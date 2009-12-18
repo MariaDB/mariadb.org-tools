@@ -1,0 +1,449 @@
+#! /usr/bin/perl
+
+# More robust replacement for these original direct commands:
+#
+# kill -9 "$(cat kvm_pid_2223)"
+# (exec sh -c "echo \$\$ > 'kvm_pid_2223' ; exec kvm -m 2047 -hda /kvm/vms/vm-jaunty-i386-deb-tarbake.qcow2 -redir 'tcp:2223::22' -boot c -smp 2 -cpu qemu32,-nx -nographic -net nic,model=virtio -net user" </dev/null) &
+# sleep 15
+# while : ; do ssh -o ConnectTimeout=4 -p 2223 buildbot@127.0.0.1 true && break; sleep 2; done
+# ssh -p 2223 buildbot@127.0.0.1 'sudo shutdown -h now'
+# while : ; do sleep 5; kill -0 "$(cat kvm_pid_2223)" || break; done
+# rm -f kvm_pid_2223
+
+use strict;
+use warnings;
+
+use POSIX;
+use Socket;
+
+use Getopt::Long;
+
+my $ssh_exec= 'ssh';
+my $kvm_exec= 'kvm';
+my $qimg_exe= 'qemu-img';
+
+
+my @cpu_fix;
+
+my $opt_port= 2222;
+#my $opt_background= undef;
+my $opt_memory= 2047;
+my $opt_smp= 2;
+# This workaround (-nx) is needed to boot Ubuntu Jaunty i386 guest on
+# Jaunty i386 host. For now we just include it everywhere by default,
+# better safe than sorry.
+my $opt_cpu= 'qemu32,-nx';
+my $opt_netdev= 'virtio';
+#my $opt_shutdown= undef;
+my $opt_initial_sleep= 15;
+my $opt_startup_timeout= 300;
+my $opt_shutdown_timeout= 120;
+my $opt_max_retries= 3;
+my $opt_kvm_logfile= '/dev/null';
+my $opt_user= undef;
+my $opt_extra_kvm= [];
+my $opt_baseimage= undef;
+my @user_cmd_opt;
+
+my $image;
+my $pidfile;
+
+sub usage {
+  print <<END;
+Usage: $0 <options> image.qcow2 [command ...]
+END
+  exit 1;
+};
+
+# Quote and escape meta-characters as necessary.
+# Don't have to do this perfectly, as it's just for printing, but
+# doing at least some effort is nice for copy-paste ability.
+sub quote_for_print {
+  my @print_args= @_;
+  for (@print_args) {
+    if (/[^-_\/\+=,.a-zA-Z0-9]/) {
+      if (/[\']/) {
+        s/\\/\\\\/g;
+        s/\"/\\\"/g;
+        s/\$/\\\$/g;
+        s/\`/\\\`/g;
+        $_= '"'. $_ .'"';
+      } else {
+        $_= "'". $_ . "'";
+      }
+    }
+  }
+  return @print_args;
+}
+
+sub exec_with_print {
+  my @args= @_;
+
+  print STDERR "+ ", join(" ", quote_for_print(@args)), "\n";
+  exec {$args[0]} @args
+      or die "exec() failed: $!\n";
+}
+
+sub system_with_print {
+  my @args= @_;
+
+  print STDERR "+ ", join(" ", quote_for_print(@args)), "\n";
+  my $res= system {$args[0]} @args;
+  return $res;
+}
+
+sub exec_guest_cmd {
+  my ($cmd_and_args)= @_;
+  if (scalar(@$cmd_and_args) == 0 || $cmd_and_args->[0] eq '')
+  {
+    # Otherwise ssh will do an interactive login, which we do not want.
+    exit 0;
+  }
+
+  exec_guest_cmd $ssh_exec, '-p', $opt_port, @user_cmd_opt, 'localhost', @$cmd_and_args;
+}
+
+sub is_port_used {
+  socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname('tcp'))
+      or die "socket() failed: $!\n";
+  my $addr= sockaddr_in($opt_port, inet_aton('localhost'));
+  my $res= connect(SOCK, $addr);
+  close SOCK;
+  return $res;
+}
+
+sub get_kvm_pid {
+  open PIDFILE, '<', $pidfile
+      or return undef;
+  my $pid= <PIDFILE>;
+  close PIDFILE;
+  chomp($pid);
+  if ($pid =~ /^[0-9]+$/) {
+    return $pid;
+  } else {
+    return undef;
+  }
+}
+
+# Start the KVM process.
+#
+# We want to avoid leaving stray KVM processes running, even when other things
+# go wrong (Crashed Buildbot, master-slave connection breaks, etc).
+#
+# Further, Even if we do manage to leave a stray KVM, we want the next
+# invocation to be able to succeed by first shutting down the old one if at
+# all possible.
+#
+sub start_kvm {
+  my $kvm_pid= get_kvm_pid();
+  # Don't attempt to use a stale pid file.
+  if (defined ($kvm_pid) && !kill(0, $kvm_pid)) {
+    # No process associated with pid file (or if there is we do not
+    # have privileges to signal it).
+    $kvm_pid= undef;
+  }
+
+  # If the port is unused, seems safer to leave any stray process
+  # running (it shouldn't really bother us) rather than trying to kill
+  # it in an unclean fashion.
+  if (is_port_used()) {
+    shutdown_kvm($kvm_pid);
+  }
+
+  if (is_port_used()) {
+    die "Cannot start KVM. The port $opt_port is already in use, and we\n".
+        "were not able to shutdown any existing KVM process properly to\n".
+        "free up the port.\n";
+  }
+
+  # We fork() a management process in-between the main parent process and the
+  # KVM process. This process will attempt to cleanly shutdown the KVM process
+  # if the parent dies; this is better to preserve the integrity of the VM
+  # disk image (no fsck etc. on next boot).
+  #
+  # The stdin of the management process is made a pipe so it can easily detect
+  # parent exit by waiting for stdin to close.
+  #
+  # The stdin of KVM is redirected to /dev/null, and the output is
+  # sent to log file.
+  open KVM_LOG, '>', $opt_kvm_logfile
+      or die "Failed to open '$opt_kvm_logfile' for writing: $!\n";
+
+  # We want the kvm startup command both in the normal stdout log and
+  # in the kernel log.
+  my @kvm_cmdline=
+      ($kvm_exec, '-m', $opt_memory, '-hda', $image,
+       '-redir', "tcp:${opt_port}::22", '-boot', 'c', '-smp', $opt_smp, @cpu_fix,
+       '-nographic', '-net', 'nic,model='. $opt_netdev, '-net', 'user',
+       '-pidfile', $pidfile,
+       @$opt_extra_kvm);
+  print STDERR "+ ", join(" ", quote_for_print(@kvm_cmdline)), "\n";
+
+  my $res= open(PIPE1, '|-');
+  if (!defined($res)) {
+    die "fork() or pipe() failed: $!\n";
+  } elsif (!$res) {
+    # Management process.
+
+    # Make us the process group leader, so that when the parent
+    # process group is signalled, we get time to do our own cleanup.
+    setpgrp(0,0);
+
+    # Close not used file descriptors.
+    close PIPE1;
+
+    # Set up a signal handler so that we can exit when the kvm child
+    # process does.
+    $SIG{'CHLD'}= sub {
+      waitpid(-1, 0);
+      exit($?);
+    };
+    $res= fork();
+    if (!defined($res)) {
+      die "fork() failed: $!\n";
+    } elsif (!$res) {
+      # KVM child process.
+      # Kill stdin.
+      open STDIN, '<', '/dev/null'
+          or die "Failed to redirect stdin: $!\n";
+      # Redirect STDOUT/STDERR to log file.
+      open STDOUT, '>&KVM_LOG'
+          or die "Failed to redirect stdout: $!\n";
+      open STDERR, '>&STDOUT'
+          or die "Failed to redirect stderr: $!\n";
+      exec_with_print @kvm_cmdline;
+      # Not reached.
+      die "Unexpected failure to start kvm.";
+    } else {
+      # Management process after forking kvm child.
+
+      close KVM_LOG;
+
+      # We just wait for the STDIN pipe from parent to close, indicating that
+      # the parent process has exited. Once this happens, we shutdown the KVM
+      # child process and exit.
+
+      scalar(<STDIN>);
+      # Parent process exited.
+      print STDERR "Parent process exited, shutting down KVM...\n";
+      shutdown_kvm(get_kvm_pid());
+      waitpid($res, 0);
+      exit($?);
+    }
+  } else {
+    # Parent process.
+    close KVM_LOG;
+  }
+}
+
+sub check_if_still_running {
+  my ($kvm_pid)= @_;
+  return 1 if is_port_used();
+  return 1 if $kvm_pid && kill(0, $kvm_pid);
+  return undef;
+}
+
+# Shutdown kvm. Try nicely first, to protect disk images, but kill
+# hard if necessary.
+sub shutdown_kvm {
+  my ($kvm_pid)= @_;
+
+  my $pid;
+  my $timeout= undef;
+  $SIG{ALRM}= sub {
+    kill 9, $pid
+        if defined($pid);
+    $timeout= 1;
+  };
+  alarm($opt_shutdown_timeout);
+
+  while (!$timeout) {
+    $pid= fork();
+    if (!defined($pid)) {
+      die "Fatal error: Cannot fork(): $!\n";
+    } elsif (!$pid) {
+      # Child.
+      exec_with_print($ssh_exec, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                      @user_cmd_opt, 'localhost',
+                      'sudo', '/sbin/shutdown', '-h', 'now');
+    } else {
+      # Parent.
+      my $res= waitpid $pid, 0;
+      $pid= undef;
+      last unless $?;
+      last if !check_if_still_running($kvm_pid);
+      sleep 1;
+    }
+  }
+
+  # See if it will come down by itself.
+  my $still_running;
+  for(;;) {
+    $still_running= check_if_still_running($kvm_pid);
+    last if $timeout || !$still_running;
+    sleep 1;
+  }
+
+  alarm(0);
+  $SIG{ALRM}= 'DEFAULT';
+
+  return unless $still_running;
+
+  # Ok, it refuses to die, kill it the hard way.
+  print STDERR "Failed to gracefully shutdown KVM within ".
+      "$opt_shutdown_timeout seconds\nTrying kill -9 ...\n";
+  kill 9, $kvm_pid;
+  sleep 2;
+  # If that didn't work, there is not much else we can try.
+  print STDERR "Unable to kill kvm process (pid $kvm_pid).\n"
+      if kill(0, $kvm_pid);
+}
+
+# Wait for kvm to come up, with timeout for giving up.
+# Return 0 on success, -1 on timeout, 1 on kvm process gone.
+sub wait_for_up {
+  my ($kvm_pid)= @_;
+
+  # Set an alarm() timeout so we don't hang forever waiting for a broken KVM
+  # to come up.
+  my $pid;
+  my $timeout= undef;
+  $SIG{ALRM}= sub {
+    kill 9, $pid
+        if defined($pid);
+    $timeout= 1;
+  };
+  alarm($opt_startup_timeout);
+
+  sleep ($opt_initial_sleep)
+      if $opt_initial_sleep;
+
+  my $ret= -1;
+  while (!$timeout) {
+    $pid= fork();
+    if (!defined($pid)) {
+      die "Fatal error: Cannot fork(): $!\n";
+    } elsif (!$pid) {
+      # Child.
+      exec_with_print($ssh_exec, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+           @user_cmd_opt, 'localhost', '/bin/true');
+    } else {
+      # Parent.
+      my $res= waitpid $pid, 0;
+      $pid= undef;
+      if ($? == 0) {
+        # Ok, KVM is up now!
+        $ret= 0;
+        last;
+      }
+      $kvm_pid= get_kvm_pid()
+          unless defined($kvm_pid);
+      if (!kill(0, $kvm_pid)) {
+        # The KVM process seems to have died!
+        $ret= 1;
+        last;
+      }
+      # Wait a bit before retrying.
+      sleep 2;
+    }
+  }
+
+  alarm(0);
+  $SIG{ALRM}= 'DEFAULT';
+  return $ret;
+}
+
+my $result= GetOptions
+    ( 'port|p=i' => \$opt_port,
+      'user|u=s' => \$opt_user,
+#      'background|b' => \$opt_background,
+      'memory|m=i' => \$opt_memory,
+      'smp=i' => \$opt_smp,
+      'cpu|c=s' => \$opt_cpu,
+      'netdev=s' => \$opt_netdev,
+      'kvm=s' => $opt_extra_kvm,
+#      'shutdown|s' => \$opt_shutdown,
+      'initial-sleep=i' => \$opt_initial_sleep,
+      'startup-timeout=i' => \$opt_startup_timeout,
+      'shutdown-timeout=i' => \$opt_shutdown_timeout,
+      'kvm-retries=i' => \$opt_max_retries,
+      'logfile|l=s' => \$opt_kvm_logfile,
+      'base-image|b=s' => \$opt_baseimage,
+    );
+
+if (defined($opt_user)) {
+    @user_cmd_opt= ('-l', $opt_user);
+}
+
+if (@ARGV < 1) {
+    print STDERR "No KVM/Qemu image specified, aborting.\n";
+    usage();
+}
+
+$image= shift @ARGV;
+
+$pidfile= $ENV{HOME} . "/.runvm";
+system 'mkdir', '-p', $pidfile
+    and die "Failed to create pidfile directory '$pidfile': $!\n";
+$pidfile.= "kvm_$opt_port.pid";
+
+@cpu_fix= ('-cpu', $opt_cpu);
+
+my $retries= 0;
+for (;;) {
+  if (defined($opt_baseimage)) {
+    my $res= system_with_print($qimg_exe, 'create', '-b', $opt_baseimage, '-f', 'qcow2', $image);
+    if ($res) {
+      print STDERR "Failed to clone base image, aborting\n";
+      exit 1;
+    }
+  }
+
+  start_kvm();
+  my $err= wait_for_up();
+  last unless $err;
+
+  # Hm, we did not come up :-(. Retry until the limit.
+  $retries++;
+
+  print "KVM does not seem to come up properly, shutting down and ",
+      ($retries < $opt_max_retries ? "retrying" : "aborting"), ".\n";
+  shutdown_kvm(get_kvm_pid());
+  exit 1 unless $retries < $opt_max_retries;
+}
+
+my $ret= 0;
+for my $arg (@ARGV) {
+  my $res;
+  # A leading equals sign '=' means it is a host command, else guest.
+  if ($arg =~ s/^=//) {
+    print STDERR "= $arg\n";
+    $res= system(substr($arg, 1));
+  } else {
+    print STDERR "+ $arg\n";
+    $res= system($ssh_exec, '-p', $opt_port, @user_cmd_opt, 'localhost', $arg);
+  }
+  if ($res < 0) {
+    print STDERR "Could not spawn command: $!\n";
+    $ret= 1;
+    last;
+  } elsif ($res > 0) {
+    my $exit_val= $res >> 8;
+    my $core= (($res >> 7) & 1) ? " (core dumped)" : "";
+    my $sig= $res & 127;
+    if ($core || $sig) {
+      print STDERR "Terminated$core";
+      print STDERR ": got signal $sig"
+          if $sig;
+      print STDERR "\n";
+    } else {
+      print STDERR "Command exit $exit_val\n";
+    }
+    $ret= $exit_val || 1;
+    last;
+  }
+}
+
+shutdown_kvm(get_kvm_pid());
+
+exit $ret;
