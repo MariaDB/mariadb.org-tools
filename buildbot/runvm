@@ -1,14 +1,21 @@
 #! /usr/bin/perl
 
-# More robust replacement for these original direct commands:
+# runvm: Run a list of commands inside a KVM virtual machine.
+# Copyright (C) 2009  Kristian Nielsen and Monty Program AB.
 #
-# kill -9 "$(cat kvm_pid_2223)"
-# (exec sh -c "echo \$\$ > 'kvm_pid_2223' ; exec kvm -m 2047 -hda /kvm/vms/vm-jaunty-i386-deb-tarbake.qcow2 -redir 'tcp:2223::22' -boot c -smp 2 -cpu qemu32,-nx -nographic -net nic,model=virtio -net user" </dev/null) &
-# sleep 15
-# while : ; do ssh -o ConnectTimeout=4 -p 2223 buildbot@127.0.0.1 true && break; sleep 2; done
-# ssh -p 2223 buildbot@127.0.0.1 'sudo shutdown -h now'
-# while : ; do sleep 5; kill -0 "$(cat kvm_pid_2223)" || break; done
-# rm -f kvm_pid_2223
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 use strict;
 use warnings;
