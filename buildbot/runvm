@@ -58,6 +58,84 @@ my $pidfile;
 sub usage {
   print <<END;
 Usage: $0 <options> image.qcow2 [command ...]
+
+Boot the given KVM virtual machine image and wait for it to come up.
+Run the list of commands one at a time, aborting on receiving an error.
+When all commands are run (or one of them failed), shutdown the virtual
+machine and exit.
+
+Commands are by default run inside the virtual machine using ssh(1). By
+prefixing a command with an equals sign '=', it will instead be run on the
+host system (for example to copy files into or out of the virtual machine
+using scp(1)).
+
+Some care is taken to ensure that the virtual machine is shutdown
+gracefully and not left running even in case the controlling tty is
+closed or the parent process killed. If a previous virtual machine is
+already running on a conflicting port, an attempt is made to shut it
+down first. For this purpose, a PID file is created in \$HOME/.runvm/
+
+Available options:
+
+  -p, --port=N        Forward this port on the host side to the ssh port (port
+                      22) on the guest side. Must be different for each runvm
+                      instance running in parallel to avoid conflicts. The
+                      default is $opt_port.
+                      To copy files in/out of the guest use a command prefixed
+                      with '=' calling scp(1) with the -P option using the port
+                      specified here, like this:
+                          runvm img.qcow2 "=scp -P 2222 file.txt localhost:"
+  -u, --user=USER     Name of the account to ssh into in the guest. Defaults to
+                      the name of the user invoking runvm on the host.
+  -m, --memory=N      Amount of memory (in megabytes) to allocate to the guest.
+                      Defaults to $opt_memory.
+  --smp=N             Number of CPU cores to allocate to the guest.
+                      Defaults to $opt_smp.
+  -c, --cpu=NAME      Type of CPU to emulate for KVM, see qemu(1) for details.
+                      For example:
+                          --cpu=qemu64      For 64-bit amd64 emulation
+                          --cpu=qemu32      For 32-bit x86 emulation
+                          --cpu=qemu32,-nx  32-bit and disable "no-execute"
+                      The default is $opt_cpu
+  --netdev=NAME       Network device to emulate. The 'virtio' device has good
+                      performance but may not have driver support in all
+                      operating systems, if so another can be specified.
+                      The default is $opt_netdev.
+  --kvm=OPT           Pass additional option OPT to kvm. Specify multiple times
+                      to pass more than one option. For example
+                          runvm --kvm=-cdrom --kvm=mycd.iso img.qcow2 ...
+  --initial-sleep=SECS
+                      Wait this many seconds before starting to poll the guest
+                      ssh port for it to be up. Default $opt_initial_sleep.
+  --startup-timeout=SECS
+                      Wait at most this many seconds for the guest OS to respond
+                      to ssh. If this time is exceeded assume it has failed to
+                      boot correctly. Default $opt_startup_timeout.
+  --shutdown-timeout=SECS
+                      Wait at most this many seconds for the guest OS to
+                      shutdown gracefully after sending a shutdown command. If
+                      this time is exceeded, assume the guest has failed to
+                      shutdown gracefully and kill it forcibly. Default $opt_shutdown_timeout.
+  --kvm-retries=N     If the guest fails to come up, retry the boot this many
+                      times before giving up. This helps if the virtual machine
+                      sometimes crashes during boot. Default $opt_max_retries.
+  -l, --logfile=FILE  File to redirect the output from kvm into. This includes
+                      any (error) messages from kvm, and also includes anything
+                      the guest writes to the kvm emulated serial port (it can
+                      be useful to set the guest to send boot loader and kernel
+                      messages to the serial console and log them with this
+                      option). Default is to not log this output anywhere.
+  -b, --base-image=IMG
+                      Instead of booting an existing image, create a new
+                      copy-on-write image based on IMG. This uses the -b option
+                      of qemu-img(1). IMG is not modified in any way. This way,
+                      the booted image can be discarded after use, so that each
+                      use of IMG is using the same reference image with no risk
+                      of "polution" between different invocations.
+                      Note that this DELETES any existing image of the same
+                      name as the one specified on the command line to boot! It
+                      will be replaced with the image created as a copy of IMG,
+                      with any modifications done during the runvm session.
 END
   exit 1;
 };
