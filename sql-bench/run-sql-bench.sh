@@ -9,15 +9,23 @@
 # Hakan Kuecuekyilmaz <hakan at askmonty dot org> 2009-12-05.
 #
 
+RUN_BY=$(whoami)
+if [ x"root" = x"$RUN_BY" ];then
+   echo '[ERROR]: Do not run this script as root!'
+   echo '  Exiting.'
+   
+   exit 1
+fi
+
 if [ $# != 2 ]; then
     echo '[ERROR]: Please provide exactly two options.'
     echo "  Example: $0 [/path/to/bzr/repository] [name_without_spaces]"
-    echo '  [name_without_spaces] is used as identifier in the result file.'
+    echo '  [name_without_spaces] is used as identifier in the result file (--suffix).'
     
     exit 1
 else
     REPOSITORY="$1"
-    REPOSITORY_NAME="$2"
+    SUFFIX="-$2"
 fi
 
 #
@@ -158,6 +166,10 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
 
     MYSQLADMIN_OPTIONS="$MYSQLADMIN_OPTIONS \
       --socket=$MARIADB_SOCKET"
+ 
+    # Determine mysqld version for result file naming.
+    MARIADB_VERSION=$(sql/mysqld --version | awk '{ print $3 }')
+    SUFFIX="$SUFFIX"-"$MARIADB_VERSION"
 
     sql/mysqld $MARIADB_OPTIONS &
 
@@ -201,7 +213,8 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
 
     # TODO: Adding --comments="$COMMENTS" does not work
     SQLBENCH_OPTIONS="$SQLBENCH_OPTIONS \
-      --socket=$MARIADB_SOCKET"
+      --socket=$MARIADB_SOCKET \
+      --suffix=$SUFFIX"
 
     ./run-all-tests $SQLBENCH_OPTIONS
     if [ $? != 0 ]; then
@@ -215,8 +228,6 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
     # Save result file for later usage and comparison.
     RESULT_FILE=$(ls output/RUN-*)
     if [ x"$RESULT_FILE" != x"" ]; then
-        NEW_FILE_NAME="RUN-${REPOSITORY_NAME}-$(basename $RESULT_FILE | awk -F 'RUN-' '{ print $2 }')"
-
         CONFIGURATION=$(basename "$i" | awk -F . '{ print $1 }')
         ARCHIVE_DIR="${SQL_BENCH_RESULTS}/${MACHINE}/${RUN_DATE}/${CONFIGURATION}"
         mkdir -p $ARCHIVE_DIR
@@ -225,7 +236,7 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
         sed -e "s%Comments:%Comments:            ${COMMENTS}%" $RESULT_FILE > foo.tmp
         mv foo.tmp $RESULT_FILE
         # TODO: check for failures and copy the logs in question.
-        cp $RESULT_FILE ${ARCHIVE_DIR}/$NEW_FILE_NAME
+        cp $RESULT_FILE $ARCHIVE_DIR
         
         # Clean up for next round.
         rm -rf $TEMP_DIR
