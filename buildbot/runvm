@@ -52,6 +52,19 @@ my $opt_extra_kvm= [];
 my $opt_baseimage= undef;
 my @user_cmd_opt;
 
+# Disable host key checking for ssh.
+# This is a bit convoluted due to OpenSSH's slight security-paranoia.
+# Without this, we would get a login failure if using another VM image
+# (with different host key) on the same port, which is annoying.
+# An alternative would be to use CheckHostIP=no and HostKeyAlias=<img.qcow2>
+# to get ssh to check a different key for each image. But that would still
+# cause an error if re-generating an image (with new ssh host key), and it
+# doesn't really give any additional security.
+my @ssh_cmd_prefix= ($ssh_exec,
+                     '-o', 'UserKnownHostsFile=/dev/null',
+                     '-o', 'StrictHostKeyChecking=no',
+                     '-o', 'LogLevel=ERROR');
+
 my $image;
 my $pidfile;
 
@@ -175,17 +188,6 @@ sub system_with_print {
   print STDERR "+ ", join(" ", quote_for_print(@args)), "\n";
   my $res= system {$args[0]} @args;
   return $res;
-}
-
-sub exec_guest_cmd {
-  my ($cmd_and_args)= @_;
-  if (scalar(@$cmd_and_args) == 0 || $cmd_and_args->[0] eq '')
-  {
-    # Otherwise ssh will do an interactive login, which we do not want.
-    exit 0;
-  }
-
-  exec_guest_cmd $ssh_exec, '-p', $opt_port, @user_cmd_opt, 'localhost', @$cmd_and_args;
 }
 
 sub is_port_used {
@@ -348,7 +350,7 @@ sub shutdown_kvm {
       die "Fatal error: Cannot fork(): $!\n";
     } elsif (!$pid) {
       # Child.
-      exec_with_print($ssh_exec, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+      exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
                       @user_cmd_opt, 'localhost',
                       'sudo', '/sbin/shutdown', '-h', 'now');
     } else {
@@ -410,7 +412,7 @@ sub wait_for_up {
       die "Fatal error: Cannot fork(): $!\n";
     } elsif (!$pid) {
       # Child.
-      exec_with_print($ssh_exec, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+      exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
            @user_cmd_opt, 'localhost', '/bin/true');
     } else {
       # Parent.
@@ -506,7 +508,7 @@ for my $arg (@ARGV) {
     $res= system(substr($arg, 1));
   } else {
     print STDERR "+ $arg\n";
-    $res= system($ssh_exec, '-p', $opt_port, @user_cmd_opt, 'localhost', $arg);
+    $res= system(@ssh_cmd_prefix, '-p', $opt_port, @user_cmd_opt, 'localhost', $arg);
   }
   if ($res < 0) {
     print STDERR "Could not spawn command: $!\n";
