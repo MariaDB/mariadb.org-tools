@@ -51,7 +51,8 @@ TIMEOUT=100
 # Binaries.
 #
 BZR='/usr/local/bin/bzr'
-MYSQLADMIN='client/mysqladmin'
+#BZR='/usr/bin/bzr'
+MYSQLADMIN='bin/mysqladmin'
 
 #
 # Check system.
@@ -139,7 +140,9 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
         exit 1
     fi
 
-    ./configure $MARIADB_CONFIG
+    # We need --prefix for running make install. Otherwise
+    # mysql_install_db does not work properly.
+    ./configure $MARIADB_CONFIG --prefix=${TEMP_DIR}/install
     if [ $? != 0 ]; then
         echo "[ERROR]: ./configure $MARIADB_CONFIG failed."
         echo "  Please check your MARIADB_CONFIG in $i."
@@ -157,10 +160,24 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
         exit 1
     fi
 
+    make install
+    if [ $? != 0 ]; then
+        echo '[ERROR]: make install.'
+        echo '  Please check your build logs.'
+        echo 'Exiting.'
+
+        exit 1
+    fi
+
+    cd ${TEMP_DIR}/install
+
+    # Install system tables.
+    bin/mysql_install_db --no-defaults --basedir=${TEMP_DIR}/install --datadir=${TEMP_DIR}/data
+
     # Start mysqld.
     MARIADB_SOCKET="${TEMP_DIR}/mysql.sock"
     MARIADB_OPTIONS="$MARIADB_OPTIONS \
-      --datadir=$TEMP_DIR \
+      --datadir=${TEMP_DIR}/data \
       --tmpdir=$TEMP_DIR \
       --socket=$MARIADB_SOCKET"
 
@@ -168,10 +185,10 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
       --socket=$MARIADB_SOCKET"
  
     # Determine mysqld version for result file naming.
-    MARIADB_VERSION=$(sql/mysqld --version | awk '{ print $3 }')
+    MARIADB_VERSION=$(libexec/mysqld --version | awk '{ print $3 }')
     SUFFIX="$SUFFIX"-"$MARIADB_VERSION"
 
-    sql/mysqld $MARIADB_OPTIONS &
+    libexec/mysqld $MARIADB_OPTIONS &
 
     j=0
     STARTED=-1
@@ -191,15 +208,6 @@ for i in ${SQL_BENCH_CONFIGS}/*.inc
     if [ $STARTED != 0 ]; then
         echo '[ERROR]: Start of mysqld failed.'
         echo '  Please check your error log.'
-        echo 'Exiting.'
-
-        exit 1
-    fi
-
-    $MYSQLADMIN $MYSQLADMIN_OPTIONS create test
-    if [ $? != 0 ]; then
-        echo '[ERROR]: Create schema test failed.'
-        echo '  Please check your mysqld error log.'
         echo 'Exiting.'
 
         exit 1

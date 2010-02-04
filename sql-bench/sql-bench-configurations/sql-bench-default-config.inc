@@ -16,11 +16,9 @@ export MARIADB_CONFIG="--enable-thread-safe-client \
 #
 # Options for starting mysqld.
 #
-# Attention: Do not set --datadir, --tmpdir, and --socket.
+# Attention: Do not set --datadir, --tmpdir, nor --socket.
 #
-export MARIADB_OPTIONS="--no-defaults \
-  --skip-grant-tables \
-  --language=./sql/share/english"
+export MARIADB_OPTIONS="--no-defaults"
 
 #
 # Options for sql-bench.
