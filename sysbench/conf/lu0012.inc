@@ -23,3 +23,7 @@ OPCONTROL='/usr/bin/opcontrol'
 IOSTAT='/usr/bin/iostat'
 IOSTAT_DEVICE='/dev/sda'
 SAR='/usr/bin/sar'
+
+# Directories.
+TEMP_DIR='/tmp'
+DATA_DIR="${TEMP_DIR}/data"

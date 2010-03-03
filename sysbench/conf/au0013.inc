@@ -26,3 +26,7 @@ IOSTAT='/usr/sbin/iostat'
 IOSTAT_DEVICE='disk0'
 # Note: sar works different on Mac OS X.
 SAR='/usr/bin/sar'
+
+# Directories.
+TEMP_DIR='/tmp'
+DATA_DIR="${TEMP_DIR}/data"

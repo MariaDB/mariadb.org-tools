@@ -59,6 +59,7 @@ MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQL_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
   --language=./sql/share/english \
+  --key_buffer_size=32M \
   --max_connections=256 \
   --query_cache_size=0 \
   --query_cache_type=0 \
@@ -66,26 +67,14 @@ MYSQL_OPTIONS="--no-defaults \
   --socket=$MY_SOCKET \
   --table_open_cache=512 \
   --thread_cache=512 \
-  --tmpdir=$TEMP_DIR \
-  --innodb_additional_mem_pool_size=32M \
-  --innodb_buffer_pool_size=1024M \
-  --innodb_data_file_path=ibdata1:32M:autoextend \
-  --innodb_data_home_dir=$DATA_DIR \
-  --innodb_doublewrite=0 \
-  --innodb_flush_log_at_trx_commit=1 \
-  --innodb_flush_method=O_DIRECT \
-  --innodb_lock_wait_timeout=50 \
-  --innodb_log_buffer_size=16M \
-  --innodb_log_file_size=256M \
-  --innodb_log_group_home_dir=$DATA_DIR \
-  --innodb_max_dirty_pages_pct=80 \
-  --innodb_thread_concurrency=0"
+  --tmpdir=$TEMP_DIR"
+#  --key_cache_partitions=7 \
 
 # Number of threads we run sysbench with.
 NUM_THREADS="1 4 8 16 32 64 128"
 
 # The table size we use for sysbench.
-TABLE_SIZE=2000000
+TABLE_SIZE=20000000
 
 # The run time we use for sysbench.
 RUN_TIME=300
@@ -105,9 +94,10 @@ SYSBENCH_TESTS="delete.lua \
 SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --max-time=$RUN_TIME \
   --max-requests=0 \
-  --mysql-table-engine=InnoDB \
+  --mysql-table-engine=MyISAM\
   --mysql-user=root \
-  --mysql-engine-trx=yes"
+  --mysql-engine-trx=no \
+  --myisam-max-rows=50000000"
 
 # Timeout in seconds for waiting for mysqld to start.
 TIMEOUT=100
@@ -264,6 +254,10 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
 
 			SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS --test=${TEST_DIR}/${SYSBENCH_TEST}"
 			$SYSBENCH $SYSBENCH_OPTIONS prepare
+
+                        sync
+                        sleep 3
+
 			$SYSBENCH $SYSBENCH_OPTIONS run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
 			
 			grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt

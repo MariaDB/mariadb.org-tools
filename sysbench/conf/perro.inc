@@ -25,5 +25,5 @@ IOSTAT_DEVICE='/dev/sda'
 SAR='/usr/bin/sar'
 
 # Directories.
-TEMP_DIR="${HOME}/tmp"
+TEMP_DIR='/mnt/data/sysbench'
 DATA_DIR="${TEMP_DIR}/data"
