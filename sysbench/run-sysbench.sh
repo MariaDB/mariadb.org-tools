@@ -34,15 +34,22 @@ else
 fi
 
 #
-# Binaries.
+# Read system dependent settings.
 #
-MYSQLADMIN='client/mysqladmin'
+if [ ! -f conf/${HOSTNAME}.inc ]; then
+    echo "[ERROR]: Could not find config file: conf/${HOSTNAME}.conf."
+    echo "  Please create one."
+    
+    exit 1
+else
+    source conf/${HOSTNAME}.inc
+fi
 
 #
-# Adjust the following paths according to your installation.
+# Binaries used after building from source. You do not have to
+# change these, except you exactly know what you are doing.
 #
-SYSBENCH='/usr/local/bin/sysbench'
-BZR='/usr/local/bin/bzr'
+MYSQLADMIN='client/mysqladmin'
 
 #
 # Variables.
