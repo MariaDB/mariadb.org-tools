@@ -126,10 +126,10 @@ RESULT_DIR="${BASE}/sysbench-results"
 WORK_DIR='/tmp'
 
 if [ ! -d $LOCAL_MASTER ]; then
-	echo "[ERROR]: Supplied local master $LOCAL_MASTER does not exists."
-	echo "  Please provide a valid bzr repository."
-	echo "  Exiting."
-	exit 1
+    echo "[ERROR]: Supplied local master $LOCAL_MASTER does not exists."
+    echo "  Please provide a valid bzr repository."
+    echo "  Exiting."
+    exit 1
 fi
 
 #
@@ -154,10 +154,10 @@ fi
 cd $WORK_DIR
 TEMP_DIR=$(mktemp -d)
 if [ $? != 0 ]; then
-	echo "[ERROR]: mktemp in $WORK_DIR failed."
-	echo 'Exiting.'
+    echo "[ERROR]: mktemp in $WORK_DIR failed."
+    echo 'Exiting.'
 
-	exit 1
+    exit 1
 fi
 
 #
@@ -167,10 +167,10 @@ fi
 echo "Exporting from $LOCAL_MASTER to ${TEMP_DIR}/build"
 $BZR export --format=dir ${TEMP_DIR}/build $LOCAL_MASTER
 if [ $? != 0 ]; then
-	echo '[ERROR]: bzr export failed.'
-	echo 'Exiting.'
+    echo '[ERROR]: bzr export failed.'
+    echo 'Exiting.'
 
-	exit 1
+    exit 1
 fi
 
 #
@@ -182,10 +182,10 @@ echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting to compile $PRODUCT."
 cd ${TEMP_DIR}/build
 BUILD/compile-amd64-max > $BUILD_LOG 2>&1
 if [ $? != 0 ]; then
-	echo "[ERROR]: Build of $PRODUCT failed"
-	echo "  Please check your log at $BUILD_LOG"
-	echo "  Exiting."
-	exit 1
+    echo "[ERROR]: Build of $PRODUCT failed"
+    echo "  Please check your log at $BUILD_LOG"
+    echo "  Exiting."
+    exit 1
 fi
 
 echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished compiling $PRODUCT."
@@ -219,58 +219,62 @@ sql/mysqld $MYSQL_OPTIONS &
 j=0
 STARTED=-1
 while [ $j -le $TIMEOUT ]
-	do
-	$MYSQLADMIN $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1
-	if [ $? = 0 ]; then
-		STARTED=0
-		
-		break
-	fi
-	
-	sleep 1
-	j=$(($j + 1))
+    do
+    $MYSQLADMIN $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1
+    if [ $? = 0 ]; then
+        STARTED=0
+        
+        break
+    fi
+    
+    sleep 1
+    j=$(($j + 1))
 done
 
 if [ $STARTED != 0 ]; then
-	echo '[ERROR]: Start of mysqld failed.'
-	echo '  Please check your error log.'
-	echo '  Exiting.'
+    echo '[ERROR]: Start of mysqld failed.'
+    echo '  Please check your error log.'
+    echo '  Exiting.'
 
-	exit 1
+    exit 1
 fi
 
 for SYSBENCH_TEST in $SYSBENCH_TESTS
-	do
-	mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}
+    do
+    mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}
 
-	for THREADS in $NUM_THREADS
-		do
-		THIS_RESULT_DIR="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}/${THREADS}"
-		mkdir $THIS_RESULT_DIR
-		echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
-		echo '' >> ${THIS_RESULT_DIR}/results.txt
+    for THREADS in $NUM_THREADS
+        do
+        THIS_RESULT_DIR="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}/${THREADS}"
+        mkdir $THIS_RESULT_DIR
+        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
+        echo '' >> ${THIS_RESULT_DIR}/results.txt
 
-		k=0
-		while [ $k -lt $LOOP_COUNT ]
-			do
-			$MYSQLADMIN $MYSQLADMIN_OPTIONS -f drop sbtest
-			$MYSQLADMIN $MYSQLADMIN_OPTIONS create sbtest
-			if [ $? != 0 ]; then
-				echo "[ERROR]: Create of sbtest database failed"
-				echo "  Please check your setup."
-				echo "  Exiting"
-				exit 1
-			fi
+        k=0
+        while [ $k -lt $LOOP_COUNT ]
+            do
+            $MYSQLADMIN $MYSQLADMIN_OPTIONS -f drop sbtest
+            $MYSQLADMIN $MYSQLADMIN_OPTIONS create sbtest
+            if [ $? != 0 ]; then
+                echo "[ERROR]: Create of sbtest database failed"
+                echo "  Please check your setup."
+                echo "  Exiting"
+                exit 1
+            fi
 
-			SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS --test=${TEST_DIR}/${SYSBENCH_TEST}"
-			$SYSBENCH $SYSBENCH_OPTIONS prepare
-			$SYSBENCH $SYSBENCH_OPTIONS run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
-			
-			grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
+            SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS --test=${TEST_DIR}/${SYSBENCH_TEST}"
+            $SYSBENCH $SYSBENCH_OPTIONS prepare
 
-			k=$(($k + 1))
-		done
-	done
+            sync
+            sleep 3
+
+            $SYSBENCH $SYSBENCH_OPTIONS run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
+            
+            grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
+
+            k=$(($k + 1))
+        done
+    done
 done
 
 #
