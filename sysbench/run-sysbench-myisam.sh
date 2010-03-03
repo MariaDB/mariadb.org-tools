@@ -54,7 +54,7 @@ MYSQLADMIN='client/mysqladmin'
 #
 # Variables.
 #
-MY_SOCKET="${TEMP_DIR}/mysql.sock"
+MY_SOCKET="/tmp/mysql.sock"
 MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQL_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
@@ -94,7 +94,7 @@ SYSBENCH_TESTS="delete.lua \
 SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --max-time=$RUN_TIME \
   --max-requests=0 \
-  --mysql-table-engine=MyISAM\
+  --mysql-table-engine=MyISAM \
   --mysql-user=root \
   --mysql-engine-trx=no \
   --myisam-max-rows=50000000"

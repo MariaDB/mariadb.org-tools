@@ -54,7 +54,7 @@ MYSQLADMIN='client/mysqladmin'
 #
 # Variables.
 #
-MY_SOCKET="${TEMP_DIR}/mysql.sock"
+MY_SOCKET="/tmp/mysql.sock"
 MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQL_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
