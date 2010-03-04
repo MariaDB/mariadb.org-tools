@@ -1,10 +1,10 @@
-# Configuration file for host: work
+# Configuration file for host: perro
 # 
 # OS: openSUSE 11.1 (x86_64)
 # Platform: x86_64
-# CPU: Two socket quad-core Intel Xeon @ 3.00GHz
-# RAM: 8GB
-# Disk(s): 1 x WDC WD2500JS-00NCB1 S-ATA
+# CPU: Quad-core Intel @ 3.20GHz
+# RAM: 2GB
+# Disk(s): 2 x ST31000528AS S-ATA as software RAID 0
 
 #
 # Adjust the following paths according to your installation.
@@ -27,3 +27,6 @@ SAR='/usr/bin/sar'
 # Directories.
 TEMP_DIR='/mnt/data/sysbench'
 DATA_DIR="${TEMP_DIR}/data"
+
+# Where to compile the sources.
+WORK_DIR='/tmp'

@@ -27,3 +27,6 @@ SAR='/usr/bin/sar'
 # Directories.
 TEMP_DIR="${HOME}/tmp"
 DATA_DIR="${TEMP_DIR}/data"
+
+# Where to compile the sources.
+WORK_DIR='/tmp'

@@ -113,17 +113,17 @@ SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
 TIMEOUT=100
 
 #
-# Files
-#
-BUILD_LOG="/tmp/${PRODUCT}_build.log"
-
-#
 # Directories.
 #
 BASE="${HOME}/work"
 TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 RESULT_DIR="${BASE}/sysbench-results"
-WORK_DIR='/tmp'
+
+#
+# Files
+#
+BUILD_LOG="${WORK_DIR}/${PRODUCT}_build.log"
+
 
 if [ ! -d $LOCAL_MASTER ]; then
     echo "[ERROR]: Supplied local master $LOCAL_MASTER does not exists."
