@@ -61,7 +61,7 @@ MYSQLADMIN='bin/mysqladmin'
 AVAILABLE=$(df $WORK_DIR | grep -v Filesystem | awk '{ print $4 }')
 
 if [ $AVAILABLE -lt $SPACE_LIMIT ]; then
-    echo "[ERROR]: We need at least $ONE_GB space in $WORK_DIR."
+    echo "[ERROR]: We need at least $SPACE_LIMIT space in $WORK_DIR."
     echo 'Exiting.'
     
     exit 1
