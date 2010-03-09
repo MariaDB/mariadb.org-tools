@@ -82,6 +82,9 @@ RUN_TIME=300
 # How many times we run each test.
 LOOP_COUNT=3
 
+# We need at least 1 GB disk space in our $WORK_DIR.
+SPACE_LIMIT=1000000
+
 SYSBENCH_TESTS="delete.lua \
   insert.lua \
   oltp_complex_ro.lua \
@@ -101,7 +104,9 @@ SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --mysql-table-engine=MyISAM \
   --mysql-user=root \
   --mysql-engine-trx=no \
-  --myisam-max-rows=50000000"
+  --myisam-max-rows=50000000 \
+  --rand-init=on \
+  --rand-seed=303"
 
 # Timeout in seconds for waiting for mysqld to start.
 TIMEOUT=100
@@ -112,11 +117,25 @@ TIMEOUT=100
 BASE="${HOME}/work"
 TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 RESULT_DIR="${BASE}/sysbench-results"
+SYSBENCH_DB_BACKUP="${TEMP_DIR}/sysbench_db"
 
 #
 # Files
 #
 BUILD_LOG="${WORK_DIR}/${PRODUCT}_build.log"
+
+#
+# Check system.
+#
+# We should at least have $SPACE_LIMIT in $WORKDIR.
+AVAILABLE=$(df $WORK_DIR | grep -v Filesystem | awk '{ print $4 }')
+
+if [ $AVAILABLE -lt $SPACE_LIMIT ]; then
+    echo "[ERROR]: We need at least $SPACE_LIMIT space in $WORK_DIR."
+    echo 'Exiting.'
+    
+    exit 1
+fi
 
 if [ ! -d $LOCAL_MASTER ]; then
     echo "[ERROR]: Supplied local master $LOCAL_MASTER does not exists."
@@ -202,39 +221,71 @@ TODAY=$(date +%Y-%m-%d)
 mkdir ${RESULT_DIR}/${TODAY}
 mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}
 
-killall -9 mysqld
-rm -rf $DATA_DIR
-rm -f $MY_SOCKET
-mkdir $DATA_DIR
+function kill_mysqld {
+    killall -9 mysqld
+    rm -rf $DATA_DIR
+    rm -f $MY_SOCKET
+    mkdir $DATA_DIR
+}
 
-sql/mysqld $MYSQL_OPTIONS &
+function start_mysqld {
+    sql/mysqld $MYSQL_OPTIONS &
 
-j=0
-STARTED=-1
-while [ $j -le $TIMEOUT ]
-    do
-    $MYSQLADMIN $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1
-    if [ $? = 0 ]; then
-        STARTED=0
+    j=0
+    STARTED=-1
+    while [ $j -le $TIMEOUT ]
+        do
+        $MYSQLADMIN $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1
+        if [ $? = 0 ]; then
+            STARTED=0
+            
+            break
+        fi
         
-        break
-    fi
+        sleep 1
+        j=$(($j + 1))
+    done
     
-    sleep 1
-    j=$(($j + 1))
-done
+    if [ $STARTED != 0 ]; then
+        echo '[ERROR]: Start of mysqld failed.'
+        echo '  Please check your error log.'
+        echo '  Exiting.'
+    
+        exit 1
+    fi
+}
 
-if [ $STARTED != 0 ]; then
-    echo '[ERROR]: Start of mysqld failed.'
-    echo '  Please check your error log.'
-    echo '  Exiting.'
-
-    exit 1
-fi
+#
+# Write out configurations used for future refernce.
+#
+echo $MYSQL_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
+echo $SYSBENCH_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 
 for SYSBENCH_TEST in $SYSBENCH_TESTS
     do
     mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}
+
+    kill_mysqld
+    start_mysqld
+    $MYSQLADMIN $MYSQLADMIN_OPTIONS create sbtest
+    if [ $? != 0 ]; then
+        echo "[ERROR]: Create of sbtest database failed"
+        echo "  Please check your setup."
+        echo "  Exiting"
+        exit 1
+    fi
+
+    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Preparing and loading data for $SYSBENCH_TEST."
+    SYSBENCH_OPTIONS="${SYSBENCH_OPTIONS} --test=${TEST_DIR}/${SYSBENCH_TEST}"
+    $SYSBENCH $SYSBENCH_OPTIONS prepare
+    
+    $MYSQLADMIN $MYSQLADMIN_OPTIONS shutdown
+    sync
+    rm -rf ${SYSBENCH_DB_BACKUP}
+    mkdir ${SYSBENCH_DB_BACKUP}
+    
+    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Copying $DATA_DIR of $SYSBENCH_TEST for later usage."
+    cp -a ${DATA_DIR}/* ${SYSBENCH_DB_BACKUP}/
 
     for THREADS in $NUM_THREADS
         do
@@ -243,23 +294,24 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
 
+        SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS"
+
         k=0
         while [ $k -lt $LOOP_COUNT ]
             do
-            $MYSQLADMIN $MYSQLADMIN_OPTIONS -f drop sbtest
-            $MYSQLADMIN $MYSQLADMIN_OPTIONS create sbtest
-            if [ $? != 0 ]; then
-                echo "[ERROR]: Create of sbtest database failed"
-                echo "  Please check your setup."
-                echo "  Exiting"
-                exit 1
-            fi
-
-            SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS --test=${TEST_DIR}/${SYSBENCH_TEST}"
-            $SYSBENCH $SYSBENCH_OPTIONS prepare
-
+            echo ''
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Killing mysqld and copying back $DATA_DIR for $SYSBENCH_TEST."
+            kill_mysqld
+            cp -a ${SYSBENCH_DB_BACKUP}/* ${DATA_DIR}
+            
+            # Clear file system cache. This works only with Linux >= 2.6.16.
+            # On Mac OS X we can use sync; purge.
             sync
-            sleep 3
+            echo 3 | $SUDO tee /proc/sys/vm/drop_caches
+
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting mysqld for running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT"
+            start_mysqld
+            sync
 
             $SYSBENCH $SYSBENCH_OPTIONS run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
             
@@ -267,6 +319,9 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
 
             k=$(($k + 1))
         done
+        
+        echo '' >> ${THIS_RESULT_DIR}/results.txt
+        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee -a ${THIS_RESULT_DIR}/results.txt
     done
 done
 
