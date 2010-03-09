@@ -91,6 +91,10 @@ SYSBENCH_TESTS="delete.lua \
   update_index.lua \
   update_non_index.lua"
 
+#
+# Note: myisam-max-rows has to match or exceed oltp-table-size
+#   otherwise we get a table full error while preparing the run.
+#
 SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --max-time=$RUN_TIME \
   --max-requests=0 \

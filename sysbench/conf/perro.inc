@@ -24,6 +24,9 @@ IOSTAT='/usr/bin/iostat'
 IOSTAT_DEVICE='/dev/sda'
 SAR='/usr/bin/sar'
 
+# Other binaries.
+SUDO=/my/local/bin/sur
+
 # Directories.
 TEMP_DIR='/mnt/data/sysbench'
 DATA_DIR="${TEMP_DIR}/data"

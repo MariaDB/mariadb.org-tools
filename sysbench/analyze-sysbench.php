@@ -2,10 +2,10 @@
 /**
  * Analyze sysbench v0.5 results
  *
- * We take one directories as an argument and produce
+ * We take one directory as an argument and produce
  * SQL INSERT statements for further usage.
  *
- * The directory structure is:
+ * The current directory structure is:
  *   ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}/${THREADS}
  *
  * For instance:
@@ -19,7 +19,7 @@
  *   21749.94
  *
  * The current layout of the tables for storing the
- * benchmark results of sysbench is:
+ * benchmark results of a sysbench run is:
  *   CREATE TABLE sysbench_run (
  *     id int unsigned NOT NULL auto_increment,
  *     host varchar(80),               -- Hostname we ran the test on.
@@ -62,7 +62,7 @@
  */
 
 /**
- * Base path to our result files
+ * Base path to our result files.
  */
 define('BASE_PATH', $_SERVER['HOME'] . '/work/sysbench-results/' . RUN_DATE . '/' . PRODUCT);
 
