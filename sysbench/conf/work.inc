@@ -22,7 +22,8 @@ OPCONTROL='/usr/bin/opcontrol'
 # System statistic binaries.
 IOSTAT='/usr/bin/iostat'
 IOSTAT_DEVICE='/dev/sda'
-SAR='/usr/bin/sar'
+# For CPU utilization statistics
+MPSTAT='/usr/bin/mpstat'
 
 # Other binaries.
 SUDO=/my/local/bin/sur
