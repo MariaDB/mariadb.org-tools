@@ -22,7 +22,7 @@ OPCONTROL='/usr/bin/opcontrol'
 # System statistic binaries.
 IOSTAT='/usr/bin/iostat'
 IOSTAT_DEVICE='/dev/sda'
-# For CPU utilization statistics
+# For CPU utilization statistics.
 MPSTAT='/usr/bin/mpstat'
 
 # Other binaries.

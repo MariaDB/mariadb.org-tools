@@ -267,6 +267,9 @@ function start_mysqld {
 #
 echo $MYSQL_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
 echo $SYSBENCH_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
+echo '' >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
+echo "Warm up time is: $WARM_UP_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
+echo "Run time is: $RUN_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 
 for SYSBENCH_TEST in $SYSBENCH_TESTS
     do
@@ -321,8 +324,12 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             start_mysqld
             sync
 
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting warm up of $WARM_UP_TIME seconds."
             $SYSBENCH $SYSBENCH_OPTIONS_WARM_UP run
             sync
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
+
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual sysbench run."
             $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
