@@ -111,7 +111,6 @@ SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --mysql-table-engine=InnoDB \
   --mysql-user=root \
   --mysql-engine-trx=yes \
-  --rand-init=on \
   --rand-seed=303"
 
 # Timeout in seconds for waiting for mysqld to start.

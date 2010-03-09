@@ -105,7 +105,6 @@ SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --mysql-user=root \
   --mysql-engine-trx=no \
   --myisam-max-rows=50000000 \
-  --rand-init=on \
   --rand-seed=303"
 
 # Timeout in seconds for waiting for mysqld to start.
