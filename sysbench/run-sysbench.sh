@@ -90,6 +90,9 @@ TABLE_SIZE=2000000
 # The run time we use for sysbench.
 RUN_TIME=300
 
+# Warm up time we use for sysbench.
+WARM_UP_TIME=180
+
 # How many times we run each test.
 LOOP_COUNT=3
 
@@ -106,7 +109,6 @@ SYSBENCH_TESTS="delete.lua \
   update_non_index.lua"
 
 SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
-  --max-time=$RUN_TIME \
   --max-requests=0 \
   --mysql-table-engine=InnoDB \
   --mysql-user=root \
@@ -299,7 +301,8 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
 
-        SYSBENCH_OPTIONS="$SYSBENCH_OPTIONS --num-threads=$THREADS"
+        SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=1 --max-time=$WARM_UP_TIME"
+        SYSBENCH_OPTIONS_RUN="${SYSBENCH_OPTIONS} --num-threads=$THREADS --max-time=$RUN_TIME"
 
         k=0
         while [ $k -lt $LOOP_COUNT ]
@@ -318,7 +321,9 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             start_mysqld
             sync
 
-            $SYSBENCH $SYSBENCH_OPTIONS run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
+            $SYSBENCH $SYSBENCH_OPTIONS_WARM_UP run
+            sync
+            $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
 
