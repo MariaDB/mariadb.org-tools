@@ -87,7 +87,7 @@ NUM_THREADS="1 4 8 16 32 64 128"
 TABLE_SIZE=20000000
 
 # The run time we use for sysbench.
-RUN_TIME=300
+RUN_TIME=900
 
 # Warm up time we use for sysbench.
 WARM_UP_TIME=180
