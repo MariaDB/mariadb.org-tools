@@ -291,7 +291,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
 
     echo "[$(date "+%Y-%m-%d %H:%M:%S")] Preparing and loading data for $SYSBENCH_TEST."
     SYSBENCH_OPTIONS="${SYSBENCH_OPTIONS} --test=${TEST_DIR}/${SYSBENCH_TEST}"
-    $SYSBENCH $SYSBENCH_OPTIONS prepare
+    $SYSBENCH $SYSBENCH_OPTIONS --max-time=$RUN_TIME prepare
     
     $MYSQLADMIN $MYSQLADMIN_OPTIONS shutdown
     sync
