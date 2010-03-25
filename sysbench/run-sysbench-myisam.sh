@@ -6,16 +6,20 @@
 #   * Do not run this script with root privileges. We use
 #   killall -9, which can cause severe side effects!
 #   * By bzr pull we mean bzr merge --pull
+#   * For reasonable performance set your IO scheduler to noop or deadline, for
+#   reference please check
+#   http://www.mysqlperformanceblog.com/2009/01/30/linux-schedulers-in-tpcc-like-benchmark/
 #
 # Index sizes for 20 mio rows (--table-size=20000000).
-#   * delete.lua:           313M  sbtest.MYI
-#   * insert.lua:           4.0K  sbtest.MYI
-#   * oltp_complex_ro.lua:  313M  sbtest.MYI
-#   * oltp_complex_rw.lua:  313M  sbtest.MYI
-#   * oltp_simple.lua:      325M  sbtest.MYI
-#   * select.lua:           313M  sbtest.MYI
-#   * update_index.lua:     313M  sbtest.MYI
-#   * update_non_index.lua: 313M  sbtest.MYI
+#   * delete.lua                313M  sbtest.MYI
+#   * insert.lua                4.0K  sbtest.MYI
+#   * oltp_complex_ro.lua       313M  sbtest.MYI
+#   * oltp_complex_rw.lua       313M  sbtest.MYI
+#   * oltp_simple.lua           325M  sbtest.MYI
+#   * select.lua                313M  sbtest.MYI
+#   * select_random_ranges.lua  313M  sbtest.MYI
+#   * update_index.lua          313M  sbtest.MYI
+#   * update_non_index.lua      313M  sbtest.MYI
 #
 # Hakan Kuecuekyilmaz <hakan at askmonty dot org> 2010-02-19.
 #
@@ -60,13 +64,14 @@ fi
 # change these, except you exactly know what you are doing.
 #
 MYSQLADMIN='client/mysqladmin'
+MYSQL='client/mysql'
 
 #
 # Variables.
 #
 MY_SOCKET="/tmp/mysql.sock"
 MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
-MYSQL_OPTIONS="--no-defaults \
+MYSQLD_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
   --language=./sql/share/english \
   --key_buffer_size=32M \
@@ -104,6 +109,7 @@ SYSBENCH_TESTS="delete.lua \
   oltp_complex_rw.lua \
   oltp_simple.lua \
   select.lua \
+  select_random_ranges.lua \
   update_index.lua \
   update_non_index.lua"
 
@@ -240,7 +246,7 @@ function kill_mysqld {
 }
 
 function start_mysqld {
-    sql/mysqld $MYSQL_OPTIONS &
+    sql/mysqld $MYSQLD_OPTIONS &
 
     j=0
     STARTED=-1
@@ -269,7 +275,7 @@ function start_mysqld {
 #
 # Write out configurations used for future refernce.
 #
-echo $MYSQL_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
+echo $MYSQLD_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
 echo $SYSBENCH_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo '' >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo "Warm up time is: $WARM_UP_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
@@ -331,12 +337,15 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting warm up of $WARM_UP_TIME seconds."
             $SYSBENCH $SYSBENCH_OPTIONS_WARM_UP run
             sync
+            echo 'FLUSH STATUS' | $MYSQL -uroot
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
 
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual sysbench run."
             $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
+
+            echo 'SELECT * FROM INFORMATION_SCHEMA.KEY_CACHES' | $MYSQL -uroot > ${THIS_RESULT_DIR}/key_cache_stats{k}.txt
 
             k=$(($k + 1))
         done

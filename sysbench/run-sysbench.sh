@@ -6,6 +6,9 @@
 #   * Do not run this script with root privileges. We use
 #   killall -9, which can cause severe side effects!
 #   * By bzr pull we mean bzr merge --pull
+#   * For reasonable performance set your IO scheduler to noop or deadline, for
+#   reference please check
+#   http://www.mysqlperformanceblog.com/2009/01/30/linux-schedulers-in-tpcc-like-benchmark/
 #
 # Hakan Kuecuekyilmaz <hakan at askmonty dot org> 2010-02-19.
 #
@@ -56,7 +59,7 @@ MYSQLADMIN='client/mysqladmin'
 #
 MY_SOCKET="/tmp/mysql.sock"
 MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
-MYSQL_OPTIONS="--no-defaults \
+MYSQLD_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
   --language=./sql/share/english \
   --max_connections=256 \
@@ -236,7 +239,7 @@ function kill_mysqld {
 }
 
 function start_mysqld {
-    sql/mysqld $MYSQL_OPTIONS &
+    sql/mysqld $MYSQLD_OPTIONS &
 
     j=0
     STARTED=-1
@@ -265,7 +268,7 @@ function start_mysqld {
 #
 # Write out configurations used for future refernce.
 #
-echo $MYSQL_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
+echo $MYSQLD_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
 echo $SYSBENCH_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo '' >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo "Warm up time is: $WARM_UP_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
