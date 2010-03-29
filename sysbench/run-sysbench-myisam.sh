@@ -92,10 +92,10 @@ NUM_THREADS="1 4 8 16 32 64 128"
 TABLE_SIZE=20000000
 
 # The run time we use for sysbench.
-RUN_TIME=900
+RUN_TIME=1800
 
 # Warm up time we use for sysbench.
-WARM_UP_TIME=180
+WARM_UP_TIME=300
 
 # How many times we run each test.
 LOOP_COUNT=3
@@ -314,7 +314,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
 
-        SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=1 --max-time=$WARM_UP_TIME"
+        SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=3 --max-time=$WARM_UP_TIME"
         SYSBENCH_OPTIONS_RUN="${SYSBENCH_OPTIONS} --num-threads=$THREADS --max-time=$RUN_TIME"
 
         k=0
@@ -345,7 +345,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
 
-            echo 'SELECT * FROM INFORMATION_SCHEMA.KEY_CACHES' | $MYSQL -uroot > ${THIS_RESULT_DIR}/key_cache_stats{k}.txt
+            echo 'SELECT * FROM INFORMATION_SCHEMA.KEY_CACHES' | $MYSQL -uroot > ${THIS_RESULT_DIR}/key_cache_stats${k}.txt
 
             k=$(($k + 1))
         done
