@@ -70,6 +70,7 @@ MYSQL='client/mysql'
 # Variables.
 #
 MY_SOCKET="/tmp/mysql.sock"
+MYSQL_OPTIONS="-uroot --socket=$MY_SOCKET"
 MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQLD_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
@@ -334,10 +335,11 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             start_mysqld
             sync
 
+            echo ""
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting warm up of $WARM_UP_TIME seconds."
             $SYSBENCH $SYSBENCH_OPTIONS_WARM_UP run
             sync
-            echo 'FLUSH STATUS' | $MYSQL -uroot
+            echo 'FLUSH STATUS' | $MYSQL $MYSQL_OPTIONS
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
 
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual sysbench run."
@@ -345,7 +347,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
 
-            echo 'SELECT * FROM INFORMATION_SCHEMA.KEY_CACHES' | $MYSQL -uroot > ${THIS_RESULT_DIR}/key_cache_stats${k}.txt
+            echo 'SELECT * FROM INFORMATION_SCHEMA.KEY_CACHES' | $MYSQL $MYSQL_OPTIONS > ${THIS_RESULT_DIR}/key_cache_stats${k}.txt
 
             k=$(($k + 1))
         done

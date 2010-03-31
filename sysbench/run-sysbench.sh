@@ -327,6 +327,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             start_mysqld
             sync
 
+            echo ""
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting warm up of $WARM_UP_TIME seconds."
             $SYSBENCH $SYSBENCH_OPTIONS_WARM_UP run
             sync
