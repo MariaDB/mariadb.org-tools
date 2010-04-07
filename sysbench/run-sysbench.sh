@@ -62,6 +62,7 @@ MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQLD_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
   --language=./sql/share/english \
+  --log-error \
   --max_connections=256 \
   --query_cache_size=0 \
   --query_cache_type=0 \
@@ -91,10 +92,10 @@ NUM_THREADS="1 4 8 16 32 64 128"
 TABLE_SIZE=2000000
 
 # The run time we use for sysbench.
-RUN_TIME=300
+RUN_TIME=1200
 
 # Warm up time we use for sysbench.
-WARM_UP_TIME=180
+WARM_UP_TIME=300
 
 # How many times we run each test.
 LOOP_COUNT=3
@@ -108,6 +109,8 @@ SYSBENCH_TESTS="delete.lua \
   oltp_complex_rw.lua \
   oltp_simple.lua \
   select.lua \
+  select_random_points.lua  \
+  select_random_ranges.lua \
   update_index.lua \
   update_non_index.lua"
 

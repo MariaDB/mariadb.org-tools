@@ -17,6 +17,7 @@
 #   * oltp_complex_rw.lua       313M  sbtest.MYI
 #   * oltp_simple.lua           325M  sbtest.MYI
 #   * select.lua                313M  sbtest.MYI
+#   * select_random_points.lua  313M  sbtest.MYI
 #   * select_random_ranges.lua  313M  sbtest.MYI
 #   * update_index.lua          313M  sbtest.MYI
 #   * update_non_index.lua      313M  sbtest.MYI
@@ -75,6 +76,7 @@ MYSQLADMIN_OPTIONS="--no-defaults -uroot --socket=$MY_SOCKET"
 MYSQLD_OPTIONS="--no-defaults \
   --datadir=$DATA_DIR \
   --language=./sql/share/english \
+  --log-error \
   --key_buffer_size=32M \
   --max_connections=256 \
   --query_cache_size=0 \
@@ -93,7 +95,7 @@ NUM_THREADS="1 4 8 16 32 64 128"
 TABLE_SIZE=20000000
 
 # The run time we use for sysbench.
-RUN_TIME=1800
+RUN_TIME=1200
 
 # Warm up time we use for sysbench.
 WARM_UP_TIME=300
@@ -110,6 +112,7 @@ SYSBENCH_TESTS="delete.lua \
   oltp_complex_rw.lua \
   oltp_simple.lua \
   select.lua \
+  select_random_points.lua  \
   select_random_ranges.lua \
   update_index.lua \
   update_non_index.lua"
