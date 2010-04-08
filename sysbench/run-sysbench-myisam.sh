@@ -106,16 +106,26 @@ LOOP_COUNT=3
 # We need at least 1 GB disk space in our $WORK_DIR.
 SPACE_LIMIT=1000000
 
-SYSBENCH_TESTS="delete.lua \
-  insert.lua \
-  oltp_complex_ro.lua \
-  oltp_complex_rw.lua \
-  oltp_simple.lua \
-  select.lua \
-  select_random_points.lua  \
-  select_random_ranges.lua \
-  update_index.lua \
-  update_non_index.lua"
+# Interval in seconds for monitoring system status like disk IO,
+# CPU utilization, and such.
+MONITOR_INTERVAL=10
+
+SYSBENCH_TESTS[0]="delete.lua"
+SYSBENCH_TESTS[1]="insert.lua"
+SYSBENCH_TESTS[2]="oltp_complex_ro.lua"
+SYSBENCH_TESTS[3]="oltp_complex_rw.lua"
+SYSBENCH_TESTS[4]="oltp_simple.lua"
+SYSBENCH_TESTS[5]="select.lua"
+
+# Default option is --random-points=10.
+SYSBENCH_TESTS[6]="select_random_points.lua"
+
+# Default options are
+#   --number-of-ranges=10
+#   --random-ranges-delta=5.
+SYSBENCH_TESTS[7]="select_random_ranges.lua"
+SYSBENCH_TESTS[8]="update_index.lua"
+SYSBENCH_TESTS[9]="update_non_index.lua"
 
 #
 # Note: myisam-max-rows has to match or exceed oltp-table-size
@@ -277,7 +287,7 @@ function start_mysqld {
 }
 
 #
-# Write out configurations used for future refernce.
+# Write out configurations used for future reference.
 #
 echo $MYSQLD_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/mysqld_options.txt
 echo $SYSBENCH_OPTIONS > ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
@@ -285,8 +295,17 @@ echo '' >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo "Warm up time is: $WARM_UP_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 echo "Run time is: $RUN_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 
-for SYSBENCH_TEST in $SYSBENCH_TESTS
+#
+# Kill possibly left over monitoring processes.
+#
+killall -9 iostat
+killall -9 mpstat
+killall -9 mysqladmin
+
+for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     do
+    # Get rid of any options of given sysbench test.
+    SYSBENCH_TEST=$(echo "${SYSBENCH_TESTS[$i]}" | awk '{ print $1 }')
     mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}
 
     kill_mysqld
@@ -299,8 +318,8 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         exit 1
     fi
 
-    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Preparing and loading data for $SYSBENCH_TEST."
-    SYSBENCH_OPTIONS="${SYSBENCH_OPTIONS} --test=${TEST_DIR}/${SYSBENCH_TEST}"
+    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Preparing and loading data for ${SYSBENCH_TESTS[$i]}."
+    SYSBENCH_OPTIONS="${SYSBENCH_OPTIONS} --test=${TEST_DIR}/${SYSBENCH_TESTS[$i]}"
     $SYSBENCH $SYSBENCH_OPTIONS --max-time=$RUN_TIME prepare
     
     $MYSQLADMIN $MYSQLADMIN_OPTIONS shutdown
@@ -308,14 +327,14 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
     rm -rf ${SYSBENCH_DB_BACKUP}
     mkdir ${SYSBENCH_DB_BACKUP}
     
-    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Copying $DATA_DIR of $SYSBENCH_TEST for later usage."
+    echo "[$(date "+%Y-%m-%d %H:%M:%S")] Copying $DATA_DIR of ${SYSBENCH_TESTS[$i]} for later usage."
     cp -a ${DATA_DIR}/* ${SYSBENCH_DB_BACKUP}/
 
     for THREADS in $NUM_THREADS
         do
         THIS_RESULT_DIR="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}/${THREADS}"
         mkdir $THIS_RESULT_DIR
-        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
+        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
 
         SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=3 --max-time=$WARM_UP_TIME"
@@ -325,7 +344,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         while [ $k -lt $LOOP_COUNT ]
             do
             echo ''
-            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Killing mysqld and copying back $DATA_DIR for $SYSBENCH_TEST."
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Killing mysqld and copying back $DATA_DIR for ${SYSBENCH_TESTS[$i]}."
             kill_mysqld
             cp -a ${SYSBENCH_DB_BACKUP}/* ${DATA_DIR}
             
@@ -334,7 +353,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             sync
             echo 3 | $SUDO tee /proc/sys/vm/drop_caches
 
-            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting mysqld for running $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT"
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting mysqld for running ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT"
             start_mysqld
             sync
 
@@ -346,7 +365,24 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
 
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual sysbench run."
+            
+            $IOSTAT -d -k $IOSTAT_DEVICE $MONITOR_INTERVAL > ${THIS_RESULT_DIR}/iostat${k}.txt 2>&1 &
+            IOSTAT_PID=$!
+
+            $MPSTAT -u $MONITOR_INTERVAL > ${THIS_RESULT_DIR}/cpustat${k}.txt 2>&1 &
+            MPSTAT_PID=$!
+            
+            $MYSQLADMIN $MYSQLADMIN_OPTIONS --sleep $MONITOR_INTERVAL status > ${THIS_RESULT_DIR}/server_status${k}.txt 2>&1 &
+            SERVER_STATUS_PID=$!
+            
             $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
+            
+            sync; sync; sync
+            sleep 1
+            
+            kill -9 $SERVER_STATUS_PID
+            kill -9 $MPSTAT_PID
+            kill -9 $IOSTAT_PID
             
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
 
@@ -356,7 +392,7 @@ for SYSBENCH_TEST in $SYSBENCH_TESTS
         done
         
         echo '' >> ${THIS_RESULT_DIR}/results.txt
-        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished $SYSBENCH_TEST with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee -a ${THIS_RESULT_DIR}/results.txt
+        echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee -a ${THIS_RESULT_DIR}/results.txt
     done
 done
 
