@@ -10,6 +10,11 @@
 #   reference please check
 #   http://www.mysqlperformanceblog.com/2009/01/30/linux-schedulers-in-tpcc-like-benchmark/
 #
+# For proper work we need these two commands to be run via sudo
+# with no password. Example:
+#   hakan ALL=NOPASSWD: /usr/bin/opcontrol
+#   hakan ALL=NOPASSWD: /usr/bin/tee /proc/sys/vm/drop_caches
+#
 # Hakan Kuecuekyilmaz <hakan at askmonty dot org> 2010-02-19.
 #
 
@@ -107,23 +112,6 @@ SPACE_LIMIT=1000000
 # CPU utilization, and such.
 MONITOR_INTERVAL=10
 
-SYSBENCH_TESTS[0]="delete.lua"
-SYSBENCH_TESTS[1]="insert.lua"
-SYSBENCH_TESTS[2]="oltp_complex_ro.lua"
-SYSBENCH_TESTS[3]="oltp_complex_rw.lua"
-SYSBENCH_TESTS[4]="oltp_simple.lua"
-SYSBENCH_TESTS[5]="select.lua"
-
-# Default option is --random-points=10.
-SYSBENCH_TESTS[6]="select_random_points.lua"
-
-# Default options are
-#   --number-of-ranges=10
-#   --random-ranges-delta=5.
-SYSBENCH_TESTS[7]="select_random_ranges.lua"
-SYSBENCH_TESTS[8]="update_index.lua"
-SYSBENCH_TESTS[9]="update_non_index.lua"
-
 SYSBENCH_OPTIONS="--oltp-table-size=$TABLE_SIZE \
   --max-requests=0 \
   --mysql-table-engine=InnoDB \
@@ -208,6 +196,9 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
+# Location of our mysqld binary.
+MYSQLD_BINARY="${TEMP_DIR}/build/sql/mysqld"
+
 #
 # Compile sources.
 # TODO: Add platform detection and choose proper build script accordingly.
@@ -288,11 +279,14 @@ echo "Warm up time is: $WARM_UP_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbe
 echo "Run time is: $RUN_TIME" >> ${RESULT_DIR}/${TODAY}/${PRODUCT}/sysbench_options.txt
 
 #
-# Kill possibly left over monitoring processes.
+# Clean up possibly left over monitoring processes.
 #
 killall -9 iostat
 killall -9 mpstat
 killall -9 mysqladmin
+$SUDO opcontrol --stop
+$SUDO opcontrol --deinit
+$SUDO opcontrol --reset
 
 for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     do
@@ -332,6 +326,16 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
         SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=1 --max-time=$WARM_UP_TIME"
         SYSBENCH_OPTIONS_RUN="${SYSBENCH_OPTIONS} --num-threads=$THREADS --max-time=$RUN_TIME"
 
+        # Check whether we want a profiled run.
+        PROFILE_IT=-1
+        for l in $DO_OPROFILE
+            do
+            if [ x"$l" = x"$THREADS" ]; then
+                PROFILE_IT=1
+                break
+            fi
+        done
+
         k=0
         while [ $k -lt $LOOP_COUNT ]
             do
@@ -366,8 +370,35 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             $MYSQLADMIN $MYSQLADMIN_OPTIONS --sleep $MONITOR_INTERVAL status > ${THIS_RESULT_DIR}/server_status${k}.txt 2>&1 &
             SERVER_STATUS_PID=$!
             
+            if [ $PROFILE_IT -eq 1 ]; then
+                $SUDO opcontrol --setup --separate=lib,kernel,thread --no-vmlinux
+                $SUDO opcontrol --start-daemon
+                if [ $? != 0 ]; then
+                    echo "[WARNING]: Could not start oprofile daemonl."
+                    echo "  Please check your OProfile installation."
+                fi
+                
+                $SUDO opcontrol --start
+                echo "[$(date "+%Y-%m-%d %H:%M:%S")] This is an OProfile'd sysbench run."
+            fi
+            
             $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
 
+            if [ $PROFILE_IT -eq 1 ]; then
+                PROFILE_IT=-1
+                $SUDO opcontrol --dump
+                $SUDO opcontrol --stop
+
+                opreport --demangle=smart --threshold 0.5 --symbols --long-filenames --merge tgid $MYSQLD_BINARY > ${THIS_RESULT_DIR}/oprofile${k}.txt 2>&1
+
+                $SUDO opcontrol --deinit
+                $SUDO opcontrol --reset
+            fi
+
+            # Copy mysqld error log for future reference.
+            # TODO: add chrash detection.
+            cp ${DATA_DIR}/${HOSTNAME}.err ${THIS_RESULT_DIR}/${HOSTNAME}${k}.err
+            
             sync; sync; sync
             sleep 1
 
