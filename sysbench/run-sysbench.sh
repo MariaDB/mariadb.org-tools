@@ -323,7 +323,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
 
-        SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=1 --max-time=$WARM_UP_TIME"
+        SYSBENCH_OPTIONS_WARM_UP="${SYSBENCH_OPTIONS} --num-threads=3 --max-time=$WARM_UP_TIME"
         SYSBENCH_OPTIONS_RUN="${SYSBENCH_OPTIONS} --num-threads=$THREADS --max-time=$RUN_TIME"
 
         # Check whether we want a profiled run.
