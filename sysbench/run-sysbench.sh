@@ -371,7 +371,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             SERVER_STATUS_PID=$!
             
             if [ $PROFILE_IT -eq 1 ]; then
-                $SUDO opcontrol --setup --separate=lib,kernel,thread --no-vmlinux
+                $SUDO opcontrol --setup --no-vmlinux --separate=lib,kernel,thread
                 $SUDO opcontrol --start-daemon
                 if [ $? != 0 ]; then
                     echo "[WARNING]: Could not start oprofile daemonl."
@@ -402,11 +402,11 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             sync; sync; sync
             sleep 1
 
-            kill -9 $SERVER_STATUS_PID
-            kill -9 $MPSTAT_PID
-            kill -9 $IOSTAT_PID
-
             grep "write requests:" ${THIS_RESULT_DIR}/result${k}.txt | awk '{ print $4 }' | sed -e 's/(//' >> ${THIS_RESULT_DIR}/results.txt
+
+            kill -9 $IOSTAT_PID
+            kill -9 $MPSTAT_PID
+            kill -9 $SERVER_STATUS_PID
 
             k=$(($k + 1))
         done
