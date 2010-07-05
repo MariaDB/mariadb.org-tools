@@ -51,6 +51,7 @@ my $opt_user= undef;
 my $opt_extra_kvm= [];
 my $opt_baseimage= undef;
 my @user_cmd_opt;
+my $opt_win;
 
 # Disable host key checking for ssh.
 # This is a bit convoluted due to OpenSSH's slight security-paranoia.
@@ -149,6 +150,7 @@ Available options:
                       name as the one specified on the command line to boot! It
                       will be replaced with the image created as a copy of IMG,
                       with any modifications done during the runvm session.
+  --windows           The guest is Windows, not Linux.
 END
   exit 1;
 };
@@ -350,9 +352,15 @@ sub shutdown_kvm {
       die "Fatal error: Cannot fork(): $!\n";
     } elsif (!$pid) {
       # Child.
-      exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
-                      @user_cmd_opt, 'localhost',
-                      'sudo', '/sbin/shutdown', '-h', 'now');
+      if ($opt_win) {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'shutdown', '-s', '-f', '-t', '1');
+      } else {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'sudo', '/sbin/shutdown', '-h', 'now');
+      }
     } else {
       # Parent.
       my $res= waitpid $pid, 0;
@@ -456,6 +464,7 @@ my $result= GetOptions
       'kvm-retries=i' => \$opt_max_retries,
       'logfile|l=s' => \$opt_kvm_logfile,
       'base-image|b=s' => \$opt_baseimage,
+      'windows' => \$opt_win,
     );
 
 if (defined($opt_user)) {
