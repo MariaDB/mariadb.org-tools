@@ -40,7 +40,7 @@ my $uncommitted_opt;
 my $result= GetOptions
   ("context=i"   => \$context,
    "all"         => \$all_opt,
-   "verbose"     => \$verbose,
+   "verbose+"    => \$verbose,
    "help"        => \$help,
    "purge"       => \$purge_opt,
    "only-gcov"   => \$only_gcov_opt,
@@ -584,9 +584,12 @@ sub gcov_one_file {
     warn "$File::Find::dir/$file does not start from a Source line ? Weird "
       unless /^\s+-:\s+0:Source:/;
     my $sourcefile=$';
+    print STDERR "Looking for $sourcefile\n" if $verbose > 1;
     # remove .libs from the end of the path
     # for building dynamic libraries libtool puts .o files in the .libs/
-    my $up=($File::Find::dir =~ /\/\.libs$/ ? "../"  : "");
+    my $up="";
+    $up = "../" if $File::Find::dir =~ /\/\.libs$/ and
+                   $sourcefile !~ /^\//;
     # and resolve symlinks, we love symlinking sources so much!
     my $source=realpath($up.$sourcefile);
     unless ($source and -r $source) {
