@@ -27,7 +27,7 @@ use File::Find;
 use Cwd qw/realpath/;
 use File::Basename;
 
-my $verbose;
+my $verbose=0;
 my $all_opt;
 my $context= 3;
 my $help;
@@ -38,16 +38,16 @@ my $local_opt;
 my $uncommitted_opt;
 
 my $result= GetOptions
-  ("context=i"   => \$context,
-   "all"         => \$all_opt,
-   "verbose+"    => \$verbose,
-   "help"        => \$help,
-   "purge"       => \$purge_opt,
-   "only-gcov"   => \$only_gcov_opt,
-   "skip-gcov"   => \$skip_gcov_opt,
-   "local"       => \$local_opt,
-   "uncommitted" => \$uncommitted_opt,
-  );
+  ("c|context=i"   => \$context,
+   "a|all"         => \$all_opt,
+   "v|verbose+"    => \$verbose,
+   "h|help"        => \$help,
+   "p|purge"       => \$purge_opt,
+   "g|only-gcov"   => \$only_gcov_opt,
+   "s|skip-gcov"   => \$skip_gcov_opt,
+   "l|local"       => \$local_opt,
+   "u|uncommitted" => \$uncommitted_opt,
+  ) or exit;
 
 usage() if $help;
 
