@@ -57,7 +57,7 @@ fi
 # Read system dependent settings.
 #
 if [ ! -f conf/${HOSTNAME}.inc ]; then
-    echo "[ERROR]: Could not find config file: conf/${HOSTNAME}.conf."
+    echo "[ERROR]: Could not find config file: conf/${HOSTNAME}.inc."
     echo "  Please create one."
     
     exit 1
