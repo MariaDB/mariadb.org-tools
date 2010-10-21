@@ -1,4 +1,4 @@
-/#!/bin/bash
+#!/bin/bash
 #
 # Run sysbench tests with MariaDB and MySQL
 #
