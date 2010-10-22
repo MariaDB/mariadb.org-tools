@@ -132,9 +132,8 @@ TIMEOUT=100
 
 #
 # Directories.
+# ${BASE} and ${TEMP_DIR} are defined in the $HOSTNAME.inc configuration file.
 #
-BASE="${HOME}/work"
-TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 RESULT_DIR="${BASE}/sysbench-results"
 SYSBENCH_DB_BACKUP="${TEMP_DIR}/sysbench_db"
 

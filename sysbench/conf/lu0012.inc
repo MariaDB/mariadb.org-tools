@@ -10,6 +10,11 @@
 # Adjust the following paths according to your installation.
 #
 
+# Base directory where sysbench files are found 
+BASE="${HOME}/work"
+TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
+
+
 # We need sysbench >= v0.5.
 SYSBENCH='/usr/local/bin/sysbench'
 
