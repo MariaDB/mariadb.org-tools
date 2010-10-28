@@ -1,0 +1,21 @@
+1. What is it?
+This wrapper scripts are meant to run sql-bench with
+various configurations.
+
+2. Prerequisite
+- MariaDB bzr tree from lp:maria
+- Perl with DBD::MySQL
+
+3. What files?
+* Configuration file(s):
+Can be found in the conf/ directory. Please look
+into the conf file for further details.
+
+* Wrapper script to run sql-bench:
+run-sql-bench.pl
+
+The file run-sql-bench.sh is outdated and
+for references purposes only.
+
+--
+Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-28.

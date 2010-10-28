@@ -9,6 +9,11 @@
 # Hakan Kuecuekyilmaz <hakan at askmonty dot org> 2009-12-05.
 #
 
+echo '[ERROR]: This script is outdated.'
+echo '  Please use run-sql-bench.pl instead!'
+echo '  Exiting.'
+exit 1
+
 RUN_BY=$(whoami)
 if [ x"root" = x"$RUN_BY" ];then
    echo '[ERROR]: Do not run this script as root!'
