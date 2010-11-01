@@ -10,7 +10,12 @@
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-22.
 
 use strict;
-my($config, $config_text, $sql_bench_test);
+
+our ($config);
+our ($sql_bench_test);
+
+# Config file we read.
+# TODO: Make the config file a parameter.
 my $config_file = './conf/sql-bench-base.cnf';
 
 my $run_by = qx(whoami);
@@ -23,6 +28,7 @@ if ($run_by eq 'root')
 }
 
 # TODO: rewrite to Perl syntax
+# @see perldoc Getopt::Long
 #if ($# != 2) {
 #    echo '[ERROR]: Please provide exactly two options.'
 #    echo "  Example: $0 [/path/to/bzr/repository] [name_without_spaces]"
@@ -34,29 +40,14 @@ if ($run_by eq 'root')
 #    SUFFIX="-$2"
 #}
 
-open(CONF, $config_file) or die "unable to open config file '$config_file': $!";
-read(CONF, my $config_text, -s $config_file);
-eval ($config_text);
-
-# Print a specific error if the config file is invalid,
-# along with a line number.
-die "Unable to load $config_file: $@" if $@;
-
-# Here we will have $config->{hash_key1} containing 'hash_value1'.
-# print $config->{configure_env};
-# print "\n";
-# print "\n";
-
-# print $sql_bench_test['myisam']->{'mysqld_start_options'};
-# print "\n";
-# print "\n";
+require $config_file;
 
 #
 # For debugging the config file parsing.
 #
-foreach my $key (keys %{$config}) {
-    print "The value of $key is $config->{$key}\n";
-}
+#foreach my $key (keys %{$config}) {
+#    print "The value of $key is $config->{$key}\n";
+#}
 
 print "\n";
 

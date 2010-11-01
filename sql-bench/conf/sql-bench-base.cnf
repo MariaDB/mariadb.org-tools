@@ -115,3 +115,6 @@ $sql_bench_test->{'pbxt'} = {
   mysqld_init_command => '',
   sql_bench_options => '--comment="engine=pbxt-index-cache-size=64M --pbxt-record-cache-size=name=196M"',
 };
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;
