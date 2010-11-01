@@ -18,7 +18,7 @@ TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 SYSBENCH='/usr/local/bin/sysbench'
 
 # We need bzr >= 1.18.1.
-BZR='/usr/local/bin/bzr'
+BZR='/usr/bin/bzr'
 
 # OProfile binaries.
 OPCONTROL='/usr/bin/opcontrol'
