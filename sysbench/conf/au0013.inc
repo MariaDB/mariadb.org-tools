@@ -10,15 +10,14 @@
 # Adjust the following paths according to your installation.
 #
 
-# Base directory where sysbench files are found 
+# Base directory where SysBench files are found.
 BASE="${HOME}/work"
 TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 
-
-# We need sysbench >= v0.5.
+# We need SysBench >= v0.5.
 SYSBENCH='/usr/local/bin/sysbench'
 
-# We need bzr >= 1.18.1
+# We need bzr >= 1.18.1.
 BZR='/usr/local/bin/bzr'
 
 # OProfile binaries.
@@ -42,15 +41,15 @@ DATA_DIR="${TEMP_DIR}/data"
 # Where to compile the sources.
 WORK_DIR='/tmp'
 
-# Which concurrency level(s) we want to profile with OProfile
+# Which concurrency level(s) we want to profile with OProfile.
 #
-# Example: profile 8 and 32
+# Example: profile 8 and 32.
 # DO_OPROFILE='8 32'
 #DO_OPROFILE='64'
 # There is no OProfile on Mac OS X.
 DO_OPROFILE=''
 
-# sysbench tests to run.
+# SysBench tests to run.
 SYSBENCH_TESTS[0]="delete.lua"
 SYSBENCH_TESTS[1]="insert.lua"
 SYSBENCH_TESTS[2]="oltp_complex_ro.lua"

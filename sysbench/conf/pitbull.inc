@@ -1,10 +1,10 @@
-# Configuration file for host: work
-# 
-# OS: openSUSE 11.1 (x86_64)
+# Configuration file for host: pitbull
+#
+# OS: Ubuntu 10.10
 # Platform: x86_64
-# CPU: Two socket quad-core Intel Xeon @ 3.00GHz
-# RAM: 8GB
-# Disk(s): 1 x WDC WD2500JS-00NCB1 S-ATA
+# CPU: Two socket hexa-core Intel Xeon X5660 @ 2.80GHz
+# RAM: 28GB
+# Disk(s): 1 x ST3500320NS S-ATA
 
 #
 # Adjust the following paths according to your installation.
@@ -18,7 +18,7 @@ TEST_DIR="${BASE}/monty_program/sysbench/sysbench/tests/db"
 SYSBENCH='/usr/local/bin/sysbench'
 
 # We need bzr >= 1.18.1.
-BZR='/usr/local/bin/bzr'
+BZR='/usr/bin/bzr'
 
 # OProfile binaries.
 OPCONTROL='/usr/bin/opcontrol'
@@ -30,7 +30,7 @@ IOSTAT_DEVICE='/dev/sda'
 MPSTAT='/usr/bin/mpstat'
 
 # Other binaries.
-SUDO=/my/local/bin/sur
+SUDO=/usr/bin/sudo
 
 # Directories.
 TEMP_DIR="${HOME}/tmp"

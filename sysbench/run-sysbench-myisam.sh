@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Run sysbench tests with MariaDB and MySQL
+# Run SysBench tests with MariaDB and MySQL
 #
 # Notes:
 #   * Do not run this script with root privileges. We use
@@ -91,18 +91,18 @@ MYSQLD_OPTIONS="--no-defaults \
   --table_open_cache=512 \
   --thread_cache=512 \
   --tmpdir=$TEMP_DIR"
-#  --key_cache_partitions=7 \
+#  --key_cache_segments=32 \
 
-# Number of threads we run sysbench with.
+# Number of threads we run SysBench with.
 NUM_THREADS="1 4 8 16 32 64 128"
 
-# The table size we use for sysbench.
+# The table size we use for SysBench.
 TABLE_SIZE=20000000
 
-# The run time we use for sysbench.
+# The run time we use for SysBench.
 RUN_TIME=1200
 
-# Warm up time we use for sysbench.
+# Warm up time we use for SysBench.
 WARM_UP_TIME=300
 
 # How many times we run each test.
@@ -226,7 +226,7 @@ echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished compiling $PRODUCT."
 #
 # Go to work.
 #
-echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting sysbench runs."
+echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting SysBench runs."
 
 #
 # Prepare results directory.
@@ -297,9 +297,38 @@ $SUDO opcontrol --reset
 
 for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     do
-    # Get rid of any options of given sysbench test.
+    # Get rid of any options of given SysBench test.
     SYSBENCH_TEST=$(echo "${SYSBENCH_TESTS[$i]}" | awk '{ print $1 }')
-    mkdir ${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}
+    # If we run the same SysBench test with different options,
+    # then we have to care not to overwrite our previous results.
+    m=0
+    DIR_CREATED=-1
+    MKDIR_RETRY=512
+    DIR_TO_CREATE="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}"
+    
+    if [ ! -d $DIR_TO_CREATE ]; then
+        mkdir $DIR_TO_CREATE
+    else 
+        while [ $m -le $MKDIR_RETRY ]
+            do
+            if [ ! -d ${DIR_TO_CREATE}-${l} ]; then
+                mkdir ${DIR_TO_CREATE}-${l}
+                DIR_CREATED=1
+                
+                break
+            fi
+            
+            m=$(($m + 1))
+        done
+        
+        if [ $DIR_CREATED = -1 ]; then
+            echo "[ERROR]: Could not create result dir after $MKDIR_RETRY times."
+            echo '  Please check your configuration and file system.'
+            echo '  Refusing to overwrite existing results. Exiting!'
+            
+            exit 1
+        fi
+    fi
 
     kill_mysqld
     start_mysqld
@@ -367,7 +396,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             echo 'FLUSH STATUS' | $MYSQL $MYSQL_OPTIONS
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
 
-            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual sysbench run."
+            echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual SysBench run."
             
             $IOSTAT -d -k $IOSTAT_DEVICE $MONITOR_INTERVAL > ${THIS_RESULT_DIR}/iostat${k}.txt 2>&1 &
             IOSTAT_PID=$!
@@ -387,7 +416,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
                 fi
                 
                 $SUDO opcontrol --start
-                echo "[$(date "+%Y-%m-%d %H:%M:%S")] This is an OProfile'd sysbench run."
+                echo "[$(date "+%Y-%m-%d %H:%M:%S")] This is an OProfile'd SysBench run."
             fi
 
             $SYSBENCH $SYSBENCH_OPTIONS_RUN run > ${THIS_RESULT_DIR}/result${k}.txt 2>&1
@@ -429,5 +458,5 @@ done
 #
 # We are done!
 #
-echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finished sysbench runs."
+echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finished SysBench runs."
 echo "  You can check your results."
