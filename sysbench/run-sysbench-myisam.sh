@@ -300,7 +300,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     # Get rid of any options of given SysBench test.
     SYSBENCH_TEST=$(echo "${SYSBENCH_TESTS[$i]}" | awk '{ print $1 }')
     # If we run the same SysBench test with different options,
-    # then we have to care not to overwrite our previous results.
+    # then we have to take care not to overwrite our previous results.
     m=0
     DIR_CREATED=-1
     MKDIR_RETRY=512
@@ -308,11 +308,13 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     
     if [ ! -d $DIR_TO_CREATE ]; then
         mkdir $DIR_TO_CREATE
+        CURRENT_RESULT_DIR="$DIR_TO_CREATE"
     else 
         while [ $m -le $MKDIR_RETRY ]
             do
-            if [ ! -d ${DIR_TO_CREATE}-${l} ]; then
-                mkdir ${DIR_TO_CREATE}-${l}
+            if [ ! -d ${DIR_TO_CREATE}-${m} ]; then
+                mkdir ${DIR_TO_CREATE}-${m}
+                CURRENT_RESULT_DIR="${DIR_TO_CREATE}-${m}"
                 DIR_CREATED=1
                 
                 break
@@ -354,7 +356,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
 
     for THREADS in $NUM_THREADS
         do
-        THIS_RESULT_DIR="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}/${THREADS}"
+        THIS_RESULT_DIR="${CURRENT_RESULT_DIR}/${THREADS}"
         mkdir $THIS_RESULT_DIR
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Running ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee ${THIS_RESULT_DIR}/results.txt
         echo '' >> ${THIS_RESULT_DIR}/results.txt
