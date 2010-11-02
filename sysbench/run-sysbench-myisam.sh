@@ -37,7 +37,7 @@ RUN_BY=$(whoami)
 if [ x"root" = x"$RUN_BY" ];then
    echo '[ERROR]: Do not run this script as root!'
    echo '  Exiting.'
-   
+
    exit 1
 fi
 
@@ -45,7 +45,7 @@ if [ $# != 3 ]; then
     echo '[ERROR]: Please provide exactly three options.'
     echo "  Example: $0 [pull | no-pull] [/path/to/bzr/repo] [name]"
     echo "  $0 pull ${HOME}/work/monty_program/maria-local-master MariaDB"
-    
+
     exit 1
 else
     PULL="$1"
@@ -59,7 +59,7 @@ fi
 if [ ! -f conf/${HOSTNAME}.inc ]; then
     echo "[ERROR]: Could not find config file: conf/${HOSTNAME}.inc."
     echo "  Please create one."
-    
+
     exit 1
 else
     source conf/${HOSTNAME}.inc
@@ -151,7 +151,7 @@ AVAILABLE=$(df $WORK_DIR | grep -v Filesystem | awk '{ print $4 }')
 if [ $AVAILABLE -lt $SPACE_LIMIT ]; then
     echo "[ERROR]: We need at least $SPACE_LIMIT space in $WORK_DIR."
     echo 'Exiting.'
-    
+
     exit 1
 fi
 
@@ -234,7 +234,7 @@ echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting SysBench runs."
 if [ ! -d $RESULT_DIR ]; then
     echo "[NOTE]: $RESULT_DIR did not exist."
     echo "  We are creating it for you!"
-    
+
     mkdir $RESULT_DIR
 fi
 
@@ -259,19 +259,19 @@ function start_mysqld {
         $MYSQLADMIN $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1
         if [ $? = 0 ]; then
             STARTED=0
-            
+
             break
         fi
-        
+
         sleep 1
         j=$(($j + 1))
     done
-    
+
     if [ $STARTED != 0 ]; then
         echo '[ERROR]: Start of mysqld failed.'
         echo '  Please check your error log.'
         echo '  Exiting.'
-    
+
         exit 1
     fi
 }
@@ -299,13 +299,14 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     do
     # Get rid of any options of given SysBench test.
     SYSBENCH_TEST=$(echo "${SYSBENCH_TESTS[$i]}" | awk '{ print $1 }')
+
     # If we run the same SysBench test with different options,
     # then we have to take care not to overwrite our previous results.
     m=0
     DIR_CREATED=-1
     MKDIR_RETRY=512
     DIR_TO_CREATE="${RESULT_DIR}/${TODAY}/${PRODUCT}/${SYSBENCH_TEST}"
-    
+
     if [ ! -d $DIR_TO_CREATE ]; then
         mkdir $DIR_TO_CREATE
         CURRENT_RESULT_DIR="$DIR_TO_CREATE"
@@ -316,18 +317,18 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
                 mkdir ${DIR_TO_CREATE}-${m}
                 CURRENT_RESULT_DIR="${DIR_TO_CREATE}-${m}"
                 DIR_CREATED=1
-                
+
                 break
             fi
-            
+
             m=$(($m + 1))
         done
-        
+
         if [ $DIR_CREATED = -1 ]; then
             echo "[ERROR]: Could not create result dir after $MKDIR_RETRY times."
             echo '  Please check your configuration and file system.'
             echo '  Refusing to overwrite existing results. Exiting!'
-            
+
             exit 1
         fi
     fi
@@ -345,12 +346,12 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     echo "[$(date "+%Y-%m-%d %H:%M:%S")] Preparing and loading data for ${SYSBENCH_TESTS[$i]}."
     SYSBENCH_OPTIONS="${SYSBENCH_OPTIONS} --test=${TEST_DIR}/${SYSBENCH_TESTS[$i]}"
     $SYSBENCH $SYSBENCH_OPTIONS --max-time=$RUN_TIME prepare
-    
+
     $MYSQLADMIN $MYSQLADMIN_OPTIONS shutdown
     sync
     rm -rf ${SYSBENCH_DB_BACKUP}
     mkdir ${SYSBENCH_DB_BACKUP}
-    
+
     echo "[$(date "+%Y-%m-%d %H:%M:%S")] Copying $DATA_DIR of ${SYSBENCH_TESTS[$i]} for later usage."
     cp -a ${DATA_DIR}/* ${SYSBENCH_DB_BACKUP}/
 
@@ -381,7 +382,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Killing mysqld and copying back $DATA_DIR for ${SYSBENCH_TESTS[$i]}."
             kill_mysqld
             cp -a ${SYSBENCH_DB_BACKUP}/* ${DATA_DIR}
-            
+
             # Clear file system cache. This works only with Linux >= 2.6.16.
             # On Mac OS X we can use sync; purge.
             sync
@@ -399,13 +400,13 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished warm up."
 
             echo "[$(date "+%Y-%m-%d %H:%M:%S")] Starting actual SysBench run."
-            
+
             $IOSTAT -d -k $IOSTAT_DEVICE $MONITOR_INTERVAL > ${THIS_RESULT_DIR}/iostat${k}.txt 2>&1 &
             IOSTAT_PID=$!
 
             $MPSTAT -u $MONITOR_INTERVAL > ${THIS_RESULT_DIR}/cpustat${k}.txt 2>&1 &
             MPSTAT_PID=$!
-            
+
             $MYSQLADMIN $MYSQLADMIN_OPTIONS --sleep $MONITOR_INTERVAL status > ${THIS_RESULT_DIR}/server_status${k}.txt 2>&1 &
             SERVER_STATUS_PID=$!
 
@@ -416,7 +417,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
                     echo "[WARNING]: Could not start oprofile daemonl."
                     echo "  Please check your OProfile installation."
                 fi
-                
+
                 $SUDO opcontrol --start
                 echo "[$(date "+%Y-%m-%d %H:%M:%S")] This is an OProfile'd SysBench run."
             fi
@@ -437,7 +438,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
             # Copy mysqld error log for future reference.
             # TODO: add chrash detection.
             cp ${DATA_DIR}/${HOSTNAME}.err ${THIS_RESULT_DIR}/${HOSTNAME}${k}.err
-            
+
             sync; sync; sync
             sleep 1
 
@@ -451,7 +452,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
 
             k=$(($k + 1))
         done
-        
+
         echo '' >> ${THIS_RESULT_DIR}/results.txt
         echo "[$(date "+%Y-%m-%d %H:%M:%S")] Finnished ${SYSBENCH_TESTS[$i]} with $THREADS threads and $LOOP_COUNT iterations for $PRODUCT" | tee -a ${THIS_RESULT_DIR}/results.txt
     done
