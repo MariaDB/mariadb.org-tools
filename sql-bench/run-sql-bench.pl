@@ -45,9 +45,9 @@ require $config_file;
 #
 # For debugging the config file parsing.
 #
-#foreach my $key (keys %{$config}) {
-#    print "The value of $key is $config->{$key}\n";
-#}
+foreach my $key (keys %{$config}) {
+    print "The value of $key is $config->{$key}\n";
+}
 
 print "\n";
 
