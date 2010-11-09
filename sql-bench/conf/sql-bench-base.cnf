@@ -5,16 +5,20 @@
 #
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-22.
 
+$ENV{'CC'} = "/sw/bin/ccache gcc";
+$ENV{'CFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wunused-parameter -O3 -fno-omit-frame-pointer";
+$ENV{'CXX'} = "/sw/bin/ccache gcc";
+$ENV{'CXXFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wreorder -Wctor-dtor-privacy -Wnon-virtual-dtor -felide-constructors -fno-exceptions -fno-rtti -O3 -fno-omit-frame-pointer";
+$ENV{'CXXLDFLAGS'} = "";
+
 $config = {
   # The MariaDB tree to use and compile.
   # We are also using the sql-bench directory from there.
   mysqld_base_tree => '/Users/hakan/work/monty_program/maria-5.2',
-
-  # Configuration environment for running configure.
-  configure_env => 'CC="gcc" CFLAGS="-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wunused-parameter  -O3 -fno-omit-frame-pointer" CXX="gcc" CXXFLAGS="-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wreorder -Wctor-dtor-privacy -Wnon-virtual-dtor -felide-constructors -fno-exceptions -fno-rtti -O3 -fno-omit-frame-pointer" CXXLDFLAGS=""',
   
   # Configure invocation line.
-  configure_line => './configure --prefix=/usr/local/mysql --enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-maria --with-maria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-ssl --with-plugins=max-no-ndb --with-embedded-server --with-libevent --enable-local-infile',
+  # Do not use --prefix here.
+  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-maria --with-maria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-ssl --with-plugins=max-no-ndb --with-embedded-server --with-libevent --enable-local-infile',
 };
 
 #
