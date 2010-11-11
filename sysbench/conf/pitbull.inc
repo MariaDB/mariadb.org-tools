@@ -3,7 +3,7 @@
 # OS: Ubuntu 10.10
 # Platform: x86_64
 # CPU: Two socket hexa-core Intel Xeon X5660 @ 2.80GHz
-# RAM: 28GB
+# RAM: 23GB
 # Disk(s): 1 x ST3500320NS S-ATA
 
 #

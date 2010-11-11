@@ -5,33 +5,30 @@
 #
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-22.
 
-$ENV{'CC'} = "/sw/bin/ccache gcc";
+# Configure environment variables.
+# Note: ccache is checked in the host specific config file.
+$ENV{'CC'} = "gcc";
 $ENV{'CFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wunused-parameter -O3 -fno-omit-frame-pointer";
-$ENV{'CXX'} = "/sw/bin/ccache gcc";
+$ENV{'CXX'} = "gcc";
 $ENV{'CXXFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-compare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wreorder -Wctor-dtor-privacy -Wnon-virtual-dtor -felide-constructors -fno-exceptions -fno-rtti -O3 -fno-omit-frame-pointer";
 $ENV{'CXXLDFLAGS'} = "";
 
 $config = {
-  # The MariaDB tree to use and compile.
-  # We are also using the sql-bench directory from there.
-  mysqld_base_tree => '/Users/hakan/work/monty_program/maria-5.2',
-  
   # Configure invocation line.
   # Do not use --prefix here.
   configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-maria --with-maria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-ssl --with-plugins=max-no-ndb --with-embedded-server --with-libevent --enable-local-infile',
 };
 
 #
-# Different test to be run with the above configuration
+# Different test to be run with the above configuration.
 # The sql-bench-test will automaticly get --suffix=_test_name as an argument
 # The different options that can be used are:
 #
-# mysqld_start_options       Options given to the mysqld that is started
-#                            This is prefixed with --skip-grant
-# mysqld_init_command        SQL commands given to mysqld before tests starts
-# sql_bench_options          Options given to sql-bench
+# mysqld_start_options    Options given to the mysqld that is started.
+#                         This is prefixed with --skip-grant.
+# mysqld_init_command     SQL commands given to mysqld before tests starts.
+# sql_bench_options       Options given to sql-bench.
 #
-
 $sql_bench_test->{'base'} = {
   mysqld_start_options => '',
   mysqld_init_command => '',
@@ -47,7 +44,7 @@ $sql_bench_test->{'userstat'} = {
 $sql_bench_test->{'profile'} = {
   mysqld_start_options => '',
   mysqld_init_command => '',
-  sql_bench_option => '--connect_command="set profile=1" --comment="set profile"',
+  sql_bench_options => '--connect-command="set profile=1" --comment="set profile"',
 };
 
 $sql_bench_test->{'grant'} = {
@@ -64,7 +61,7 @@ $sql_bench_test->{'grant-db'} = {
 
 $sql_bench_test->{'grant-column'} = {
   mysqld_start_options => '',
-  mysqld_init_command => 'GRANT ALL PRIVILEGES on test.* to \'test@localhost\' ; CREATE table test.foo (a int); GRANT SELECT (a) on test.t1 to \'test@localhost\';',
+  mysqld_init_command => 'GRANT ALL PRIVILEGES on test.* to \'test@localhost\'; CREATE table test.foo (a int); GRANT SELECT (a) on test.t1 to \'test@localhost\';',
   sql_bench_options => '--comment="grant to database and column level grants"',
 };
 
@@ -77,7 +74,6 @@ $sql_bench_test->{'tcpip'} = {
 #
 # Tests with different storage engines
 #
-
 $sql_bench_test->{'myisam'} = {
   mysqld_start_options => '--default-storage-engine=myisam --key-buffer-size=256M',
   mysqld_init_command => '',
