@@ -35,6 +35,7 @@ $sql_bench_test->{'base'} = {
   sql_bench_options => '--comment="base test (with MyISAM)"',
 };
 
+# --userstat is available starting with MariaDB 5.2.
 $sql_bench_test->{'userstat'} = {
   mysqld_start_options => '--userstat=1',
   mysqld_init_command => '',

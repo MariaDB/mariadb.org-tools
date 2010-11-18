@@ -1,10 +1,10 @@
-# Configuration file for host: au0013
-# 
-# OS: Mac OS X 10.6.5
+# Configuration file for host: pitbull
+#
+# OS: Ubuntu 10.10
 # Platform: x86_64
-# CPU: Dual-core Intel Core 2 Duo @ 2.8GHz
-# RAM: 4GB
-# Disk(s): 1 x ST9500420ASG S-ATA
+# CPU: Two socket hexa-core Intel Xeon X5660 @ 2.80GHz
+# RAM: 23GB
+# Disk(s): 1 x ST3500320NS S-ATA
 
 #
 # Adjust the following variables according to your system.
@@ -15,7 +15,7 @@
 #
 
 # Where to store the test results.
-$sql_bench_results = '/Users/hakan/sql-bench-results';
+$sql_bench_results = '/home/hakan/sql-bench-results';
 
 # Where to compile the sources. You will need at least 1GB of disk space.
 $work_dir = '/tmp';
@@ -25,21 +25,21 @@ $work_dir = '/tmp';
 #
 
 # We need bzr >= 1.18.1.
-$bzr = '/usr/local/bin/bzr';
+$bzr = '/usr/bin/bzr';
 
-$mktemp = '/sw/sbin/mktemp';
+$mktemp = '/bin/mktemp';
 
-$mkdir = '/sw/bin/mkdir';
+$mkdir = '/bin/mkdir';
 
 # Set the concurrency level (-j) to about: number of CPUs + 1.
-$make = '/sw/bin/make -j3';
+$make = '/usr/bin/make -j3';
 
 # Perl with DBD::MySQL.
-$perl = '/sw/bin/perl';
+$perl = '/usr/bin/perl';
 
 # If you use ccache, a compiler cache, which reduces compile time,
 # then set the path to it here.
-my $ccache = '/sw/bin/ccache';
+my $ccache = '/usr/bin/ccache';
 
 $ENV{'CC'}  = $ccache . " " . $ENV{'CC'};
 $ENV{'CXX'} = $ccache . " " . $ENV{'CXX'};

@@ -1,0 +1,56 @@
+# Base configuration for running sql-bench tests.
+#
+# This is the minimal base test version
+#
+# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-11-18.
+
+# Configure environment variables.
+# Note: ccache is checked in the host specific config file.
+$ENV{'CC'} = "gcc";
+$ENV{'CFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-com
+pare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wunused-parameter -O3 -fno-omit-frame-po
+inter";
+$ENV{'CXX'} = "gcc";
+$ENV{'CXXFLAGS'} = "-Wimplicit -Wreturn-type -Wswitch -Wtrigraphs -Wcomment -W -Wchar-subscripts -Wformat -Wparentheses -Wsign-c
+ompare -Wwrite-strings -Wunused-function -Wunused-label -Wunused-value -Wunused-variable -Wreorder -Wctor-dtor-privacy -Wnon-vir
+tual-dtor -felide-constructors -fno-exceptions -fno-rtti -O3 -fno-omit-frame-pointer";
+$ENV{'CXXLDFLAGS'} = "";
+
+$config = {
+  # Configure invocation line.
+  # Do not use --prefix here.
+  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugi
+n-maria --with-maria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --wit
+h-readline --with-ssl --with-plugins=max-no-ndb --with-embedded-server --with-libevent --enable-local-infile',
+};
+
+#
+# Different test to be run with the above configuration.
+# The sql-bench-test will automaticly get --suffix=_test_name as an argument
+# The different options that can be used are:
+#
+# mysqld_start_options    Options given to the mysqld that is started.
+#                         This is prefixed with --skip-grant.
+# mysqld_init_command     SQL commands given to mysqld before tests starts.
+# sql_bench_options       Options given to sql-bench.
+#
+$sql_bench_test->{'base'} = {
+  mysqld_start_options => '',
+  mysqld_init_command => '',
+  sql_bench_options => '--comment="base test (with MyISAM)"',
+};
+
+$sql_bench_test->{'innodb'} = {
+  mysqld_start_options => '--default-storage-engine=innodb --innodb-buffer-pool-size=256M',
+  mysqld_init_command => '',
+  sql_bench_options => '--comment="engine=innodb innodb-buffer-pool-size=256M"',
+};
+
+$sql_bench_test->{'pbxt'} = {
+  mysqld_start_options => '--default-storage-engine=pbxt --pbxt-index-cache-size=64M --pbxt-record-cache-size=name=196M',
+  mysqld_init_command => '',
+  sql_bench_options => '--comment="engine=pbxt-index-cache-size=64M --pbxt-record-cache-size=name=196M"',
+};
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;
