@@ -1,0 +1,68 @@
+--source include/have_innodb.inc
+
+USE upgrade_common;
+
+# Check that we are running under MariaDB 
+
+SELECT VERSION() LIKE '%MariaDB%';
+
+# Partitions
+
+INSERT INTO part_range VALUES (1), (10), (100), (1000);
+SELECT * FROM part_range;
+ALTER TABLE part_range DROP PARTITION p3;
+SELECT * FROM part_range;
+ALTER TABLE part_range REBUILD PARTITION p0, p1;
+SELECT * FROM part_range;
+
+INSERT INTO part_list VALUES (1), (2), (3), (4), (5), (6);
+SELECT * FROM part_list;
+ALTER TABLE part_list DROP PARTITION p0;
+SELECT * FROM part_list;
+ALTER TABLE part_list OPTIMIZE PARTITION p1, p2;
+SELECT * FROM part_list;
+
+INSERT INTO part_hash VALUES (1), (2), (3), (4);
+SELECT * FROM part_hash;
+ALTER TABLE part_hash COALESCE PARTITION 1;
+SELECT * FROM part_hash;
+
+INSERT INTO part_key VALUES (1), (2), (3), (4), (5), (6);
+SELECT * FROM part_key;
+ALTER TABLE part_key COALESCE PARTITION 1;
+SELECT * FROM part_key;
+
+INSERT INTO subpart values ('1989-01-01'), ('1990-02-02'), ('1991-03-03'), ('2001-04-04');
+SELECT * FROM subpart;
+ALTER TABLE subpart REMOVE PARTITIONING;
+SELECT * FROM subpart;
+
+#
+# Stored procedures
+#
+
+INSERT INTO proc_table VALUES (1);
+CALL proc1(@out1);
+SELECT @out1;
+
+SELECT func1('abcdefgh');
+
+#
+# Triggers
+#
+
+INSERT INTO trig_table1 VALUES (1);
+--error ER_DUP_ENTRY
+INSERT INTO trig_table1 VALUES (1);
+SELECT * FROM trig_table2;
+
+#
+# Foreign keys
+#
+
+INSERT INTO parent VALUES (1);
+INSERT INTO child VALUES (1,1);
+--error ER_ROW_IS_REFERENCED_2
+DELETE FROM parent;
+
+DROP DATABASE upgrade_common;
