@@ -1,12 +1,442 @@
+--disable_abort_on_error
 --source include/have_innodb.inc
 
+SET SESSION SQL_MODE = 'NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES';
 USE upgrade_common;
 
 # Check that we are running under MariaDB 
 
-SELECT VERSION() LIKE '%MariaDB%';
+SELECT VERSION() LIKE '%Maria%';
+
+# MySQL variables
+
+SET SESSION pseudo_thread_id = 1;       # Keep value stable during the test
+--replace_regex /129([0-9]*)/(timestamp)/
+SHOW VARIABLES;
+
+# MySQL system tables
+
+USE mysql;
+SHOW TABLES;
+
+SELECT * FROM mysql.columns_priv;
+SHOW PRIVILEGES;
+SHOW GRANTS;
+
+SHOW DATABASES;
+SELECT * FROM mysql.db;
+
+SHOW EVENTS;
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SELECT * FROM mysql.event;
+
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW FUNCTION STATUS;
+SELECT * FROM mysql.func;
+
+DESCRIBE mysql.general_log;
+
+SELECT * FROM mysql.help_category ORDER BY help_category_id ASC LIMIT 1;
+HELP 'contents';
+
+SELECT * FROM mysql.help_keyword ORDER BY help_keyword_id ASC LIMIT 1;
+HELP 'WAIT';
+
+SELECT * FROM mysql.help_relation ORDER BY help_topic_id ASC, help_keyword_id ASC LIMIT 1;
+
+SELECT * FROM mysql.help_topic ORDER BY help_topic_id ASC LIMIT 1;
+HELP 'SELECT';
+
+SELECT * FROM mysql.host;
+
+SELECT * FROM mysql.plugin;
+SHOW PLUGINS;
+SHOW ENGINES;
+
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SELECT * FROM mysql.proc;
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW PROCEDURE STATUS;
+
+SELECT * FROM mysql.procs_priv;
+
+
+SELECT * FROM mysql.servers;
+
+SELECT * FROM slow_log;
+
+SELECT * FROM tables_priv;
+
+SELECT * FROM time_zone;
+SELECT * FROM time_zone_leap_second;
+SELECT * FROM time_zone_name;
+SELECT * FROM time_zone_transition;
+SELECT * FROM time_zone_transition_type;
+
+USE upgrade_common;
+
+#
+# Information Schema
+#
+
+SHOW CREATE TABLE information_schema.CHARACTER_SETS;
+SHOW CREATE TABLE information_schema.COLLATIONS;
+SHOW CREATE TABLE information_schema.COLLATION_CHARACTER_SET_APPLICABILITY;
+SHOW CREATE TABLE information_schema.COLUMNS;
+SHOW CREATE TABLE information_schema.COLUMN_PRIVILEGES;
+SHOW CREATE TABLE information_schema.ENGINES;
+SHOW CREATE TABLE information_schema.EVENTS;
+SHOW CREATE TABLE information_schema.FILES;
+SHOW CREATE TABLE information_schema.GLOBAL_STATUS;
+SHOW CREATE TABLE information_schema.GLOBAL_VARIABLES;
+SHOW CREATE TABLE information_schema.KEY_COLUMN_USAGE;
+SHOW CREATE TABLE information_schema.PARTITIONS;
+SHOW CREATE TABLE information_schema.PLUGINS;
+SHOW CREATE TABLE information_schema.PROCESSLIST;
+SHOW CREATE TABLE information_schema.PROFILING;
+SHOW CREATE TABLE information_schema.REFERENTIAL_CONSTRAINTS;
+SHOW CREATE TABLE information_schema.ROUTINES;
+SHOW CREATE TABLE information_schema.SCHEMATA;
+SHOW CREATE TABLE information_schema.SCHEMA_PRIVILEGES;
+SHOW CREATE TABLE information_schema.SESSION_STATUS;
+SHOW CREATE TABLE information_schema.SESSION_VARIABLES;
+SHOW CREATE TABLE information_schema.STATISTICS;
+SHOW CREATE TABLE information_schema.TABLES;
+SHOW CREATE TABLE information_schema.TABLE_CONSTRAINTS;
+SHOW CREATE TABLE information_schema.TABLE_PRIVILEGES;
+SHOW CREATE TABLE information_schema.TRIGGERS;
+SHOW CREATE TABLE information_schema.USER_PRIVILEGES;
+SHOW CREATE TABLE information_schema.VIEWS;
+
+# Databases
+
+SHOW DATABASES;
+SHOW CREATE DATABASE upgrade_common;
+--let $create_database = query_get_value('SHOW CREATE DATABASE upgrade_common','Create Database',1)
+--error ER_DB_CREATE_EXISTS
+--eval $create_database
+
+# Tables
+
+DESCRIBE table_complex;
+SHOW CREATE TABLE table_complex;
+CREATE TABLE table_complex_like LIKE table_complex;
+SHOW CREATE TABLE table_complex_like;
+INSERT INTO table_complex VALUES (2345);
+SELECT * FROM table_complex;
+
+CREATE DATABASE IF NOT EXISTS recreations;
+--let $create_table_complex = query_get_value("SHOW CREATE TABLE table_complex", 'Create Table',1)
+USE recreations;
+--eval $create_table_complex
+SHOW CREATE TABLE table_complex;
+USE upgrade_common;
+
+CHECK TABLE table_complex EXTENDED;
+REPAIR TABLE table_complex EXTENDED USE_FRM;
+
+DROP TABLE table_complex;
+
+# Merge tables
+
+DESCRIBE merge_simple;
+SHOW CREATE TABLE merge_simple;
+CREATE TABLE merge_simple_like LIKE merge_simple;
+SHOW CREATE TABLE merge_simple_like;
+
+--let $create_merge_simple = query_get_value("SHOW CREATE TABLE merge_simple", 'Create Table', 1)
+USE recreations;
+CREATE TABLE merge_1 (f1 INTEGER);
+CREATE TABLE merge_2 (f1 INTEGER);
+--eval $create_merge_simple
+SHOW CREATE TABLE merge_simple;
+INSERT INTO merge_simple VALUES (1);
+SELECT * FROM merge_simple;
+USE upgrade_common;
+
+INSERT INTO merge_1 VALUES (4);
+INSERT INTO merge_2 VALUES (5);
+INSERT INTO merge_simple VALUES (6);
+SELECT * FROM merge_simple;
+
+CHECK TABLE merge_simple EXTENDED;
+REPAIR TABLE merge_simple EXTENDED USE_FRM;
+
+DROP TABLE merge_simple;
+
+# Field attributes
+
+DESCRIBE field_attributes;
+SHOW CREATE TABLE field_attributes;
+CREATE TABLE field_attributes_like LIKE field_attributes;
+SHOW CREATE TABLE field_attributes_like;
+
+--let $create_field_attributes = query_get_value("SHOW CREATE TABLE field_attributes", "Create Table", 1)
+USE recreations;
+--eval $create_field_attributes
+SHOW CREATE TABLE field_attributes;
+--error ER_BAD_NULL_ERROR
+INSERT INTO field_attributes VALUES (NULL);
+INSERT INTO field_attributes VALUES (DEFAULT);
+--error ER_WARN_DATA_OUT_OF_RANGE
+INSERT INTO field_attributes VALUES (-2345);
+--error ER_DUP_ENTRY
+INSERT INTO field_attributes VALUES (1), (1);
+SELECT * FROM field_attributes;
+USE upgrade_common;
+
+--error ER_BAD_NULL_ERROR
+INSERT INTO field_attributes VALUES (NULL);
+INSERT INTO field_attributes VALUES (DEFAULT);
+--error ER_WARN_DATA_OUT_OF_RANGE
+INSERT INTO field_attributes VALUES (-2345);
+--error ER_DUP_ENTRY
+INSERT INTO field_attributes VALUES (1), (1);
+SELECT * FROM field_attributes;
+
+CHECK TABLE field_attributes EXTENDED;
+REPAIR TABLE field_attributes EXTENDED USE_FRM;
+
+DROP TABLE field_attributes;
+
+# Indexes and index attributes
+
+DESCRIBE indexes;
+SHOW CREATE TABLE indexes;
+SHOW INDEXES FROM indexes;
+CREATE TABLE indexes_like LIKE indexes;
+SHOW CREATE TABLE indexes_like;
+
+--let $create_indexes = query_get_value("SHOW CREATE TABLE indexes", "Create Table", 1)
+USE recreations;
+--eval $create_indexes
+SHOW CREATE TABLE indexes;
+USE upgrade_common;
+
+INSERT INTO indexes VALUES ('bcd', 'bcde', 'cdef', GeomFromWKB(Point(2,3)));
+--error ER_DUP_ENTRY
+INSERT INTO indexes VALUES ('bzz', 'bcde', 'cdef', GeomFromWKB(Point(4,5)));
+SELECT * FROM indexes;
+
+CHECK TABLE indexes EXTENDED;
+REPAIR TABLE indexes EXTENDED USE_FRM;
+DROP TABLE indexes;
+
+# Field types - numeric
+
+DESCRIBE field_types_numeric;
+SHOW CREATE TABLE field_types_numeric;
+CREATE TABLE field_types_numeric_like LIKE field_types_numeric;
+SHOW CREATE TABLE field_types_numeric_like;
+
+--let $create_field_types_numeric = query_get_value("SHOW CREATE TABLE field_types_numeric", "Create Table", 1)
+USE recreations;
+--eval $create_field_types_numeric
+SHOW CREATE TABLE field_types_numeric;
+USE upgrade_common;
+
+INSERT INTO field_types_numeric SET
+        `serial_default` = 10,
+        `bit_default` = 1,
+        `bit_64` = 12,
+        `tinyint_default` = 13,
+        `tinyint_2` = 14,
+        `bool_default` = 15,
+        `smallint_default` = 16,
+        `smallint_3` = 17,
+        `mediumint_default` = 18,
+        `mediumint_4` = 19,
+        `integer_default` = 110,
+        `integer_5` = 111,
+        `bigint_default` = 112,
+        `bigint_6` = 113,
+        `float_default` = 114,
+        `float_32` = 1.15,
+        `double_default` = 116,
+        `double_30` = 117,
+        `decimal_default` = 118,
+        `decimal_52` = 119;
+
+SELECT * FROM field_types_numeric;
+
+CHECK TABLE field_types_numeric EXTENDED;
+REPAIR TABLE field_types_numeric EXTENDED USE_FRM;
+
+DROP TABLE field_types_numeric;
+
+# Field types - date
+
+DESCRIBE field_types_date;
+SHOW CREATE TABLE field_types_date;
+CREATE TABLE field_types_date_like LIKE field_types_date;
+SHOW CREATE TABLE field_types_date_like;
+
+--let $create_field_types_date = query_get_value("SHOW CREATE TABLE field_types_date", "Create Table", 1)
+USE recreations;
+--eval $create_field_types_date
+SHOW CREATE TABLE field_types_date;
+USE upgrade_common;
+
+INSERT INTO field_types_date SET
+        `date` = '2007-07-07',
+        `datetime` = '2008-08-08 08:08:08',
+        `timestamp` = '2009-09-09 09:09:09',
+        `time` = '10:10:10',
+        `year_2` = '11',
+        `year_4` = '2012';
+
+SELECT * FROM field_types_date;
+
+CHECK TABLE field_types_date EXTENDED;
+REPAIR TABLE field_types_date EXTENDED USE_FRM;
+DROP TABLE field_types_date;
+
+# Field types - string
+
+DESCRIBE field_types_string;
+SHOW CREATE TABLE field_types_string;
+CREATE TABLE field_types_string_like LIKE field_types_string;
+SHOW CREATE TABLE field_types_string_like;
+
+--let $create_field_types_string = query_get_value("SHOW CREATE TABLE field_types_string", "Create Table", 1)
+USE recreations;
+--eval $create_field_types_string
+SHOW CREATE TABLE field_types_string;
+USE upgrade_common;
+
+INSERT INTO field_types_string SET
+        `char` = 'b',
+        `varchar` = 'bb',
+        `binary` = 'bbb',
+        `varbinary` = 'bbba',
+        `tinyblob` = 'bbbbb',
+        `tinytext` = 'bbbbbb',
+        `blob` = 'bbbbbba',
+        `blob_128` = 'bbb bbb bb',
+        `text` = 'bbb bbb bbb bbb',
+        `mediumblob` = 'bbb bbb bbb bbb b',
+        `medimutext` = 'bbb bbb bbb bbb bb',
+        `longblob` = 'bbb bbb bbb bbb bbb',
+        `longtext` = 'bbb bbb bbb bbb bbbb';
+
+SELECT * FROM field_types_string;
+
+CHECK TABLE field_types_string EXTENDED;
+REPAIR TABLE field_types_string EXTENDED USE_FRM;
+
+DROP TABLE field_types_string;
+
+# Field types - enum and set
+
+DESCRIBE field_types_enum;
+SHOW CREATE TABLE field_types_enum;
+CREATE TABLE field_types_enum_like LIKE field_types_enum;
+SHOW CREATE TABLE field_types_enum_like;
+
+--let $create_field_types_enum = query_get_value("SHOW CREATE TABLE field_types_enum", "Create Table", 1)
+USE recreations;
+--eval $create_field_types_enum
+SHOW CREATE TABLE field_types_enum;
+USE upgrade_common;
+
+INSERT INTO field_types_enum SET
+        enum_many = 1,
+        enum_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789',
+        set_many  = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64'
+#,
+#       set_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345$8901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'
+;
+
+SELECT * FROM field_types_enum;
+
+CHECK TABLE field_types_enum EXTENDED;
+REPAIR TABLE field_types_enum EXTENDED USE_FRM;
+
+DROP TABLE field_types_enum;
+
+# Engines
+
+DESCRIBE table_myisam;
+SHOW CREATE TABLE table_myisam;
+
+DESCRIBE table_innodb;
+SHOW CREATE TABLE table_innodb;
+
+DESCRIBE table_memory;
+SHOW CREATE TABLE table_memory;
+
+--let $create_myisam = query_get_value("SHOW CREATE TABLE table_myisam", "Create Table", 1)
+--let $create_memory = query_get_value("SHOW CREATE TABLE table_memory", "Create Table", 1)
+--let $create_innodb = query_get_value("SHOW CREATE TABLE table_innodb", "Create Table", 1)
+
+USE recreations;
+--eval $create_myisam
+SHOW CREATE TABLE table_myisam;
+
+--eval $create_memory
+SHOW CREATE TABLE table_memory;
+
+--eval $create_innodb
+SHOW CREATE TABLE table_innodb;
+
+USE upgrade_common;
+
+DROP TABLE table_myisam, table_innodb, table_memory;
+
+# Character sets
+
+SHOW CHARACTER SET;
+SHOW COLLATION;
+
+# Users
+
+SHOW PRIVILEGES;
+SHOW GRANTS;
+SHOW GRANTS FOR CURRENT_USER();
+FLUSH PRIVILEGES;
 
 # Partitions
+
+DESCRIBE part_complex;
+SHOW CREATE TABLE part_complex;
+
+DESCRIBE part_range;
+SHOW CREATE TABLE part_range;
+
+DESCRIBE part_list;
+SHOW CREATE TABLE part_list;
+
+DESCRIBE part_hash;
+SHOW CREATE TABLE part_hash;
+
+DESCRIBE part_key;
+SHOW CREATE TABLE part_key;
+
+DESCRIBE subpart;
+SHOW CREATE TABLE subpart;
+
+
+--let $create_part_complex = query_get_value("SHOW CREATE TABLE part_complex", "Create Table", 1)
+--let $create_part_range = query_get_value("SHOW CREATE TABLE part_range", "Create Table", 1)
+--let $create_part_list = query_get_value("SHOW CREATE TABLE part_list", "Create Table", 1)
+--let $create_part_hash = query_get_value("SHOW CREATE TABLE part_hash", "Create Table", 1)
+--let $create_part_key = query_get_value("SHOW CREATE TABLE part_key", "Create Table", 1)
+--let $create_subpart = query_get_value("SHOW CREATE TABLE subpart", "Create Table", 1)
+USE recreations;
+--eval $create_part_complex
+SHOW CREATE TABLE part_complex;
+--eval $create_part_range
+SHOW CREATE TABLE part_range;
+--eval $create_part_list
+SHOW CREATE TABLE part_list;
+--eval $create_part_hash
+SHOW CREATE TABLE part_hash;
+--eval $create_part_key 
+SHOW CREATE TABLE part_key;
+--eval $create_subpart;
+SHOW CREATE TABLE subpart;
+
+USE upgrade_common;
 
 INSERT INTO part_range VALUES (1), (10), (100), (1000);
 SELECT * FROM part_range;
@@ -37,32 +467,181 @@ SELECT * FROM subpart;
 ALTER TABLE subpart REMOVE PARTITIONING;
 SELECT * FROM subpart;
 
+DROP TABLE part_complex, part_range, part_list, part_hash, part_key, subpart;
+
 #
 # Stored procedures
 #
 
-INSERT INTO proc_table VALUES (1);
-CALL proc1(@out1);
-SELECT @out1;
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW PROCEDURE STATUS LIKE 'proc_simple';
+# SHOW PROCEDURE CODE proc_simple;
+SHOW CREATE PROCEDURE proc_simple;
 
-SELECT func1('abcdefgh');
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW PROCEDURE STATUS LIKE 'very_very_very_very_very_very_very_long_name';
+# SHOW PROCEDURE CODE very_very_very_very_very_very_very_long_name;
+SHOW CREATE PROCEDURE very_very_very_very_very_very_very_long_name;
+
+--let $create_proc_simple = query_get_value("SHOW CREATE PROCEDURE proc_simple", "Create Procedure", 1)
+--let $create_proc_complex = query_get_value("SHOW CREATE PROCEDURE very_very_very_very_very_very_very_long_name", "Create Procedure", 1)
+
+USE recreations;
+--eval $create_proc_simple
+# SHOW PROCEDURE CODE 'proc_simple';
+SHOW CREATE PROCEDURE proc_simple;
+--eval $create_proc_complex
+# SHOW PROCEDURE CODE 'very_very_very_very_very_very_very_long_name'
+SHOW CREATE PROCEDURE very_very_very_very_very_very_very_long_name;
+USE upgrade_common;
+
+INSERT INTO proc_table VALUES (1);
+CALL proc_simple(@out1);
+SELECT @out1;
+CALL very_very_very_very_very_very_very_long_name(@out1, @out2, @out3, @out4, @out5, @out6, @out7, @out8, @out9, @out10, @out11, @out12, @out13);
+SELECT @out2;
+
+DROP PROCEDURE very_very_very_very_very_very_very_long_name;
+DROP PROCEDURE proc_simple;
+
+DROP TABLE proc_table;
+
+# Functions
+
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW FUNCTION STATUS LIKE 'func_simple';
+# SHOW PROCEDURE CODE 'func_simple';
+SHOW CREATE FUNCTION func_simple;
+
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW FUNCTION STATUS LIKE 'func_complex';
+# SHOW PROCEDURE CODE 'func_complex';
+SHOW CREATE FUNCTION func_complex;
+
+--let $create_func_simple = query_get_value("SHOW CREATE FUNCTION func_simple", "Create Function", 1)
+--let $create_func_complex = query_get_value("SHOW CREATE FUNCTION func_complex", "Create Function", 1)
+
+USE recreations;
+--eval $create_func_simple
+# SHOW PROCEDURE CODE 'func_simple';
+SHOW CREATE FUNCTION func_simple;
+--eval $create_func_complex
+# SHOW PROCEDURE CODE 'func_complex';
+SHOW CREATE FUNCTION func_complex;
+SELECT func_simple('abcdefgh');
+SELECT func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13);
+USE upgrade_common;
+
+SELECT func_simple('abcdefgh');
+SELECT func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13);
+
+DROP FUNCTION func_simple;
+DROP FUNCTION func_complex;
+
+# Views
+
+DESCRIBE view_simple;
+SHOW CREATE VIEW view_simple;
+
+--let $create_view_simple = query_get_value("SHOW CREATE VIEW view_simple", "Create View", 1)
+USE recreations;
+CREATE TABLE view_table1 (f1 INTEGER);
+INSERT INTO view_table1 VALUES (1);
+--eval $create_view_simple
+SHOW CREATE VIEW view_simple;
+SELECT * FROM view_simple;
+
+USE upgrade_common;
+
+INSERT INTO view_table1 VALUES (2);
+SELECT * FROM view_simple;
+DROP VIEW view_simple;
+
+DROP TABLE view_table1;
+
+# Events
+
+SET GLOBAL event_scheduler = 0;
+SET GLOBAL event_scheduler = 1;
+
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW EVENTS;
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SELECT * FROM mysql.event WHERE name = 'event_simple';
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SELECT * FROM information_schema.EVENTS WHERE event_name = 'event_simple';
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+SHOW CREATE EVENT event_simple;
+--let $create_event = query_get_value("SHOW CREATE EVENT event_simple", "Create Event", 1)
+
+SELECT SLEEP(2);
+SELECT (SELECT COUNT(*) FROM event_t1) > 0;
+DROP EVENT event_simple;
+DELETE FROM event_t1;
+--replace_regex /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]/(date_time)/
+--eval $create_event;
+SELECT SLEEP(2);
+SELECT (SELECT COUNT(*) FROM event_t1) > 0;
+DROP EVENT event_simple;
+DROP TABLE event_t1;
 
 #
 # Triggers
 #
+
+SHOW CREATE TRIGGER trigger_simple;
+--let $create_trigger = query_get_value("SHOW CREATE TRIGGER trigger_simple", "SQL Original Statement", 1)
 
 INSERT INTO trig_table1 VALUES (1);
 --error ER_DUP_ENTRY
 INSERT INTO trig_table1 VALUES (1);
 SELECT * FROM trig_table2;
 
+DROP TRIGGER trigger_simple;
+--eval $create_trigger
+--error ER_DUP_ENTRY
+INSERT INTO trig_table1 VALUES (1);
+DROP TRIGGER trigger_simple;
+
+DROP TABLE trig_table1;
+DROP TABLE trig_table2;
+
 #
 # Foreign keys
 #
+
+DESCRIBE parent;
+SHOW CREATE TABLE parent;
+DESCRIBE child;
+SHOW CREATE TABLE child;
+
+--let $create_parent = query_get_value("SHOW CREATE TABLE parent", "Create Table", 1)
+--let $create_child =  query_get_value("SHOW CREATE TABLE child", "Create Table", 1)
+USE recreations;
+--eval $create_parent
+--eval $create_child
+SHOW CREATE TABLE parent;
+SHOW CREATE TABLE child;
+INSERT INTO parent VALUES (1);
+INSERT INTO child VALUES (1,1);
+--error ER_ROW_IS_REFERENCED_2
+DELETE FROM parent;
+USE upgrade_common;
 
 INSERT INTO parent VALUES (1);
 INSERT INTO child VALUES (1,1);
 --error ER_ROW_IS_REFERENCED_2
 DELETE FROM parent;
+DROP TABLE child;
+DROP TABLE parent;
 
+#
+# Time zones
+#
+
+SET @time_zone_saved = @@time_zone;
+SET SESSION time_zone = 'UTC';
+SET SESSION time_zone = @time_zone_saved;
+
+DROP DATABASE recreations;
 DROP DATABASE upgrade_common;

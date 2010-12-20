@@ -1,21 +1,287 @@
+--disable_abort_on_error
 --source include/have_innodb.inc
+
+#
+# This test is run via --extern on the running server before an upgrade is
+# performed. It creates various database objects which will then be examined
+# after upgrade. The "complex" objects attempt to push the FRM format to its
+# limits by definining too many fields, indexes or overly long comments
+#
+# This test is monolithic because --extern --skip-reorder does not seem to
+# work and thus execution order of subtests will not be guaranteed.
+#
+
+SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES';
+
+#
+# We dump and --record all variable values in order to detect any silent changes
+# in the defaults implemented by MySQL/Sun/Oracle
+#
+
+SHOW PLUGINS;
+
+SET SESSION pseudo_thread_id = 1;	# Keep value stable during the test
+--replace_regex /129([0-9]*)/(timestamp)/
+SHOW VARIABLES;
+
+#
+# The mysql database. We dump and --record each table structure here in
+# order to detect any changes made by MySQL/Sun/Oracle
+#
+
+SHOW CREATE TABLE mysql.columns_priv;
+SHOW CREATE TABLE mysql.db;
+SHOW CREATE TABLE mysql.event;
+SHOW CREATE TABLE mysql.func;
+SHOW CREATE TABLE mysql.general_log;
+SHOW CREATE TABLE mysql.help_category;
+SHOW CREATE TABLE mysql.help_keyword;
+SHOW CREATE TABLE mysql.help_relation;
+SHOW CREATE TABLE mysql.help_topic;
+SHOW CREATE TABLE mysql.host;
+SHOW CREATE TABLE mysql.ndb_binlog_index;
+SHOW CREATE TABLE mysql.plugin;
+SHOW CREATE TABLE mysql.proc;
+SHOW CREATE TABLE mysql.procs_priv;
+SHOW CREATE TABLE mysql.servers;
+SHOW CREATE TABLE mysql.slow_log;
+SHOW CREATE TABLE mysql.tables_priv;
+SHOW CREATE TABLE mysql.time_zone;
+SHOW CREATE TABLE mysql.time_zone_leap_second;
+SHOW CREATE TABLE mysql.time_zone_name;
+SHOW CREATE TABLE mysql.time_zone_transition;
+SHOW CREATE TABLE mysql.time_zone_transition_type;
+SHOW CREATE TABLE mysql.user;
+
+#
+# Same for information_schema
+#
+
+SHOW CREATE TABLE information_schema.CHARACTER_SETS;
+SHOW CREATE TABLE information_schema.COLLATIONS;
+SHOW CREATE TABLE information_schema.COLLATION_CHARACTER_SET_APPLICABILITY;
+SHOW CREATE TABLE information_schema.COLUMNS;
+SHOW CREATE TABLE information_schema.COLUMN_PRIVILEGES;
+SHOW CREATE TABLE information_schema.ENGINES;
+SHOW CREATE TABLE information_schema.EVENTS;
+SHOW CREATE TABLE information_schema.FILES;
+SHOW CREATE TABLE information_schema.GLOBAL_STATUS;
+SHOW CREATE TABLE information_schema.GLOBAL_VARIABLES;
+SHOW CREATE TABLE information_schema.KEY_COLUMN_USAGE;
+SHOW CREATE TABLE information_schema.PARTITIONS;
+SHOW CREATE TABLE information_schema.PLUGINS;
+SHOW CREATE TABLE information_schema.PROCESSLIST;
+SHOW CREATE TABLE information_schema.PROFILING;
+SHOW CREATE TABLE information_schema.REFERENTIAL_CONSTRAINTS;
+SHOW CREATE TABLE information_schema.ROUTINES;
+SHOW CREATE TABLE information_schema.SCHEMATA;
+SHOW CREATE TABLE information_schema.SCHEMA_PRIVILEGES;
+SHOW CREATE TABLE information_schema.SESSION_STATUS;
+SHOW CREATE TABLE information_schema.SESSION_VARIABLES;
+SHOW CREATE TABLE information_schema.STATISTICS;
+SHOW CREATE TABLE information_schema.TABLES;
+SHOW CREATE TABLE information_schema.TABLE_CONSTRAINTS;
+SHOW CREATE TABLE information_schema.TABLE_PRIVILEGES;
+SHOW CREATE TABLE information_schema.TRIGGERS;
+SHOW CREATE TABLE information_schema.USER_PRIVILEGES;
+SHOW CREATE TABLE information_schema.VIEWS;
+
+# Databases
 
 --disable_warnings
 DROP DATABASE IF EXISTS upgrade_common;
 --enable_warnings
-CREATE DATABASE upgrade_common;
+CREATE DATABASE upgrade_common CHARACTER SET = utf8 COLLATE = utf8_bin ;
 USE upgrade_common;
 
-CREATE TABLE t1 (f1 integer) ENGINE=InnoDB;
+# Tables
+
+CREATE TABLE table_complex (f1 integer)
+ENGINE=MyISAM ,
+AUTO_INCREMENT=100 ,
+AVG_ROW_LENGTH=1000 ,
+CHARACTER SET = binary ,
+CHECKSUM = 1 ,
+COLLATE = 'binary' ,
+COMMENT = '012345678901234567890123456789012345678901234567890123456789' ,
+# DATA DIRECTORY = '/tmp' ,
+DELAY_KEY_WRITE = 1 ,
+# INDEX DIRECTORY = '/tmp' ,
+KEY_BLOCK_SIZE = 1024 ,
+MAX_ROWS = 1000 ,
+MIN_ROWS = 100 ,
+PACK_KEYS = 1 ,
+PASSWORD = 'foo' ,
+ROW_FORMAT = COMPRESSED;
+
+INSERT INTO table_complex VALUES (1234);
+
+# Merge tables + INSERT_METHOD
+
+CREATE TABLE merge_1 (f1 INTEGER);
+CREATE TABLE merge_2 (f1 INTEGER);
+CREATE TABLE merge_simple (f1 INTEGER) ENGINE=MERGE UNION(merge_1, merge_2) INSERT_METHOD=LAST;
+
+INSERT INTO merge_1 VALUES (1);
+INSERT INTO merge_2 VALUES (2);
+INSERT INTO merge_simple VALUES (3);
+
+# Field attributes
+
+CREATE TABLE field_attributes (
+	f1 BIGINT
+	UNSIGNED
+	NOT NULL
+	DEFAULT 18446744073709551615
+	UNIQUE
+	COMMENT '012345678901234567890123456789012345678901234567890123456789'
+);
+
+INSERT INTO field_attributes VALUES (1234);
+
+# Indexes and index attributes
+
+CREATE TABLE indexes (
+	f1 VARCHAR(255), f2 VARCHAR(255), f3 VARCHAR(255), g GEOMETRY NOT NULL,
+	PRIMARY KEY ( f1(1), f2(255)  ),
+	INDEX USING HASH ( f2 ASC , f3 DESC, f1(64)) KEY_BLOCK_SIZE = 2048 USING HASH ,
+	FULLTEXT INDEX (f1 , f2 , f3),
+	SPATIAL INDEX (g)
+) CHARACTER SET = latin1;
+
+INSERT INTO indexes VALUES ('abc', 'cdef', 'ghij', GeomFromWKB(Point(1,1)));
+
+# Field types
+
+CREATE TABLE field_types_numeric (
+	`serial_default` SERIAL,
+	`bit_default` BIT,
+	`bit_64` BIT(64),
+	`tinyint_default` TINYINT UNSIGNED,
+	`tinyint_2` TINYINT(2) ZEROFILL,
+	`bool_default` BOOLEAN,
+	`smallint_default` SMALLINT UNSIGNED,
+	`smallint_3` SMALLINT(3) ZEROFILL,
+	`mediumint_default` MEDIUMINT UNSIGNED,
+	`mediumint_4` MEDIUMINT(4) ZEROFILL,
+	`integer_default` INTEGER UNSIGNED,
+	`integer_5` INTEGER(5) ZEROFILL,
+	`bigint_default` BIGINT UNSIGNED,
+	`bigint_6` BIGINT(6) ZEROFILL,
+	`float_default` FLOAT UNSIGNED,
+	`float_32` FLOAT(3,2) ZEROFILL,
+	`double_default` DOUBLE UNSIGNED,
+	`double_30` DOUBLE(3,0) ZEROFILL,
+	`decimal_default` DECIMAL UNSIGNED,
+	`decimal_52` DECIMAL(5,2) ZEROFILL
+);
+
+INSERT INTO field_types_numeric SET 
+	`serial_default` = 0,
+	`bit_default` = 1,
+	`bit_64` = 2,
+	`tinyint_default` = 3,
+	`tinyint_2` = 4,
+	`bool_default` = 5,
+	`smallint_default` = 6,
+	`smallint_3` = 7,
+	`mediumint_default` = 8,
+	`mediumint_4` = 9,
+	`integer_default` = 10,
+	`integer_5` = 11,
+	`bigint_default` = 12,
+	`bigint_6` = 13,
+	`float_default` = 14,
+	`float_32` = 1.5,
+	`double_default` = 16,
+	`double_30` = 17,
+	`decimal_default` = 18,
+	`decimal_52` = 19;
+
+CREATE TABLE field_types_date (
+	`date` DATE,
+	`datetime` DATETIME,
+	`timestamp` TIMESTAMP,
+	`time` TIME,
+	`year_2` YEAR(2),
+	`year_4` YEAR(4)
+);
+
+INSERT INTO field_types_date SET
+	`date` = '2001-01-01',
+	`datetime` = '2002-02-02 02:02:02',
+	`timestamp` = '2003-03-03 03:03:03',
+	`time` = '04:04:04',
+	`year_2` = '05',
+	`year_4` = '2006';
+
+CREATE TABLE field_types_string (
+	`char` CHAR(255) CHARACTER SET utf8,
+	`varchar` VARCHAR(255) COLLATE utf8_general_ci,
+	`binary` BINARY(255),
+	`varbinary` VARBINARY(255),
+	`tinyblob` TINYBLOB,
+	`tinytext` TINYTEXT CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+	`blob` BLOB,
+	`blob_128` BLOB(128),
+	`text` TEXT,
+	`mediumblob` MEDIUMBLOB,
+	`medimutext` MEDIUMTEXT,
+	`longblob` LONGBLOB,
+	`longtext` LONGTEXT
+);
+
+INSERT INTO field_types_string SET 
+	`char` = 'a',
+	`varchar` = 'aa',
+	`binary` = 'aaa',
+	`varbinary` = 'aaaa',
+	`tinyblob` = 'aaaaa',
+	`tinytext` = 'aaaaaa',
+	`blob` = 'aaaaaaa',
+	`blob_128` = 'aaa aaa aa',
+	`text` = 'aaa aaa aaa aaa',
+	`mediumblob` = 'aaa aaa aaa aaa a',
+	`medimutext` = 'aaa aaa aaa aaa aa',
+	`longblob` = 'aaa aaa aaa aaa aaa',
+	`longtext` = 'aaa aaa aaa aaa aaaa';
+
+CREATE TABLE field_types_enum (
+	enum_many ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64'),
+	enum_long ENUM ('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'),
+	set_many SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64'),
+	set_long SET ('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567')
+);
+
+INSERT INTO field_types_enum SET 
+	enum_many = 1,
+	enum_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789',
+	set_many  = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64'
+#,
+#	set_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678,01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'
+;
+
+#
+# Engines
+#
+
+CREATE TABLE table_myisam (f1 INTEGER) ENGINE=MyISAM;
+CREATE TABLE table_innodb (f1 INTEGER) ENGINE=InnoDB;
+CREATE TABLE table_memory (f1 INTEGER) ENGINE=Memory;
 
 #
 # Character sets
 #
 
+SHOW CHARACTER SET;
+SHOW COLLATION;
+
 
 #
 # Users: nh = no host specifier ; np = no password ; na = no access ; wa = with access 
 #
+
+SHOW PRIVILEGES;
 
 CREATE USER 'nh_np_na';
 CREATE USER 'nh_np_wa';
@@ -35,16 +301,20 @@ GRANT ALL PRIVILEGES ON *.* TO 'wh_wp_wa';
 
 
 #
-# Engines
-#
-
-#
-# Data types
-#
-
-#
 # Partitioning
 # 
+
+CREATE TABLE part_complex ( f1 INTEGER ) 
+PARTITION BY RANGE (f1) (
+	PARTITION p0 VALUES LESS THAN (10)
+		STORAGE ENGINE = MyISAM 
+		COMMENT = '012345678901234567890123456789012345678901234567890123456789'
+# 		DATA DIRECTORY = '/tmp'
+#		INDEX DIRECTORY = '/tmp'
+		MAX_ROWS = 100
+		MIN_ROWS = 10 ,
+	PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE=MyISAM
+);
 
 CREATE TABLE part_range ( range_field INTEGER )
 PARTITION BY RANGE (range_field) (
@@ -83,19 +353,68 @@ CREATE TABLE proc_table (f1 INTEGER) ENGINE=InnoDB;
 
 --delimiter //
 
-CREATE PROCEDURE proc1 (OUT param1 INT)
+CREATE PROCEDURE proc_simple (OUT param1 INT)
 BEGIN
 	SELECT COUNT(*) INTO param1 FROM proc_table;
 END//
 
+CREATE
+DEFINER = 'root'@'localhost'
+PROCEDURE very_very_very_very_very_very_very_long_name (
+	INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+	IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+	OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+	INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+	INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+)
+LANGUAGE SQL
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+NOT DETERMINISTIC
+MODIFIES SQL DATA
+SQL SECURITY DEFINER
+BEGIN
+	SELECT COUNT(*) INTO param2 FROM proc_table;
+END//
+
 --delimiter ;
 
-CREATE FUNCTION func1 (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN s;
+CREATE FUNCTION func_simple (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN s;
+
+CREATE FUNCTION func_complex (
+	very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+	param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+	param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+	param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+	param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+) RETURNS SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64')
+LANGUAGE SQL
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+NOT DETERMINISTIC
+MODIFIES SQL DATA
+SQL SECURITY DEFINER
+RETURN param2;
+
+#
+# Views
+#
+
+CREATE TABLE view_table1 (f1 INTEGER);
+INSERT INTO view_table1 VALUES (1);
+CREATE ALGORITHM=MERGE DEFINER = 'root'@'localhost' SQL SECURITY DEFINER VIEW view_simple AS SELECT * FROM view_table1 WITH CASCADED CHECK OPTION;
 
 #
 # Events
 #
 
+CREATE TABLE event_t1 (f1 INTEGER);
+
+CREATE
+DEFINER = 'root'@'localhost'
+EVENT event_simple
+ON SCHEDULE EVERY 1 SECOND
+ON COMPLETION PRESERVE
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+DO INSERT INTO event_t1 VALUES (1);
 
 #
 # Triggers
@@ -103,11 +422,11 @@ CREATE FUNCTION func1 (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN s;
 
 CREATE TABLE trig_table1 (f1 INTEGER) ENGINE=InnoDB;
 CREATE TABLE trig_table2 (f1 INTEGER AUTO_INCREMENT PRIMARY KEY) ENGINE=InnoDB;
-CREATE TRIGGER trigger1 BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1);
+CREATE DEFINER = 'root'@'localhost' TRIGGER trigger_simple BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1);
 
 #
 # Foreign keys
 #
 
 CREATE TABLE parent (id INT NOT NULL PRIMARY KEY) ENGINE=InnoDB;
-CREATE TABLE child (id INT, parent_id INT, INDEX (parent_id), FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE RESTRICT) ENGINE=InnoDB;
+CREATE TABLE child (id INT, parent_id INT, INDEX (parent_id), FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE RESTRICT ON UPDATE CASCADE) ENGINE=InnoDB;

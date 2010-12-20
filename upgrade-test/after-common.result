@@ -1,7 +1,2569 @@
+SET SESSION SQL_MODE = 'NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES';
 USE upgrade_common;
-SELECT VERSION() LIKE '%MariaDB%';
-VERSION() LIKE '%MariaDB%'
+SELECT VERSION() LIKE '%Maria%';
+VERSION() LIKE '%Maria%'
 1
+SET SESSION pseudo_thread_id = 1;
+SHOW VARIABLES;
+Variable_name	Value
+aria_block_size	8192
+aria_checkpoint_interval	30
+aria_force_start_after_recovery_failures	0
+aria_group_commit	none
+aria_group_commit_interval	0
+aria_log_file_size	1073741824
+aria_log_purge_type	immediate
+aria_max_sort_file_size	9223372036853727232
+aria_page_checksum	ON
+aria_pagecache_age_threshold	300
+aria_pagecache_buffer_size	134213632
+aria_pagecache_division_limit	100
+aria_recover	NORMAL
+aria_repair_threads	1
+aria_sort_buffer_size	134217728
+aria_stats_method	nulls_unequal
+aria_sync_log_dir	NEWFILE
+aria_used_for_temp_tables	ON
+auto_increment_increment	1
+auto_increment_offset	1
+autocommit	ON
+automatic_sp_privileges	ON
+back_log	50
+basedir	/home/philips/bzr/maria-5.2/
+big_tables	OFF
+binlog_cache_size	32768
+binlog_direct_non_transactional_updates	OFF
+binlog_format	STATEMENT
+bulk_insert_buffer_size	8388608
+character_set_client	latin1
+character_set_connection	latin1
+character_set_database	utf8
+character_set_filesystem	binary
+character_set_results	latin1
+character_set_server	latin1
+character_set_system	utf8
+character_sets_dir	/home/philips/bzr/maria-5.2/sql/share/charsets/
+collation_connection	latin1_swedish_ci
+collation_database	utf8_bin
+collation_server	latin1_swedish_ci
+completion_type	0
+concurrent_insert	1
+connect_timeout	60
+datadir	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/data/
+date_format	%Y-%m-%d
+datetime_format	%Y-%m-%d %H:%i:%s
+deadlock_search_depth_long	15
+deadlock_search_depth_short	4
+deadlock_timeout_long	50000000
+deadlock_timeout_short	10000
+default_week_format	0
+delay_key_write	ON
+delayed_insert_limit	100
+delayed_insert_timeout	300
+delayed_queue_size	1000
+div_precision_increment	4
+engine_condition_pushdown	ON
+error_count	0
+event_scheduler	OFF
+expire_logs_days	0
+extra_max_connections	1
+extra_port	0
+flush	OFF
+flush_time	0
+foreign_key_checks	ON
+ft_boolean_syntax	+ -><()~*:""&|
+ft_max_word_len	84
+ft_min_word_len	4
+ft_query_expansion_limit	20
+ft_stopword_file	(built-in)
+general_log	ON
+general_log_file	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/mysqld.log
+group_concat_max_len	1024
+have_community_features	YES
+have_compress	YES
+have_crypt	YES
+have_csv	YES
+have_dynamic_loading	YES
+have_geometry	YES
+have_innodb	YES
+have_ndbcluster	NO
+have_openssl	NO
+have_partitioning	YES
+have_query_cache	YES
+have_rtree_keys	YES
+have_ssl	NO
+have_symlink	YES
+hostname	eve
+identity	0
+ignore_builtin_innodb	OFF
+init_connect	
+init_file	
+init_slave	
+innodb_adaptive_checkpoint	estimate
+innodb_adaptive_flushing	OFF
+innodb_adaptive_hash_index	ON
+innodb_additional_mem_pool_size	8388608
+innodb_auto_lru_dump	0
+innodb_autoextend_increment	8
+innodb_autoinc_lock_mode	1
+innodb_buffer_pool_shm_checksum	ON
+innodb_buffer_pool_shm_key	0
+innodb_buffer_pool_size	134217728
+innodb_change_buffering	inserts
+innodb_checkpoint_age_target	0
+innodb_checksums	ON
+innodb_commit_concurrency	0
+innodb_concurrency_tickets	500
+innodb_data_file_path	ibdata1:10M:autoextend
+innodb_data_home_dir	
+innodb_dict_size_limit	0
+innodb_doublewrite	ON
+innodb_doublewrite_file	
+innodb_enable_unsafe_group_commit	0
+innodb_expand_import	0
+innodb_extra_rsegments	0
+innodb_extra_undoslots	OFF
+innodb_fast_checksum	OFF
+innodb_fast_recovery	OFF
+innodb_fast_shutdown	1
+innodb_file_format	Antelope
+innodb_file_format_check	Antelope
+innodb_file_per_table	OFF
+innodb_flush_log_at_trx_commit	1
+innodb_flush_log_at_trx_commit_session	3
+innodb_flush_method	
+innodb_flush_neighbor_pages	1
+innodb_force_recovery	0
+innodb_ibuf_accel_rate	100
+innodb_ibuf_active_contract	1
+innodb_ibuf_max_size	67092480
+innodb_io_capacity	200
+innodb_lock_wait_timeout	50
+innodb_locks_unsafe_for_binlog	OFF
+innodb_log_buffer_size	8388608
+innodb_log_file_size	5242880
+innodb_log_files_in_group	2
+innodb_log_group_home_dir	./
+innodb_max_dirty_pages_pct	75
+innodb_max_purge_lag	0
+innodb_mirrored_log_groups	1
+innodb_old_blocks_pct	37
+innodb_old_blocks_time	0
+innodb_open_files	300
+innodb_overwrite_relay_log_info	OFF
+innodb_page_size	16384
+innodb_pass_corrupt_table	0
+innodb_read_ahead	linear
+innodb_read_ahead_threshold	56
+innodb_read_io_threads	4
+innodb_recovery_stats	OFF
+innodb_replication_delay	0
+innodb_rollback_on_timeout	OFF
+innodb_show_locks_held	10
+innodb_show_verbose_locks	0
+innodb_spin_wait_delay	6
+innodb_stats_auto_update	1
+innodb_stats_method	nulls_equal
+innodb_stats_on_metadata	ON
+innodb_stats_sample_pages	8
+innodb_stats_update_need_lock	1
+innodb_strict_mode	OFF
+innodb_support_xa	ON
+innodb_sync_spin_loops	30
+innodb_table_locks	ON
+innodb_thread_concurrency	0
+innodb_thread_concurrency_timer_based	OFF
+innodb_thread_sleep_delay	10000
+innodb_use_purge_thread	1
+innodb_use_sys_malloc	ON
+innodb_use_sys_stats_table	OFF
+innodb_version	1.0.12-12.1
+innodb_write_io_threads	4
+insert_id	0
+interactive_timeout	28800
+join_buffer_size	131072
+keep_files_on_create	OFF
+key_buffer_size	1048576
+key_cache_age_threshold	300
+key_cache_block_size	1024
+key_cache_division_limit	100
+key_cache_segments	0
+language	/home/philips/bzr/maria-5.2/sql/share/english/
+large_files_support	ON
+large_page_size	0
+large_pages	OFF
+last_insert_id	0
+lc_time_names	en_US
+license	GPL
+local_infile	ON
+locked_in_memory	OFF
+log	ON
+log_bin	OFF
+log_bin_trust_function_creators	ON
+log_bin_trust_routine_creators	ON
+log_error	
+log_output	FILE,TABLE
+log_queries_not_using_indexes	OFF
+log_slave_updates	OFF
+log_slow_filter	
+log_slow_queries	ON
+log_slow_rate_limit	1
+log_slow_time	10.000000
+log_slow_verbosity	
+log_warnings	1
+long_query_time	10.000000
+low_priority_updates	OFF
+lower_case_file_system	OFF
+lower_case_table_names	0
+maria_block_size	8192
+maria_checkpoint_interval	30
+maria_force_start_after_recovery_failures	0
+maria_group_commit	none
+maria_group_commit_interval	0
+maria_log_file_size	1073741824
+maria_log_purge_type	immediate
+maria_max_sort_file_size	9223372036853727232
+maria_page_checksum	ON
+maria_pagecache_age_threshold	300
+maria_pagecache_buffer_size	134213632
+maria_pagecache_division_limit	100
+maria_recover	NORMAL
+maria_repair_threads	1
+maria_sort_buffer_size	134217728
+maria_stats_method	nulls_unequal
+maria_sync_log_dir	NEWFILE
+maria_used_for_temp_tables	ON
+max_allowed_packet	1048576
+max_binlog_cache_size	4294963200
+max_binlog_size	1073741824
+max_connect_errors	10
+max_connections	151
+max_delayed_threads	20
+max_error_count	64
+max_heap_table_size	1048576
+max_insert_delayed_threads	20
+max_join_size	4294967295
+max_length_for_sort_data	1024
+max_prepared_stmt_count	16382
+max_relay_log_size	0
+max_seeks_for_key	4294967295
+max_sort_length	1024
+max_sp_recursion_depth	0
+max_tmp_tables	32
+max_user_connections	0
+max_write_lock_count	4294967295
+min_examined_row_limit	0
+multi_range_count	256
+myisam_data_pointer_size	6
+myisam_max_sort_file_size	2146435072
+myisam_mmap_size	4294967295
+myisam_recover_options	DEFAULT
+myisam_repair_threads	1
+myisam_sort_buffer_size	8388608
+myisam_stats_method	nulls_unequal
+myisam_use_mmap	OFF
+net_buffer_length	16384
+net_read_timeout	30
+net_retry_count	10
+net_write_timeout	60
+new	OFF
+old	OFF
+old_alter_table	OFF
+old_passwords	OFF
+open_files_limit	1024
+optimizer_prune_level	1
+optimizer_search_depth	62
+optimizer_switch	index_merge=on,index_merge_union=on,index_merge_sort_union=on,index_merge_intersection=on
+pid_file	/home/philips/bzr/maria-5.2/mysql-test/var/run/mysqld.1.pid
+plugin_dir	/home/philips/bzr/maria-5.2/mysql-test/var/plugins
+plugin_maturity	unknown
+port	13000
+preload_buffer_size	32768
+profiling	OFF
+profiling_history_size	15
+protocol_version	10
+pseudo_thread_id	1
+query_alloc_block_size	8192
+query_cache_limit	1048576
+query_cache_min_res_unit	4096
+query_cache_size	0
+query_cache_type	ON
+query_cache_wlock_invalidate	OFF
+query_prealloc_size	8192
+rand_seed1	
+rand_seed2	
+range_alloc_block_size	4096
+read_buffer_size	131072
+read_only	OFF
+read_rnd_buffer_size	262144
+relay_log	
+relay_log_index	
+relay_log_info_file	relay-log.info
+relay_log_purge	ON
+relay_log_space_limit	0
+report_host	
+report_password	
+report_port	3306
+report_user	
+rpl_recovery_rank	0
+secure_auth	OFF
+secure_file_priv	/home/philips/bzr/maria-5.2/mysql-test/var/
+server_id	1
+skip_external_locking	ON
+skip_name_resolve	OFF
+skip_networking	OFF
+skip_show_database	OFF
+slave_compressed_protocol	OFF
+slave_exec_mode	STRICT
+slave_load_tmpdir	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1
+slave_net_timeout	120
+slave_skip_errors	OFF
+slave_transaction_retries	10
+slow_launch_time	2
+slow_query_log	ON
+slow_query_log_file	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/mysqld-slow.log
+socket	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1.sock
+sort_buffer_size	262144
+sql_auto_is_null	ON
+sql_big_selects	ON
+sql_big_tables	OFF
+sql_buffer_result	OFF
+sql_log_bin	ON
+sql_log_off	OFF
+sql_log_update	ON
+sql_low_priority_updates	OFF
+sql_max_join_size	4294967295
+sql_mode	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION
+sql_notes	ON
+sql_quote_show_create	ON
+sql_safe_updates	OFF
+sql_select_limit	4294967295
+sql_slave_skip_counter	
+sql_warnings	OFF
+ssl_ca	
+ssl_capath	
+ssl_cert	
+ssl_cipher	
+ssl_key	
+storage_engine	MyISAM
+sync_binlog	0
+sync_frm	OFF
+system_time_zone	EET
+table_definition_cache	256
+table_lock_wait_timeout	50
+table_open_cache	64
+table_type	MyISAM
+thread_cache_size	0
+thread_handling	one-thread-per-connection
+thread_stack	294912
+time_format	%H:%i:%s
+time_zone	SYSTEM
+timed_mutexes	OFF
+timestamp	(timestamp)
+tmp_table_size	16777216
+tmpdir	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1
+transaction_alloc_block_size	8192
+transaction_prealloc_size	4096
+tx_isolation	REPEATABLE-READ
+unique_checks	ON
+updatable_views_with_limit	YES
+userstat	OFF
+version	5.2.3-MariaDB-log
+version_comment	Source distribution
+version_compile_machine	i686
+version_compile_os	pc-linux-gnu
+wait_timeout	28800
+warning_count	0
+USE mysql;
+SHOW TABLES;
+Tables_in_mysql
+columns_priv
+db
+event
+func
+general_log
+help_category
+help_keyword
+help_relation
+help_topic
+host
+ndb_binlog_index
+plugin
+proc
+procs_priv
+servers
+slow_log
+tables_priv
+time_zone
+time_zone_leap_second
+time_zone_name
+time_zone_transition
+time_zone_transition_type
+user
+SELECT * FROM mysql.columns_priv;
+Host	Db	User	Table_name	Column_name	Timestamp	Column_priv
+SHOW PRIVILEGES;
+Privilege	Context	Comment
+Alter	Tables	To alter the table
+Alter routine	Functions,Procedures	To alter or drop stored functions/procedures
+Create	Databases,Tables,Indexes	To create new databases and tables
+Create routine	Databases	To use CREATE FUNCTION/PROCEDURE
+Create temporary tables	Databases	To use CREATE TEMPORARY TABLE
+Create view	Tables	To create new views
+Create user	Server Admin	To create new users
+Delete	Tables	To delete existing rows
+Drop	Databases,Tables	To drop databases, tables, and views
+Event	Server Admin	To create, alter, drop and execute events
+Execute	Functions,Procedures	To execute stored routines
+File	File access on server	To read and write files on the server
+Grant option	Databases,Tables,Functions,Procedures	To give to other users those privileges you possess
+Index	Tables	To create or drop indexes
+Insert	Tables	To insert data into tables
+Lock tables	Databases	To use LOCK TABLES (together with SELECT privilege)
+Process	Server Admin	To view the plain text of currently executing queries
+References	Databases,Tables	To have references on tables
+Reload	Server Admin	To reload or refresh tables, logs and privileges
+Replication client	Server Admin	To ask where the slave or master servers are
+Replication slave	Server Admin	To read binary log events from the master
+Select	Tables	To retrieve rows from table
+Show databases	Server Admin	To see all databases with SHOW DATABASES
+Show view	Tables	To see views with SHOW CREATE VIEW
+Shutdown	Server Admin	To shut down the server
+Super	Server Admin	To use KILL thread, SET GLOBAL, CHANGE MASTER, etc.
+Trigger	Tables	To use triggers
+Update	Tables	To update existing rows
+Usage	Server Admin	No privileges - allow connect only
+SHOW GRANTS;
+Grants for root@localhost
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION
+SHOW DATABASES;
+Database
+information_schema
+mtr
+mysql
+test
+upgrade_common
+SELECT * FROM mysql.db;
+Host	Db	User	Select_priv	Insert_priv	Update_priv	Delete_priv	Create_priv	Drop_priv	Grant_priv	References_priv	Index_priv	Alter_priv	Create_tmp_table_priv	Lock_tables_priv	Create_view_priv	Show_view_priv	Create_routine_priv	Alter_routine_priv	Execute_priv	Event_priv	Trigger_priv
+%	test		Y	Y	Y	Y	Y	Y	N	Y	Y	Y	Y	Y	Y	Y	Y	N	N	Y	Y
+%	test\_%		Y	Y	Y	Y	Y	Y	N	Y	Y	Y	Y	Y	Y	Y	Y	N	N	Y	Y
+SHOW EVENTS;
+Db	Name	Definer	Time zone	Type	Execute at	Interval value	Interval field	Starts	Ends	Status	Originator	character_set_client	collation_connection	Database Collation
+SELECT * FROM mysql.event;
+db	name	body	definer	execute_at	interval_value	interval_field	created	modified	last_executed	starts	ends	status	on_completion	sql_mode	comment	originator	time_zone	character_set_client	collation_connection	db_collation	body_utf8
+upgrade_common	event_simple	INSERT INTO event_t1 VALUES (1)	root@localhost	NULL	1	SECOND	(date_time)	(date_time)	NULL	(date_time)	NULL	ENABLED	PRESERVE	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	012345678901234567890123456789012345678901234567890123456789	1	SYSTEM	latin1	latin1_swedish_ci	utf8_bin	INSERT INTO event_t1 VALUES (1)
+SHOW FUNCTION STATUS;
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+upgrade_common	func_complex	FUNCTION	root@localhost	(date_time)	(date_time)	DEFINER	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin
+upgrade_common	func_simple	FUNCTION	root@localhost	(date_time)	(date_time)	DEFINER		latin1	latin1_swedish_ci	utf8_bin
+SELECT * FROM mysql.func;
+name	ret	dl	type
+DESCRIBE mysql.general_log;
+Field	Type	Null	Key	Default	Extra
+event_time	timestamp	NO		CURRENT_TIMESTAMP	on update CURRENT_TIMESTAMP
+user_host	mediumtext	NO		NULL	
+thread_id	int(11)	NO		NULL	
+server_id	int(10) unsigned	NO		NULL	
+command_type	varchar(64)	NO		NULL	
+argument	mediumtext	NO		NULL	
+SELECT * FROM mysql.help_category ORDER BY help_category_id ASC LIMIT 1;
+help_category_id	name	parent_category_id	url
+1	Geographic	0	
+HELP 'contents';
+source_category_name	name	is_it_category
+Contents	Account Management	Y
+Contents	Administration	Y
+Contents	Compound Statements	Y
+Contents	Data Definition	Y
+Contents	Data Manipulation	Y
+Contents	Data Types	Y
+Contents	Functions	Y
+Contents	Functions and Modifiers for Use with GROUP BY	Y
+Contents	Geographic Features	Y
+Contents	Language Structure	Y
+Contents	Plugins	Y
+Contents	Table Maintenance	Y
+Contents	Transactions	Y
+Contents	User-Defined Functions	Y
+Contents	Utility	Y
+SELECT * FROM mysql.help_keyword ORDER BY help_keyword_id ASC LIMIT 1;
+help_keyword_id	name
+0	JOIN
+HELP 'WAIT';
+name	is_it_category
+ALTER TABLESPACE	N
+CREATE TABLESPACE	N
+SELECT * FROM mysql.help_relation ORDER BY help_topic_id ASC, help_keyword_id ASC LIMIT 1;
+help_topic_id	help_keyword_id
+0	430
+SELECT * FROM mysql.help_topic ORDER BY help_topic_id ASC LIMIT 1;
+help_topic_id	name	help_category_id	description	example	url
+0	MIN	16	Syntax:
+MIN([DISTINCT] expr)
+
+Returns the minimum value of expr. MIN() may take a string argument; in
+such cases, it returns the minimum string value. See
+http://dev.mysql.com/doc/refman/5.1/en/mysql-indexes.html. The DISTINCT
+keyword can be used to find the minimum of the distinct values of expr,
+however, this produces the same result as omitting DISTINCT.
+
+MIN() returns NULL if there were no matching rows.
+
+URL: http://dev.mysql.com/doc/refman/5.1/en/group-by-functions.html
+
+	mysql> SELECT student_name, MIN(test_score), MAX(test_score)
+    ->        FROM student
+    ->        GROUP BY student_name;
+	http://dev.mysql.com/doc/refman/5.1/en/group-by-functions.html
+HELP 'SELECT';
+name	description	example
+SELECT	Syntax:
+SELECT
+    [ALL | DISTINCT | DISTINCTROW ]
+      [HIGH_PRIORITY]
+      [STRAIGHT_JOIN]
+      [SQL_SMALL_RESULT] [SQL_BIG_RESULT] [SQL_BUFFER_RESULT]
+      [SQL_CACHE | SQL_NO_CACHE] [SQL_CALC_FOUND_ROWS]
+    select_expr [, select_expr ...]
+    [FROM table_references
+    [WHERE where_condition]
+    [GROUP BY {col_name | expr | position}
+      [ASC | DESC], ... [WITH ROLLUP]]
+    [HAVING where_condition]
+    [ORDER BY {col_name | expr | position}
+      [ASC | DESC], ...]
+    [LIMIT {[offset,] row_count | row_count OFFSET offset}]
+    [PROCEDURE procedure_name(argument_list)]
+    [INTO OUTFILE 'file_name'
+        [CHARACTER SET charset_name]
+        export_options
+      | INTO DUMPFILE 'file_name'
+      | INTO var_name [, var_name]]
+    [FOR UPDATE | LOCK IN SHARE MODE]]
+
+SELECT is used to retrieve rows selected from one or more tables, and
+can include UNION statements and subqueries. See [HELP UNION], and
+http://dev.mysql.com/doc/refman/5.1/en/subqueries.html.
+
+The most commonly used clauses of SELECT statements are these:
+
+o Each select_expr indicates a column that you want to retrieve. There
+  must be at least one select_expr.
+
+o table_references indicates the table or tables from which to retrieve
+  rows. Its syntax is described in [HELP JOIN].
+
+o The WHERE clause, if given, indicates the condition or conditions
+  that rows must satisfy to be selected. where_condition is an
+  expression that evaluates to true for each row to be selected. The
+  statement selects all rows if there is no WHERE clause.
+
+  In the WHERE clause, you can use any of the functions and operators
+  that MySQL supports, except for aggregate (summary) functions. See
+  http://dev.mysql.com/doc/refman/5.1/en/functions.html.
+
+SELECT can also be used to retrieve rows computed without reference to
+any table.
+
+URL: http://dev.mysql.com/doc/refman/5.1/en/select.html
+
+	
+SELECT * FROM mysql.host;
+Host	Db	Select_priv	Insert_priv	Update_priv	Delete_priv	Create_priv	Drop_priv	Grant_priv	References_priv	Index_priv	Alter_priv	Create_tmp_table_priv	Lock_tables_priv	Create_view_priv	Show_view_priv	Create_routine_priv	Alter_routine_priv	Execute_priv	Trigger_priv
+SELECT * FROM mysql.plugin;
+name	dl
+SHOW PLUGINS;
+Name	Status	Type	Library	License
+binlog	ACTIVE	STORAGE ENGINE	NULL	GPL
+mysql_native_password	ACTIVE	AUTHENTICATION	NULL	GPL
+mysql_old_password	ACTIVE	AUTHENTICATION	NULL	GPL
+MyISAM	ACTIVE	STORAGE ENGINE	NULL	GPL
+partition	ACTIVE	STORAGE ENGINE	NULL	GPL
+ARCHIVE	ACTIVE	STORAGE ENGINE	NULL	GPL
+BLACKHOLE	ACTIVE	STORAGE ENGINE	NULL	GPL
+CSV	ACTIVE	STORAGE ENGINE	NULL	GPL
+FEDERATED	ACTIVE	STORAGE ENGINE	NULL	GPL
+MEMORY	ACTIVE	STORAGE ENGINE	NULL	GPL
+Maria	ACTIVE	DAEMON	NULL	GPL
+Aria	ACTIVE	STORAGE ENGINE	NULL	GPL
+MRG_MYISAM	ACTIVE	STORAGE ENGINE	NULL	GPL
+PBXT	DISABLED	STORAGE ENGINE	NULL	GPL
+PBXT_STATISTICS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+InnoDB	ACTIVE	STORAGE ENGINE	NULL	GPL
+INNODB_RSEG	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES_INDEX	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES_BLOB	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_TRX	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_LOCKS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_LOCK_WAITS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMP	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMP_RESET	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMPMEM	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMPMEM_RESET	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_TABLE_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_INDEX_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+XTRADB_ADMIN_COMMAND	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_TABLES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_INDEXES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+XTRADB_ENHANCEMENTS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+SHOW ENGINES;
+Engine	Support	Comment	Transactions	XA	Savepoints
+MEMORY	YES	Hash based, stored in memory, useful for temporary tables	NO	NO	NO
+MRG_MYISAM	YES	Collection of identical MyISAM tables	NO	NO	NO
+FEDERATED	YES	FederatedX pluggable storage engine	YES	NO	YES
+BLACKHOLE	YES	/dev/null storage engine (anything you write to it disappears)	NO	NO	NO
+CSV	YES	CSV storage engine	NO	NO	NO
+Aria	YES	Crash-safe tables with MyISAM heritage	YES	NO	NO
+ARCHIVE	YES	Archive storage engine	NO	NO	NO
+MyISAM	DEFAULT	Default engine as of MySQL 3.23 with great performance	NO	NO	NO
+InnoDB	YES	XtraDB engine based on InnoDB plugin. Supports transactions, row-level locking, and foreign keys	YES	YES	YES
+PBXT	NO	High performance, multi-versioning transactional engine	NULL	NULL	NULL
+SELECT * FROM mysql.proc;
+db	name	type	specific_name	language	sql_data_access	is_deterministic	security_type	param_list	returns	body	definer	created	modified	sql_mode	comment	character_set_client	collation_connection	db_collation	body_utf8
+mtr	check_warnings	PROCEDURE	check_warnings	SQL	CONTAINS_SQL	NO	DEFINER	OUT result INT		BEGIN   DECLARE `pos` bigint unsigned;    SET SQL_LOG_BIN=0;    UPDATE error_log el, global_suppressions gs     SET suspicious=0       WHERE el.suspicious=1 AND el.line REGEXP gs.pattern;    UPDATE error_log el, test_suppressions ts     SET suspicious=0       WHERE el.suspicious=1 AND el.line REGEXP ts.pattern;    SELECT COUNT(*) INTO @num_warnings FROM error_log     WHERE suspicious=1;    IF @num_warnings > 0 THEN     SELECT line         FROM error_log WHERE suspicious=1;     SELECT 2 INTO result;   ELSE     SELECT 0 INTO RESULT;   END IF;    TRUNCATE test_suppressions;   DROP TABLE error_log;  END	root@localhost	(date_time)	(date_time)			utf8	utf8_general_ci	latin1_swedish_ci	BEGIN   DECLARE `pos` bigint unsigned;    SET SQL_LOG_BIN=0;    UPDATE error_log el, global_suppressions gs     SET suspicious=0       WHERE el.suspicious=1 AND el.line REGEXP gs.pattern;    UPDATE error_log el, test_suppressions ts     SET suspicious=0       WHERE el.suspicious=1 AND el.line REGEXP ts.pattern;    SELECT COUNT(*) INTO @num_warnings FROM error_log     WHERE suspicious=1;    IF @num_warnings > 0 THEN     SELECT line         FROM error_log WHERE suspicious=1;     SELECT 2 INTO result;   ELSE     SELECT 0 INTO RESULT;   END IF;    TRUNCATE test_suppressions;   DROP TABLE error_log;  END
+mtr	add_suppression	PROCEDURE	add_suppression	SQL	CONTAINS_SQL	NO	DEFINER	pattern VARCHAR(255)		BEGIN   INSERT INTO test_suppressions (pattern) VALUES (pattern); END	root@localhost	(date_time)	(date_time)			utf8	utf8_general_ci	latin1_swedish_ci	BEGIN   INSERT INTO test_suppressions (pattern) VALUES (pattern); END
+mtr	check_testcase	PROCEDURE	check_testcase	SQL	CONTAINS_SQL	NO	DEFINER			BEGIN    SELECT * FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES    WHERE variable_name != 'timestamp'      AND variable_name != 'INNODB_IBUF_MAX_SIZE'    ORDER BY variable_name;    SELECT * FROM INFORMATION_SCHEMA.SCHEMATA;    SELECT table_name AS tables_in_test FROM INFORMATION_SCHEMA.TABLES     WHERE table_schema='test';    SELECT CONCAT(table_schema, '.', table_name) AS tables_in_mysql     FROM INFORMATION_SCHEMA.TABLES       WHERE table_schema='mysql' AND table_name != 'ndb_apply_status'         ORDER BY tables_in_mysql;   SELECT CONCAT(table_schema, '.', table_name) AS columns_in_mysql,   	 column_name, ordinal_position, column_default, is_nullable,          data_type, character_maximum_length, character_octet_length,          numeric_precision, numeric_scale, character_set_name,          collation_name, column_type, column_key, extra, column_comment     FROM INFORMATION_SCHEMA.COLUMNS       WHERE table_schema='mysql' AND table_name != 'ndb_apply_status'         ORDER BY columns_in_mysql;    checksum table     mysql.columns_priv,     mysql.db,     mysql.func,     mysql.help_category,     mysql.help_keyword,     mysql.help_relation,     mysql.host,     mysql.proc,     mysql.procs_priv,     mysql.tables_priv,     mysql.time_zone,     mysql.time_zone_leap_second,     mysql.time_zone_name,     mysql.time_zone_transition,     mysql.time_zone_transition_type,     mysql.user;  END	root@localhost	(date_time)	(date_time)			utf8	utf8_general_ci	latin1_swedish_ci	BEGIN    SELECT * FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES    WHERE variable_name != 'timestamp'      AND variable_name != 'INNODB_IBUF_MAX_SIZE'    ORDER BY variable_name;    SELECT * FROM INFORMATION_SCHEMA.SCHEMATA;    SELECT table_name AS tables_in_test FROM INFORMATION_SCHEMA.TABLES     WHERE table_schema='test';    SELECT CONCAT(table_schema, '.', table_name) AS tables_in_mysql     FROM INFORMATION_SCHEMA.TABLES       WHERE table_schema='mysql' AND table_name != 'ndb_apply_status'         ORDER BY tables_in_mysql;   SELECT CONCAT(table_schema, '.', table_name) AS columns_in_mysql,   	 column_name, ordinal_position, column_default, is_nullable,          data_type, character_maximum_length, character_octet_length,          numeric_precision, numeric_scale, character_set_name,          collation_name, column_type, column_key, extra, column_comment     FROM INFORMATION_SCHEMA.COLUMNS       WHERE table_schema='mysql' AND table_name != 'ndb_apply_status'         ORDER BY columns_in_mysql;    checksum table     mysql.columns_priv,     mysql.db,     mysql.func,     mysql.help_category,     mysql.help_keyword,     mysql.help_relation,     mysql.host,     mysql.proc,     mysql.procs_priv,     mysql.tables_priv,     mysql.time_zone,     mysql.time_zone_leap_second,     mysql.time_zone_name,     mysql.time_zone_transition,     mysql.time_zone_transition_type,     mysql.user;  END
+mtr	force_restart	PROCEDURE	force_restart	SQL	CONTAINS_SQL	NO	DEFINER			BEGIN   SELECT 1 INTO OUTFILE 'force_restart'; END	root@localhost	(date_time)	(date_time)			utf8	utf8_general_ci	latin1_swedish_ci	BEGIN   SELECT 1 INTO OUTFILE 'force_restart'; END
+upgrade_common	proc_simple	PROCEDURE	proc_simple	SQL	CONTAINS_SQL	NO	DEFINER	OUT param1 INT		BEGIN
+SELECT COUNT(*) INTO param1 FROM proc_table;
+END	root@localhost	(date_time)	(date_time)	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION		latin1	latin1_swedish_ci	utf8_bin	BEGIN
+SELECT COUNT(*) INTO param1 FROM proc_table;
+END
+upgrade_common	very_very_very_very_very_very_very_long_name	PROCEDURE	very_very_very_very_very_very_very_long_name	SQL	MODIFIES_SQL_DATA	NO	DEFINER	
+INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+		BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END	root@localhost	(date_time)	(date_time)	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin	BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END
+upgrade_common	func_simple	FUNCTION	func_simple	SQL	CONTAINS_SQL	YES	DEFINER	s CHAR(20)	char(50) CHARSET utf8	RETURN s	root@localhost	(date_time)	(date_time)	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION		latin1	latin1_swedish_ci	utf8_bin	RETURN s
+upgrade_common	func_complex	FUNCTION	func_complex	SQL	MODIFIES_SQL_DATA	NO	DEFINER	
+very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+	set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') CHARSET utf8	RETURN param2	root@localhost	(date_time)	(date_time)	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin	RETURN param2
+SHOW PROCEDURE STATUS;
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+mtr	add_suppression	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		utf8	utf8_general_ci	latin1_swedish_ci
+mtr	check_testcase	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		utf8	utf8_general_ci	latin1_swedish_ci
+mtr	check_warnings	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		utf8	utf8_general_ci	latin1_swedish_ci
+mtr	force_restart	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		utf8	utf8_general_ci	latin1_swedish_ci
+upgrade_common	proc_simple	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		latin1	latin1_swedish_ci	utf8_bin
+upgrade_common	very_very_very_very_very_very_very_long_name	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin
+SELECT * FROM mysql.procs_priv;
+Host	Db	User	Routine_name	Routine_type	Grantor	Proc_priv	Timestamp
+SELECT * FROM mysql.servers;
+Server_name	Host	Db	Username	Password	Port	Socket	Wrapper	Owner
+SELECT * FROM slow_log;
+start_time	user_host	query_time	lock_time	rows_sent	rows_examined	db	last_insert_id	insert_id	server_id	sql_text
+SELECT * FROM tables_priv;
+Host	Db	User	Table_name	Grantor	Timestamp	Table_priv	Column_priv
+SELECT * FROM time_zone;
+Time_zone_id	Use_leap_seconds
+1	N
+2	N
+3	N
+4	Y
+5	N
+SELECT * FROM time_zone_leap_second;
+Transition_time	Correction
+78796800	1
+94694401	2
+126230402	3
+157766403	4
+189302404	5
+220924805	6
+252460806	7
+283996807	8
+315532808	9
+362793609	10
+394329610	11
+425865611	12
+489024012	13
+567993613	14
+631152014	15
+662688015	16
+709948816	17
+741484817	18
+773020818	19
+820454419	20
+867715220	21
+915148821	22
+SELECT * FROM time_zone_name;
+Name	Time_zone_id
+MET	1
+UTC	2
+Universal	2
+Europe/Moscow	3
+leap/Europe/Moscow	4
+Japan	5
+SELECT * FROM time_zone_transition;
+Time_zone_id	Transition_time	Transition_type_id
+1	-1693706400	0
+1	-1680483600	1
+1	-1663455600	2
+1	-1650150000	3
+1	-1632006000	2
+1	-1618700400	3
+1	-938905200	2
+1	-857257200	3
+1	-844556400	2
+1	-828226800	3
+1	-812502000	2
+1	-796777200	3
+1	228877200	2
+1	243997200	3
+1	260326800	2
+1	276051600	3
+1	291776400	2
+1	307501200	3
+1	323830800	2
+1	338950800	3
+1	354675600	2
+1	370400400	3
+1	386125200	2
+1	401850000	3
+1	417574800	2
+1	433299600	3
+1	449024400	2
+1	465354000	3
+1	481078800	2
+1	496803600	3
+1	512528400	2
+1	528253200	3
+1	543978000	2
+1	559702800	3
+1	575427600	2
+1	591152400	3
+1	606877200	2
+1	622602000	3
+1	638326800	2
+1	654656400	3
+1	670381200	2
+1	686106000	3
+1	701830800	2
+1	717555600	3
+1	733280400	2
+1	749005200	3
+1	764730000	2
+1	780454800	3
+1	796179600	2
+1	811904400	3
+1	828234000	2
+1	846378000	3
+1	859683600	2
+1	877827600	3
+1	891133200	2
+1	909277200	3
+1	922582800	2
+1	941331600	3
+1	954032400	2
+1	972781200	3
+1	985482000	2
+1	1004230800	3
+1	1017536400	2
+1	1035680400	3
+1	1048986000	2
+1	1067130000	3
+1	1080435600	2
+1	1099184400	3
+1	1111885200	2
+1	1130634000	3
+1	1143334800	2
+1	1162083600	3
+1	1174784400	2
+1	1193533200	3
+1	1206838800	2
+1	1224982800	3
+1	1238288400	2
+1	1256432400	3
+1	1269738000	2
+1	1288486800	3
+1	1301187600	2
+1	1319936400	3
+1	1332637200	2
+1	1351386000	3
+1	1364691600	2
+1	1382835600	3
+1	1396141200	2
+1	1414285200	3
+1	1427590800	2
+1	1445734800	3
+1	1459040400	2
+1	1477789200	3
+1	1490490000	2
+1	1509238800	3
+1	1521939600	2
+1	1540688400	3
+1	1553994000	2
+1	1572138000	3
+1	1585443600	2
+1	1603587600	3
+1	1616893200	2
+1	1635642000	3
+1	1648342800	2
+1	1667091600	3
+1	1679792400	2
+1	1698541200	3
+1	1711846800	2
+1	1729990800	3
+1	1743296400	2
+1	1761440400	3
+1	1774746000	2
+1	1792890000	3
+1	1806195600	2
+1	1824944400	3
+1	1837645200	2
+1	1856394000	3
+1	1869094800	2
+1	1887843600	3
+1	1901149200	2
+1	1919293200	3
+1	1932598800	2
+1	1950742800	3
+1	1964048400	2
+1	1982797200	3
+1	1995498000	2
+1	2014246800	3
+1	2026947600	2
+1	2045696400	3
+1	2058397200	2
+1	2077146000	3
+1	2090451600	2
+1	2108595600	3
+1	2121901200	2
+1	2140045200	3
+3	-1688265000	2
+3	-1656819048	1
+3	-1641353448	2
+3	-1627965048	3
+3	-1618716648	1
+3	-1596429048	3
+3	-1593829848	5
+3	-1589860800	4
+3	-1542427200	5
+3	-1539493200	6
+3	-1525323600	5
+3	-1522728000	4
+3	-1491188400	7
+3	-1247536800	4
+3	354920400	5
+3	370728000	4
+3	386456400	5
+3	402264000	4
+3	417992400	5
+3	433800000	4
+3	449614800	5
+3	465346800	8
+3	481071600	9
+3	496796400	8
+3	512521200	9
+3	528246000	8
+3	543970800	9
+3	559695600	8
+3	575420400	9
+3	591145200	8
+3	606870000	9
+3	622594800	8
+3	638319600	9
+3	654649200	8
+3	670374000	10
+3	686102400	11
+3	695779200	8
+3	701812800	5
+3	717534000	4
+3	733273200	9
+3	748998000	8
+3	764722800	9
+3	780447600	8
+3	796172400	9
+3	811897200	8
+3	828226800	9
+3	846370800	8
+3	859676400	9
+3	877820400	8
+3	891126000	9
+3	909270000	8
+3	922575600	9
+3	941324400	8
+3	954025200	9
+3	972774000	8
+3	985474800	9
+3	1004223600	8
+3	1017529200	9
+3	1035673200	8
+3	1048978800	9
+3	1067122800	8
+3	1080428400	9
+3	1099177200	8
+3	1111878000	9
+3	1130626800	8
+3	1143327600	9
+3	1162076400	8
+3	1174777200	9
+3	1193526000	8
+3	1206831600	9
+3	1224975600	8
+3	1238281200	9
+3	1256425200	8
+3	1269730800	9
+3	1288479600	8
+3	1301180400	9
+3	1319929200	8
+3	1332630000	9
+3	1351378800	8
+3	1364684400	9
+3	1382828400	8
+3	1396134000	9
+3	1414278000	8
+3	1427583600	9
+3	1445727600	8
+3	1459033200	9
+3	1477782000	8
+3	1490482800	9
+3	1509231600	8
+3	1521932400	9
+3	1540681200	8
+3	1553986800	9
+3	1572130800	8
+3	1585436400	9
+3	1603580400	8
+3	1616886000	9
+3	1635634800	8
+3	1648335600	9
+3	1667084400	8
+3	1679785200	9
+3	1698534000	8
+3	1711839600	9
+3	1729983600	8
+3	1743289200	9
+3	1761433200	8
+3	1774738800	9
+3	1792882800	8
+3	1806188400	9
+3	1824937200	8
+3	1837638000	9
+3	1856386800	8
+3	1869087600	9
+3	1887836400	8
+3	1901142000	9
+3	1919286000	8
+3	1932591600	9
+3	1950735600	8
+3	1964041200	9
+3	1982790000	8
+3	1995490800	9
+3	2014239600	8
+3	2026940400	9
+3	2045689200	8
+3	2058390000	9
+3	2077138800	8
+3	2090444400	9
+3	2108588400	8
+3	2121894000	9
+3	2140038000	8
+4	-1688265000	2
+4	-1656819048	1
+4	-1641353448	2
+4	-1627965048	3
+4	-1618716648	1
+4	-1596429048	3
+4	-1593829848	5
+4	-1589860800	4
+4	-1542427200	5
+4	-1539493200	6
+4	-1525323600	5
+4	-1522728000	4
+4	-1491188400	7
+4	-1247536800	4
+4	354920409	5
+4	370728010	4
+4	386456410	5
+4	402264011	4
+4	417992411	5
+4	433800012	4
+4	449614812	5
+4	465346812	8
+4	481071612	9
+4	496796413	8
+4	512521213	9
+4	528246013	8
+4	543970813	9
+4	559695613	8
+4	575420414	9
+4	591145214	8
+4	606870014	9
+4	622594814	8
+4	638319615	9
+4	654649215	8
+4	670374016	10
+4	686102416	11
+4	695779216	8
+4	701812816	5
+4	717534017	4
+4	733273217	9
+4	748998018	8
+4	764722818	9
+4	780447619	8
+4	796172419	9
+4	811897219	8
+4	828226820	9
+4	846370820	8
+4	859676420	9
+4	877820421	8
+4	891126021	9
+4	909270021	8
+4	922575622	9
+4	941324422	8
+4	954025222	9
+4	972774022	8
+4	985474822	9
+4	1004223622	8
+4	1017529222	9
+4	1035673222	8
+4	1048978822	9
+4	1067122822	8
+4	1080428422	9
+4	1099177222	8
+4	1111878022	9
+4	1130626822	8
+4	1143327622	9
+4	1162076422	8
+4	1174777222	9
+4	1193526022	8
+4	1206831622	9
+4	1224975622	8
+4	1238281222	9
+4	1256425222	8
+4	1269730822	9
+4	1288479622	8
+4	1301180422	9
+4	1319929222	8
+4	1332630022	9
+4	1351378822	8
+4	1364684422	9
+4	1382828422	8
+4	1396134022	9
+4	1414278022	8
+4	1427583622	9
+4	1445727622	8
+4	1459033222	9
+4	1477782022	8
+4	1490482822	9
+4	1509231622	8
+4	1521932422	9
+4	1540681222	8
+4	1553986822	9
+4	1572130822	8
+4	1585436422	9
+4	1603580422	8
+4	1616886022	9
+4	1635634822	8
+4	1648335622	9
+4	1667084422	8
+4	1679785222	9
+4	1698534022	8
+4	1711839622	9
+4	1729983622	8
+4	1743289222	9
+4	1761433222	8
+4	1774738822	9
+4	1792882822	8
+4	1806188422	9
+4	1824937222	8
+4	1837638022	9
+4	1856386822	8
+4	1869087622	9
+4	1887836422	8
+4	1901142022	9
+4	1919286022	8
+4	1932591622	9
+4	1950735622	8
+4	1964041222	9
+4	1982790022	8
+4	1995490822	9
+4	2014239622	8
+4	2026940422	9
+4	2045689222	8
+4	2058390022	9
+4	2077138822	8
+4	2090444422	9
+4	2108588422	8
+4	2121894022	9
+4	2140038022	8
+5	-1009875600	1
+SELECT * FROM time_zone_transition_type;
+Time_zone_id	Transition_type_id	Offset	Is_DST	Abbreviation
+1	0	7200	1	MEST
+1	1	3600	0	MET
+1	2	7200	1	MEST
+1	3	3600	0	MET
+2	0	0	0	UTC
+3	0	9000	0	MMT
+3	1	12648	1	MST
+3	2	9048	0	MMT
+3	3	16248	1	MDST
+3	4	10800	0	MSK
+3	5	14400	1	MSD
+3	6	18000	1	MSD
+3	7	7200	0	EET
+3	8	10800	0	MSK
+3	9	14400	1	MSD
+3	10	10800	1	EEST
+3	11	7200	0	EET
+4	0	9000	0	MMT
+4	1	12648	1	MST
+4	2	9048	0	MMT
+4	3	16248	1	MDST
+4	4	10800	0	MSK
+4	5	14400	1	MSD
+4	6	18000	1	MSD
+4	7	7200	0	EET
+4	8	10800	0	MSK
+4	9	14400	1	MSD
+4	10	10800	1	EEST
+4	11	7200	0	EET
+5	0	32400	0	CJT
+5	1	32400	0	JST
+USE upgrade_common;
+SHOW CREATE TABLE information_schema.CHARACTER_SETS;
+Table	Create Table
+CHARACTER_SETS	CREATE TEMPORARY TABLE `CHARACTER_SETS` (
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DEFAULT_COLLATE_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DESCRIPTION` varchar(60) NOT NULL DEFAULT '',
+  `MAXLEN` bigint(3) NOT NULL DEFAULT '0'
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLLATIONS;
+Table	Create Table
+COLLATIONS	CREATE TEMPORARY TABLE `COLLATIONS` (
+  `COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `ID` bigint(11) NOT NULL DEFAULT '0',
+  `IS_DEFAULT` varchar(3) NOT NULL DEFAULT '',
+  `IS_COMPILED` varchar(3) NOT NULL DEFAULT '',
+  `SORTLEN` bigint(3) NOT NULL DEFAULT '0'
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLLATION_CHARACTER_SET_APPLICABILITY;
+Table	Create Table
+COLLATION_CHARACTER_SET_APPLICABILITY	CREATE TEMPORARY TABLE `COLLATION_CHARACTER_SET_APPLICABILITY` (
+  `COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLUMNS;
+Table	Create Table
+COLUMNS	CREATE TEMPORARY TABLE `COLUMNS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ORDINAL_POSITION` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `COLUMN_DEFAULT` longtext,
+  `IS_NULLABLE` varchar(3) NOT NULL DEFAULT '',
+  `DATA_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `CHARACTER_MAXIMUM_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `CHARACTER_OCTET_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `NUMERIC_PRECISION` bigint(21) unsigned DEFAULT NULL,
+  `NUMERIC_SCALE` bigint(21) unsigned DEFAULT NULL,
+  `CHARACTER_SET_NAME` varchar(32) DEFAULT NULL,
+  `COLLATION_NAME` varchar(32) DEFAULT NULL,
+  `COLUMN_TYPE` longtext NOT NULL,
+  `COLUMN_KEY` varchar(3) NOT NULL DEFAULT '',
+  `EXTRA` varchar(27) NOT NULL DEFAULT '',
+  `PRIVILEGES` varchar(80) NOT NULL DEFAULT '',
+  `COLUMN_COMMENT` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.COLUMN_PRIVILEGES;
+Table	Create Table
+COLUMN_PRIVILEGES	CREATE TEMPORARY TABLE `COLUMN_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.ENGINES;
+Table	Create Table
+ENGINES	CREATE TEMPORARY TABLE `ENGINES` (
+  `ENGINE` varchar(64) NOT NULL DEFAULT '',
+  `SUPPORT` varchar(8) NOT NULL DEFAULT '',
+  `COMMENT` varchar(160) NOT NULL DEFAULT '',
+  `TRANSACTIONS` varchar(3) DEFAULT NULL,
+  `XA` varchar(3) DEFAULT NULL,
+  `SAVEPOINTS` varchar(3) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.EVENTS;
+Table	Create Table
+EVENTS	CREATE TEMPORARY TABLE `EVENTS` (
+  `EVENT_CATALOG` varchar(64) DEFAULT NULL,
+  `EVENT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `TIME_ZONE` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_BODY` varchar(8) NOT NULL DEFAULT '',
+  `EVENT_DEFINITION` longtext NOT NULL,
+  `EVENT_TYPE` varchar(9) NOT NULL DEFAULT '',
+  `EXECUTE_AT` datetime DEFAULT NULL,
+  `INTERVAL_VALUE` varchar(256) DEFAULT NULL,
+  `INTERVAL_FIELD` varchar(18) DEFAULT NULL,
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `STARTS` datetime DEFAULT NULL,
+  `ENDS` datetime DEFAULT NULL,
+  `STATUS` varchar(18) NOT NULL DEFAULT '',
+  `ON_COMPLETION` varchar(12) NOT NULL DEFAULT '',
+  `CREATED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_ALTERED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_EXECUTED` datetime DEFAULT NULL,
+  `EVENT_COMMENT` varchar(64) NOT NULL DEFAULT '',
+  `ORIGINATOR` bigint(10) NOT NULL DEFAULT '0',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.FILES;
+Table	Create Table
+FILES	CREATE TEMPORARY TABLE `FILES` (
+  `FILE_ID` bigint(4) NOT NULL DEFAULT '0',
+  `FILE_NAME` varchar(64) DEFAULT NULL,
+  `FILE_TYPE` varchar(20) NOT NULL DEFAULT '',
+  `TABLESPACE_NAME` varchar(64) DEFAULT NULL,
+  `TABLE_CATALOG` varchar(64) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) DEFAULT NULL,
+  `TABLE_NAME` varchar(64) DEFAULT NULL,
+  `LOGFILE_GROUP_NAME` varchar(64) DEFAULT NULL,
+  `LOGFILE_GROUP_NUMBER` bigint(4) DEFAULT NULL,
+  `ENGINE` varchar(64) NOT NULL DEFAULT '',
+  `FULLTEXT_KEYS` varchar(64) DEFAULT NULL,
+  `DELETED_ROWS` bigint(4) DEFAULT NULL,
+  `UPDATE_COUNT` bigint(4) DEFAULT NULL,
+  `FREE_EXTENTS` bigint(4) DEFAULT NULL,
+  `TOTAL_EXTENTS` bigint(4) DEFAULT NULL,
+  `EXTENT_SIZE` bigint(4) NOT NULL DEFAULT '0',
+  `INITIAL_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `MAXIMUM_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `AUTOEXTEND_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `CREATION_TIME` datetime DEFAULT NULL,
+  `LAST_UPDATE_TIME` datetime DEFAULT NULL,
+  `LAST_ACCESS_TIME` datetime DEFAULT NULL,
+  `RECOVER_TIME` bigint(4) DEFAULT NULL,
+  `TRANSACTION_COUNTER` bigint(4) DEFAULT NULL,
+  `VERSION` bigint(21) unsigned DEFAULT NULL,
+  `ROW_FORMAT` varchar(10) DEFAULT NULL,
+  `TABLE_ROWS` bigint(21) unsigned DEFAULT NULL,
+  `AVG_ROW_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_FREE` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `STATUS` varchar(20) NOT NULL DEFAULT '',
+  `EXTRA` varchar(255) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.GLOBAL_STATUS;
+Table	Create Table
+GLOBAL_STATUS	CREATE TEMPORARY TABLE `GLOBAL_STATUS` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.GLOBAL_VARIABLES;
+Table	Create Table
+GLOBAL_VARIABLES	CREATE TEMPORARY TABLE `GLOBAL_VARIABLES` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.KEY_COLUMN_USAGE;
+Table	Create Table
+KEY_COLUMN_USAGE	CREATE TEMPORARY TABLE `KEY_COLUMN_USAGE` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ORDINAL_POSITION` bigint(10) NOT NULL DEFAULT '0',
+  `POSITION_IN_UNIQUE_CONSTRAINT` bigint(10) DEFAULT NULL,
+  `REFERENCED_TABLE_SCHEMA` varchar(64) DEFAULT NULL,
+  `REFERENCED_TABLE_NAME` varchar(64) DEFAULT NULL,
+  `REFERENCED_COLUMN_NAME` varchar(64) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.PARTITIONS;
+Table	Create Table
+PARTITIONS	CREATE TEMPORARY TABLE `PARTITIONS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PARTITION_NAME` varchar(64) DEFAULT NULL,
+  `SUBPARTITION_NAME` varchar(64) DEFAULT NULL,
+  `PARTITION_ORDINAL_POSITION` bigint(21) unsigned DEFAULT NULL,
+  `SUBPARTITION_ORDINAL_POSITION` bigint(21) unsigned DEFAULT NULL,
+  `PARTITION_METHOD` varchar(12) DEFAULT NULL,
+  `SUBPARTITION_METHOD` varchar(12) DEFAULT NULL,
+  `PARTITION_EXPRESSION` longtext,
+  `SUBPARTITION_EXPRESSION` longtext,
+  `PARTITION_DESCRIPTION` longtext,
+  `TABLE_ROWS` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `AVG_ROW_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `DATA_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `DATA_FREE` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `PARTITION_COMMENT` varchar(80) NOT NULL DEFAULT '',
+  `NODEGROUP` varchar(12) NOT NULL DEFAULT '',
+  `TABLESPACE_NAME` varchar(64) DEFAULT NULL
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PLUGINS;
+Table	Create Table
+PLUGINS	CREATE TEMPORARY TABLE `PLUGINS` (
+  `PLUGIN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PLUGIN_VERSION` varchar(20) NOT NULL DEFAULT '',
+  `PLUGIN_STATUS` varchar(10) NOT NULL DEFAULT '',
+  `PLUGIN_TYPE` varchar(80) NOT NULL DEFAULT '',
+  `PLUGIN_TYPE_VERSION` varchar(20) NOT NULL DEFAULT '',
+  `PLUGIN_LIBRARY` varchar(64) DEFAULT NULL,
+  `PLUGIN_LIBRARY_VERSION` varchar(20) DEFAULT NULL,
+  `PLUGIN_AUTHOR` varchar(64) DEFAULT NULL,
+  `PLUGIN_DESCRIPTION` longtext,
+  `PLUGIN_LICENSE` varchar(80) DEFAULT NULL,
+  `PLUGIN_MATURITY` varchar(12) DEFAULT NULL,
+  `PLUGIN_AUTH_VERSION` varchar(80) DEFAULT NULL
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PROCESSLIST;
+Table	Create Table
+PROCESSLIST	CREATE TEMPORARY TABLE `PROCESSLIST` (
+  `ID` bigint(4) NOT NULL DEFAULT '0',
+  `USER` varchar(16) NOT NULL DEFAULT '',
+  `HOST` varchar(64) NOT NULL DEFAULT '',
+  `DB` varchar(64) DEFAULT NULL,
+  `COMMAND` varchar(16) NOT NULL DEFAULT '',
+  `TIME` int(7) NOT NULL DEFAULT '0',
+  `STATE` varchar(64) DEFAULT NULL,
+  `INFO` longtext,
+  `TIME_MS` decimal(22,3) NOT NULL DEFAULT '0.000'
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PROFILING;
+Table	Create Table
+PROFILING	CREATE TEMPORARY TABLE `PROFILING` (
+  `QUERY_ID` int(20) NOT NULL DEFAULT '0',
+  `SEQ` int(20) NOT NULL DEFAULT '0',
+  `STATE` varchar(30) NOT NULL DEFAULT '',
+  `DURATION` decimal(9,6) NOT NULL DEFAULT '0.000000',
+  `CPU_USER` decimal(9,6) DEFAULT NULL,
+  `CPU_SYSTEM` decimal(9,6) DEFAULT NULL,
+  `CONTEXT_VOLUNTARY` int(20) DEFAULT NULL,
+  `CONTEXT_INVOLUNTARY` int(20) DEFAULT NULL,
+  `BLOCK_OPS_IN` int(20) DEFAULT NULL,
+  `BLOCK_OPS_OUT` int(20) DEFAULT NULL,
+  `MESSAGES_SENT` int(20) DEFAULT NULL,
+  `MESSAGES_RECEIVED` int(20) DEFAULT NULL,
+  `PAGE_FAULTS_MAJOR` int(20) DEFAULT NULL,
+  `PAGE_FAULTS_MINOR` int(20) DEFAULT NULL,
+  `SWAPS` int(20) DEFAULT NULL,
+  `SOURCE_FUNCTION` varchar(30) DEFAULT NULL,
+  `SOURCE_FILE` varchar(20) DEFAULT NULL,
+  `SOURCE_LINE` int(20) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.REFERENTIAL_CONSTRAINTS;
+Table	Create Table
+REFERENTIAL_CONSTRAINTS	CREATE TEMPORARY TABLE `REFERENTIAL_CONSTRAINTS` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `UNIQUE_CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `UNIQUE_CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `UNIQUE_CONSTRAINT_NAME` varchar(64) DEFAULT NULL,
+  `MATCH_OPTION` varchar(64) NOT NULL DEFAULT '',
+  `UPDATE_RULE` varchar(64) NOT NULL DEFAULT '',
+  `DELETE_RULE` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `REFERENCED_TABLE_NAME` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.ROUTINES;
+Table	Create Table
+ROUTINES	CREATE TEMPORARY TABLE `ROUTINES` (
+  `SPECIFIC_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_CATALOG` varchar(512) DEFAULT NULL,
+  `ROUTINE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_TYPE` varchar(9) NOT NULL DEFAULT '',
+  `DTD_IDENTIFIER` varchar(64) DEFAULT NULL,
+  `ROUTINE_BODY` varchar(8) NOT NULL DEFAULT '',
+  `ROUTINE_DEFINITION` longtext,
+  `EXTERNAL_NAME` varchar(64) DEFAULT NULL,
+  `EXTERNAL_LANGUAGE` varchar(64) DEFAULT NULL,
+  `PARAMETER_STYLE` varchar(8) NOT NULL DEFAULT '',
+  `IS_DETERMINISTIC` varchar(3) NOT NULL DEFAULT '',
+  `SQL_DATA_ACCESS` varchar(64) NOT NULL DEFAULT '',
+  `SQL_PATH` varchar(64) DEFAULT NULL,
+  `SECURITY_TYPE` varchar(7) NOT NULL DEFAULT '',
+  `CREATED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_ALTERED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `ROUTINE_COMMENT` varchar(64) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.SCHEMATA;
+Table	Create Table
+SCHEMATA	CREATE TEMPORARY TABLE `SCHEMATA` (
+  `CATALOG_NAME` varchar(512) DEFAULT NULL,
+  `SCHEMA_NAME` varchar(64) NOT NULL DEFAULT '',
+  `DEFAULT_CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DEFAULT_COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `SQL_PATH` varchar(512) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SCHEMA_PRIVILEGES;
+Table	Create Table
+SCHEMA_PRIVILEGES	CREATE TEMPORARY TABLE `SCHEMA_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SESSION_STATUS;
+Table	Create Table
+SESSION_STATUS	CREATE TEMPORARY TABLE `SESSION_STATUS` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SESSION_VARIABLES;
+Table	Create Table
+SESSION_VARIABLES	CREATE TEMPORARY TABLE `SESSION_VARIABLES` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.STATISTICS;
+Table	Create Table
+STATISTICS	CREATE TEMPORARY TABLE `STATISTICS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `NON_UNIQUE` bigint(1) NOT NULL DEFAULT '0',
+  `INDEX_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `INDEX_NAME` varchar(64) NOT NULL DEFAULT '',
+  `SEQ_IN_INDEX` bigint(2) NOT NULL DEFAULT '0',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLLATION` varchar(1) DEFAULT NULL,
+  `CARDINALITY` bigint(21) DEFAULT NULL,
+  `SUB_PART` bigint(3) DEFAULT NULL,
+  `PACKED` varchar(10) DEFAULT NULL,
+  `NULLABLE` varchar(3) NOT NULL DEFAULT '',
+  `INDEX_TYPE` varchar(16) NOT NULL DEFAULT '',
+  `COMMENT` varchar(16) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLES;
+Table	Create Table
+TABLES	CREATE TEMPORARY TABLE `TABLES` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `ENGINE` varchar(64) DEFAULT NULL,
+  `VERSION` bigint(21) unsigned DEFAULT NULL,
+  `ROW_FORMAT` varchar(10) DEFAULT NULL,
+  `TABLE_ROWS` bigint(21) unsigned DEFAULT NULL,
+  `AVG_ROW_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_FREE` bigint(21) unsigned DEFAULT NULL,
+  `AUTO_INCREMENT` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `TABLE_COLLATION` varchar(32) DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_OPTIONS` varchar(255) DEFAULT NULL,
+  `TABLE_COMMENT` varchar(80) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLE_CONSTRAINTS;
+Table	Create Table
+TABLE_CONSTRAINTS	CREATE TEMPORARY TABLE `TABLE_CONSTRAINTS` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_TYPE` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLE_PRIVILEGES;
+Table	Create Table
+TABLE_PRIVILEGES	CREATE TEMPORARY TABLE `TABLE_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TRIGGERS;
+Table	Create Table
+TRIGGERS	CREATE TEMPORARY TABLE `TRIGGERS` (
+  `TRIGGER_CATALOG` varchar(512) DEFAULT NULL,
+  `TRIGGER_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TRIGGER_NAME` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_MANIPULATION` varchar(6) NOT NULL DEFAULT '',
+  `EVENT_OBJECT_CATALOG` varchar(512) DEFAULT NULL,
+  `EVENT_OBJECT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_OBJECT_TABLE` varchar(64) NOT NULL DEFAULT '',
+  `ACTION_ORDER` bigint(4) NOT NULL DEFAULT '0',
+  `ACTION_CONDITION` longtext,
+  `ACTION_STATEMENT` longtext NOT NULL,
+  `ACTION_ORIENTATION` varchar(9) NOT NULL DEFAULT '',
+  `ACTION_TIMING` varchar(6) NOT NULL DEFAULT '',
+  `ACTION_REFERENCE_OLD_TABLE` varchar(64) DEFAULT NULL,
+  `ACTION_REFERENCE_NEW_TABLE` varchar(64) DEFAULT NULL,
+  `ACTION_REFERENCE_OLD_ROW` varchar(3) NOT NULL DEFAULT '',
+  `ACTION_REFERENCE_NEW_ROW` varchar(3) NOT NULL DEFAULT '',
+  `CREATED` datetime DEFAULT NULL,
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.USER_PRIVILEGES;
+Table	Create Table
+USER_PRIVILEGES	CREATE TEMPORARY TABLE `USER_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.VIEWS;
+Table	Create Table
+VIEWS	CREATE TEMPORARY TABLE `VIEWS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VIEW_DEFINITION` longtext NOT NULL,
+  `CHECK_OPTION` varchar(8) NOT NULL DEFAULT '',
+  `IS_UPDATABLE` varchar(3) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `SECURITY_TYPE` varchar(7) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW DATABASES;
+Database
+information_schema
+mtr
+mysql
+test
+upgrade_common
+SHOW CREATE DATABASE upgrade_common;
+Database	Create Database
+upgrade_common	CREATE DATABASE `upgrade_common` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */
+CREATE DATABASE `upgrade_common` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
+ERROR HY000: Can't create database 'upgrade_common'; database exists
+DESCRIBE table_complex;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE table_complex;
+Table	Create Table
+table_complex	CREATE TABLE `table_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=binary MIN_ROWS=100 MAX_ROWS=1000 AVG_ROW_LENGTH=1000 PACK_KEYS=1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=1024 COMMENT='012345678901234567890123456789012345678901234567890123456789'
+CREATE TABLE table_complex_like LIKE table_complex;
+SHOW CREATE TABLE table_complex_like;
+Table	Create Table
+table_complex_like	CREATE TABLE `table_complex_like` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=binary MIN_ROWS=100 MAX_ROWS=1000 AVG_ROW_LENGTH=1000 PACK_KEYS=1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=1024 COMMENT='012345678901234567890123456789012345678901234567890123456789'
+INSERT INTO table_complex VALUES (2345);
+SELECT * FROM table_complex;
+f1
+1234
+2345
+CREATE DATABASE IF NOT EXISTS recreations;
+USE recreations;
+CREATE TABLE `table_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=binary MIN_ROWS=100 MAX_ROWS=1000 AVG_ROW_LENGTH=1000 PACK_KEYS=1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=1024 COMMENT='012345678901234567890123456789012345678901234567890123456789';
+SHOW CREATE TABLE table_complex;
+Table	Create Table
+table_complex	CREATE TABLE `table_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=binary MIN_ROWS=100 MAX_ROWS=1000 AVG_ROW_LENGTH=1000 PACK_KEYS=1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=1024 COMMENT='012345678901234567890123456789012345678901234567890123456789'
+USE upgrade_common;
+CHECK TABLE table_complex EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.table_complex	check	status	OK
+REPAIR TABLE table_complex EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.table_complex	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.table_complex	repair	status	OK
+DROP TABLE table_complex;
+DESCRIBE merge_simple;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE merge_simple;
+Table	Create Table
+merge_simple	CREATE TABLE `merge_simple` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin INSERT_METHOD=LAST UNION=(`merge_1`,`merge_2`)
+CREATE TABLE merge_simple_like LIKE merge_simple;
+SHOW CREATE TABLE merge_simple_like;
+Table	Create Table
+merge_simple_like	CREATE TABLE `merge_simple_like` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE merge_1 (f1 INTEGER);
+CREATE TABLE merge_2 (f1 INTEGER);
+CREATE TABLE `merge_simple` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin INSERT_METHOD=LAST UNION=(`merge_1`,`merge_2`);
+SHOW CREATE TABLE merge_simple;
+Table	Create Table
+merge_simple	CREATE TABLE `merge_simple` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MRG_MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin INSERT_METHOD=LAST UNION=(`merge_1`,`merge_2`)
+INSERT INTO merge_simple VALUES (1);
+SELECT * FROM merge_simple;
+f1
+1
+USE upgrade_common;
+INSERT INTO merge_1 VALUES (4);
+INSERT INTO merge_2 VALUES (5);
+INSERT INTO merge_simple VALUES (6);
+SELECT * FROM merge_simple;
+f1
+1
+4
+2
+3
+5
+6
+CHECK TABLE merge_simple EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.merge_simple	check	status	OK
+REPAIR TABLE merge_simple EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.merge_simple	repair	note	The storage engine for the table doesn't support repair
+DROP TABLE merge_simple;
+DESCRIBE field_attributes;
+Field	Type	Null	Key	Default	Extra
+f1	bigint(20) unsigned	NO	PRI	18446744073709551615	
+SHOW CREATE TABLE field_attributes;
+Table	Create Table
+field_attributes	CREATE TABLE `field_attributes` (
+  `f1` bigint(20) unsigned NOT NULL DEFAULT '18446744073709551615' COMMENT '012345678901234567890123456789012345678901234567890123456789',
+  UNIQUE KEY `f1` (`f1`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE field_attributes_like LIKE field_attributes;
+SHOW CREATE TABLE field_attributes_like;
+Table	Create Table
+field_attributes_like	CREATE TABLE `field_attributes_like` (
+  `f1` bigint(20) unsigned NOT NULL DEFAULT '18446744073709551615' COMMENT '012345678901234567890123456789012345678901234567890123456789',
+  UNIQUE KEY `f1` (`f1`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `field_attributes` (
+  `f1` bigint(20) unsigned NOT NULL DEFAULT '18446744073709551615' COMMENT '012345678901234567890123456789012345678901234567890123456789',
+  UNIQUE KEY `f1` (`f1`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE field_attributes;
+Table	Create Table
+field_attributes	CREATE TABLE `field_attributes` (
+  `f1` bigint(20) unsigned NOT NULL DEFAULT '18446744073709551615' COMMENT '012345678901234567890123456789012345678901234567890123456789',
+  UNIQUE KEY `f1` (`f1`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+INSERT INTO field_attributes VALUES (NULL);
+ERROR 23000: Column 'f1' cannot be null
+INSERT INTO field_attributes VALUES (DEFAULT);
+INSERT INTO field_attributes VALUES (-2345);
+ERROR 22003: Out of range value for column 'f1' at row 1
+INSERT INTO field_attributes VALUES (1), (1);
+ERROR 23000: Duplicate entry '1' for key 'f1'
+SELECT * FROM field_attributes;
+f1
+1
+18446744073709551615
+USE upgrade_common;
+INSERT INTO field_attributes VALUES (NULL);
+ERROR 23000: Column 'f1' cannot be null
+INSERT INTO field_attributes VALUES (DEFAULT);
+INSERT INTO field_attributes VALUES (-2345);
+ERROR 22003: Out of range value for column 'f1' at row 1
+INSERT INTO field_attributes VALUES (1), (1);
+ERROR 23000: Duplicate entry '1' for key 'f1'
+SELECT * FROM field_attributes;
+f1
+1
+1234
+18446744073709551615
+CHECK TABLE field_attributes EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_attributes	check	status	OK
+REPAIR TABLE field_attributes EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_attributes	repair	warning	Number of rows changed from 0 to 3
+upgrade_common.field_attributes	repair	status	OK
+DROP TABLE field_attributes;
+DESCRIBE indexes;
+Field	Type	Null	Key	Default	Extra
+f1	varchar(255)	NO	PRI		
+f2	varchar(255)	NO	PRI		
+f3	varchar(255)	YES		NULL	
+g	geometry	NO	MUL	NULL	
+SHOW CREATE TABLE indexes;
+Table	Create Table
+indexes	CREATE TABLE `indexes` (
+  `f1` varchar(255) NOT NULL DEFAULT '',
+  `f2` varchar(255) NOT NULL DEFAULT '',
+  `f3` varchar(255) DEFAULT NULL,
+  `g` geometry NOT NULL,
+  PRIMARY KEY (`f1`(1),`f2`),
+  KEY `f2` (`f2`,`f3`,`f1`(64)) USING HASH KEY_BLOCK_SIZE=4096,
+  SPATIAL KEY `g` (`g`),
+  FULLTEXT KEY `f1` (`f1`,`f2`,`f3`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+SHOW INDEXES FROM indexes;
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment
+indexes	0	PRIMARY	1	f1	A	NULL	1	NULL		BTREE	
+indexes	0	PRIMARY	2	f2	A	1	NULL	NULL		BTREE	
+indexes	1	f2	1	f2	A	NULL	NULL	NULL		BTREE	
+indexes	1	f2	2	f3	A	NULL	NULL	NULL	YES	BTREE	
+indexes	1	f2	3	f1	A	NULL	64	NULL		BTREE	
+indexes	1	g	1	g	A	NULL	32	NULL		SPATIAL	
+indexes	1	f1	1	f1	NULL	NULL	NULL	NULL		FULLTEXT	
+indexes	1	f1	2	f2	NULL	NULL	NULL	NULL		FULLTEXT	
+indexes	1	f1	3	f3	NULL	NULL	NULL	NULL	YES	FULLTEXT	
+CREATE TABLE indexes_like LIKE indexes;
+SHOW CREATE TABLE indexes_like;
+Table	Create Table
+indexes_like	CREATE TABLE `indexes_like` (
+  `f1` varchar(255) NOT NULL DEFAULT '',
+  `f2` varchar(255) NOT NULL DEFAULT '',
+  `f3` varchar(255) DEFAULT NULL,
+  `g` geometry NOT NULL,
+  PRIMARY KEY (`f1`(1),`f2`),
+  KEY `f2` (`f2`,`f3`,`f1`(64)) USING HASH KEY_BLOCK_SIZE=4096,
+  SPATIAL KEY `g` (`g`),
+  FULLTEXT KEY `f1` (`f1`,`f2`,`f3`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+USE recreations;
+CREATE TABLE `indexes` (
+  `f1` varchar(255) NOT NULL DEFAULT '',
+  `f2` varchar(255) NOT NULL DEFAULT '',
+  `f3` varchar(255) DEFAULT NULL,
+  `g` geometry NOT NULL,
+  PRIMARY KEY (`f1`(1),`f2`),
+  KEY `f2` (`f2`,`f3`,`f1`(64)) USING HASH KEY_BLOCK_SIZE=4096,
+  SPATIAL KEY `g` (`g`),
+  FULLTEXT KEY `f1` (`f1`,`f2`,`f3`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SHOW CREATE TABLE indexes;
+Table	Create Table
+indexes	CREATE TABLE `indexes` (
+  `f1` varchar(255) NOT NULL DEFAULT '',
+  `f2` varchar(255) NOT NULL DEFAULT '',
+  `f3` varchar(255) DEFAULT NULL,
+  `g` geometry NOT NULL,
+  PRIMARY KEY (`f1`(1),`f2`),
+  KEY `f2` (`f2`,`f3`,`f1`(64)) USING HASH KEY_BLOCK_SIZE=4096,
+  SPATIAL KEY `g` (`g`),
+  FULLTEXT KEY `f1` (`f1`,`f2`,`f3`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+USE upgrade_common;
+INSERT INTO indexes VALUES ('bcd', 'bcde', 'cdef', GeomFromWKB(Point(2,3)));
+INSERT INTO indexes VALUES ('bzz', 'bcde', 'cdef', GeomFromWKB(Point(4,5)));
+ERROR 23000: Duplicate entry 'b-bcde' for key 'PRIMARY'
+SELECT * FROM indexes;
+f1	f2	f3	g
+abc	cdef	ghij	             ð?      ð?
+bcd	bcde	cdef	              @      @
+CHECK TABLE indexes EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.indexes	check	status	OK
+REPAIR TABLE indexes EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.indexes	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.indexes	repair	status	OK
+DROP TABLE indexes;
+DESCRIBE field_types_numeric;
+Field	Type	Null	Key	Default	Extra
+serial_default	bigint(20) unsigned	NO	PRI	NULL	auto_increment
+bit_default	bit(1)	YES		NULL	
+bit_64	bit(64)	YES		NULL	
+tinyint_default	tinyint(3) unsigned	YES		NULL	
+tinyint_2	tinyint(2) unsigned zerofill	YES		NULL	
+bool_default	tinyint(1)	YES		NULL	
+smallint_default	smallint(5) unsigned	YES		NULL	
+smallint_3	smallint(3) unsigned zerofill	YES		NULL	
+mediumint_default	mediumint(8) unsigned	YES		NULL	
+mediumint_4	mediumint(4) unsigned zerofill	YES		NULL	
+integer_default	int(10) unsigned	YES		NULL	
+integer_5	int(5) unsigned zerofill	YES		NULL	
+bigint_default	bigint(20) unsigned	YES		NULL	
+bigint_6	bigint(6) unsigned zerofill	YES		NULL	
+float_default	float unsigned	YES		NULL	
+float_32	float(3,2) unsigned zerofill	YES		NULL	
+double_default	double unsigned	YES		NULL	
+double_30	double(3,0) unsigned zerofill	YES		NULL	
+decimal_default	decimal(10,0) unsigned	YES		NULL	
+decimal_52	decimal(5,2) unsigned zerofill	YES		NULL	
+SHOW CREATE TABLE field_types_numeric;
+Table	Create Table
+field_types_numeric	CREATE TABLE `field_types_numeric` (
+  `serial_default` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `bit_default` bit(1) DEFAULT NULL,
+  `bit_64` bit(64) DEFAULT NULL,
+  `tinyint_default` tinyint(3) unsigned DEFAULT NULL,
+  `tinyint_2` tinyint(2) unsigned zerofill DEFAULT NULL,
+  `bool_default` tinyint(1) DEFAULT NULL,
+  `smallint_default` smallint(5) unsigned DEFAULT NULL,
+  `smallint_3` smallint(3) unsigned zerofill DEFAULT NULL,
+  `mediumint_default` mediumint(8) unsigned DEFAULT NULL,
+  `mediumint_4` mediumint(4) unsigned zerofill DEFAULT NULL,
+  `integer_default` int(10) unsigned DEFAULT NULL,
+  `integer_5` int(5) unsigned zerofill DEFAULT NULL,
+  `bigint_default` bigint(20) unsigned DEFAULT NULL,
+  `bigint_6` bigint(6) unsigned zerofill DEFAULT NULL,
+  `float_default` float unsigned DEFAULT NULL,
+  `float_32` float(3,2) unsigned zerofill DEFAULT NULL,
+  `double_default` double unsigned DEFAULT NULL,
+  `double_30` double(3,0) unsigned zerofill DEFAULT NULL,
+  `decimal_default` decimal(10,0) unsigned DEFAULT NULL,
+  `decimal_52` decimal(5,2) unsigned zerofill DEFAULT NULL,
+  UNIQUE KEY `serial_default` (`serial_default`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE field_types_numeric_like LIKE field_types_numeric;
+SHOW CREATE TABLE field_types_numeric_like;
+Table	Create Table
+field_types_numeric_like	CREATE TABLE `field_types_numeric_like` (
+  `serial_default` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `bit_default` bit(1) DEFAULT NULL,
+  `bit_64` bit(64) DEFAULT NULL,
+  `tinyint_default` tinyint(3) unsigned DEFAULT NULL,
+  `tinyint_2` tinyint(2) unsigned zerofill DEFAULT NULL,
+  `bool_default` tinyint(1) DEFAULT NULL,
+  `smallint_default` smallint(5) unsigned DEFAULT NULL,
+  `smallint_3` smallint(3) unsigned zerofill DEFAULT NULL,
+  `mediumint_default` mediumint(8) unsigned DEFAULT NULL,
+  `mediumint_4` mediumint(4) unsigned zerofill DEFAULT NULL,
+  `integer_default` int(10) unsigned DEFAULT NULL,
+  `integer_5` int(5) unsigned zerofill DEFAULT NULL,
+  `bigint_default` bigint(20) unsigned DEFAULT NULL,
+  `bigint_6` bigint(6) unsigned zerofill DEFAULT NULL,
+  `float_default` float unsigned DEFAULT NULL,
+  `float_32` float(3,2) unsigned zerofill DEFAULT NULL,
+  `double_default` double unsigned DEFAULT NULL,
+  `double_30` double(3,0) unsigned zerofill DEFAULT NULL,
+  `decimal_default` decimal(10,0) unsigned DEFAULT NULL,
+  `decimal_52` decimal(5,2) unsigned zerofill DEFAULT NULL,
+  UNIQUE KEY `serial_default` (`serial_default`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `field_types_numeric` (
+  `serial_default` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `bit_default` bit(1) DEFAULT NULL,
+  `bit_64` bit(64) DEFAULT NULL,
+  `tinyint_default` tinyint(3) unsigned DEFAULT NULL,
+  `tinyint_2` tinyint(2) unsigned zerofill DEFAULT NULL,
+  `bool_default` tinyint(1) DEFAULT NULL,
+  `smallint_default` smallint(5) unsigned DEFAULT NULL,
+  `smallint_3` smallint(3) unsigned zerofill DEFAULT NULL,
+  `mediumint_default` mediumint(8) unsigned DEFAULT NULL,
+  `mediumint_4` mediumint(4) unsigned zerofill DEFAULT NULL,
+  `integer_default` int(10) unsigned DEFAULT NULL,
+  `integer_5` int(5) unsigned zerofill DEFAULT NULL,
+  `bigint_default` bigint(20) unsigned DEFAULT NULL,
+  `bigint_6` bigint(6) unsigned zerofill DEFAULT NULL,
+  `float_default` float unsigned DEFAULT NULL,
+  `float_32` float(3,2) unsigned zerofill DEFAULT NULL,
+  `double_default` double unsigned DEFAULT NULL,
+  `double_30` double(3,0) unsigned zerofill DEFAULT NULL,
+  `decimal_default` decimal(10,0) unsigned DEFAULT NULL,
+  `decimal_52` decimal(5,2) unsigned zerofill DEFAULT NULL,
+  UNIQUE KEY `serial_default` (`serial_default`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE field_types_numeric;
+Table	Create Table
+field_types_numeric	CREATE TABLE `field_types_numeric` (
+  `serial_default` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `bit_default` bit(1) DEFAULT NULL,
+  `bit_64` bit(64) DEFAULT NULL,
+  `tinyint_default` tinyint(3) unsigned DEFAULT NULL,
+  `tinyint_2` tinyint(2) unsigned zerofill DEFAULT NULL,
+  `bool_default` tinyint(1) DEFAULT NULL,
+  `smallint_default` smallint(5) unsigned DEFAULT NULL,
+  `smallint_3` smallint(3) unsigned zerofill DEFAULT NULL,
+  `mediumint_default` mediumint(8) unsigned DEFAULT NULL,
+  `mediumint_4` mediumint(4) unsigned zerofill DEFAULT NULL,
+  `integer_default` int(10) unsigned DEFAULT NULL,
+  `integer_5` int(5) unsigned zerofill DEFAULT NULL,
+  `bigint_default` bigint(20) unsigned DEFAULT NULL,
+  `bigint_6` bigint(6) unsigned zerofill DEFAULT NULL,
+  `float_default` float unsigned DEFAULT NULL,
+  `float_32` float(3,2) unsigned zerofill DEFAULT NULL,
+  `double_default` double unsigned DEFAULT NULL,
+  `double_30` double(3,0) unsigned zerofill DEFAULT NULL,
+  `decimal_default` decimal(10,0) unsigned DEFAULT NULL,
+  `decimal_52` decimal(5,2) unsigned zerofill DEFAULT NULL,
+  UNIQUE KEY `serial_default` (`serial_default`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE upgrade_common;
+INSERT INTO field_types_numeric SET
+`serial_default` = 10,
+`bit_default` = 1,
+`bit_64` = 12,
+`tinyint_default` = 13,
+`tinyint_2` = 14,
+`bool_default` = 15,
+`smallint_default` = 16,
+`smallint_3` = 17,
+`mediumint_default` = 18,
+`mediumint_4` = 19,
+`integer_default` = 110,
+`integer_5` = 111,
+`bigint_default` = 112,
+`bigint_6` = 113,
+`float_default` = 114,
+`float_32` = 1.15,
+`double_default` = 116,
+`double_30` = 117,
+`decimal_default` = 118,
+`decimal_52` = 119;
+SELECT * FROM field_types_numeric;
+serial_default	bit_default	bit_64	tinyint_default	tinyint_2	bool_default	smallint_default	smallint_3	mediumint_default	mediumint_4	integer_default	integer_5	bigint_default	bigint_6	float_default	float_32	double_default	double_30	decimal_default	decimal_52
+1		       	3	04	5	6	007	8	0009	10	00011	12	000013	14	1.50	16	017	18	019.00
+10		       	13	14	15	16	017	18	0019	110	00111	112	000113	114	1.15	116	117	118	119.00
+CHECK TABLE field_types_numeric EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_numeric	check	status	OK
+REPAIR TABLE field_types_numeric EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_numeric	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.field_types_numeric	repair	status	OK
+DROP TABLE field_types_numeric;
+DESCRIBE field_types_date;
+Field	Type	Null	Key	Default	Extra
+date	date	YES		NULL	
+datetime	datetime	YES		NULL	
+timestamp	timestamp	NO		CURRENT_TIMESTAMP	on update CURRENT_TIMESTAMP
+time	time	YES		NULL	
+year_2	year(2)	YES		NULL	
+year_4	year(4)	YES		NULL	
+SHOW CREATE TABLE field_types_date;
+Table	Create Table
+field_types_date	CREATE TABLE `field_types_date` (
+  `date` date DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` time DEFAULT NULL,
+  `year_2` year(2) DEFAULT NULL,
+  `year_4` year(4) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE field_types_date_like LIKE field_types_date;
+SHOW CREATE TABLE field_types_date_like;
+Table	Create Table
+field_types_date_like	CREATE TABLE `field_types_date_like` (
+  `date` date DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` time DEFAULT NULL,
+  `year_2` year(2) DEFAULT NULL,
+  `year_4` year(4) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `field_types_date` (
+  `date` date DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` time DEFAULT NULL,
+  `year_2` year(2) DEFAULT NULL,
+  `year_4` year(4) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE field_types_date;
+Table	Create Table
+field_types_date	CREATE TABLE `field_types_date` (
+  `date` date DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` time DEFAULT NULL,
+  `year_2` year(2) DEFAULT NULL,
+  `year_4` year(4) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE upgrade_common;
+INSERT INTO field_types_date SET
+`date` = '2007-07-07',
+`datetime` = '2008-08-08 08:08:08',
+`timestamp` = '2009-09-09 09:09:09',
+`time` = '10:10:10',
+`year_2` = '11',
+`year_4` = '2012';
+SELECT * FROM field_types_date;
+date	datetime	timestamp	time	year_2	year_4
+2001-01-01	2002-02-02 02:02:02	2003-03-03 03:03:03	04:04:04	05	2006
+2007-07-07	2008-08-08 08:08:08	2009-09-09 09:09:09	10:10:10	11	2012
+CHECK TABLE field_types_date EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_date	check	status	OK
+REPAIR TABLE field_types_date EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_date	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.field_types_date	repair	status	OK
+DROP TABLE field_types_date;
+DESCRIBE field_types_string;
+Field	Type	Null	Key	Default	Extra
+char	char(255)	YES		NULL	
+varchar	varchar(255)	YES		NULL	
+binary	binary(255)	YES		NULL	
+varbinary	varbinary(255)	YES		NULL	
+tinyblob	tinyblob	YES		NULL	
+tinytext	tinytext	YES		NULL	
+blob	blob	YES		NULL	
+blob_128	tinyblob	YES		NULL	
+text	text	YES		NULL	
+mediumblob	mediumblob	YES		NULL	
+medimutext	mediumtext	YES		NULL	
+longblob	longblob	YES		NULL	
+longtext	longtext	YES		NULL	
+SHOW CREATE TABLE field_types_string;
+Table	Create Table
+field_types_string	CREATE TABLE `field_types_string` (
+  `char` char(255) CHARACTER SET utf8 DEFAULT NULL,
+  `varchar` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `binary` binary(255) DEFAULT NULL,
+  `varbinary` varbinary(255) DEFAULT NULL,
+  `tinyblob` tinyblob,
+  `tinytext` tinytext CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  `blob` blob,
+  `blob_128` tinyblob,
+  `text` text COLLATE utf8_bin,
+  `mediumblob` mediumblob,
+  `medimutext` mediumtext COLLATE utf8_bin,
+  `longblob` longblob,
+  `longtext` longtext COLLATE utf8_bin
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE field_types_string_like LIKE field_types_string;
+SHOW CREATE TABLE field_types_string_like;
+Table	Create Table
+field_types_string_like	CREATE TABLE `field_types_string_like` (
+  `char` char(255) CHARACTER SET utf8 DEFAULT NULL,
+  `varchar` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `binary` binary(255) DEFAULT NULL,
+  `varbinary` varbinary(255) DEFAULT NULL,
+  `tinyblob` tinyblob,
+  `tinytext` tinytext CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  `blob` blob,
+  `blob_128` tinyblob,
+  `text` text COLLATE utf8_bin,
+  `mediumblob` mediumblob,
+  `medimutext` mediumtext COLLATE utf8_bin,
+  `longblob` longblob,
+  `longtext` longtext COLLATE utf8_bin
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `field_types_string` (
+  `char` char(255) CHARACTER SET utf8 DEFAULT NULL,
+  `varchar` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `binary` binary(255) DEFAULT NULL,
+  `varbinary` varbinary(255) DEFAULT NULL,
+  `tinyblob` tinyblob,
+  `tinytext` tinytext CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  `blob` blob,
+  `blob_128` tinyblob,
+  `text` text COLLATE utf8_bin,
+  `mediumblob` mediumblob,
+  `medimutext` mediumtext COLLATE utf8_bin,
+  `longblob` longblob,
+  `longtext` longtext COLLATE utf8_bin
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE field_types_string;
+Table	Create Table
+field_types_string	CREATE TABLE `field_types_string` (
+  `char` char(255) CHARACTER SET utf8 DEFAULT NULL,
+  `varchar` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `binary` binary(255) DEFAULT NULL,
+  `varbinary` varbinary(255) DEFAULT NULL,
+  `tinyblob` tinyblob,
+  `tinytext` tinytext CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  `blob` blob,
+  `blob_128` tinyblob,
+  `text` text COLLATE utf8_bin,
+  `mediumblob` mediumblob,
+  `medimutext` mediumtext COLLATE utf8_bin,
+  `longblob` longblob,
+  `longtext` longtext COLLATE utf8_bin
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE upgrade_common;
+INSERT INTO field_types_string SET
+`char` = 'b',
+`varchar` = 'bb',
+`binary` = 'bbb',
+`varbinary` = 'bbba',
+`tinyblob` = 'bbbbb',
+`tinytext` = 'bbbbbb',
+`blob` = 'bbbbbba',
+`blob_128` = 'bbb bbb bb',
+`text` = 'bbb bbb bbb bbb',
+`mediumblob` = 'bbb bbb bbb bbb b',
+`medimutext` = 'bbb bbb bbb bbb bb',
+`longblob` = 'bbb bbb bbb bbb bbb',
+`longtext` = 'bbb bbb bbb bbb bbbb';
+SELECT * FROM field_types_string;
+char	varchar	binary	varbinary	tinyblob	tinytext	blob	blob_128	text	mediumblob	medimutext	longblob	longtext
+a	aa	aaa                                                                                                                                                                                                                                                            	aaaa	aaaaa	aaaaaa	aaaaaaa	aaa aaa aa	aaa aaa aaa aaa	aaa aaa aaa aaa a	aaa aaa aaa aaa aa	aaa aaa aaa aaa aaa	aaa aaa aaa aaa aaaa
+b	bb	bbb                                                                                                                                                                                                                                                            	bbba	bbbbb	bbbbbb	bbbbbba	bbb bbb bb	bbb bbb bbb bbb	bbb bbb bbb bbb b	bbb bbb bbb bbb bb	bbb bbb bbb bbb bbb	bbb bbb bbb bbb bbbb
+CHECK TABLE field_types_string EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_string	check	status	OK
+REPAIR TABLE field_types_string EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_string	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.field_types_string	repair	status	OK
+DROP TABLE field_types_string;
+DESCRIBE field_types_enum;
+Field	Type	Null	Key	Default	Extra
+enum_many	enum('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64')	YES		NULL	
+enum_long	enum('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567')	YES		NULL	
+set_many	set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64')	YES		NULL	
+set_long	set('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567')	YES		NULL	
+SHOW CREATE TABLE field_types_enum;
+Table	Create Table
+field_types_enum	CREATE TABLE `field_types_enum` (
+  `enum_many` enum('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `enum_long` enum('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL,
+  `set_many` set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `set_long` set('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE field_types_enum_like LIKE field_types_enum;
+SHOW CREATE TABLE field_types_enum_like;
+Table	Create Table
+field_types_enum_like	CREATE TABLE `field_types_enum_like` (
+  `enum_many` enum('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `enum_long` enum('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL,
+  `set_many` set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `set_long` set('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `field_types_enum` (
+  `enum_many` enum('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `enum_long` enum('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL,
+  `set_many` set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `set_long` set('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE field_types_enum;
+Table	Create Table
+field_types_enum	CREATE TABLE `field_types_enum` (
+  `enum_many` enum('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `enum_long` enum('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL,
+  `set_many` set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') COLLATE utf8_bin DEFAULT NULL,
+  `set_long` set('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567') COLLATE utf8_bin DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE upgrade_common;
+INSERT INTO field_types_enum SET
+enum_many = 1,
+enum_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789',
+set_many  = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64'
+#,
+#       set_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345$8901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'
+;
+SELECT * FROM field_types_enum;
+enum_many	enum_long	set_many	set_long
+1	0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64	NULL
+1	0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64	NULL
+CHECK TABLE field_types_enum EXTENDED;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_enum	check	status	OK
+REPAIR TABLE field_types_enum EXTENDED USE_FRM;
+Table	Op	Msg_type	Msg_text
+upgrade_common.field_types_enum	repair	warning	Number of rows changed from 0 to 2
+upgrade_common.field_types_enum	repair	status	OK
+DROP TABLE field_types_enum;
+DESCRIBE table_myisam;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE table_myisam;
+Table	Create Table
+table_myisam	CREATE TABLE `table_myisam` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+DESCRIBE table_innodb;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE table_innodb;
+Table	Create Table
+table_innodb	CREATE TABLE `table_innodb` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+DESCRIBE table_memory;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE table_memory;
+Table	Create Table
+table_memory	CREATE TABLE `table_memory` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `table_myisam` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE table_myisam;
+Table	Create Table
+table_myisam	CREATE TABLE `table_myisam` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE `table_memory` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE table_memory;
+Table	Create Table
+table_memory	CREATE TABLE `table_memory` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+CREATE TABLE `table_innodb` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE table_innodb;
+Table	Create Table
+table_innodb	CREATE TABLE `table_innodb` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE upgrade_common;
+DROP TABLE table_myisam, table_innodb, table_memory;
+SHOW CHARACTER SET;
+Charset	Description	Default collation	Maxlen
+dec8	DEC West European	dec8_swedish_ci	1
+cp850	DOS West European	cp850_general_ci	1
+hp8	HP West European	hp8_english_ci	1
+koi8r	KOI8-R Relcom Russian	koi8r_general_ci	1
+latin1	cp1252 West European	latin1_swedish_ci	1
+latin2	ISO 8859-2 Central European	latin2_general_ci	1
+swe7	7bit Swedish	swe7_swedish_ci	1
+ascii	US ASCII	ascii_general_ci	1
+hebrew	ISO 8859-8 Hebrew	hebrew_general_ci	1
+koi8u	KOI8-U Ukrainian	koi8u_general_ci	1
+greek	ISO 8859-7 Greek	greek_general_ci	1
+cp1250	Windows Central European	cp1250_general_ci	1
+latin5	ISO 8859-9 Turkish	latin5_turkish_ci	1
+armscii8	ARMSCII-8 Armenian	armscii8_general_ci	1
+utf8	UTF-8 Unicode	utf8_general_ci	3
+cp866	DOS Russian	cp866_general_ci	1
+keybcs2	DOS Kamenicky Czech-Slovak	keybcs2_general_ci	1
+macce	Mac Central European	macce_general_ci	1
+macroman	Mac West European	macroman_general_ci	1
+cp852	DOS Central European	cp852_general_ci	1
+latin7	ISO 8859-13 Baltic	latin7_general_ci	1
+cp1251	Windows Cyrillic	cp1251_general_ci	1
+cp1256	Windows Arabic	cp1256_general_ci	1
+cp1257	Windows Baltic	cp1257_general_ci	1
+binary	Binary pseudo charset	binary	1
+geostd8	GEOSTD8 Georgian	geostd8_general_ci	1
+SHOW COLLATION;
+Collation	Charset	Id	Default	Compiled	Sortlen
+dec8_swedish_ci	dec8	3	Yes		0
+dec8_bin	dec8	69			0
+cp850_general_ci	cp850	4	Yes		0
+cp850_bin	cp850	80			0
+hp8_english_ci	hp8	6	Yes		0
+hp8_bin	hp8	72			0
+koi8r_general_ci	koi8r	7	Yes		0
+koi8r_bin	koi8r	74			0
+latin1_german1_ci	latin1	5		Yes	1
+latin1_swedish_ci	latin1	8	Yes	Yes	1
+latin1_danish_ci	latin1	15		Yes	1
+latin1_german2_ci	latin1	31		Yes	2
+latin1_bin	latin1	47		Yes	1
+latin1_general_ci	latin1	48		Yes	1
+latin1_general_cs	latin1	49		Yes	1
+latin1_spanish_ci	latin1	94		Yes	1
+latin2_general_ci	latin2	9	Yes		0
+latin2_hungarian_ci	latin2	21			0
+latin2_croatian_ci	latin2	27			0
+latin2_bin	latin2	77			0
+swe7_swedish_ci	swe7	10	Yes		0
+swe7_bin	swe7	82			0
+ascii_general_ci	ascii	11	Yes		0
+ascii_bin	ascii	65			0
+hebrew_general_ci	hebrew	16	Yes		0
+hebrew_bin	hebrew	71			0
+koi8u_general_ci	koi8u	22	Yes		0
+koi8u_bin	koi8u	75			0
+greek_general_ci	greek	25	Yes		0
+greek_bin	greek	70			0
+cp1250_general_ci	cp1250	26	Yes		0
+cp1250_croatian_ci	cp1250	44			0
+cp1250_bin	cp1250	66			0
+cp1250_polish_ci	cp1250	99			0
+latin5_turkish_ci	latin5	30	Yes		0
+latin5_bin	latin5	78			0
+armscii8_general_ci	armscii8	32	Yes		0
+armscii8_bin	armscii8	64			0
+utf8_general_ci	utf8	33	Yes	Yes	1
+utf8_bin	utf8	83		Yes	1
+utf8_unicode_ci	utf8	192		Yes	8
+utf8_icelandic_ci	utf8	193		Yes	8
+utf8_latvian_ci	utf8	194		Yes	8
+utf8_romanian_ci	utf8	195		Yes	8
+utf8_slovenian_ci	utf8	196		Yes	8
+utf8_polish_ci	utf8	197		Yes	8
+utf8_estonian_ci	utf8	198		Yes	8
+utf8_spanish_ci	utf8	199		Yes	8
+utf8_swedish_ci	utf8	200		Yes	8
+utf8_turkish_ci	utf8	201		Yes	8
+utf8_czech_ci	utf8	202		Yes	8
+utf8_danish_ci	utf8	203		Yes	8
+utf8_lithuanian_ci	utf8	204		Yes	8
+utf8_slovak_ci	utf8	205		Yes	8
+utf8_spanish2_ci	utf8	206		Yes	8
+utf8_roman_ci	utf8	207		Yes	8
+utf8_persian_ci	utf8	208		Yes	8
+utf8_esperanto_ci	utf8	209		Yes	8
+utf8_hungarian_ci	utf8	210		Yes	8
+utf8_croatian_ci	utf8	213		Yes	8
+cp866_general_ci	cp866	36	Yes		0
+cp866_bin	cp866	68			0
+keybcs2_general_ci	keybcs2	37	Yes		0
+keybcs2_bin	keybcs2	73			0
+macce_general_ci	macce	38	Yes		0
+macce_bin	macce	43			0
+macroman_general_ci	macroman	39	Yes		0
+macroman_bin	macroman	53			0
+cp852_general_ci	cp852	40	Yes		0
+cp852_bin	cp852	81			0
+latin7_estonian_cs	latin7	20			0
+latin7_general_ci	latin7	41	Yes		0
+latin7_general_cs	latin7	42			0
+latin7_bin	latin7	79			0
+cp1251_bulgarian_ci	cp1251	14			0
+cp1251_ukrainian_ci	cp1251	23			0
+cp1251_bin	cp1251	50			0
+cp1251_general_ci	cp1251	51	Yes		0
+cp1251_general_cs	cp1251	52			0
+cp1256_general_ci	cp1256	57	Yes		0
+cp1256_bin	cp1256	67			0
+cp1257_lithuanian_ci	cp1257	29			0
+cp1257_bin	cp1257	58			0
+cp1257_general_ci	cp1257	59	Yes		0
+binary	binary	63	Yes	Yes	1
+geostd8_general_ci	geostd8	92	Yes		0
+geostd8_bin	geostd8	93			0
+SHOW PRIVILEGES;
+Privilege	Context	Comment
+Alter	Tables	To alter the table
+Alter routine	Functions,Procedures	To alter or drop stored functions/procedures
+Create	Databases,Tables,Indexes	To create new databases and tables
+Create routine	Databases	To use CREATE FUNCTION/PROCEDURE
+Create temporary tables	Databases	To use CREATE TEMPORARY TABLE
+Create view	Tables	To create new views
+Create user	Server Admin	To create new users
+Delete	Tables	To delete existing rows
+Drop	Databases,Tables	To drop databases, tables, and views
+Event	Server Admin	To create, alter, drop and execute events
+Execute	Functions,Procedures	To execute stored routines
+File	File access on server	To read and write files on the server
+Grant option	Databases,Tables,Functions,Procedures	To give to other users those privileges you possess
+Index	Tables	To create or drop indexes
+Insert	Tables	To insert data into tables
+Lock tables	Databases	To use LOCK TABLES (together with SELECT privilege)
+Process	Server Admin	To view the plain text of currently executing queries
+References	Databases,Tables	To have references on tables
+Reload	Server Admin	To reload or refresh tables, logs and privileges
+Replication client	Server Admin	To ask where the slave or master servers are
+Replication slave	Server Admin	To read binary log events from the master
+Select	Tables	To retrieve rows from table
+Show databases	Server Admin	To see all databases with SHOW DATABASES
+Show view	Tables	To see views with SHOW CREATE VIEW
+Shutdown	Server Admin	To shut down the server
+Super	Server Admin	To use KILL thread, SET GLOBAL, CHANGE MASTER, etc.
+Trigger	Tables	To use triggers
+Update	Tables	To update existing rows
+Usage	Server Admin	No privileges - allow connect only
+SHOW GRANTS;
+Grants for root@localhost
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION
+SHOW GRANTS FOR CURRENT_USER();
+Grants for root@localhost
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION
+FLUSH PRIVILEGES;
+DESCRIBE part_complex;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE TABLE part_complex;
+Table	Create Table
+part_complex	CREATE TABLE `part_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (f1)
+(PARTITION p0 VALUES LESS THAN (10) MAX_ROWS = 100 MIN_ROWS = 10 COMMENT = '012345678901234567890123456789012345678901234567890123456789' ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+DESCRIBE part_range;
+Field	Type	Null	Key	Default	Extra
+range_field	int(11)	YES		NULL	
+SHOW CREATE TABLE part_range;
+Table	Create Table
+part_range	CREATE TABLE `part_range` (
+  `range_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (range_field)
+(PARTITION p0 VALUES LESS THAN (10) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (100) ENGINE = MyISAM,
+ PARTITION p3 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+DESCRIBE part_list;
+Field	Type	Null	Key	Default	Extra
+list_field	int(11)	YES		NULL	
+SHOW CREATE TABLE part_list;
+Table	Create Table
+part_list	CREATE TABLE `part_list` (
+  `list_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY LIST (list_field)
+(PARTITION p0 VALUES IN (1,2) ENGINE = MyISAM,
+ PARTITION p1 VALUES IN (3,4) ENGINE = MyISAM,
+ PARTITION p2 VALUES IN (5,6) ENGINE = MyISAM) */
+DESCRIBE part_hash;
+Field	Type	Null	Key	Default	Extra
+hash_field	int(11)	YES		NULL	
+SHOW CREATE TABLE part_hash;
+Table	Create Table
+part_hash	CREATE TABLE `part_hash` (
+  `hash_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY HASH ( hash_field)
+PARTITIONS 2 */
+DESCRIBE part_key;
+Field	Type	Null	Key	Default	Extra
+key_field	int(11)	NO	PRI	NULL	
+SHOW CREATE TABLE part_key;
+Table	Create Table
+part_key	CREATE TABLE `part_key` (
+  `key_field` int(11) NOT NULL,
+  PRIMARY KEY (`key_field`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY KEY ()
+PARTITIONS 2 */
+DESCRIBE subpart;
+Field	Type	Null	Key	Default	Extra
+purchased	date	YES		NULL	
+SHOW CREATE TABLE subpart;
+Table	Create Table
+subpart	CREATE TABLE `subpart` (
+  `purchased` date DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE ( YEAR(purchased))
+SUBPARTITION BY HASH ( TO_DAYS(purchased))
+SUBPARTITIONS 2
+(PARTITION p0 VALUES LESS THAN (1990) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (2000) ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+USE recreations;
+CREATE TABLE `part_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (f1)
+(PARTITION p0 VALUES LESS THAN (10) MAX_ROWS = 100 MIN_ROWS = 10 COMMENT = '012345678901234567890123456789012345678901234567890123456789' ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */;
+SHOW CREATE TABLE part_complex;
+Table	Create Table
+part_complex	CREATE TABLE `part_complex` (
+  `f1` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (f1)
+(PARTITION p0 VALUES LESS THAN (10) MAX_ROWS = 100 MIN_ROWS = 10 COMMENT = '012345678901234567890123456789012345678901234567890123456789' ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+CREATE TABLE `part_range` (
+  `range_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (range_field)
+(PARTITION p0 VALUES LESS THAN (10) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (100) ENGINE = MyISAM,
+ PARTITION p3 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */;
+SHOW CREATE TABLE part_range;
+Table	Create Table
+part_range	CREATE TABLE `part_range` (
+  `range_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE (range_field)
+(PARTITION p0 VALUES LESS THAN (10) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (100) ENGINE = MyISAM,
+ PARTITION p3 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+CREATE TABLE `part_list` (
+  `list_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY LIST (list_field)
+(PARTITION p0 VALUES IN (1,2) ENGINE = MyISAM,
+ PARTITION p1 VALUES IN (3,4) ENGINE = MyISAM,
+ PARTITION p2 VALUES IN (5,6) ENGINE = MyISAM) */;
+SHOW CREATE TABLE part_list;
+Table	Create Table
+part_list	CREATE TABLE `part_list` (
+  `list_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY LIST (list_field)
+(PARTITION p0 VALUES IN (1,2) ENGINE = MyISAM,
+ PARTITION p1 VALUES IN (3,4) ENGINE = MyISAM,
+ PARTITION p2 VALUES IN (5,6) ENGINE = MyISAM) */
+CREATE TABLE `part_hash` (
+  `hash_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY HASH ( hash_field)
+PARTITIONS 2 */;
+SHOW CREATE TABLE part_hash;
+Table	Create Table
+part_hash	CREATE TABLE `part_hash` (
+  `hash_field` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY HASH ( hash_field)
+PARTITIONS 2 */
+CREATE TABLE `part_key` (
+  `key_field` int(11) NOT NULL,
+  PRIMARY KEY (`key_field`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY KEY ()
+PARTITIONS 2 */ ;
+SHOW CREATE TABLE part_key;
+Table	Create Table
+part_key	CREATE TABLE `part_key` (
+  `key_field` int(11) NOT NULL,
+  PRIMARY KEY (`key_field`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY KEY ()
+PARTITIONS 2 */
+CREATE TABLE `subpart` (
+  `purchased` date DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE ( YEAR(purchased))
+SUBPARTITION BY HASH ( TO_DAYS(purchased))
+SUBPARTITIONS 2
+(PARTITION p0 VALUES LESS THAN (1990) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (2000) ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */;;
+SHOW CREATE TABLE subpart;
+Table	Create Table
+subpart	CREATE TABLE `subpart` (
+  `purchased` date DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+/*!50100 PARTITION BY RANGE ( YEAR(purchased))
+SUBPARTITION BY HASH ( TO_DAYS(purchased))
+SUBPARTITIONS 2
+(PARTITION p0 VALUES LESS THAN (1990) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (2000) ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE = MyISAM) */
+USE upgrade_common;
 INSERT INTO part_range VALUES (1), (10), (100), (1000);
 SELECT * FROM part_range;
 range_field
@@ -90,22 +2652,282 @@ purchased
 1990-02-02
 1991-03-03
 2001-04-04
+DROP TABLE part_complex, part_range, part_list, part_hash, part_key, subpart;
+SHOW PROCEDURE STATUS LIKE 'proc_simple';
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+upgrade_common	proc_simple	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER		latin1	latin1_swedish_ci	utf8_bin
+SHOW CREATE PROCEDURE proc_simple;
+Procedure	sql_mode	Create Procedure	character_set_client	collation_connection	Database Collation
+proc_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_simple`(OUT param1 INT)
+BEGIN
+SELECT COUNT(*) INTO param1 FROM proc_table;
+END	latin1	latin1_swedish_ci	utf8_bin
+SHOW PROCEDURE STATUS LIKE 'very_very_very_very_very_very_very_long_name';
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+upgrade_common	very_very_very_very_very_very_very_long_name	PROCEDURE	root@localhost	(date_time)	(date_time)	DEFINER	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin
+SHOW CREATE PROCEDURE very_very_very_very_very_very_very_long_name;
+Procedure	sql_mode	Create Procedure	character_set_client	collation_connection	Database Collation
+very_very_very_very_very_very_very_long_name	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` PROCEDURE `very_very_very_very_very_very_very_long_name`(
+INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+)
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END	latin1	latin1_swedish_ci	utf8_bin
+USE recreations;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_simple`(OUT param1 INT)
+BEGIN
+SELECT COUNT(*) INTO param1 FROM proc_table;
+END;
+SHOW CREATE PROCEDURE proc_simple;
+Procedure	sql_mode	Create Procedure	character_set_client	collation_connection	Database Collation
+proc_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_simple`(OUT param1 INT)
+BEGIN
+SELECT COUNT(*) INTO param1 FROM proc_table;
+END	latin1	latin1_swedish_ci	latin1_swedish_ci
+CREATE DEFINER=`root`@`localhost` PROCEDURE `very_very_very_very_very_very_very_long_name`(
+INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+)
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END;
+SHOW CREATE PROCEDURE very_very_very_very_very_very_very_long_name;
+Procedure	sql_mode	Create Procedure	character_set_client	collation_connection	Database Collation
+very_very_very_very_very_very_very_long_name	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` PROCEDURE `very_very_very_very_very_very_very_long_name`(
+INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+)
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END	latin1	latin1_swedish_ci	latin1_swedish_ci
+USE upgrade_common;
 INSERT INTO proc_table VALUES (1);
-CALL proc1(@out1);
+CALL proc_simple(@out1);
 SELECT @out1;
 @out1
 1
-SELECT func1('abcdefgh');
-func1('abcdefgh')
+CALL very_very_very_very_very_very_very_long_name(@out1, @out2, @out3, @out4, @out5, @out6, @out7, @out8, @out9, @out10, @out11, @out12, @out13);
+SELECT @out2;
+@out2
+NULL
+DROP PROCEDURE very_very_very_very_very_very_very_long_name;
+DROP PROCEDURE proc_simple;
+DROP TABLE proc_table;
+SHOW FUNCTION STATUS LIKE 'func_simple';
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+upgrade_common	func_simple	FUNCTION	root@localhost	(date_time)	(date_time)	DEFINER		latin1	latin1_swedish_ci	utf8_bin
+SHOW CREATE FUNCTION func_simple;
+Function	sql_mode	Create Function	character_set_client	collation_connection	Database Collation
+func_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` FUNCTION `func_simple`(s CHAR(20)) RETURNS char(50) CHARSET utf8
+    DETERMINISTIC
+RETURN s	latin1	latin1_swedish_ci	utf8_bin
+SHOW FUNCTION STATUS LIKE 'func_complex';
+Db	Name	Type	Definer	Modified	Created	Security_type	Comment	character_set_client	collation_connection	Database Collation
+upgrade_common	func_complex	FUNCTION	root@localhost	(date_time)	(date_time)	DEFINER	012345678901234567890123456789012345678901234567890123456789	latin1	latin1_swedish_ci	utf8_bin
+SHOW CREATE FUNCTION func_complex;
+Function	sql_mode	Create Function	character_set_client	collation_connection	Database Collation
+func_complex	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` FUNCTION `func_complex`(
+very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+) RETURNS set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') CHARSET utf8
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+RETURN param2	latin1	latin1_swedish_ci	utf8_bin
+USE recreations;
+CREATE DEFINER=`root`@`localhost` FUNCTION `func_simple`(s CHAR(20)) RETURNS char(50) CHARSET utf8
+    DETERMINISTIC
+RETURN s;
+SHOW CREATE FUNCTION func_simple;
+Function	sql_mode	Create Function	character_set_client	collation_connection	Database Collation
+func_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` FUNCTION `func_simple`(s CHAR(20)) RETURNS char(50) CHARSET utf8
+    DETERMINISTIC
+RETURN s	latin1	latin1_swedish_ci	latin1_swedish_ci
+CREATE DEFINER=`root`@`localhost` FUNCTION `func_complex`(
+very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+) RETURNS set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') CHARSET utf8
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+RETURN param2;
+SHOW CREATE FUNCTION func_complex;
+Function	sql_mode	Create Function	character_set_client	collation_connection	Database Collation
+func_complex	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` FUNCTION `func_complex`(
+very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+) RETURNS set('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') CHARSET utf8
+    MODIFIES SQL DATA
+    COMMENT '012345678901234567890123456789012345678901234567890123456789'
+RETURN param2	latin1	latin1_swedish_ci	latin1_swedish_ci
+SELECT func_simple('abcdefgh');
+func_simple('abcdefgh')
 abcdefgh
+SELECT func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13);
+func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13)
+2
+USE upgrade_common;
+SELECT func_simple('abcdefgh');
+func_simple('abcdefgh')
+abcdefgh
+SELECT func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13);
+func_complex(1,2,3,4,5,6,7,8,9,10,11,12,13)
+2
+DROP FUNCTION func_simple;
+DROP FUNCTION func_complex;
+DESCRIBE view_simple;
+Field	Type	Null	Key	Default	Extra
+f1	int(11)	YES		NULL	
+SHOW CREATE VIEW view_simple;
+View	Create View	character_set_client	collation_connection
+view_simple	CREATE ALGORITHM=MERGE DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_simple` AS select `view_table1`.`f1` AS `f1` from `view_table1` WITH CASCADED CHECK OPTION	latin1	latin1_swedish_ci
+USE recreations;
+CREATE TABLE view_table1 (f1 INTEGER);
+INSERT INTO view_table1 VALUES (1);
+CREATE ALGORITHM=MERGE DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_simple` AS select `view_table1`.`f1` AS `f1` from `view_table1` WITH CASCADED CHECK OPTION;
+SHOW CREATE VIEW view_simple;
+View	Create View	character_set_client	collation_connection
+view_simple	CREATE ALGORITHM=MERGE DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_simple` AS select `view_table1`.`f1` AS `f1` from `view_table1` WITH CASCADED CHECK OPTION	latin1	latin1_swedish_ci
+SELECT * FROM view_simple;
+f1
+1
+USE upgrade_common;
+INSERT INTO view_table1 VALUES (2);
+SELECT * FROM view_simple;
+f1
+1
+2
+DROP VIEW view_simple;
+DROP TABLE view_table1;
+SET GLOBAL event_scheduler = 0;
+SET GLOBAL event_scheduler = 1;
+SHOW EVENTS;
+Db	Name	Definer	Time zone	Type	Execute at	Interval value	Interval field	Starts	Ends	Status	Originator	character_set_client	collation_connection	Database Collation
+upgrade_common	event_simple	root@localhost	SYSTEM	RECURRING	NULL	1	SECOND	(date_time)	NULL	ENABLED	1	latin1	latin1_swedish_ci	utf8_bin
+SELECT * FROM mysql.event WHERE name = 'event_simple';
+db	name	body	definer	execute_at	interval_value	interval_field	created	modified	last_executed	starts	ends	status	on_completion	sql_mode	comment	originator	time_zone	character_set_client	collation_connection	db_collation	body_utf8
+upgrade_common	event_simple	INSERT INTO event_t1 VALUES (1)	root@localhost	NULL	1	SECOND	(date_time)	(date_time)	NULL	(date_time)	NULL	ENABLED	PRESERVE	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	012345678901234567890123456789012345678901234567890123456789	1	SYSTEM	latin1	latin1_swedish_ci	utf8_bin	INSERT INTO event_t1 VALUES (1)
+SELECT * FROM information_schema.EVENTS WHERE event_name = 'event_simple';
+EVENT_CATALOG	EVENT_SCHEMA	EVENT_NAME	DEFINER	TIME_ZONE	EVENT_BODY	EVENT_DEFINITION	EVENT_TYPE	EXECUTE_AT	INTERVAL_VALUE	INTERVAL_FIELD	SQL_MODE	STARTS	ENDS	STATUS	ON_COMPLETION	CREATED	LAST_ALTERED	LAST_EXECUTED	EVENT_COMMENT	ORIGINATOR	CHARACTER_SET_CLIENT	COLLATION_CONNECTION	DATABASE_COLLATION
+NULL	upgrade_common	event_simple	root@localhost	SYSTEM	SQL	INSERT INTO event_t1 VALUES (1)	RECURRING	NULL	1	SECOND	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	(date_time)	NULL	ENABLED	PRESERVE	(date_time)	(date_time)	NULL	012345678901234567890123456789012345678901234567890123456789	1	latin1	latin1_swedish_ci	utf8_bin
+SHOW CREATE EVENT event_simple;
+Event	sql_mode	time_zone	Create Event	character_set_client	collation_connection	Database Collation
+event_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	SYSTEM	CREATE EVENT `event_simple` ON SCHEDULE EVERY 1 SECOND STARTS '(date_time)' ON COMPLETION PRESERVE ENABLE COMMENT '012345678901234567890123456789012345678901234567890123456789' DO INSERT INTO event_t1 VALUES (1)	latin1	latin1_swedish_ci	utf8_bin
+SELECT SLEEP(2);
+SLEEP(2)
+0
+SELECT (SELECT COUNT(*) FROM event_t1) > 0;
+(SELECT COUNT(*) FROM event_t1) > 0
+1
+DROP EVENT event_simple;
+DELETE FROM event_t1;
+CREATE EVENT `event_simple` ON SCHEDULE EVERY 1 SECOND STARTS '(date_time)' ON COMPLETION PRESERVE ENABLE COMMENT '012345678901234567890123456789012345678901234567890123456789' DO INSERT INTO event_t1 VALUES (1);;
+SELECT SLEEP(2);
+SLEEP(2)
+0
+SELECT (SELECT COUNT(*) FROM event_t1) > 0;
+(SELECT COUNT(*) FROM event_t1) > 0
+1
+DROP EVENT event_simple;
+DROP TABLE event_t1;
+SHOW CREATE TRIGGER trigger_simple;
+Trigger	sql_mode	SQL Original Statement	character_set_client	collation_connection	Database Collation
+trigger_simple	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION	CREATE DEFINER=`root`@`localhost` TRIGGER trigger_simple BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1)	latin1	latin1_swedish_ci	utf8_bin
 INSERT INTO trig_table1 VALUES (1);
 INSERT INTO trig_table1 VALUES (1);
 ERROR 23000: Duplicate entry '1' for key 'PRIMARY'
 SELECT * FROM trig_table2;
 f1
 1
+DROP TRIGGER trigger_simple;
+CREATE DEFINER=`root`@`localhost` TRIGGER trigger_simple BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1);
+INSERT INTO trig_table1 VALUES (1);
+ERROR 23000: Duplicate entry '1' for key 'PRIMARY'
+DROP TRIGGER trigger_simple;
+DROP TABLE trig_table1;
+DROP TABLE trig_table2;
+DESCRIBE parent;
+Field	Type	Null	Key	Default	Extra
+id	int(11)	NO	PRI	NULL	
+SHOW CREATE TABLE parent;
+Table	Create Table
+parent	CREATE TABLE `parent` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+DESCRIBE child;
+Field	Type	Null	Key	Default	Extra
+id	int(11)	YES		NULL	
+parent_id	int(11)	YES	MUL	NULL	
+SHOW CREATE TABLE child;
+Table	Create Table
+child	CREATE TABLE `child` (
+  `id` int(11) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  KEY `parent_id` (`parent_id`),
+  CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+USE recreations;
+CREATE TABLE `parent` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+CREATE TABLE `child` (
+  `id` int(11) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  KEY `parent_id` (`parent_id`),
+  CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+SHOW CREATE TABLE parent;
+Table	Create Table
+parent	CREATE TABLE `parent` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+SHOW CREATE TABLE child;
+Table	Create Table
+child	CREATE TABLE `child` (
+  `id` int(11) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  KEY `parent_id` (`parent_id`),
+  CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
 INSERT INTO parent VALUES (1);
 INSERT INTO child VALUES (1,1);
 DELETE FROM parent;
-ERROR 23000: Cannot delete or update a parent row: a foreign key constraint fails (`upgrade_common`.`child`, CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`))
+ERROR 23000: Cannot delete or update a parent row: a foreign key constraint fails (`recreations`.`child`, CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE)
+USE upgrade_common;
+INSERT INTO parent VALUES (1);
+INSERT INTO child VALUES (1,1);
+DELETE FROM parent;
+ERROR 23000: Cannot delete or update a parent row: a foreign key constraint fails (`upgrade_common`.`child`, CONSTRAINT `child_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE)
+DROP TABLE child;
+DROP TABLE parent;
+SET @time_zone_saved = @@time_zone;
+SET SESSION time_zone = 'UTC';
+SET SESSION time_zone = @time_zone_saved;
+DROP DATABASE recreations;
 DROP DATABASE upgrade_common;

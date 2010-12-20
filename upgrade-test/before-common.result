@@ -1,7 +1,1470 @@
+SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES';
+SHOW PLUGINS;
+Name	Status	Type	Library	License
+binlog	ACTIVE	STORAGE ENGINE	NULL	GPL
+mysql_native_password	ACTIVE	AUTHENTICATION	NULL	GPL
+mysql_old_password	ACTIVE	AUTHENTICATION	NULL	GPL
+MyISAM	ACTIVE	STORAGE ENGINE	NULL	GPL
+partition	ACTIVE	STORAGE ENGINE	NULL	GPL
+ARCHIVE	ACTIVE	STORAGE ENGINE	NULL	GPL
+BLACKHOLE	ACTIVE	STORAGE ENGINE	NULL	GPL
+CSV	ACTIVE	STORAGE ENGINE	NULL	GPL
+FEDERATED	ACTIVE	STORAGE ENGINE	NULL	GPL
+MEMORY	ACTIVE	STORAGE ENGINE	NULL	GPL
+Maria	ACTIVE	DAEMON	NULL	GPL
+Aria	ACTIVE	STORAGE ENGINE	NULL	GPL
+MRG_MYISAM	ACTIVE	STORAGE ENGINE	NULL	GPL
+PBXT	DISABLED	STORAGE ENGINE	NULL	GPL
+PBXT_STATISTICS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+InnoDB	ACTIVE	STORAGE ENGINE	NULL	GPL
+INNODB_RSEG	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES_INDEX	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_BUFFER_POOL_PAGES_BLOB	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_TRX	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_LOCKS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_LOCK_WAITS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMP	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMP_RESET	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMPMEM	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_CMPMEM_RESET	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_TABLE_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_INDEX_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+XTRADB_ADMIN_COMMAND	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_TABLES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_INDEXES	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+INNODB_SYS_STATS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+XTRADB_ENHANCEMENTS	ACTIVE	INFORMATION SCHEMA	NULL	GPL
+SET SESSION pseudo_thread_id = 1;
+SHOW VARIABLES;
+Variable_name	Value
+aria_block_size	8192
+aria_checkpoint_interval	30
+aria_force_start_after_recovery_failures	0
+aria_group_commit	none
+aria_group_commit_interval	0
+aria_log_file_size	1073741824
+aria_log_purge_type	immediate
+aria_max_sort_file_size	9223372036853727232
+aria_page_checksum	ON
+aria_pagecache_age_threshold	300
+aria_pagecache_buffer_size	134213632
+aria_pagecache_division_limit	100
+aria_recover	NORMAL
+aria_repair_threads	1
+aria_sort_buffer_size	134217728
+aria_stats_method	nulls_unequal
+aria_sync_log_dir	NEWFILE
+aria_used_for_temp_tables	ON
+auto_increment_increment	1
+auto_increment_offset	1
+autocommit	ON
+automatic_sp_privileges	ON
+back_log	50
+basedir	/home/philips/bzr/maria-5.2/
+big_tables	OFF
+binlog_cache_size	32768
+binlog_direct_non_transactional_updates	OFF
+binlog_format	STATEMENT
+bulk_insert_buffer_size	8388608
+character_set_client	latin1
+character_set_connection	latin1
+character_set_database	latin1
+character_set_filesystem	binary
+character_set_results	latin1
+character_set_server	latin1
+character_set_system	utf8
+character_sets_dir	/home/philips/bzr/maria-5.2/sql/share/charsets/
+collation_connection	latin1_swedish_ci
+collation_database	latin1_swedish_ci
+collation_server	latin1_swedish_ci
+completion_type	0
+concurrent_insert	1
+connect_timeout	60
+datadir	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/data/
+date_format	%Y-%m-%d
+datetime_format	%Y-%m-%d %H:%i:%s
+deadlock_search_depth_long	15
+deadlock_search_depth_short	4
+deadlock_timeout_long	50000000
+deadlock_timeout_short	10000
+default_week_format	0
+delay_key_write	ON
+delayed_insert_limit	100
+delayed_insert_timeout	300
+delayed_queue_size	1000
+div_precision_increment	4
+engine_condition_pushdown	ON
+error_count	0
+event_scheduler	OFF
+expire_logs_days	0
+extra_max_connections	1
+extra_port	0
+flush	OFF
+flush_time	0
+foreign_key_checks	ON
+ft_boolean_syntax	+ -><()~*:""&|
+ft_max_word_len	84
+ft_min_word_len	4
+ft_query_expansion_limit	20
+ft_stopword_file	(built-in)
+general_log	ON
+general_log_file	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/mysqld.log
+group_concat_max_len	1024
+have_community_features	YES
+have_compress	YES
+have_crypt	YES
+have_csv	YES
+have_dynamic_loading	YES
+have_geometry	YES
+have_innodb	YES
+have_ndbcluster	NO
+have_openssl	NO
+have_partitioning	YES
+have_query_cache	YES
+have_rtree_keys	YES
+have_ssl	NO
+have_symlink	YES
+hostname	eve
+identity	0
+ignore_builtin_innodb	OFF
+init_connect	
+init_file	
+init_slave	
+innodb_adaptive_checkpoint	estimate
+innodb_adaptive_flushing	OFF
+innodb_adaptive_hash_index	ON
+innodb_additional_mem_pool_size	8388608
+innodb_auto_lru_dump	0
+innodb_autoextend_increment	8
+innodb_autoinc_lock_mode	1
+innodb_buffer_pool_shm_checksum	ON
+innodb_buffer_pool_shm_key	0
+innodb_buffer_pool_size	134217728
+innodb_change_buffering	inserts
+innodb_checkpoint_age_target	0
+innodb_checksums	ON
+innodb_commit_concurrency	0
+innodb_concurrency_tickets	500
+innodb_data_file_path	ibdata1:10M:autoextend
+innodb_data_home_dir	
+innodb_dict_size_limit	0
+innodb_doublewrite	ON
+innodb_doublewrite_file	
+innodb_enable_unsafe_group_commit	0
+innodb_expand_import	0
+innodb_extra_rsegments	0
+innodb_extra_undoslots	OFF
+innodb_fast_checksum	OFF
+innodb_fast_recovery	OFF
+innodb_fast_shutdown	1
+innodb_file_format	Antelope
+innodb_file_format_check	Antelope
+innodb_file_per_table	OFF
+innodb_flush_log_at_trx_commit	1
+innodb_flush_log_at_trx_commit_session	3
+innodb_flush_method	
+innodb_flush_neighbor_pages	1
+innodb_force_recovery	0
+innodb_ibuf_accel_rate	100
+innodb_ibuf_active_contract	1
+innodb_ibuf_max_size	67092480
+innodb_io_capacity	200
+innodb_lock_wait_timeout	50
+innodb_locks_unsafe_for_binlog	OFF
+innodb_log_buffer_size	8388608
+innodb_log_file_size	5242880
+innodb_log_files_in_group	2
+innodb_log_group_home_dir	./
+innodb_max_dirty_pages_pct	75
+innodb_max_purge_lag	0
+innodb_mirrored_log_groups	1
+innodb_old_blocks_pct	37
+innodb_old_blocks_time	0
+innodb_open_files	300
+innodb_overwrite_relay_log_info	OFF
+innodb_page_size	16384
+innodb_pass_corrupt_table	0
+innodb_read_ahead	linear
+innodb_read_ahead_threshold	56
+innodb_read_io_threads	4
+innodb_recovery_stats	OFF
+innodb_replication_delay	0
+innodb_rollback_on_timeout	OFF
+innodb_show_locks_held	10
+innodb_show_verbose_locks	0
+innodb_spin_wait_delay	6
+innodb_stats_auto_update	1
+innodb_stats_method	nulls_equal
+innodb_stats_on_metadata	ON
+innodb_stats_sample_pages	8
+innodb_stats_update_need_lock	1
+innodb_strict_mode	OFF
+innodb_support_xa	ON
+innodb_sync_spin_loops	30
+innodb_table_locks	ON
+innodb_thread_concurrency	0
+innodb_thread_concurrency_timer_based	OFF
+innodb_thread_sleep_delay	10000
+innodb_use_purge_thread	1
+innodb_use_sys_malloc	ON
+innodb_use_sys_stats_table	OFF
+innodb_version	1.0.12-12.1
+innodb_write_io_threads	4
+insert_id	0
+interactive_timeout	28800
+join_buffer_size	131072
+keep_files_on_create	OFF
+key_buffer_size	1048576
+key_cache_age_threshold	300
+key_cache_block_size	1024
+key_cache_division_limit	100
+key_cache_segments	0
+language	/home/philips/bzr/maria-5.2/sql/share/english/
+large_files_support	ON
+large_page_size	0
+large_pages	OFF
+last_insert_id	0
+lc_time_names	en_US
+license	GPL
+local_infile	ON
+locked_in_memory	OFF
+log	ON
+log_bin	OFF
+log_bin_trust_function_creators	ON
+log_bin_trust_routine_creators	ON
+log_error	
+log_output	FILE,TABLE
+log_queries_not_using_indexes	OFF
+log_slave_updates	OFF
+log_slow_filter	
+log_slow_queries	ON
+log_slow_rate_limit	1
+log_slow_time	10.000000
+log_slow_verbosity	
+log_warnings	1
+long_query_time	10.000000
+low_priority_updates	OFF
+lower_case_file_system	OFF
+lower_case_table_names	0
+maria_block_size	8192
+maria_checkpoint_interval	30
+maria_force_start_after_recovery_failures	0
+maria_group_commit	none
+maria_group_commit_interval	0
+maria_log_file_size	1073741824
+maria_log_purge_type	immediate
+maria_max_sort_file_size	9223372036853727232
+maria_page_checksum	ON
+maria_pagecache_age_threshold	300
+maria_pagecache_buffer_size	134213632
+maria_pagecache_division_limit	100
+maria_recover	NORMAL
+maria_repair_threads	1
+maria_sort_buffer_size	134217728
+maria_stats_method	nulls_unequal
+maria_sync_log_dir	NEWFILE
+maria_used_for_temp_tables	ON
+max_allowed_packet	1048576
+max_binlog_cache_size	4294963200
+max_binlog_size	1073741824
+max_connect_errors	10
+max_connections	151
+max_delayed_threads	20
+max_error_count	64
+max_heap_table_size	1048576
+max_insert_delayed_threads	20
+max_join_size	4294967295
+max_length_for_sort_data	1024
+max_prepared_stmt_count	16382
+max_relay_log_size	0
+max_seeks_for_key	4294967295
+max_sort_length	1024
+max_sp_recursion_depth	0
+max_tmp_tables	32
+max_user_connections	0
+max_write_lock_count	4294967295
+min_examined_row_limit	0
+multi_range_count	256
+myisam_data_pointer_size	6
+myisam_max_sort_file_size	2146435072
+myisam_mmap_size	4294967295
+myisam_recover_options	DEFAULT
+myisam_repair_threads	1
+myisam_sort_buffer_size	8388608
+myisam_stats_method	nulls_unequal
+myisam_use_mmap	OFF
+net_buffer_length	16384
+net_read_timeout	30
+net_retry_count	10
+net_write_timeout	60
+new	OFF
+old	OFF
+old_alter_table	OFF
+old_passwords	OFF
+open_files_limit	1024
+optimizer_prune_level	1
+optimizer_search_depth	62
+optimizer_switch	index_merge=on,index_merge_union=on,index_merge_sort_union=on,index_merge_intersection=on
+pid_file	/home/philips/bzr/maria-5.2/mysql-test/var/run/mysqld.1.pid
+plugin_dir	/home/philips/bzr/maria-5.2/mysql-test/var/plugins
+plugin_maturity	unknown
+port	13000
+preload_buffer_size	32768
+profiling	OFF
+profiling_history_size	15
+protocol_version	10
+pseudo_thread_id	1
+query_alloc_block_size	8192
+query_cache_limit	1048576
+query_cache_min_res_unit	4096
+query_cache_size	0
+query_cache_type	ON
+query_cache_wlock_invalidate	OFF
+query_prealloc_size	8192
+rand_seed1	
+rand_seed2	
+range_alloc_block_size	4096
+read_buffer_size	131072
+read_only	OFF
+read_rnd_buffer_size	262144
+relay_log	
+relay_log_index	
+relay_log_info_file	relay-log.info
+relay_log_purge	ON
+relay_log_space_limit	0
+report_host	
+report_password	
+report_port	3306
+report_user	
+rpl_recovery_rank	0
+secure_auth	OFF
+secure_file_priv	/home/philips/bzr/maria-5.2/mysql-test/var/
+server_id	1
+skip_external_locking	ON
+skip_name_resolve	OFF
+skip_networking	OFF
+skip_show_database	OFF
+slave_compressed_protocol	OFF
+slave_exec_mode	STRICT
+slave_load_tmpdir	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1
+slave_net_timeout	120
+slave_skip_errors	OFF
+slave_transaction_retries	10
+slow_launch_time	2
+slow_query_log	ON
+slow_query_log_file	/home/philips/bzr/maria-5.2/mysql-test/var/mysqld.1/mysqld-slow.log
+socket	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1.sock
+sort_buffer_size	262144
+sql_auto_is_null	ON
+sql_big_selects	ON
+sql_big_tables	OFF
+sql_buffer_result	OFF
+sql_log_bin	ON
+sql_log_off	OFF
+sql_log_update	ON
+sql_low_priority_updates	OFF
+sql_max_join_size	4294967295
+sql_mode	STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION
+sql_notes	ON
+sql_quote_show_create	ON
+sql_safe_updates	OFF
+sql_select_limit	4294967295
+sql_slave_skip_counter	
+sql_warnings	OFF
+ssl_ca	
+ssl_capath	
+ssl_cert	
+ssl_cipher	
+ssl_key	
+storage_engine	MyISAM
+sync_binlog	0
+sync_frm	OFF
+system_time_zone	EET
+table_definition_cache	256
+table_lock_wait_timeout	50
+table_open_cache	64
+table_type	MyISAM
+thread_cache_size	0
+thread_handling	one-thread-per-connection
+thread_stack	294912
+time_format	%H:%i:%s
+time_zone	SYSTEM
+timed_mutexes	OFF
+timestamp	(timestamp)
+tmp_table_size	16777216
+tmpdir	/home/philips/bzr/maria-5.2/mysql-test/var/tmp/mysqld.1
+transaction_alloc_block_size	8192
+transaction_prealloc_size	4096
+tx_isolation	REPEATABLE-READ
+unique_checks	ON
+updatable_views_with_limit	YES
+userstat	OFF
+version	5.2.3-MariaDB-log
+version_comment	Source distribution
+version_compile_machine	i686
+version_compile_os	pc-linux-gnu
+wait_timeout	28800
+warning_count	0
+SHOW CREATE TABLE mysql.columns_priv;
+Table	Create Table
+columns_priv	CREATE TABLE `columns_priv` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Db` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Table_name` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Column_name` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Column_priv` set('Select','Insert','Update','References') CHARACTER SET utf8 NOT NULL DEFAULT '',
+  PRIMARY KEY (`Host`,`Db`,`User`,`Table_name`,`Column_name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Column privileges'
+SHOW CREATE TABLE mysql.db;
+Table	Create Table
+db	CREATE TABLE `db` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Db` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Select_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Insert_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Update_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Delete_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Drop_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Grant_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `References_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Index_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_tmp_table_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Lock_tables_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Show_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Execute_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Event_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Trigger_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`Host`,`Db`,`User`),
+  KEY `User` (`User`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Database privileges'
+SHOW CREATE TABLE mysql.event;
+Table	Create Table
+event	CREATE TABLE `event` (
+  `db` char(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `name` char(64) NOT NULL DEFAULT '',
+  `body` longblob NOT NULL,
+  `definer` char(77) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `execute_at` datetime DEFAULT NULL,
+  `interval_value` int(11) DEFAULT NULL,
+  `interval_field` enum('YEAR','QUARTER','MONTH','DAY','HOUR','MINUTE','WEEK','SECOND','MICROSECOND','YEAR_MONTH','DAY_HOUR','DAY_MINUTE','DAY_SECOND','HOUR_MINUTE','HOUR_SECOND','MINUTE_SECOND','DAY_MICROSECOND','HOUR_MICROSECOND','MINUTE_MICROSECOND','SECOND_MICROSECOND') DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_executed` datetime DEFAULT NULL,
+  `starts` datetime DEFAULT NULL,
+  `ends` datetime DEFAULT NULL,
+  `status` enum('ENABLED','DISABLED','SLAVESIDE_DISABLED') NOT NULL DEFAULT 'ENABLED',
+  `on_completion` enum('DROP','PRESERVE') NOT NULL DEFAULT 'DROP',
+  `sql_mode` set('REAL_AS_FLOAT','PIPES_AS_CONCAT','ANSI_QUOTES','IGNORE_SPACE','IGNORE_BAD_TABLE_OPTIONS','ONLY_FULL_GROUP_BY','NO_UNSIGNED_SUBTRACTION','NO_DIR_IN_CREATE','POSTGRESQL','ORACLE','MSSQL','DB2','MAXDB','NO_KEY_OPTIONS','NO_TABLE_OPTIONS','NO_FIELD_OPTIONS','MYSQL323','MYSQL40','ANSI','NO_AUTO_VALUE_ON_ZERO','NO_BACKSLASH_ESCAPES','STRICT_TRANS_TABLES','STRICT_ALL_TABLES','NO_ZERO_IN_DATE','NO_ZERO_DATE','INVALID_DATES','ERROR_FOR_DIVISION_BY_ZERO','TRADITIONAL','NO_AUTO_CREATE_USER','HIGH_NOT_PRECEDENCE','NO_ENGINE_SUBSTITUTION','PAD_CHAR_TO_FULL_LENGTH') NOT NULL DEFAULT '',
+  `comment` char(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `originator` int(10) unsigned NOT NULL,
+  `time_zone` char(64) CHARACTER SET latin1 NOT NULL DEFAULT 'SYSTEM',
+  `character_set_client` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `collation_connection` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `db_collation` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `body_utf8` longblob,
+  PRIMARY KEY (`db`,`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Events'
+SHOW CREATE TABLE mysql.func;
+Table	Create Table
+func	CREATE TABLE `func` (
+  `name` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `ret` tinyint(1) NOT NULL DEFAULT '0',
+  `dl` char(128) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `type` enum('function','aggregate') CHARACTER SET utf8 NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User defined functions'
+SHOW CREATE TABLE mysql.general_log;
+Table	Create Table
+general_log	CREATE TABLE `general_log` (
+  `event_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_host` mediumtext NOT NULL,
+  `thread_id` int(11) NOT NULL,
+  `server_id` int(10) unsigned NOT NULL,
+  `command_type` varchar(64) NOT NULL,
+  `argument` mediumtext NOT NULL
+) ENGINE=CSV DEFAULT CHARSET=utf8 COMMENT='General log'
+SHOW CREATE TABLE mysql.help_category;
+Table	Create Table
+help_category	CREATE TABLE `help_category` (
+  `help_category_id` smallint(5) unsigned NOT NULL,
+  `name` char(64) NOT NULL,
+  `parent_category_id` smallint(5) unsigned DEFAULT NULL,
+  `url` char(128) NOT NULL,
+  PRIMARY KEY (`help_category_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='help categories'
+SHOW CREATE TABLE mysql.help_keyword;
+Table	Create Table
+help_keyword	CREATE TABLE `help_keyword` (
+  `help_keyword_id` int(10) unsigned NOT NULL,
+  `name` char(64) NOT NULL,
+  PRIMARY KEY (`help_keyword_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='help keywords'
+SHOW CREATE TABLE mysql.help_relation;
+Table	Create Table
+help_relation	CREATE TABLE `help_relation` (
+  `help_topic_id` int(10) unsigned NOT NULL,
+  `help_keyword_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`help_keyword_id`,`help_topic_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='keyword-topic relation'
+SHOW CREATE TABLE mysql.help_topic;
+Table	Create Table
+help_topic	CREATE TABLE `help_topic` (
+  `help_topic_id` int(10) unsigned NOT NULL,
+  `name` char(64) NOT NULL,
+  `help_category_id` smallint(5) unsigned NOT NULL,
+  `description` text NOT NULL,
+  `example` text NOT NULL,
+  `url` char(128) NOT NULL,
+  PRIMARY KEY (`help_topic_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='help topics'
+SHOW CREATE TABLE mysql.host;
+Table	Create Table
+host	CREATE TABLE `host` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Db` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Select_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Insert_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Update_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Delete_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Drop_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Grant_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `References_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Index_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_tmp_table_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Lock_tables_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Show_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Execute_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Trigger_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`Host`,`Db`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Host privileges;  Merged with database privileges'
+SHOW CREATE TABLE mysql.ndb_binlog_index;
+Table	Create Table
+ndb_binlog_index	CREATE TABLE `ndb_binlog_index` (
+  `Position` bigint(20) unsigned NOT NULL,
+  `File` varchar(255) NOT NULL,
+  `epoch` bigint(20) unsigned NOT NULL,
+  `inserts` bigint(20) unsigned NOT NULL,
+  `updates` bigint(20) unsigned NOT NULL,
+  `deletes` bigint(20) unsigned NOT NULL,
+  `schemaops` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`epoch`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+SHOW CREATE TABLE mysql.plugin;
+Table	Create Table
+plugin	CREATE TABLE `plugin` (
+  `name` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `dl` char(128) COLLATE utf8_bin NOT NULL DEFAULT '',
+  PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='MySQL plugins'
+SHOW CREATE TABLE mysql.proc;
+Table	Create Table
+proc	CREATE TABLE `proc` (
+  `db` char(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `name` char(64) NOT NULL DEFAULT '',
+  `type` enum('FUNCTION','PROCEDURE') NOT NULL,
+  `specific_name` char(64) NOT NULL DEFAULT '',
+  `language` enum('SQL') NOT NULL DEFAULT 'SQL',
+  `sql_data_access` enum('CONTAINS_SQL','NO_SQL','READS_SQL_DATA','MODIFIES_SQL_DATA') NOT NULL DEFAULT 'CONTAINS_SQL',
+  `is_deterministic` enum('YES','NO') NOT NULL DEFAULT 'NO',
+  `security_type` enum('INVOKER','DEFINER') NOT NULL DEFAULT 'DEFINER',
+  `param_list` blob NOT NULL,
+  `returns` longblob NOT NULL,
+  `body` longblob NOT NULL,
+  `definer` char(77) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `sql_mode` set('REAL_AS_FLOAT','PIPES_AS_CONCAT','ANSI_QUOTES','IGNORE_SPACE','IGNORE_BAD_TABLE_OPTIONS','ONLY_FULL_GROUP_BY','NO_UNSIGNED_SUBTRACTION','NO_DIR_IN_CREATE','POSTGRESQL','ORACLE','MSSQL','DB2','MAXDB','NO_KEY_OPTIONS','NO_TABLE_OPTIONS','NO_FIELD_OPTIONS','MYSQL323','MYSQL40','ANSI','NO_AUTO_VALUE_ON_ZERO','NO_BACKSLASH_ESCAPES','STRICT_TRANS_TABLES','STRICT_ALL_TABLES','NO_ZERO_IN_DATE','NO_ZERO_DATE','INVALID_DATES','ERROR_FOR_DIVISION_BY_ZERO','TRADITIONAL','NO_AUTO_CREATE_USER','HIGH_NOT_PRECEDENCE','NO_ENGINE_SUBSTITUTION','PAD_CHAR_TO_FULL_LENGTH') NOT NULL DEFAULT '',
+  `comment` char(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `character_set_client` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `collation_connection` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `db_collation` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `body_utf8` longblob,
+  PRIMARY KEY (`db`,`name`,`type`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stored Procedures'
+SHOW CREATE TABLE mysql.procs_priv;
+Table	Create Table
+procs_priv	CREATE TABLE `procs_priv` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Db` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Routine_name` char(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `Routine_type` enum('FUNCTION','PROCEDURE') COLLATE utf8_bin NOT NULL,
+  `Grantor` char(77) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Proc_priv` set('Execute','Alter Routine','Grant') CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`Host`,`Db`,`User`,`Routine_name`,`Routine_type`),
+  KEY `Grantor` (`Grantor`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Procedure privileges'
+SHOW CREATE TABLE mysql.servers;
+Table	Create Table
+servers	CREATE TABLE `servers` (
+  `Server_name` char(64) NOT NULL DEFAULT '',
+  `Host` char(64) NOT NULL DEFAULT '',
+  `Db` char(64) NOT NULL DEFAULT '',
+  `Username` char(64) NOT NULL DEFAULT '',
+  `Password` char(64) NOT NULL DEFAULT '',
+  `Port` int(4) NOT NULL DEFAULT '0',
+  `Socket` char(64) NOT NULL DEFAULT '',
+  `Wrapper` char(64) NOT NULL DEFAULT '',
+  `Owner` char(64) NOT NULL DEFAULT '',
+  PRIMARY KEY (`Server_name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='MySQL Foreign Servers table'
+SHOW CREATE TABLE mysql.slow_log;
+Table	Create Table
+slow_log	CREATE TABLE `slow_log` (
+  `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_host` mediumtext NOT NULL,
+  `query_time` time NOT NULL,
+  `lock_time` time NOT NULL,
+  `rows_sent` int(11) NOT NULL,
+  `rows_examined` int(11) NOT NULL,
+  `db` varchar(512) NOT NULL,
+  `last_insert_id` int(11) NOT NULL,
+  `insert_id` int(11) NOT NULL,
+  `server_id` int(10) unsigned NOT NULL,
+  `sql_text` mediumtext NOT NULL
+) ENGINE=CSV DEFAULT CHARSET=utf8 COMMENT='Slow log'
+SHOW CREATE TABLE mysql.tables_priv;
+Table	Create Table
+tables_priv	CREATE TABLE `tables_priv` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Db` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Table_name` char(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Grantor` char(77) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Table_priv` set('Select','Insert','Update','Delete','Create','Drop','Grant','References','Index','Alter','Create View','Show view','Trigger') CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `Column_priv` set('Select','Insert','Update','References') CHARACTER SET utf8 NOT NULL DEFAULT '',
+  PRIMARY KEY (`Host`,`Db`,`User`,`Table_name`),
+  KEY `Grantor` (`Grantor`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table privileges'
+SHOW CREATE TABLE mysql.time_zone;
+Table	Create Table
+time_zone	CREATE TABLE `time_zone` (
+  `Time_zone_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Use_leap_seconds` enum('Y','N') NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`Time_zone_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Time zones'
+SHOW CREATE TABLE mysql.time_zone_leap_second;
+Table	Create Table
+time_zone_leap_second	CREATE TABLE `time_zone_leap_second` (
+  `Transition_time` bigint(20) NOT NULL,
+  `Correction` int(11) NOT NULL,
+  PRIMARY KEY (`Transition_time`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Leap seconds information for time zones'
+SHOW CREATE TABLE mysql.time_zone_name;
+Table	Create Table
+time_zone_name	CREATE TABLE `time_zone_name` (
+  `Name` char(64) NOT NULL,
+  `Time_zone_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`Name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Time zone names'
+SHOW CREATE TABLE mysql.time_zone_transition;
+Table	Create Table
+time_zone_transition	CREATE TABLE `time_zone_transition` (
+  `Time_zone_id` int(10) unsigned NOT NULL,
+  `Transition_time` bigint(20) NOT NULL,
+  `Transition_type_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`Time_zone_id`,`Transition_time`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Time zone transitions'
+SHOW CREATE TABLE mysql.time_zone_transition_type;
+Table	Create Table
+time_zone_transition_type	CREATE TABLE `time_zone_transition_type` (
+  `Time_zone_id` int(10) unsigned NOT NULL,
+  `Transition_type_id` int(10) unsigned NOT NULL,
+  `Offset` int(11) NOT NULL DEFAULT '0',
+  `Is_DST` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `Abbreviation` char(8) NOT NULL DEFAULT '',
+  PRIMARY KEY (`Time_zone_id`,`Transition_type_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Time zone transition types'
+SHOW CREATE TABLE mysql.user;
+Table	Create Table
+user	CREATE TABLE `user` (
+  `Host` char(60) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `User` char(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Password` char(41) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT '',
+  `Select_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Insert_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Update_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Delete_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Drop_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Reload_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Shutdown_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Process_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `File_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Grant_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `References_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Index_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Show_db_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Super_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_tmp_table_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Lock_tables_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Execute_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Repl_slave_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Repl_client_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Show_view_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Alter_routine_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Create_user_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Event_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `Trigger_priv` enum('N','Y') CHARACTER SET utf8 NOT NULL DEFAULT 'N',
+  `ssl_type` enum('','ANY','X509','SPECIFIED') CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `ssl_cipher` blob NOT NULL,
+  `x509_issuer` blob NOT NULL,
+  `x509_subject` blob NOT NULL,
+  `max_questions` int(11) unsigned NOT NULL DEFAULT '0',
+  `max_updates` int(11) unsigned NOT NULL DEFAULT '0',
+  `max_connections` int(11) unsigned NOT NULL DEFAULT '0',
+  `max_user_connections` int(11) unsigned NOT NULL DEFAULT '0',
+  `plugin` char(60) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `auth_string` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`Host`,`User`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Users and global privileges'
+SHOW CREATE TABLE information_schema.CHARACTER_SETS;
+Table	Create Table
+CHARACTER_SETS	CREATE TEMPORARY TABLE `CHARACTER_SETS` (
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DEFAULT_COLLATE_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DESCRIPTION` varchar(60) NOT NULL DEFAULT '',
+  `MAXLEN` bigint(3) NOT NULL DEFAULT '0'
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLLATIONS;
+Table	Create Table
+COLLATIONS	CREATE TEMPORARY TABLE `COLLATIONS` (
+  `COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `ID` bigint(11) NOT NULL DEFAULT '0',
+  `IS_DEFAULT` varchar(3) NOT NULL DEFAULT '',
+  `IS_COMPILED` varchar(3) NOT NULL DEFAULT '',
+  `SORTLEN` bigint(3) NOT NULL DEFAULT '0'
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLLATION_CHARACTER_SET_APPLICABILITY;
+Table	Create Table
+COLLATION_CHARACTER_SET_APPLICABILITY	CREATE TEMPORARY TABLE `COLLATION_CHARACTER_SET_APPLICABILITY` (
+  `COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.COLUMNS;
+Table	Create Table
+COLUMNS	CREATE TEMPORARY TABLE `COLUMNS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ORDINAL_POSITION` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `COLUMN_DEFAULT` longtext,
+  `IS_NULLABLE` varchar(3) NOT NULL DEFAULT '',
+  `DATA_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `CHARACTER_MAXIMUM_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `CHARACTER_OCTET_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `NUMERIC_PRECISION` bigint(21) unsigned DEFAULT NULL,
+  `NUMERIC_SCALE` bigint(21) unsigned DEFAULT NULL,
+  `CHARACTER_SET_NAME` varchar(32) DEFAULT NULL,
+  `COLLATION_NAME` varchar(32) DEFAULT NULL,
+  `COLUMN_TYPE` longtext NOT NULL,
+  `COLUMN_KEY` varchar(3) NOT NULL DEFAULT '',
+  `EXTRA` varchar(27) NOT NULL DEFAULT '',
+  `PRIVILEGES` varchar(80) NOT NULL DEFAULT '',
+  `COLUMN_COMMENT` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.COLUMN_PRIVILEGES;
+Table	Create Table
+COLUMN_PRIVILEGES	CREATE TEMPORARY TABLE `COLUMN_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.ENGINES;
+Table	Create Table
+ENGINES	CREATE TEMPORARY TABLE `ENGINES` (
+  `ENGINE` varchar(64) NOT NULL DEFAULT '',
+  `SUPPORT` varchar(8) NOT NULL DEFAULT '',
+  `COMMENT` varchar(160) NOT NULL DEFAULT '',
+  `TRANSACTIONS` varchar(3) DEFAULT NULL,
+  `XA` varchar(3) DEFAULT NULL,
+  `SAVEPOINTS` varchar(3) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.EVENTS;
+Table	Create Table
+EVENTS	CREATE TEMPORARY TABLE `EVENTS` (
+  `EVENT_CATALOG` varchar(64) DEFAULT NULL,
+  `EVENT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `TIME_ZONE` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_BODY` varchar(8) NOT NULL DEFAULT '',
+  `EVENT_DEFINITION` longtext NOT NULL,
+  `EVENT_TYPE` varchar(9) NOT NULL DEFAULT '',
+  `EXECUTE_AT` datetime DEFAULT NULL,
+  `INTERVAL_VALUE` varchar(256) DEFAULT NULL,
+  `INTERVAL_FIELD` varchar(18) DEFAULT NULL,
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `STARTS` datetime DEFAULT NULL,
+  `ENDS` datetime DEFAULT NULL,
+  `STATUS` varchar(18) NOT NULL DEFAULT '',
+  `ON_COMPLETION` varchar(12) NOT NULL DEFAULT '',
+  `CREATED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_ALTERED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_EXECUTED` datetime DEFAULT NULL,
+  `EVENT_COMMENT` varchar(64) NOT NULL DEFAULT '',
+  `ORIGINATOR` bigint(10) NOT NULL DEFAULT '0',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.FILES;
+Table	Create Table
+FILES	CREATE TEMPORARY TABLE `FILES` (
+  `FILE_ID` bigint(4) NOT NULL DEFAULT '0',
+  `FILE_NAME` varchar(64) DEFAULT NULL,
+  `FILE_TYPE` varchar(20) NOT NULL DEFAULT '',
+  `TABLESPACE_NAME` varchar(64) DEFAULT NULL,
+  `TABLE_CATALOG` varchar(64) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) DEFAULT NULL,
+  `TABLE_NAME` varchar(64) DEFAULT NULL,
+  `LOGFILE_GROUP_NAME` varchar(64) DEFAULT NULL,
+  `LOGFILE_GROUP_NUMBER` bigint(4) DEFAULT NULL,
+  `ENGINE` varchar(64) NOT NULL DEFAULT '',
+  `FULLTEXT_KEYS` varchar(64) DEFAULT NULL,
+  `DELETED_ROWS` bigint(4) DEFAULT NULL,
+  `UPDATE_COUNT` bigint(4) DEFAULT NULL,
+  `FREE_EXTENTS` bigint(4) DEFAULT NULL,
+  `TOTAL_EXTENTS` bigint(4) DEFAULT NULL,
+  `EXTENT_SIZE` bigint(4) NOT NULL DEFAULT '0',
+  `INITIAL_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `MAXIMUM_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `AUTOEXTEND_SIZE` bigint(21) unsigned DEFAULT NULL,
+  `CREATION_TIME` datetime DEFAULT NULL,
+  `LAST_UPDATE_TIME` datetime DEFAULT NULL,
+  `LAST_ACCESS_TIME` datetime DEFAULT NULL,
+  `RECOVER_TIME` bigint(4) DEFAULT NULL,
+  `TRANSACTION_COUNTER` bigint(4) DEFAULT NULL,
+  `VERSION` bigint(21) unsigned DEFAULT NULL,
+  `ROW_FORMAT` varchar(10) DEFAULT NULL,
+  `TABLE_ROWS` bigint(21) unsigned DEFAULT NULL,
+  `AVG_ROW_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_FREE` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `STATUS` varchar(20) NOT NULL DEFAULT '',
+  `EXTRA` varchar(255) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.GLOBAL_STATUS;
+Table	Create Table
+GLOBAL_STATUS	CREATE TEMPORARY TABLE `GLOBAL_STATUS` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.GLOBAL_VARIABLES;
+Table	Create Table
+GLOBAL_VARIABLES	CREATE TEMPORARY TABLE `GLOBAL_VARIABLES` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.KEY_COLUMN_USAGE;
+Table	Create Table
+KEY_COLUMN_USAGE	CREATE TEMPORARY TABLE `KEY_COLUMN_USAGE` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ORDINAL_POSITION` bigint(10) NOT NULL DEFAULT '0',
+  `POSITION_IN_UNIQUE_CONSTRAINT` bigint(10) DEFAULT NULL,
+  `REFERENCED_TABLE_SCHEMA` varchar(64) DEFAULT NULL,
+  `REFERENCED_TABLE_NAME` varchar(64) DEFAULT NULL,
+  `REFERENCED_COLUMN_NAME` varchar(64) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.PARTITIONS;
+Table	Create Table
+PARTITIONS	CREATE TEMPORARY TABLE `PARTITIONS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PARTITION_NAME` varchar(64) DEFAULT NULL,
+  `SUBPARTITION_NAME` varchar(64) DEFAULT NULL,
+  `PARTITION_ORDINAL_POSITION` bigint(21) unsigned DEFAULT NULL,
+  `SUBPARTITION_ORDINAL_POSITION` bigint(21) unsigned DEFAULT NULL,
+  `PARTITION_METHOD` varchar(12) DEFAULT NULL,
+  `SUBPARTITION_METHOD` varchar(12) DEFAULT NULL,
+  `PARTITION_EXPRESSION` longtext,
+  `SUBPARTITION_EXPRESSION` longtext,
+  `PARTITION_DESCRIPTION` longtext,
+  `TABLE_ROWS` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `AVG_ROW_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `DATA_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `DATA_FREE` bigint(21) unsigned NOT NULL DEFAULT '0',
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `PARTITION_COMMENT` varchar(80) NOT NULL DEFAULT '',
+  `NODEGROUP` varchar(12) NOT NULL DEFAULT '',
+  `TABLESPACE_NAME` varchar(64) DEFAULT NULL
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PLUGINS;
+Table	Create Table
+PLUGINS	CREATE TEMPORARY TABLE `PLUGINS` (
+  `PLUGIN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PLUGIN_VERSION` varchar(20) NOT NULL DEFAULT '',
+  `PLUGIN_STATUS` varchar(10) NOT NULL DEFAULT '',
+  `PLUGIN_TYPE` varchar(80) NOT NULL DEFAULT '',
+  `PLUGIN_TYPE_VERSION` varchar(20) NOT NULL DEFAULT '',
+  `PLUGIN_LIBRARY` varchar(64) DEFAULT NULL,
+  `PLUGIN_LIBRARY_VERSION` varchar(20) DEFAULT NULL,
+  `PLUGIN_AUTHOR` varchar(64) DEFAULT NULL,
+  `PLUGIN_DESCRIPTION` longtext,
+  `PLUGIN_LICENSE` varchar(80) DEFAULT NULL,
+  `PLUGIN_MATURITY` varchar(12) DEFAULT NULL,
+  `PLUGIN_AUTH_VERSION` varchar(80) DEFAULT NULL
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PROCESSLIST;
+Table	Create Table
+PROCESSLIST	CREATE TEMPORARY TABLE `PROCESSLIST` (
+  `ID` bigint(4) NOT NULL DEFAULT '0',
+  `USER` varchar(16) NOT NULL DEFAULT '',
+  `HOST` varchar(64) NOT NULL DEFAULT '',
+  `DB` varchar(64) DEFAULT NULL,
+  `COMMAND` varchar(16) NOT NULL DEFAULT '',
+  `TIME` int(7) NOT NULL DEFAULT '0',
+  `STATE` varchar(64) DEFAULT NULL,
+  `INFO` longtext,
+  `TIME_MS` decimal(22,3) NOT NULL DEFAULT '0.000'
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.PROFILING;
+Table	Create Table
+PROFILING	CREATE TEMPORARY TABLE `PROFILING` (
+  `QUERY_ID` int(20) NOT NULL DEFAULT '0',
+  `SEQ` int(20) NOT NULL DEFAULT '0',
+  `STATE` varchar(30) NOT NULL DEFAULT '',
+  `DURATION` decimal(9,6) NOT NULL DEFAULT '0.000000',
+  `CPU_USER` decimal(9,6) DEFAULT NULL,
+  `CPU_SYSTEM` decimal(9,6) DEFAULT NULL,
+  `CONTEXT_VOLUNTARY` int(20) DEFAULT NULL,
+  `CONTEXT_INVOLUNTARY` int(20) DEFAULT NULL,
+  `BLOCK_OPS_IN` int(20) DEFAULT NULL,
+  `BLOCK_OPS_OUT` int(20) DEFAULT NULL,
+  `MESSAGES_SENT` int(20) DEFAULT NULL,
+  `MESSAGES_RECEIVED` int(20) DEFAULT NULL,
+  `PAGE_FAULTS_MAJOR` int(20) DEFAULT NULL,
+  `PAGE_FAULTS_MINOR` int(20) DEFAULT NULL,
+  `SWAPS` int(20) DEFAULT NULL,
+  `SOURCE_FUNCTION` varchar(30) DEFAULT NULL,
+  `SOURCE_FILE` varchar(20) DEFAULT NULL,
+  `SOURCE_LINE` int(20) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.REFERENTIAL_CONSTRAINTS;
+Table	Create Table
+REFERENTIAL_CONSTRAINTS	CREATE TEMPORARY TABLE `REFERENTIAL_CONSTRAINTS` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `UNIQUE_CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `UNIQUE_CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `UNIQUE_CONSTRAINT_NAME` varchar(64) DEFAULT NULL,
+  `MATCH_OPTION` varchar(64) NOT NULL DEFAULT '',
+  `UPDATE_RULE` varchar(64) NOT NULL DEFAULT '',
+  `DELETE_RULE` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `REFERENCED_TABLE_NAME` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.ROUTINES;
+Table	Create Table
+ROUTINES	CREATE TEMPORARY TABLE `ROUTINES` (
+  `SPECIFIC_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_CATALOG` varchar(512) DEFAULT NULL,
+  `ROUTINE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `ROUTINE_TYPE` varchar(9) NOT NULL DEFAULT '',
+  `DTD_IDENTIFIER` varchar(64) DEFAULT NULL,
+  `ROUTINE_BODY` varchar(8) NOT NULL DEFAULT '',
+  `ROUTINE_DEFINITION` longtext,
+  `EXTERNAL_NAME` varchar(64) DEFAULT NULL,
+  `EXTERNAL_LANGUAGE` varchar(64) DEFAULT NULL,
+  `PARAMETER_STYLE` varchar(8) NOT NULL DEFAULT '',
+  `IS_DETERMINISTIC` varchar(3) NOT NULL DEFAULT '',
+  `SQL_DATA_ACCESS` varchar(64) NOT NULL DEFAULT '',
+  `SQL_PATH` varchar(64) DEFAULT NULL,
+  `SECURITY_TYPE` varchar(7) NOT NULL DEFAULT '',
+  `CREATED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `LAST_ALTERED` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `ROUTINE_COMMENT` varchar(64) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.SCHEMATA;
+Table	Create Table
+SCHEMATA	CREATE TEMPORARY TABLE `SCHEMATA` (
+  `CATALOG_NAME` varchar(512) DEFAULT NULL,
+  `SCHEMA_NAME` varchar(64) NOT NULL DEFAULT '',
+  `DEFAULT_CHARACTER_SET_NAME` varchar(32) NOT NULL DEFAULT '',
+  `DEFAULT_COLLATION_NAME` varchar(32) NOT NULL DEFAULT '',
+  `SQL_PATH` varchar(512) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SCHEMA_PRIVILEGES;
+Table	Create Table
+SCHEMA_PRIVILEGES	CREATE TEMPORARY TABLE `SCHEMA_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SESSION_STATUS;
+Table	Create Table
+SESSION_STATUS	CREATE TEMPORARY TABLE `SESSION_STATUS` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.SESSION_VARIABLES;
+Table	Create Table
+SESSION_VARIABLES	CREATE TEMPORARY TABLE `SESSION_VARIABLES` (
+  `VARIABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.STATISTICS;
+Table	Create Table
+STATISTICS	CREATE TEMPORARY TABLE `STATISTICS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `NON_UNIQUE` bigint(1) NOT NULL DEFAULT '0',
+  `INDEX_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `INDEX_NAME` varchar(64) NOT NULL DEFAULT '',
+  `SEQ_IN_INDEX` bigint(2) NOT NULL DEFAULT '0',
+  `COLUMN_NAME` varchar(64) NOT NULL DEFAULT '',
+  `COLLATION` varchar(1) DEFAULT NULL,
+  `CARDINALITY` bigint(21) DEFAULT NULL,
+  `SUB_PART` bigint(3) DEFAULT NULL,
+  `PACKED` varchar(10) DEFAULT NULL,
+  `NULLABLE` varchar(3) NOT NULL DEFAULT '',
+  `INDEX_TYPE` varchar(16) NOT NULL DEFAULT '',
+  `COMMENT` varchar(16) DEFAULT NULL
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLES;
+Table	Create Table
+TABLES	CREATE TEMPORARY TABLE `TABLES` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `ENGINE` varchar(64) DEFAULT NULL,
+  `VERSION` bigint(21) unsigned DEFAULT NULL,
+  `ROW_FORMAT` varchar(10) DEFAULT NULL,
+  `TABLE_ROWS` bigint(21) unsigned DEFAULT NULL,
+  `AVG_ROW_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `MAX_DATA_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `INDEX_LENGTH` bigint(21) unsigned DEFAULT NULL,
+  `DATA_FREE` bigint(21) unsigned DEFAULT NULL,
+  `AUTO_INCREMENT` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT NULL,
+  `UPDATE_TIME` datetime DEFAULT NULL,
+  `CHECK_TIME` datetime DEFAULT NULL,
+  `TABLE_COLLATION` varchar(32) DEFAULT NULL,
+  `CHECKSUM` bigint(21) unsigned DEFAULT NULL,
+  `CREATE_OPTIONS` varchar(255) DEFAULT NULL,
+  `TABLE_COMMENT` varchar(80) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLE_CONSTRAINTS;
+Table	Create Table
+TABLE_CONSTRAINTS	CREATE TEMPORARY TABLE `TABLE_CONSTRAINTS` (
+  `CONSTRAINT_CATALOG` varchar(512) DEFAULT NULL,
+  `CONSTRAINT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_NAME` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `CONSTRAINT_TYPE` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TABLE_PRIVILEGES;
+Table	Create Table
+TABLE_PRIVILEGES	CREATE TEMPORARY TABLE `TABLE_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.TRIGGERS;
+Table	Create Table
+TRIGGERS	CREATE TEMPORARY TABLE `TRIGGERS` (
+  `TRIGGER_CATALOG` varchar(512) DEFAULT NULL,
+  `TRIGGER_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TRIGGER_NAME` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_MANIPULATION` varchar(6) NOT NULL DEFAULT '',
+  `EVENT_OBJECT_CATALOG` varchar(512) DEFAULT NULL,
+  `EVENT_OBJECT_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `EVENT_OBJECT_TABLE` varchar(64) NOT NULL DEFAULT '',
+  `ACTION_ORDER` bigint(4) NOT NULL DEFAULT '0',
+  `ACTION_CONDITION` longtext,
+  `ACTION_STATEMENT` longtext NOT NULL,
+  `ACTION_ORIENTATION` varchar(9) NOT NULL DEFAULT '',
+  `ACTION_TIMING` varchar(6) NOT NULL DEFAULT '',
+  `ACTION_REFERENCE_OLD_TABLE` varchar(64) DEFAULT NULL,
+  `ACTION_REFERENCE_NEW_TABLE` varchar(64) DEFAULT NULL,
+  `ACTION_REFERENCE_OLD_ROW` varchar(3) NOT NULL DEFAULT '',
+  `ACTION_REFERENCE_NEW_ROW` varchar(3) NOT NULL DEFAULT '',
+  `CREATED` datetime DEFAULT NULL,
+  `SQL_MODE` varchar(8192) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT '',
+  `DATABASE_COLLATION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
+SHOW CREATE TABLE information_schema.USER_PRIVILEGES;
+Table	Create Table
+USER_PRIVILEGES	CREATE TEMPORARY TABLE `USER_PRIVILEGES` (
+  `GRANTEE` varchar(81) NOT NULL DEFAULT '',
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `PRIVILEGE_TYPE` varchar(64) NOT NULL DEFAULT '',
+  `IS_GRANTABLE` varchar(3) NOT NULL DEFAULT ''
+) ENGINE=MEMORY DEFAULT CHARSET=utf8
+SHOW CREATE TABLE information_schema.VIEWS;
+Table	Create Table
+VIEWS	CREATE TEMPORARY TABLE `VIEWS` (
+  `TABLE_CATALOG` varchar(512) DEFAULT NULL,
+  `TABLE_SCHEMA` varchar(64) NOT NULL DEFAULT '',
+  `TABLE_NAME` varchar(64) NOT NULL DEFAULT '',
+  `VIEW_DEFINITION` longtext NOT NULL,
+  `CHECK_OPTION` varchar(8) NOT NULL DEFAULT '',
+  `IS_UPDATABLE` varchar(3) NOT NULL DEFAULT '',
+  `DEFINER` varchar(77) NOT NULL DEFAULT '',
+  `SECURITY_TYPE` varchar(7) NOT NULL DEFAULT '',
+  `CHARACTER_SET_CLIENT` varchar(32) NOT NULL DEFAULT '',
+  `COLLATION_CONNECTION` varchar(32) NOT NULL DEFAULT ''
+) ENGINE=Aria DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0
 DROP DATABASE IF EXISTS upgrade_common;
-CREATE DATABASE upgrade_common;
+CREATE DATABASE upgrade_common CHARACTER SET = utf8 COLLATE = utf8_bin ;
 USE upgrade_common;
-CREATE TABLE t1 (f1 integer) ENGINE=InnoDB;
+CREATE TABLE table_complex (f1 integer)
+ENGINE=MyISAM ,
+AUTO_INCREMENT=100 ,
+AVG_ROW_LENGTH=1000 ,
+CHARACTER SET = binary ,
+CHECKSUM = 1 ,
+COLLATE = 'binary' ,
+COMMENT = '012345678901234567890123456789012345678901234567890123456789' ,
+# DATA DIRECTORY = '/tmp' ,
+DELAY_KEY_WRITE = 1 ,
+# INDEX DIRECTORY = '/tmp' ,
+KEY_BLOCK_SIZE = 1024 ,
+MAX_ROWS = 1000 ,
+MIN_ROWS = 100 ,
+PACK_KEYS = 1 ,
+PASSWORD = 'foo' ,
+ROW_FORMAT = COMPRESSED;
+INSERT INTO table_complex VALUES (1234);
+CREATE TABLE merge_1 (f1 INTEGER);
+CREATE TABLE merge_2 (f1 INTEGER);
+CREATE TABLE merge_simple (f1 INTEGER) ENGINE=MERGE UNION(merge_1, merge_2) INSERT_METHOD=LAST;
+INSERT INTO merge_1 VALUES (1);
+INSERT INTO merge_2 VALUES (2);
+INSERT INTO merge_simple VALUES (3);
+CREATE TABLE field_attributes (
+f1 BIGINT
+UNSIGNED
+NOT NULL
+DEFAULT 18446744073709551615
+UNIQUE
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+);
+INSERT INTO field_attributes VALUES (1234);
+CREATE TABLE indexes (
+f1 VARCHAR(255), f2 VARCHAR(255), f3 VARCHAR(255), g GEOMETRY NOT NULL,
+PRIMARY KEY ( f1(1), f2(255)  ),
+INDEX USING HASH ( f2 ASC , f3 DESC, f1(64)) KEY_BLOCK_SIZE = 2048 USING HASH ,
+FULLTEXT INDEX (f1 , f2 , f3),
+SPATIAL INDEX (g)
+) CHARACTER SET = latin1;
+INSERT INTO indexes VALUES ('abc', 'cdef', 'ghij', GeomFromWKB(Point(1,1)));
+CREATE TABLE field_types_numeric (
+`serial_default` SERIAL,
+`bit_default` BIT,
+`bit_64` BIT(64),
+`tinyint_default` TINYINT UNSIGNED,
+`tinyint_2` TINYINT(2) ZEROFILL,
+`bool_default` BOOLEAN,
+`smallint_default` SMALLINT UNSIGNED,
+`smallint_3` SMALLINT(3) ZEROFILL,
+`mediumint_default` MEDIUMINT UNSIGNED,
+`mediumint_4` MEDIUMINT(4) ZEROFILL,
+`integer_default` INTEGER UNSIGNED,
+`integer_5` INTEGER(5) ZEROFILL,
+`bigint_default` BIGINT UNSIGNED,
+`bigint_6` BIGINT(6) ZEROFILL,
+`float_default` FLOAT UNSIGNED,
+`float_32` FLOAT(3,2) ZEROFILL,
+`double_default` DOUBLE UNSIGNED,
+`double_30` DOUBLE(3,0) ZEROFILL,
+`decimal_default` DECIMAL UNSIGNED,
+`decimal_52` DECIMAL(5,2) ZEROFILL
+);
+INSERT INTO field_types_numeric SET 
+`serial_default` = 0,
+`bit_default` = 1,
+`bit_64` = 2,
+`tinyint_default` = 3,
+`tinyint_2` = 4,
+`bool_default` = 5,
+`smallint_default` = 6,
+`smallint_3` = 7,
+`mediumint_default` = 8,
+`mediumint_4` = 9,
+`integer_default` = 10,
+`integer_5` = 11,
+`bigint_default` = 12,
+`bigint_6` = 13,
+`float_default` = 14,
+`float_32` = 1.5,
+`double_default` = 16,
+`double_30` = 17,
+`decimal_default` = 18,
+`decimal_52` = 19;
+CREATE TABLE field_types_date (
+`date` DATE,
+`datetime` DATETIME,
+`timestamp` TIMESTAMP,
+`time` TIME,
+`year_2` YEAR(2),
+`year_4` YEAR(4)
+);
+INSERT INTO field_types_date SET
+`date` = '2001-01-01',
+`datetime` = '2002-02-02 02:02:02',
+`timestamp` = '2003-03-03 03:03:03',
+`time` = '04:04:04',
+`year_2` = '05',
+`year_4` = '2006';
+CREATE TABLE field_types_string (
+`char` CHAR(255) CHARACTER SET utf8,
+`varchar` VARCHAR(255) COLLATE utf8_general_ci,
+`binary` BINARY(255),
+`varbinary` VARBINARY(255),
+`tinyblob` TINYBLOB,
+`tinytext` TINYTEXT CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+`blob` BLOB,
+`blob_128` BLOB(128),
+`text` TEXT,
+`mediumblob` MEDIUMBLOB,
+`medimutext` MEDIUMTEXT,
+`longblob` LONGBLOB,
+`longtext` LONGTEXT
+);
+INSERT INTO field_types_string SET 
+`char` = 'a',
+`varchar` = 'aa',
+`binary` = 'aaa',
+`varbinary` = 'aaaa',
+`tinyblob` = 'aaaaa',
+`tinytext` = 'aaaaaa',
+`blob` = 'aaaaaaa',
+`blob_128` = 'aaa aaa aa',
+`text` = 'aaa aaa aaa aaa',
+`mediumblob` = 'aaa aaa aaa aaa a',
+`medimutext` = 'aaa aaa aaa aaa aa',
+`longblob` = 'aaa aaa aaa aaa aaa',
+`longtext` = 'aaa aaa aaa aaa aaaa';
+CREATE TABLE field_types_enum (
+enum_many ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64'),
+enum_long ENUM ('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'),
+set_many SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64'),
+set_long SET ('0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789','012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678','01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567')
+);
+INSERT INTO field_types_enum SET 
+enum_many = 1,
+enum_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789',
+set_many  = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64'
+#,
+#	set_long = '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789,012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678,01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567'
+;
+CREATE TABLE table_myisam (f1 INTEGER) ENGINE=MyISAM;
+CREATE TABLE table_innodb (f1 INTEGER) ENGINE=InnoDB;
+CREATE TABLE table_memory (f1 INTEGER) ENGINE=Memory;
+SHOW CHARACTER SET;
+Charset	Description	Default collation	Maxlen
+dec8	DEC West European	dec8_swedish_ci	1
+cp850	DOS West European	cp850_general_ci	1
+hp8	HP West European	hp8_english_ci	1
+koi8r	KOI8-R Relcom Russian	koi8r_general_ci	1
+latin1	cp1252 West European	latin1_swedish_ci	1
+latin2	ISO 8859-2 Central European	latin2_general_ci	1
+swe7	7bit Swedish	swe7_swedish_ci	1
+ascii	US ASCII	ascii_general_ci	1
+hebrew	ISO 8859-8 Hebrew	hebrew_general_ci	1
+koi8u	KOI8-U Ukrainian	koi8u_general_ci	1
+greek	ISO 8859-7 Greek	greek_general_ci	1
+cp1250	Windows Central European	cp1250_general_ci	1
+latin5	ISO 8859-9 Turkish	latin5_turkish_ci	1
+armscii8	ARMSCII-8 Armenian	armscii8_general_ci	1
+utf8	UTF-8 Unicode	utf8_general_ci	3
+cp866	DOS Russian	cp866_general_ci	1
+keybcs2	DOS Kamenicky Czech-Slovak	keybcs2_general_ci	1
+macce	Mac Central European	macce_general_ci	1
+macroman	Mac West European	macroman_general_ci	1
+cp852	DOS Central European	cp852_general_ci	1
+latin7	ISO 8859-13 Baltic	latin7_general_ci	1
+cp1251	Windows Cyrillic	cp1251_general_ci	1
+cp1256	Windows Arabic	cp1256_general_ci	1
+cp1257	Windows Baltic	cp1257_general_ci	1
+binary	Binary pseudo charset	binary	1
+geostd8	GEOSTD8 Georgian	geostd8_general_ci	1
+SHOW COLLATION;
+Collation	Charset	Id	Default	Compiled	Sortlen
+dec8_swedish_ci	dec8	3	Yes		0
+dec8_bin	dec8	69			0
+cp850_general_ci	cp850	4	Yes		0
+cp850_bin	cp850	80			0
+hp8_english_ci	hp8	6	Yes		0
+hp8_bin	hp8	72			0
+koi8r_general_ci	koi8r	7	Yes		0
+koi8r_bin	koi8r	74			0
+latin1_german1_ci	latin1	5		Yes	1
+latin1_swedish_ci	latin1	8	Yes	Yes	1
+latin1_danish_ci	latin1	15		Yes	1
+latin1_german2_ci	latin1	31		Yes	2
+latin1_bin	latin1	47		Yes	1
+latin1_general_ci	latin1	48		Yes	1
+latin1_general_cs	latin1	49		Yes	1
+latin1_spanish_ci	latin1	94		Yes	1
+latin2_general_ci	latin2	9	Yes		0
+latin2_hungarian_ci	latin2	21			0
+latin2_croatian_ci	latin2	27			0
+latin2_bin	latin2	77			0
+swe7_swedish_ci	swe7	10	Yes		0
+swe7_bin	swe7	82			0
+ascii_general_ci	ascii	11	Yes		0
+ascii_bin	ascii	65			0
+hebrew_general_ci	hebrew	16	Yes		0
+hebrew_bin	hebrew	71			0
+koi8u_general_ci	koi8u	22	Yes		0
+koi8u_bin	koi8u	75			0
+greek_general_ci	greek	25	Yes		0
+greek_bin	greek	70			0
+cp1250_general_ci	cp1250	26	Yes		0
+cp1250_croatian_ci	cp1250	44			0
+cp1250_bin	cp1250	66			0
+cp1250_polish_ci	cp1250	99			0
+latin5_turkish_ci	latin5	30	Yes		0
+latin5_bin	latin5	78			0
+armscii8_general_ci	armscii8	32	Yes		0
+armscii8_bin	armscii8	64			0
+utf8_general_ci	utf8	33	Yes	Yes	1
+utf8_bin	utf8	83		Yes	1
+utf8_unicode_ci	utf8	192		Yes	8
+utf8_icelandic_ci	utf8	193		Yes	8
+utf8_latvian_ci	utf8	194		Yes	8
+utf8_romanian_ci	utf8	195		Yes	8
+utf8_slovenian_ci	utf8	196		Yes	8
+utf8_polish_ci	utf8	197		Yes	8
+utf8_estonian_ci	utf8	198		Yes	8
+utf8_spanish_ci	utf8	199		Yes	8
+utf8_swedish_ci	utf8	200		Yes	8
+utf8_turkish_ci	utf8	201		Yes	8
+utf8_czech_ci	utf8	202		Yes	8
+utf8_danish_ci	utf8	203		Yes	8
+utf8_lithuanian_ci	utf8	204		Yes	8
+utf8_slovak_ci	utf8	205		Yes	8
+utf8_spanish2_ci	utf8	206		Yes	8
+utf8_roman_ci	utf8	207		Yes	8
+utf8_persian_ci	utf8	208		Yes	8
+utf8_esperanto_ci	utf8	209		Yes	8
+utf8_hungarian_ci	utf8	210		Yes	8
+utf8_croatian_ci	utf8	213		Yes	8
+cp866_general_ci	cp866	36	Yes		0
+cp866_bin	cp866	68			0
+keybcs2_general_ci	keybcs2	37	Yes		0
+keybcs2_bin	keybcs2	73			0
+macce_general_ci	macce	38	Yes		0
+macce_bin	macce	43			0
+macroman_general_ci	macroman	39	Yes		0
+macroman_bin	macroman	53			0
+cp852_general_ci	cp852	40	Yes		0
+cp852_bin	cp852	81			0
+latin7_estonian_cs	latin7	20			0
+latin7_general_ci	latin7	41	Yes		0
+latin7_general_cs	latin7	42			0
+latin7_bin	latin7	79			0
+cp1251_bulgarian_ci	cp1251	14			0
+cp1251_ukrainian_ci	cp1251	23			0
+cp1251_bin	cp1251	50			0
+cp1251_general_ci	cp1251	51	Yes		0
+cp1251_general_cs	cp1251	52			0
+cp1256_general_ci	cp1256	57	Yes		0
+cp1256_bin	cp1256	67			0
+cp1257_lithuanian_ci	cp1257	29			0
+cp1257_bin	cp1257	58			0
+cp1257_general_ci	cp1257	59	Yes		0
+binary	binary	63	Yes	Yes	1
+geostd8_general_ci	geostd8	92	Yes		0
+geostd8_bin	geostd8	93			0
+SHOW PRIVILEGES;
+Privilege	Context	Comment
+Alter	Tables	To alter the table
+Alter routine	Functions,Procedures	To alter or drop stored functions/procedures
+Create	Databases,Tables,Indexes	To create new databases and tables
+Create routine	Databases	To use CREATE FUNCTION/PROCEDURE
+Create temporary tables	Databases	To use CREATE TEMPORARY TABLE
+Create view	Tables	To create new views
+Create user	Server Admin	To create new users
+Delete	Tables	To delete existing rows
+Drop	Databases,Tables	To drop databases, tables, and views
+Event	Server Admin	To create, alter, drop and execute events
+Execute	Functions,Procedures	To execute stored routines
+File	File access on server	To read and write files on the server
+Grant option	Databases,Tables,Functions,Procedures	To give to other users those privileges you possess
+Index	Tables	To create or drop indexes
+Insert	Tables	To insert data into tables
+Lock tables	Databases	To use LOCK TABLES (together with SELECT privilege)
+Process	Server Admin	To view the plain text of currently executing queries
+References	Databases,Tables	To have references on tables
+Reload	Server Admin	To reload or refresh tables, logs and privileges
+Replication client	Server Admin	To ask where the slave or master servers are
+Replication slave	Server Admin	To read binary log events from the master
+Select	Tables	To retrieve rows from table
+Show databases	Server Admin	To see all databases with SHOW DATABASES
+Show view	Tables	To see views with SHOW CREATE VIEW
+Shutdown	Server Admin	To shut down the server
+Super	Server Admin	To use KILL thread, SET GLOBAL, CHANGE MASTER, etc.
+Trigger	Tables	To use triggers
+Update	Tables	To update existing rows
+Usage	Server Admin	No privileges - allow connect only
 CREATE USER 'nh_np_na';
 CREATE USER 'nh_np_wa';
 GRANT ALL PRIVILEGES ON *.* TO 'nh_np_wa';
@@ -14,6 +1477,17 @@ GRANT ALL PRIVILEGES ON *.* TO 'wh_np_wa'@'127.0.0.1';
 CREATE USER 'wh_wp_na'@'127.0.0.1' IDENTIFIED BY 'pass_wh_wp_na';
 CREATE USER 'wh_wp_wa'@'127.0.0.1' IDENTIFIED BY 'pass_wh_wp_wa';
 GRANT ALL PRIVILEGES ON *.* TO 'wh_wp_wa';
+CREATE TABLE part_complex ( f1 INTEGER ) 
+PARTITION BY RANGE (f1) (
+PARTITION p0 VALUES LESS THAN (10)
+STORAGE ENGINE = MyISAM 
+COMMENT = '012345678901234567890123456789012345678901234567890123456789'
+# 		DATA DIRECTORY = '/tmp'
+#		INDEX DIRECTORY = '/tmp'
+		MAX_ROWS = 100
+MIN_ROWS = 10 ,
+PARTITION p2 VALUES LESS THAN MAXVALUE ENGINE=MyISAM
+);
 CREATE TABLE part_range ( range_field INTEGER )
 PARTITION BY RANGE (range_field) (
 PARTITION p0 VALUES LESS THAN (10),
@@ -39,13 +1513,54 @@ PARTITION p1 VALUES LESS THAN (2000),
 PARTITION p2 VALUES LESS THAN MAXVALUE
 );
 CREATE TABLE proc_table (f1 INTEGER) ENGINE=InnoDB;
-CREATE PROCEDURE proc1 (OUT param1 INT)
+CREATE PROCEDURE proc_simple (OUT param1 INT)
 BEGIN
 SELECT COUNT(*) INTO param1 FROM proc_table;
 END//
-CREATE FUNCTION func1 (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN s;
+CREATE
+DEFINER = 'root'@'localhost'
+PROCEDURE very_very_very_very_very_very_very_long_name (
+INOUT very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+IN param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+OUT param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+INOUT param4 INT , INOUT param5 INT , INOUT param6 INT, INOUT param7 INT , INOUT param8 INT ,
+INOUT param9 INT , INOUT param10 INT , INOUT param11 INT, INOUT param12 INT , INOUT param13 INT
+)
+LANGUAGE SQL
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+NOT DETERMINISTIC
+MODIFIES SQL DATA
+SQL SECURITY DEFINER
+BEGIN
+SELECT COUNT(*) INTO param2 FROM proc_table;
+END//
+CREATE FUNCTION func_simple (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN s;
+CREATE FUNCTION func_complex (
+very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_param_name VARBINARY(255),
+param2 SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param3 ENUM ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64') ,
+param4 INT , param5 INT , param6 INT, param7 INT , param8 INT ,
+param9 INT , param10 INT , param11 INT, param12 INT , param13 INT
+) RETURNS SET ('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64')
+LANGUAGE SQL
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+NOT DETERMINISTIC
+MODIFIES SQL DATA
+SQL SECURITY DEFINER
+RETURN param2;
+CREATE TABLE view_table1 (f1 INTEGER);
+INSERT INTO view_table1 VALUES (1);
+CREATE ALGORITHM=MERGE DEFINER = 'root'@'localhost' SQL SECURITY DEFINER VIEW view_simple AS SELECT * FROM view_table1 WITH CASCADED CHECK OPTION;
+CREATE TABLE event_t1 (f1 INTEGER);
+CREATE
+DEFINER = 'root'@'localhost'
+EVENT event_simple
+ON SCHEDULE EVERY 1 SECOND
+ON COMPLETION PRESERVE
+COMMENT '012345678901234567890123456789012345678901234567890123456789'
+DO INSERT INTO event_t1 VALUES (1);
 CREATE TABLE trig_table1 (f1 INTEGER) ENGINE=InnoDB;
 CREATE TABLE trig_table2 (f1 INTEGER AUTO_INCREMENT PRIMARY KEY) ENGINE=InnoDB;
-CREATE TRIGGER trigger1 BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1);
+CREATE DEFINER = 'root'@'localhost' TRIGGER trigger_simple BEFORE INSERT ON trig_table1 FOR EACH ROW INSERT INTO trig_table2 VALUES (NEW.f1);
 CREATE TABLE parent (id INT NOT NULL PRIMARY KEY) ENGINE=InnoDB;
-CREATE TABLE child (id INT, parent_id INT, INDEX (parent_id), FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE RESTRICT) ENGINE=InnoDB;
+CREATE TABLE child (id INT, parent_id INT, INDEX (parent_id), FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE RESTRICT ON UPDATE CASCADE) ENGINE=InnoDB;
