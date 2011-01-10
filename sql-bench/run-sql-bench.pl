@@ -121,7 +121,7 @@ require './conf/' . $machine . '.cnf';
 #
 # Check system.
 #
-# We should at least have $space_limit in $workdir.
+# We should at least have $space_limit in $work_dir.
 my $available = qx(df $work_dir | grep -v Filesystem | awk '{ print \$4 }');
 
 if ($available < $space_limit)
@@ -155,8 +155,8 @@ chdir($work_dir)
 qx(killall -9 mysqld);
 
 #my $temp_dir = qx(mktemp --directory);
-# For Mac OS X.
-$ENV{'TMPDIR'} = "/tmp";
+# Mac OS X needs explicit TMPDIR environment variable for mktemp -d to work.
+$ENV{'TMPDIR'} = $work_dir;
 my $temp_dir = qx($mktemp -d);
 if ($? != 0)
 {

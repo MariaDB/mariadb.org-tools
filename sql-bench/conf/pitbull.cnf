@@ -18,7 +18,9 @@
 $sql_bench_results = '/home/hakan/sql-bench-results';
 
 # Where to compile the sources. You will need at least 1GB of disk space.
-$work_dir = '/tmp';
+#$work_dir = '/tmp';
+#$work_dir = '/media/ssd_tmp';
+$work_dir = '/data/sql-bench';
 
 #
 # Binaries.
@@ -32,7 +34,7 @@ $mktemp = '/bin/mktemp';
 $mkdir = '/bin/mkdir';
 
 # Set the concurrency level (-j) to about: number of CPUs + 1.
-$make = '/usr/bin/make -j3';
+$make = '/usr/bin/make -j13';
 
 # Perl with DBD::MySQL.
 $perl = '/usr/bin/perl';
