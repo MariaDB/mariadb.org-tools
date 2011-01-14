@@ -1,0 +1,20 @@
+#
+# Test to be run with configuration in the file, which is including this test.
+#
+# This sql-bench-test will automaticly get --suffix=_test_name as an argument
+# The different options which can be used are:
+#
+# mysqld_start_options    Options given to the mysqld that is started.
+#                         This is prefixed with --skip-grant.
+# mysqld_init_command     SQL commands given to mysqld before tests starts.
+# sql_bench_options       Options given to sql-bench.
+#
+
+$sql_bench_test->{'profiling'} = {
+  mysqld_start_options => '',
+  mysqld_init_command => '',
+  sql_bench_options => '--connect-command="set profiling=1" --comment="set profiling"',
+};
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;

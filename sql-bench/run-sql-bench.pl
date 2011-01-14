@@ -60,7 +60,7 @@ if ($run_by eq 'root')
 {
   print '[ERROR]: Do not run this script as root!' . "\n";
   print '  Exiting.';
-   
+
   exit 1;
 }
 
@@ -72,11 +72,12 @@ usage() if (@ARGV < 3
             or defined $help);
 
 sub usage
-{  
+{
   print "Please provide exactly three options.\n";
   print "  Example: $0 --config-file=[/path/to/config/file] --repository=[/path/to/bzr/repository] --suffix=[name_without_spaces]\n";
   print "  [name_without_spaces] is used as identifier in the result file (--suffix).\n";
-  exit;
+
+  exit 1;
 }
 
 # Base config file.
@@ -96,12 +97,12 @@ require './conf/' . $machine . '.cnf';
 
 #foreach my $sql_bench_test_name (keys %{$sql_bench_test}) {
 #    print "The value of $sql_bench_test_name is $sql_bench_test->{$sql_bench_test_name}\n";
-#    
+#
 #    foreach my $sql_bench_test_option (keys %{$sql_bench_test->{$sql_bench_test_name}}) {
 #        print "The value of $sql_bench_test_name $sql_bench_test_option is $sql_bench_test->{$sql_bench_test_name}->{$sql_bench_test_option}\n";
 #        print "\n";
 #    }
-#    
+#
 #    print "\n";
 #}
 #my $now = '';
@@ -154,7 +155,6 @@ chdir($work_dir)
 # Clean up of previous runs.
 qx(killall -9 mysqld);
 
-#my $temp_dir = qx(mktemp --directory);
 # Mac OS X needs explicit TMPDIR environment variable for mktemp -d to work.
 $ENV{'TMPDIR'} = $work_dir;
 my $temp_dir = qx($mktemp -d);
@@ -284,7 +284,7 @@ sub start_mysqld($$)
   $now = qx(date "+%Y-%m-%d %H:%M:%S");
   chomp($now);
   print "[$now]: Starting mysqld, ...\n";
-  
+
   chdir("$temp_dir/install")
     or die
     "[ERROR]: cd to $temp_dir/install failed.\n";
@@ -304,7 +304,7 @@ sub start_mysqld($$)
       $started = 0;
       last;
      }
-     
+
      sleep 1;
      $j++;
   }
@@ -325,7 +325,7 @@ sub start_mysqld($$)
     print "[ERROR]: Start of mysqld failed.\n";
     print "  Please check your error log.\n";
     print "  Exiting.\n";
-  
+
     exit 1;
   }
 

@@ -20,102 +20,36 @@ $config = {
 };
 
 #
-# Different test to be run with the above configuration.
-# The sql-bench-test will automaticly get --suffix=_test_name as an argument
-# The different options that can be used are:
+# Different tests to be run with the above configuration.
+#
+# This sql-bench-test will automaticly get --suffix=_test_name as an argument
+# The different options which can be used are:
 #
 # mysqld_start_options    Options given to the mysqld that is started.
 #                         This is prefixed with --skip-grant.
 # mysqld_init_command     SQL commands given to mysqld before tests starts.
 # sql_bench_options       Options given to sql-bench.
 #
-$sql_bench_test->{'base'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="base test (with MyISAM)"',
-};
 
-# --userstat is available starting with MariaDB 5.2.
-$sql_bench_test->{'userstat'} = {
-  mysqld_start_options => '--userstat=1',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="userstat=1"',
-};
-
-$sql_bench_test->{'profiling'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => '',
-  sql_bench_options => '--connect-command="set profiling=1" --comment="set profiling"',
-};
-
-$sql_bench_test->{'grant'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => 'GRANT ALL PRIVILEGES to *.* to \'test@localhost\'',
-  sql_bench_options => '--comment="grant to everything"',
-};
-
-$sql_bench_test->{'grant-db'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => 'GRANT ALL PRIVILEGES to test.* to \'test@localhost\'',
-  sql_bench_options => '--comment="grant to database"',
-};
-
-$sql_bench_test->{'grant-column'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => 'GRANT ALL PRIVILEGES on test.* to \'test@localhost\'; CREATE table test.foo (a int); GRANT SELECT (a) on test.t1 to \'test@localhost\';',
-  sql_bench_options => '--comment="grant to database and column level grants"',
-};
-
-$sql_bench_test->{'tcpip'} = {
-  mysqld_start_options => '',
-  mysqld_init_command => '--connect_options=\'host=LOCALHOST\'',
-  sql_bench_options => '--comment="tcp/ip connection"',
-};
+# Tests to be run.
+require './tests/base.sqlbt';
+require './tests/userstat.sqlbt';
+require './tests/profiling.sqlbt';
+require './tests/grant.sqlbt';
+require './tests/grant-db.sqlbt';
+require './tests/grant-column.sqlbt';
+require './tests/tcpip.sqlbt';
 
 #
 # Tests with different storage engines
 #
-$sql_bench_test->{'myisam'} = {
-  mysqld_start_options => '--default-storage-engine=myisam --key-buffer-size=256M',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="engine=myisam key_buffer_size=256M"',
-};
-
-$sql_bench_test->{'heap'} = {
-  mysqld_start_options => '--default-storage-engine=heap --max-heap-table-size=1024M',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="engine=heap"',
-};
-
-$sql_bench_test->{'aria-trans-check'} = {
-  mysqld_start_options => '--default-storage-engine=aria --aria-pagecache-buffer-size=256M',
-  mysqld_init_command => '',
-  sql_bench_options => '--create-options="transactional=1 page_checksum=1" --comment="engine=aria aria-pagecache-buffer-size=256M transactional page_checksum"',
-};
-
-$sql_bench_test->{'aria-trans'} = {
-  mysqld_start_options => '--default-storage-engine=aria --aria-pagecache-buffer-size=256M',
-  mysqld_init_command => '',
-  sql_bench_options => '--create-options="transactional=1 page_checksum=0" --comment="engine=aria aria-pagecache-buffer-size=256M transactional"',
-};
-
-$sql_bench_test->{'aria-notrans'} = {
-  mysqld_start_options => '--default-storage-engine=aria --aria-pagecache-buffer-size=256M',
-  mysqld_init_command => '',
-  sql_bench_options => '--create-options="transactional=0 page_checksum=0" --comment="engine=aria aria-pagecache-buffer-size=256M  not transactional"',
-};
-
-$sql_bench_test->{'innodb'} = {
-  mysqld_start_options => '--default-storage-engine=innodb --innodb-buffer-pool-size=256M',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="engine=innodb innodb-buffer-pool-size=256M"',
-};
-
-$sql_bench_test->{'pbxt'} = {
-  mysqld_start_options => '--default-storage-engine=pbxt --pbxt-index-cache-size=64M --pbxt-record-cache-size=name=196M',
-  mysqld_init_command => '',
-  sql_bench_options => '--comment="engine=pbxt-index-cache-size=64M --pbxt-record-cache-size=name=196M"',
-};
+require './tests/myisam.sqlbt';
+require './tests/heap.sqlbt';
+require './tests/aria-trans-check.sqlbt';
+require './tests/aria-trans.sqlbt';
+require './tests/aria-notrans.sqlbt';
+require './tests/innodb.sqlbt';
+require './tests/pbxt.sqlbt';
 
 # This has to be the last line. See "perldoc -f require" for details.
 1;

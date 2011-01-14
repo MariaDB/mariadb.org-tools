@@ -1,0 +1,48 @@
+# Configuration file for host: lu0012
+# 
+# OS: Ubuntu 10.10 (x86_64)
+# Platform: x86_64
+# CPU: Dual-core Intel Core2 Duo @ 2.80GHz
+# RAM: 4GB
+# Disk(s): HITACHI HTS722016K9SA00 160GB
+
+#
+# Adjust the following variables according to your system.
+#
+
+#
+# Directories.
+#
+
+# Where to store the test results.
+$sql_bench_results = '/home/hakan/sql-bench-results';
+
+# Where to compile the sources. You will need at least 1GB of disk space.
+$work_dir = '/tmp';
+
+#
+# Binaries.
+#
+
+# We need bzr >= 1.18.1.
+$bzr = '/usr/bin/bzr';
+
+$mktemp = '/bin/mktemp';
+
+$mkdir = '/bin/mkdir';
+
+# Set the concurrency level (-j) to about: number of CPUs + 1.
+$make = '/usr/bin/make -j3';
+
+# Perl with DBD::MySQL.
+$perl = '/usr/bin/perl';
+
+# If you use ccache, a compiler cache, which reduces compile time,
+# then set the path to it here.
+my $ccache = '/usr/bin/ccache';
+
+$ENV{'CC'}  = $ccache . " " . $ENV{'CC'};
+$ENV{'CXX'} = $ccache . " " . $ENV{'CXX'};
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;
