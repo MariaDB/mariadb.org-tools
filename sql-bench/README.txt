@@ -1,4 +1,6 @@
 Place your sql-bench related tests here.
+All tests ending with .sqlbt will be run
+with the given compiler.cnf file in here.
 
 Note: name your test file like the $sql_bench_test array name. For
   instance $sql_bench_test->{'base'} should be named
