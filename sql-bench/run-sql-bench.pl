@@ -37,6 +37,7 @@ our $bzr;
 our $mktemp;
 our $mkdir;
 our $make;
+our $concurrency;
 our $perl;
 
 #
@@ -239,7 +240,7 @@ foreach my $compile_config (@folders) {
     exit 1;
   }
 
-  qx($make);
+  qx($make -j$concurrency);
   if ($? != 0)
   {
     print "[ERROR]: make failed.\n";
