@@ -6,10 +6,13 @@ various compiler options and run time configurations.
 - MariaDB bzr tree from lp:maria
 - Perl with DBD::MySQL
 
-3. What are those directories?
-* Each directory represents a compiler configuration. You
-can find the compiler configuration in compiler.cnf.
-Each compiler configuration has a set of tests (*.sqlbt).
+3. What you will find in those directories?
+Each directory represents a compiler/test combination to be run.
+3.1 You can find the compiler configuration in
+- compiler_<hostname>.cnf.
+3.2 You can find the tests for that compiler configuration
+in the files ending with
+- *.sqlbt.
 
 4. How to run?
 Run run-sql-bench.pl and check output for details.

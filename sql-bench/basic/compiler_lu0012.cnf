@@ -1,0 +1,25 @@
+# Base compile options for running sql-bench on host lu0012.
+#
+# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-11-20.
+
+# Configure environment variables.
+# Note: You can set ccache the host specific config file.
+# In this case conf/lu0012.cnf.
+#
+# This configuration is taken from BUILD/compile-pentium64-max --print.
+#
+$ENV{'CC'} = "gcc --pipe";
+$ENV{'CFLAGS'} = "-Wall -Wextra -Wunused -Wwrite-strings -mtune=native -m64 -O3 -fno-omit-frame-pointer";
+
+$ENV{'CXX'} = "g++";
+$ENV{'CXXFLAGS'} = "-Wall -Wextra -Wunused -Wwrite-strings -Wno-unused-parameter -Wnon-virtual-dtor -felide-constructors -fno-exceptions -fno-rtti -mtune=native -m64 -O3 -fno-omit-frame-pointer";
+$ENV{'CXXLDFLAGS'} = "";
+
+$config = {
+  # Configure invocation line.
+  # Do not use --prefix here.
+  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-aria --with-aria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline  --with-ssl --with-plugins=max --with-embedded-server --with-libevent --with-mysqld-ldflags=-all-static --with-client-ldflags=-all-static --with-zlib-dir=bundled --enable-local-infile',
+};
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;
