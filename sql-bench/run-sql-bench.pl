@@ -336,7 +336,7 @@ foreach my $compile_config (@folders) {
       my $start_options = shift;
       my $init_command = shift;
 
-      my $mariadb_options = "--no-defaults --datadir=$mariadb_datadir --tmpdir=$temp_dir --socket=$mariadb_socket";
+      my $mariadb_options = "--no-defaults --log-error=$mariadb_datadir/mysqld.err --datadir=$mariadb_datadir --tmpdir=$temp_dir --socket=$mariadb_socket";
       my $mysql_options = '--no-defaults';
       $mysql_options = "$mysql_options -uroot --socket=$mariadb_socket";
 
