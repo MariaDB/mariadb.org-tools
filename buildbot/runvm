@@ -389,7 +389,10 @@ sub shutdown_kvm {
   print STDERR "Failed to gracefully shutdown KVM within ".
       "$opt_shutdown_timeout seconds\nTrying kill -9 ...\n";
   kill 9, $kvm_pid;
-  sleep 2;
+  for (1 .. 10) {
+    sleep 1;
+    last if !kill(0, $kvm_pid) && !is_port_used();
+  }
   # If that didn't work, there is not much else we can try.
   print STDERR "Unable to kill kvm process (pid $kvm_pid).\n"
       if kill(0, $kvm_pid);
