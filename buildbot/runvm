@@ -81,7 +81,9 @@ machine and exit.
 Commands are by default run inside the virtual machine using ssh(1). By
 prefixing a command with an equals sign '=', it will instead be run on the
 host system (for example to copy files into or out of the virtual machine
-using scp(1)).
+using scp(1)). By prefixing with an exclamation sign '!' it will be run
+even if a previous command fails (normal commands are not processed after
+failure of a previous command). The '=' and '!' prefixes may be combined.
 
 Some care is taken to ensure that the virtual machine is shutdown
 gracefully and not left running even in case the controlling tty is
@@ -514,19 +516,28 @@ for (;;) {
 
 my $ret= 0;
 for my $arg (@ARGV) {
-  my $res;
+  my $always_run= undef;
+  my $local_cmd= undef;
+  # Leading exclamation mark means run even if an earlier command failed.
+  $always_run= 1
+      if $arg =~ s/^(=?)\!\s*/$1/;
   # A leading equals sign '=' means it is a host command, else guest.
-  if ($arg =~ s/^=//) {
+  $local_cmd= 1
+      if $arg =~ s/^=\s*//;
+  # If a command already failed, only run commands prefixed with `!'.
+  next if $ret && !$always_run;
+
+  my $res;
+  if ($local_cmd) {
     print STDERR "= $arg\n";
-    $res= system(substr($arg, 1));
+    $res= system($arg);
   } else {
     print STDERR "+ $arg\n";
     $res= system(@ssh_cmd_prefix, '-p', $opt_port, @user_cmd_opt, 'localhost', $arg);
   }
   if ($res < 0) {
     print STDERR "Could not spawn command: $!\n";
-    $ret= 1;
-    last;
+    $ret= 1 unless $ret;
   } elsif ($res > 0) {
     my $exit_val= $res >> 8;
     my $core= (($res >> 7) & 1) ? " (core dumped)" : "";
@@ -539,8 +550,7 @@ for my $arg (@ARGV) {
     } else {
       print STDERR "Command exit $exit_val\n";
     }
-    $ret= $exit_val || 1;
-    last;
+    $ret= $exit_val || 1 unless $ret;
   }
 }
 
