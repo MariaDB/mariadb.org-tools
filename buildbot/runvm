@@ -420,6 +420,11 @@ sub wait_for_up {
       if $opt_initial_sleep;
 
   my $ret= -1;
+  # Occasionally we see ssh connection succeeding, then immediately
+  # after failing, then after a brief moment working again,
+  # permanently. Handle this by checking a few times with short
+  # interval that the connection is really working.
+  my $success_attempts= 0;
   while (!$timeout) {
     $pid= fork();
     if (!defined($pid)) {
@@ -433,9 +438,13 @@ sub wait_for_up {
       my $res= waitpid $pid, 0;
       $pid= undef;
       if ($? == 0) {
-        # Ok, KVM is up now!
-        $ret= 0;
-        last;
+        if (++$success_attempts >= 3) {
+          # Ok, KVM is up now!
+          $ret= 0;
+          last;
+        }
+      } else {
+        $success_attempts= 0;
       }
       $kvm_pid= get_kvm_pid()
           unless defined($kvm_pid);
@@ -444,8 +453,9 @@ sub wait_for_up {
         $ret= 1;
         last;
       }
-      # Wait a bit before retrying.
-      sleep 2;
+      # Wait a bit before retrying (select() is an easy way to get
+      # portable sub-second sleep).
+      select(undef, undef, undef, $success_attempts ? 0.33 : 2);
     }
   }
 
