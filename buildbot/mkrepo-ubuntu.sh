@@ -18,36 +18,44 @@ Origin: MariaDB
 Label: MariaDB
 Codename: hardy
 Architectures: amd64 i386 source
-Components: hardy
-Description: MariaDB test Repository
+Components: main
+Description: MariaDB Repository
 SignWith: info@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
 Codename: jaunty
 Architectures: amd64 i386 source
-Components: jaunty
-Description: MariaDB test Repository
+Components: main
+Description: MariaDB Repository
 SignWith: info@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
 Codename: karmic
 Architectures: amd64 i386 source
-Components: karmic
-Description: MariaDB test Repository
+Components: main
+Description: MariaDB Repository
 SignWith: info@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
 Codename: lucid
 Architectures: amd64 i386 source
-Components: lucid
-Description: MariaDB test Repository
+Components: main
+Description: MariaDB Repository
+SignWith: info@askmonty.org
+
+Origin: MariaDB
+Label: MariaDB
+Codename: maverick
+Architectures: amd64 i386 source
+Components: main
+Description: MariaDB Repository
 SignWith: info@askmonty.org
 END
 
-for x in hardy jaunty karmic lucid ; do
+for x in hardy jaunty karmic lucid maverick ; do
     reprepro --basedir=. include $x $ARCHDIR/kvm-deb-$x-amd64/debs/binary/mariadb-*_amd64.changes
     for i in `find "$ARCHDIR/kvm-deb-$x-x86/" -name '*_i386.deb'` ; do reprepro --basedir=. includedeb $x $i ; done
 done
