@@ -51,6 +51,7 @@ my $opt_user= undef;
 my $opt_extra_kvm= [];
 my $opt_baseimage= undef;
 my @user_cmd_opt;
+my $opt_work_image= undef;
 my $opt_win;
 
 # Disable host key checking for ssh.
@@ -152,6 +153,10 @@ Available options:
                       name as the one specified on the command line to boot! It
                       will be replaced with the image created as a copy of IMG,
                       with any modifications done during the runvm session.
+  --work-image=<file> Use <file> for the new copy-on-write-image while running,
+                      and afterwards move it back to the specified image.qcow2
+                      location. Used with eg. /dev/shm/ to save I/O. Only
+                      applicable when --base-image is used.
   --windows           The guest is Windows, not Linux.
 END
   exit 1;
@@ -216,6 +221,16 @@ sub get_kvm_pid {
   }
 }
 
+# Copy back any working image to the permanently saved location.
+# We do this here, so that we will not do it until kvm is shut down, and
+# also minimise the risk that we leave the work image undeleted, eg. if
+# the parent is killed.
+sub copy_back_work_image {
+  if (defined($opt_work_image) && defined($opt_baseimage)) {
+    system('/bin/mv', $opt_work_image, $image);
+  }
+}
+
 # Start the KVM process.
 #
 # We want to avoid leaving stray KVM processes running, even when other things
@@ -262,8 +277,10 @@ sub start_kvm {
 
   # We want the kvm startup command both in the normal stdout log and
   # in the kernel log.
+  my $img= (defined($opt_baseimage) && defined($opt_work_image) ?
+            $opt_work_image : $image);
   my @kvm_cmdline=
-      ($kvm_exec, '-m', $opt_memory, '-hda', $image,
+      ($kvm_exec, '-m', $opt_memory, '-hda', $img,
        '-redir', "tcp:${opt_port}::22", '-boot', 'c', '-smp', $opt_smp, @cpu_fix,
        '-nographic', '-net', 'nic,model='. $opt_netdev, '-net', 'user',
        '-pidfile', $pidfile,
@@ -288,7 +305,9 @@ sub start_kvm {
     # process does.
     $SIG{'CHLD'}= sub {
       waitpid(-1, 0);
-      exit($?);
+      my $status= $?;
+      copy_back_work_image();
+      exit($status);
     };
     $res= fork();
     if (!defined($res)) {
@@ -320,7 +339,10 @@ sub start_kvm {
       print STDERR "Parent process exited, shutting down KVM...\n";
       shutdown_kvm(get_kvm_pid());
       waitpid($res, 0);
-      exit($?);
+      my $status= $?;
+
+      copy_back_work_image();
+      exit($status);
     }
   } else {
     # Parent process.
@@ -480,6 +502,7 @@ my $result= GetOptions
       'kvm-retries=i' => \$opt_max_retries,
       'logfile|l=s' => \$opt_kvm_logfile,
       'base-image|b=s' => \$opt_baseimage,
+      'work-image=s' => \$opt_work_image,
       'windows' => \$opt_win,
     );
 
@@ -499,12 +522,13 @@ system 'mkdir', '-p', $pidfile
     and die "Failed to create pidfile directory '$pidfile': $!\n";
 $pidfile.= "kvm_$opt_port.pid";
 
-@cpu_fix= ('-cpu', $opt_cpu);
+@cpu_fix= ('-cpu', "$opt_cpu,-kvmclock");
 
 my $retries= 0;
 for (;;) {
   if (defined($opt_baseimage)) {
-    my $res= system_with_print($qimg_exe, 'create', '-b', $opt_baseimage, '-f', 'qcow2', $image);
+    my $img= (defined($opt_work_image) ? $opt_work_image : $image);
+    my $res= system_with_print($qimg_exe, 'create', '-b', $opt_baseimage, '-f', 'qcow2', $img);
     if ($res) {
       print STDERR "Failed to clone base image, aborting\n";
       exit 1;
