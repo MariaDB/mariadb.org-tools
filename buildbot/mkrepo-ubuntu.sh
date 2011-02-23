@@ -20,7 +20,7 @@ Codename: hardy
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -28,7 +28,7 @@ Codename: jaunty
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -36,7 +36,7 @@ Codename: karmic
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -44,7 +44,7 @@ Codename: lucid
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -52,7 +52,7 @@ Codename: maverick
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 END
 
 for x in hardy jaunty karmic lucid maverick ; do

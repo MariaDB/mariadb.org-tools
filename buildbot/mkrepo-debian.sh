@@ -20,7 +20,7 @@ Codename: lenny
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -28,7 +28,7 @@ Codename: squeeze
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: info@askmonty.org
+SignWith: dbart@askmonty.org
 END
 
 for i in "lenny debian5" "squeeze debian6" ; do
