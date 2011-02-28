@@ -65,6 +65,8 @@ chomp $troot;
 if (!$troot || !chdir $troot) {
     die "Failed to find tree root (this tool must be run within\n" .
         "a bzr work tree).\n";
+} else {
+  print STDERR "Chdir $troot\n" if $verbose;
 }
 
 my $res;
