@@ -330,7 +330,7 @@ print "$missing_files file(s) not processed with gcov.\n"
     if $missing_files;
 print "For documentation, see http://forge.mysql.com/wiki/DGCov_doc\n";
 
-exit 0;
+exit ($uncovered > 0 || $bad_anno_lines > 0 ? 1 : 0);
 
 ###############################################################################
 
@@ -551,9 +551,10 @@ sub suck_in {
   my ($acc, $fh) = @_;
   while (<$fh>)
   {
-    die "not a gcov file?" unless /^\s*(-|#+|\d+):\s*(\d+):/;
+    die "not a gcov file?" unless /^\s*(-|#+|-?\d+):\s*(\d+):/;
     my ($cnt, $line) = ($1, $2);
     next if $cnt eq '-';
+    $cnt =~ s/^-//;
     $acc->[$line]+=$cnt;
   }
 }
