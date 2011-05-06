@@ -44,6 +44,10 @@ my @folders;
 #my $path = "/home/hakan/work/monty_program/mariadb-tools/sql-bench/";
 my $path = "/Users/hakan/work/monty_program/mariadb-tools/sql-bench/";
 
+# [CHANGEABLE]: Name of compile log file.
+# This will be prefixed whith each corresponding configuration.
+my $compile_log = "compile.log";
+
 # The MariaDB tree to use and compile.
 # We are also using the sql-bench directory from there.
 my $repository;
@@ -66,7 +70,6 @@ my $current_mysqld_init_command;
 my $current_sql_bench_options;
 
 # Variables, which we are using for our configurations.
-my $config_file;
 our $config;
 our $sql_bench_test;
 
@@ -134,7 +137,7 @@ sub print_timestamp
   return $now;
 }
 
-# Read in every compiler option directory for iterating.
+# Read in every compiler option directory for iterating except conf/ directory.
 opendir(DIR, $path) or die "cant find $path: $!";
 while (defined(my $file = readdir(DIR))) {
   next if $file =~ /^\.\.?$/;
@@ -144,13 +147,24 @@ while (defined(my $file = readdir(DIR))) {
 }
 closedir(DIR);
 
-# Iterate over ever directory except conf/, read in compile.cnf and run
-# every test we find in that directory.
+# Iterate over ever directory read in compile_<hostname>.cnf and
+# run every test we find in that directory.
+print "[" . print_timestamp() . "]: Entering main iteration loop.\n";
 foreach my $compile_config (@folders) {
-  print "$compile_config\n";
+  print "[" . print_timestamp() . "]: In directory " . $compile_config . "\n";
+  
+  my $compile_machine_config = $compile_config . '/compiler_' . $machine . '.cnf';
 
-  # Compile configuration specific config file.
-  require $compile_config . '/compiler_' . $machine . '.cnf';
+  # Compile configuration specific config file. If there is no
+  # machine specific configuration file, we skip it.
+  if (!-f $compile_machine_config) {
+    print "[" . print_timestamp() . "]: Skipping directory " . $compile_config . "\n";
+    print "  Because $compile_machine_config was not found \n";
+    
+    last;
+  }
+
+  require $compile_machine_config;
 
   # Host specific config file.
   require './conf/' . $machine . '.cnf';
@@ -206,6 +220,7 @@ foreach my $compile_config (@folders) {
   # Get rid of any newline.
   chomp($temp_dir);
   my $mariadb_datadir = "$temp_dir/data";
+  $compile_log = $temp_dir ."/" . basename($compile_config) . "_" . $compile_log;
 
   # bzr export refuses to export to an existing directory,
   # therefore we use a build directory.
@@ -222,6 +237,7 @@ foreach my $compile_config (@folders) {
 
   print "[" . print_timestamp() . "]: Finished exporting from $repository to $temp_dir/build\n";
   print "[" . print_timestamp() . "]: Starting to compile, ...\n";
+  print "[" . print_timestamp() . "]: and logging into $compile_log.\n";
 
   chdir("$temp_dir/build")
     or die
@@ -229,11 +245,13 @@ foreach my $compile_config (@folders) {
     "  Does your $temp_dir/build directory exist?\n";
     "  Exiting.\n";
 
-  qx(BUILD/autorun.sh);
+  print "[" . print_timestamp() . "]: Running BUILD/autorun.sh\n";
+  qx(BUILD/autorun.sh > $compile_log 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: BUILD/autorun.sh failed.\n";
     print "  Please check your development environment.\n";
+    print "  You can also examine your compile log $compile_log\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -241,21 +259,24 @@ foreach my $compile_config (@folders) {
 
   # We need --prefix for running make install. Otherwise
   # mysql_install_db will not work properly.
-  qx(./configure $config->{configure_line} --prefix=$temp_dir/install);
+  print "[" . print_timestamp() . "]: Running ./configure\n";
+  qx(./configure $config->{configure_line} --prefix=$temp_dir/install >> $compile_log 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: ./configure $config->{configure_line} failed.\n";
     print "  Please check your '$config->{configure_line}'.\n";
+    print "  You can also examine your compile log $compile_log\n";
     print "  Exiting.\n";
 
     exit 1;
   }
 
-  qx($make -j$concurrency);
+  print "[" . print_timestamp() . "]: Running $make -j$concurrency\n";
+  qx($make -j$concurrency >> $compile_log 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: make failed.\n";
-    print "  Please check your build logs.\n";
+    print "  Please examine your compile log $compile_log\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -263,11 +284,12 @@ foreach my $compile_config (@folders) {
 
   print "[" . print_timestamp() . "]: Finished compiling.\n";
 
-  qx($make install);
+  print "[" . print_timestamp() . "]: Running $make install\n";
+  qx($make install >> $compile_log 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: make install failed.\n";
-    print "  Please check your build logs.\n";
+    print "  Please examine your compile log $compile_log\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -409,9 +431,9 @@ foreach my $compile_config (@folders) {
     $output_dir = "$sql_bench_results/$machine/$run_date/$compile_config_name/$sql_bench_test_file";
     qx($mkdir -p $output_dir);
 
-    print "$perl ./run-all-tests $current_sql_bench_options --dir $output_dir --log\n";
+    print "$perl run-all-tests $current_sql_bench_options --dir $output_dir --log\n";
 
-    qx($perl ./run-all-tests $current_sql_bench_options --dir $output_dir --log);
+    qx($perl run-all-tests $current_sql_bench_options --dir $output_dir --log);
     if ($? != 0)
     {
       print "[WARNING]: run-all-tests for $sql_bench_test_file produced errors.\n";
@@ -420,8 +442,8 @@ foreach my $compile_config (@folders) {
 
     kill_mysqld();
 
-    print "[" . print_timestamp() . "]: Finished $sql_bench_test_file\n";
+    print "[" . print_timestamp() . "]: Finished $sql_bench_test_file\n\n";
   }
 
-  print "[" . print_timestamp() . "]: Finished sql-bench run for $config_file!\n";
+  print "[" . print_timestamp() . "]: Finished sql-bench run for $compile_config!\n";
 }

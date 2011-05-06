@@ -37,7 +37,8 @@ $make = '/sw/bin/make';
 $concurrency = 3;
 
 # Perl with DBD::MySQL.
-$perl = '/sw/bin/perl';
+#$perl = '/sw/bin/perl';
+$perl = '/usr/bin/perl';
 
 # If you use ccache, a compiler cache, which reduces compile time,
 # then set the path to it here.
