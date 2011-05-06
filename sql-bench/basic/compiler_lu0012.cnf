@@ -1,6 +1,6 @@
 # Base compile options for running sql-bench on host lu0012.
 #
-# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-11-20.
+# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-11-20.
 
 # Configure environment variables.
 # Note: You can set ccache the host specific config file.

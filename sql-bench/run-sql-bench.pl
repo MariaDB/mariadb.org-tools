@@ -4,21 +4,61 @@
 # configurations
 # we find in the directory $SQL_BENCH_CONFIGS.
 #
-# Note: Do not run this script with root privileges.
+# Notes:
+#   * Do not run this script with root privileges.
 #   We use killall -9, which can cause severe side effects!
+#
+#   * Variables and paths, which you can adjust to your
+#   environment are tagged with [CHANGEABLE]
 #
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-22.
 use strict;
 use Getopt::Long;
 use File::Basename;
 
+# Paths we are using.
+#
+# Every directory except the conf/ directory represents a
+# compiler options and test combination we want to run. If
+# you a new compiler option scenario, then you add a directory
+# with a descriptive name and add the sql-bench test variations
+# you want to run. Every file ending on *.sqlbt represents a
+# test variation to run.
+#
+# If you want to run a new sql-bench test scenario for a
+# given compiler option, then you add a file with a descriptive
+# name ending with *.sqlbt to the compiler configuration
+# directory of your choice.
+#
+# You can also overwrite the default MariaDB tree version,
+# which you define by a command line option of this script.
+#
+# Mind the run time of a sql-bench scenario which can vary
+# from 30 minutes to 2 hours or more.
+my @folders;
+
+# [CHANGEABLE]: Set this to your sql-bench/ directory path, in which
+# you branched lp:mariadb-tools with bzr.
+#
+# Note: Mind the trailing /.
+#my $path = "/home/hakan/work/monty_program/mariadb-tools/sql-bench/";
+my $path = "/Users/hakan/work/monty_program/mariadb-tools/sql-bench/";
+
 # The MariaDB tree to use and compile.
 # We are also using the sql-bench directory from there.
 my $repository;
+
 # Additional sql-bench options, mostly for testing and
 # debugging like --small-test.
 my $cl_sql_bench_options;
 my $help;
+my $debug;
+
+#
+# Binaries.
+#
+my $mysql = 'bin/mysql';
+my $mysqladmin = 'bin/mysqladmin';
 
 # Variables we read in from .sqlbt files.
 my $current_mysqld_start_options;
@@ -30,7 +70,8 @@ my $config_file;
 our $config;
 our $sql_bench_test;
 
-# Variables, which we are using in our host specific configuration file.
+# [CHANGEABLE] Variables, which we are using in our host specific
+# configuration file from the conf/ directory.
 our $sql_bench_results;
 our $work_dir;
 our $bzr;
@@ -54,35 +95,6 @@ chomp($run_date);
 # Timeout in seconds for waiting for mysqld to start.
 my $timeout = 100;
 
-# Paths we are using.
-# Every directory except the con/ directory represents a
-# compiler options/test combination we wan to run. If you
-# a new compiler option scenario, then you add a directory
-# with a descriptive name and add the sql-bench test versions
-# you want to run. Every file ending on *.sqlbt represents a
-# test version to run.
-#
-# If you want to run a new sql-bench test scenario for a
-# given compiler option, then you add a file with a descriptive
-# name ending with *.sqlbt to the compiler configuration
-# directory of your choice.
-#
-# You can also overwrite the default MariaDB tree version,
-# which is defined by a command line option of this script.
-#
-# Mind the run time of a sql-bench scenario which can vary
-# from 30 minutes to 2 hours.
-my @folders;
-# Set this to your path to sql-bench/, which you checked output_dir
-# with bzr. Mind the trailing /.
-my $path = "/home/hakan/work/monty_program/mariadb-tools/sql-bench/";
-
-#
-# Binaries.
-#
-my $mysql = 'bin/mysql';
-my $mysqladmin = 'bin/mysqladmin';
-
 my $run_by = qx(whoami);
 if ($run_by eq 'root')
 {
@@ -92,29 +104,34 @@ if ($run_by eq 'root')
   exit 1;
 }
 
-#usage() if (@ARGV < 3
-#            or !GetOptions('help|?' => \$help,
-#                           'config-file=s' => \$config_file,
-#                           'repository=s' => \$repository,
-#                           'suffix=s' => \$suffix)
-#            or defined $help);
-
-usage() if (@ARGV < 2
+usage() if (@ARGV < 3
             or !GetOptions('help|?' => \$help,
                            'repository=s' => \$repository,
-                           'sql-bench-options=s' => \$cl_sql_bench_options)
+                           'sql-bench-options=s' => \$cl_sql_bench_options,
+                           'debug=s' => \$debug,)
             or defined $help);
 
 sub usage
 {
-  print "Please provide exactly two options.\n";
+  print "Please provide exactly three options.\n";
   print "  Example: $0 --repository=[/path/to/bzr/repository]\n";
   print "                              --sql-bench-options=[additional sql-bench-options]\n";
-  print "    sql-bench-options is mostly used for testing and debugging cases,\n";
-  print "    where we want to have short run times - for instance\n";
-  print "    using --small-test or --small-table.\n" ;
+  print "                              --debug=[yes|no]\n";
+  print "  --sql-bench-options is mostly used in testing and debugging cases,\n";
+  print "  where we want to have short run times - for instance\n";
+  print "  using --small-test or --small-table. You can separate\n" ;
+  print "  several sql-bench-options with spaces like:\n";
+  print "  --sql_bench_options=\"--small-test --small-table\"\n";
 
   exit 1;
+}
+
+sub print_timestamp
+{
+  my $now = qx(date "+%Y-%m-%d %H:%M:%S");
+  chomp($now);
+  
+  return $now;
 }
 
 # Read in every compiler option directory for iterating.
@@ -168,10 +185,11 @@ foreach my $compile_config (@folders) {
   chdir($work_dir)
     or die
     "[ERROR]: cd to $work_dir failed.\n";
-    "  Does your $work_dir directory exists?\n";
+    "  Does your $work_dir directory exist?\n";
     "  Exiting.\n";
 
   # Clean up of previous runs.
+  print "[NOTE]: Cleaning up previous runs and killing all mysqld processes.\n";
   qx(killall -9 mysqld);
 
   # Mac OS X needs explicit TMPDIR environment variable for mktemp -d to work.
@@ -191,9 +209,7 @@ foreach my $compile_config (@folders) {
 
   # bzr export refuses to export to an existing directory,
   # therefore we use a build directory.
-  my $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Exporting from $repository to $temp_dir/build\n";
+  print "[" . print_timestamp() . "]: Exporting from $repository to $temp_dir/build\n";
 
   qx($bzr export --format=dir $temp_dir/build $repository);
   if ($? != 0)
@@ -204,18 +220,13 @@ foreach my $compile_config (@folders) {
     exit 1;
   }
 
-  $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Finished exporting from $repository to $temp_dir/build\n";
-
-  $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Starting to compile, ...\n";
+  print "[" . print_timestamp() . "]: Finished exporting from $repository to $temp_dir/build\n";
+  print "[" . print_timestamp() . "]: Starting to compile, ...\n";
 
   chdir("$temp_dir/build")
     or die
     "[ERROR]: cd to $temp_dir/build failed.\n";
-    "  Does your $temp_dir/build directory exists?\n";
+    "  Does your $temp_dir/build directory exist?\n";
     "  Exiting.\n";
 
   qx(BUILD/autorun.sh);
@@ -250,9 +261,7 @@ foreach my $compile_config (@folders) {
     exit 1;
   }
 
-  $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Finished compiling.\n";
+  print "[" . print_timestamp() . "]: Finished compiling.\n";
 
   qx($make install);
   if ($? != 0)
@@ -267,7 +276,7 @@ foreach my $compile_config (@folders) {
   chdir("$temp_dir/install")
     or die
     "[ERROR]: cd to $temp_dir/install failed.\n";
-    "  Does your $temp_dir/install directory exists?\n";
+    "  Does your $temp_dir/install directory exist?\n";
     "  Exiting.\n";
 
   # Install system tables.
@@ -278,20 +287,11 @@ foreach my $compile_config (@folders) {
   # Determine mysqld version for result file naming.
   my $mariadb_version = qx(libexec/mysqld --version | awk '{ print $3 }');
 
-  $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Starting sql-bench run for $compile_config, ...\n";
+  print "[" . print_timestamp() . "]: Starting sql-bench run for $compile_config, ...\n";
 
   # Run sql-bench test configurations in a loop.
   my $current_dir = '';
   my $output_dir =  '';
-
-  #
-  #$sql_bench_test->{'base'} = {
-  #  mysqld_start_options => '',
-  #  mysqld_init_command => '',
-  #  sql_bench_options => '--comment="base test (with MyISAM)"',
-  #};
 
   opendir(DIR, $compile_config);
   my @sql_bench_tests = grep(/\.sqlbt$/, readdir(DIR));
@@ -315,11 +315,12 @@ foreach my $compile_config (@folders) {
       $current_sql_bench_options = $sql_bench_test->{$current_sql_bench_test_name}->{sql_bench_options};
     }
 
-    # For debugging.
-    #print "current_mysqld_start_options: $current_mysqld_start_options\n";
-    #print "current_mysqld_init_command: $current_mysqld_init_command\n";
-    #print "current_sql_bench_options: $current_sql_bench_options\n";
-    #print "\n";
+    if ($debug eq 'yes') {
+      print "current_mysqld_start_options: $current_mysqld_start_options\n";
+      print "current_mysqld_init_command: $current_mysqld_init_command\n";
+      print "current_sql_bench_options: $current_sql_bench_options\n";
+      print "\n";
+    }
 
     sub kill_mysqld
     {
@@ -341,16 +342,13 @@ foreach my $compile_config (@folders) {
       my $mysql_options = '--no-defaults';
       $mysql_options = "$mysql_options -uroot --socket=$mariadb_socket";
 
-      $now = qx(date "+%Y-%m-%d %H:%M:%S");
-      chomp($now);
-
       chdir("$temp_dir/install")
         or die
         "[ERROR]: cd to $temp_dir/install failed.\n";
-        "  Does your $temp_dir/install directory exists?\n";
+        "  Does your $temp_dir/install directory exist?\n";
         "  Exiting.\n";
 
-      print "[$now]: Starting mysqld with this mariadb_options: $mariadb_options\n";
+      print "[" . print_timestamp() . "]: Starting mysqld with following mariadb_options: $mariadb_options\n";
       system "$temp_dir/install/libexec/mysqld $mariadb_options &";
 
       my $j = 0;
@@ -369,9 +367,7 @@ foreach my $compile_config (@folders) {
 
       if ($current_mysqld_init_command != '')
       {
-        $now = qx(date "+%Y-%m-%d %H:%M:%S");
-        chomp($now);
-        print "[$now]: Using this init command: $current_mysqld_init_command \n";
+        print "[" . print_timestamp() . "]: Using following init command: $current_mysqld_init_command \n";
         qx(echo $current_mysqld_init_command  | $temp_dir/install/$mysql $mysql_options);
 
         if ($? != 0)
@@ -390,14 +386,10 @@ foreach my $compile_config (@folders) {
         exit 1;
       }
 
-      $now = qx(date "+%Y-%m-%d %H:%M:%S");
-      chomp($now);
-      print "[$now]: Started mysqld!\n";
+      print "[" . print_timestamp() . "]: Started mysqld!\n";
     }
 
-    $now = qx(date "+%Y-%m-%d %H:%M:%S");
-    chomp($now);
-    print "[$now]: Starting test configuration: $sql_bench_test_file\n";
+    print "[" . print_timestamp() . "]: Starting test configuration: $sql_bench_test_file\n";
 
     $current_sql_bench_options = "$current_sql_bench_options --socket=$mariadb_socket $cl_sql_bench_options";
 
@@ -406,7 +398,7 @@ foreach my $compile_config (@folders) {
     chdir("$temp_dir/install/sql-bench")
       or die
       "[ERROR]: cd to sql-bench failed.\n";
-      "  Does your sql-bench directory exists?\n";
+      "  Does your sql-bench directory exist?\n";
       "  Exiting.\n";
 
     $current_dir = qx(pwd);
@@ -428,12 +420,8 @@ foreach my $compile_config (@folders) {
 
     kill_mysqld();
 
-    $now = qx(date "+%Y-%m-%d %H:%M:%S");
-    chomp($now);
-    print "[$now]: Finished $sql_bench_test_file\n";
+    print "[" . print_timestamp() . "]: Finished $sql_bench_test_file\n";
   }
 
-  $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  print "[$now]: Finished sql-bench run for $config_file!\n";
+  print "[" . print_timestamp() . "]: Finished sql-bench run for $config_file!\n";
 }

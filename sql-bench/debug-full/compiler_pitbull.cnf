@@ -1,6 +1,6 @@
 # Compile options for debug-full running sql-bench on host pitbull.
 #
-# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-11-20.
+# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-11-20.
 
 # Configure environment variables.
 # Note: You can set ccache in the host specific config file.
