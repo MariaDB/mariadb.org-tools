@@ -3,7 +3,7 @@
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-11-20.
 
 # Configure environment variables.
-# Note: You can set ccache the host specific config file.
+# Note: You can set ccache in the host specific config file.
 # In this case conf/pitbull.cnf.
 #
 # This configuration is taken from BUILD/compile-pentium64-max --print.

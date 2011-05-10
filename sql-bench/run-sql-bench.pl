@@ -41,8 +41,7 @@ my @folders;
 # you branched lp:mariadb-tools with bzr.
 #
 # Note: Mind the trailing /.
-#my $path = "/home/hakan/work/monty_program/mariadb-tools/sql-bench/";
-my $path = "/Users/hakan/work/monty_program/mariadb-tools/sql-bench/";
+my $path = "$ENV{'HOME'}/work/monty_program/mariadb-tools/sql-bench/";
 
 # [CHANGEABLE]: Name of compile log file.
 # This will be prefixed whith each corresponding configuration.

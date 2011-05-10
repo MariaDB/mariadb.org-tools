@@ -3,7 +3,7 @@
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-03-16.
 
 # Configure environment variables.
-# Note: You can set ccache the host specific config file.
+# Note: You can set ccache in the host specific config file.
 # In this case conf/au0013.cnf.
 #
 # This configuration is taken from BUILD/compile-pentium64-max --print.
