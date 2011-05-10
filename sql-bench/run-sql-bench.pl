@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # Run sql-bench for given configuration file with different
 # configurations
@@ -89,7 +89,6 @@ our $perl;
 #
 # We need at least 1 GB disk space in our $work_dir.
 my $space_limit = 1000000;
-my $mysqladmin_options = '--no-defaults';
 my $machine = qx(/bin/hostname -s);
 chomp($machine);
 my $run_date = qx(date +%Y-%m-%d);
@@ -114,35 +113,12 @@ usage() if (@ARGV < 3
                            'debug=s' => \$debug,)
             or defined $help);
 
-sub usage
-{
-  print "Please provide exactly three options.\n";
-  print "  Example: $0 --repository=[/path/to/bzr/repository]\n";
-  print "                              --sql-bench-options=[additional sql-bench-options]\n";
-  print "                              --debug=[yes|no]\n";
-  print "  --sql-bench-options is mostly used in testing and debugging cases,\n";
-  print "  where we want to have short run times - for instance\n";
-  print "  using --small-test or --small-table. You can separate\n" ;
-  print "  several sql-bench-options with spaces like:\n";
-  print "  --sql_bench_options=\"--small-test --small-table\"\n";
-
-  exit 1;
-}
-
-sub print_timestamp
-{
-  my $now = qx(date "+%Y-%m-%d %H:%M:%S");
-  chomp($now);
-  
-  return $now;
-}
-
 # Read in every compiler option directory for iterating except conf/ directory.
 opendir(DIR, $path) or die "cant find $path: $!";
 while (defined(my $file = readdir(DIR))) {
   next if $file =~ /^\.\.?$/;
     if (-d "$path$file" && $file ne "conf") {
-      push @folders,"$path$file";
+      push @folders, "$path$file";
     }
 }
 closedir(DIR);
@@ -220,7 +196,7 @@ foreach my $compile_config (@folders) {
   # Get rid of any newline.
   chomp($temp_dir);
   my $mariadb_datadir = "$temp_dir/data";
-  $compile_log = $temp_dir ."/" . basename($compile_config) . "_" . $compile_log;
+  my $compile_log_current = $temp_dir ."/" . basename($compile_config) . "_" . $compile_log;
 
   # bzr export refuses to export to an existing directory,
   # therefore we use a build directory.
@@ -236,8 +212,7 @@ foreach my $compile_config (@folders) {
   }
 
   print "[" . print_timestamp() . "]: Finished exporting from $repository to $temp_dir/build\n";
-  print "[" . print_timestamp() . "]: Starting to compile, ...\n";
-  print "[" . print_timestamp() . "]: and logging into $compile_log.\n";
+  print "[" . print_timestamp() . "]: Starting to compile and logging into $compile_log_current.\n";
 
   chdir("$temp_dir/build")
     or die
@@ -246,12 +221,12 @@ foreach my $compile_config (@folders) {
     "  Exiting.\n";
 
   print "[" . print_timestamp() . "]: Running BUILD/autorun.sh\n";
-  qx(BUILD/autorun.sh > $compile_log 2>&1);
+  qx(BUILD/autorun.sh > $compile_log_current 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: BUILD/autorun.sh failed.\n";
     print "  Please check your development environment.\n";
-    print "  You can also examine your compile log $compile_log\n";
+    print "  You can also examine your compile log $compile_log_current\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -260,23 +235,23 @@ foreach my $compile_config (@folders) {
   # We need --prefix for running make install. Otherwise
   # mysql_install_db will not work properly.
   print "[" . print_timestamp() . "]: Running ./configure\n";
-  qx(./configure $config->{configure_line} --prefix=$temp_dir/install >> $compile_log 2>&1);
+  qx(./configure $config->{configure_line} --prefix=$temp_dir/install >> $compile_log_current 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: ./configure $config->{configure_line} failed.\n";
     print "  Please check your '$config->{configure_line}'.\n";
-    print "  You can also examine your compile log $compile_log\n";
+    print "  You can also examine your compile log $compile_log_current\n";
     print "  Exiting.\n";
 
     exit 1;
   }
 
   print "[" . print_timestamp() . "]: Running $make -j$concurrency\n";
-  qx($make -j$concurrency >> $compile_log 2>&1);
+  qx($make -j$concurrency >> $compile_log_current 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: make failed.\n";
-    print "  Please examine your compile log $compile_log\n";
+    print "  Please examine your compile log $compile_log_current\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -285,11 +260,11 @@ foreach my $compile_config (@folders) {
   print "[" . print_timestamp() . "]: Finished compiling.\n";
 
   print "[" . print_timestamp() . "]: Running $make install\n";
-  qx($make install >> $compile_log 2>&1);
+  qx($make install >> $compile_log_current 2>&1);
   if ($? != 0)
   {
     print "[ERROR]: make install failed.\n";
-    print "  Please examine your compile log $compile_log\n";
+    print "  Please examine your compile log $compile_log_current\n";
     print "  Exiting.\n";
 
     exit 1;
@@ -322,10 +297,6 @@ foreach my $compile_config (@folders) {
   foreach my $sql_bench_test_file (@sql_bench_tests) {
     require $compile_config . '/' . $sql_bench_test_file;
 
-    #my $comments = "Revision used: $revision_id\nConfigure: $config->{configure_line}\nServer options: $mariadb_options";
-
-    $mysqladmin_options = "$mysqladmin_options -uroot --socket=$mariadb_socket";
-
     my $current_sql_bench_test_name = basename($sql_bench_test_file, ".sqlbt");
     $current_mysqld_start_options = "";
     $current_sql_bench_options = "";
@@ -344,78 +315,11 @@ foreach my $compile_config (@folders) {
       print "\n";
     }
 
-    sub kill_mysqld
-    {
-      qx(killall -9 mysqld);
-      qx(rm -rf $mariadb_datadir);
-      qx(rm -f $mariadb_socket);
-
-      qx($mkdir $mariadb_datadir);
-      # Install system tables.
-      qx($temp_dir/install/bin/mysql_install_db --no-defaults --basedir=$temp_dir/install --datadir=$mariadb_datadir);
-    }
-
-    sub start_mysqld($$)
-    {
-      my $start_options = shift;
-      my $init_command = shift;
-
-      my $mariadb_options = "--no-defaults --log-error=$mariadb_datadir/mysqld.err --datadir=$mariadb_datadir --tmpdir=$temp_dir --socket=$mariadb_socket";
-      my $mysql_options = '--no-defaults';
-      $mysql_options = "$mysql_options -uroot --socket=$mariadb_socket";
-
-      chdir("$temp_dir/install")
-        or die
-        "[ERROR]: cd to $temp_dir/install failed.\n";
-        "  Does your $temp_dir/install directory exist?\n";
-        "  Exiting.\n";
-
-      print "[" . print_timestamp() . "]: Starting mysqld with following mariadb_options: $mariadb_options\n";
-      system "$temp_dir/install/libexec/mysqld $mariadb_options &";
-
-      my $j = 0;
-      my $started = -1;
-      while ($j < $timeout) {
-        qx($temp_dir/install/$mysqladmin $mysqladmin_options ping > /dev/null 2>&1);
-        if ($? == 0)
-        {
-          $started = 0;
-          last;
-        }
-
-        sleep 1;
-        $j++;
-      }
-
-      if ($current_mysqld_init_command != '')
-      {
-        print "[" . print_timestamp() . "]: Using following init command: $current_mysqld_init_command \n";
-        qx(echo $current_mysqld_init_command  | $temp_dir/install/$mysql $mysql_options);
-
-        if ($? != 0)
-        {
-          print "[WARNING]: $current_mysqld_init_command failed.\n";
-          print "  Please check '$current_mysqld_init_command'.\n";
-        }
-      }
-
-      if ($started != 0)
-      {
-        print "[ERROR]: Start of mysqld failed.\n";
-        print "  Please check your error log.\n";
-        print "  Exiting.\n";
-
-        exit 1;
-      }
-
-      print "[" . print_timestamp() . "]: Started mysqld!\n";
-    }
-
     print "[" . print_timestamp() . "]: Starting test configuration: $sql_bench_test_file\n";
 
     $current_sql_bench_options = "$current_sql_bench_options --socket=$mariadb_socket $cl_sql_bench_options";
 
-    start_mysqld($current_mysqld_start_options, $current_mysqld_init_command);
+    start_mysqld($mariadb_datadir, $temp_dir, $mariadb_socket, $current_mysqld_start_options, $current_mysqld_init_command);
 
     chdir("$temp_dir/install/sql-bench")
       or die
@@ -431,19 +335,122 @@ foreach my $compile_config (@folders) {
     $output_dir = "$sql_bench_results/$machine/$run_date/$compile_config_name/$sql_bench_test_file";
     qx($mkdir -p $output_dir);
 
-    print "$perl run-all-tests $current_sql_bench_options --dir $output_dir --log\n";
+    print "[" . print_timestamp() . "]: Running $perl run-all-tests $current_sql_bench_options --dir $output_dir --log\n";
 
     qx($perl run-all-tests $current_sql_bench_options --dir $output_dir --log);
     if ($? != 0)
     {
-      print "[WARNING]: run-all-tests for $sql_bench_test_file produced errors.\n";
+      print "[" . print_timestamp() . "][WARNING]: run-all-tests for $sql_bench_test_file produced errors.\n";
       print "  Please check your sql-bench error logs.\n";
     }
 
-    kill_mysqld();
+    kill_mysqld($mariadb_datadir, $mariadb_socket, $temp_dir);
 
     print "[" . print_timestamp() . "]: Finished $sql_bench_test_file\n\n";
   }
 
-  print "[" . print_timestamp() . "]: Finished sql-bench run for $compile_config!\n";
+  print "[" . print_timestamp() . "]: Finished sql-bench run for $compile_config!\n\n";
+}
+
+sub usage
+{
+  print "Please provide exactly three options.\n";
+  print "  Example: $0 --repository=[/path/to/bzr/repository]\n";
+  print "                              --sql-bench-options=[additional sql-bench-options]\n";
+  print "                              --debug=[yes|no]\n";
+  print "  --sql-bench-options is mostly used in testing and debugging cases,\n";
+  print "  where we want to have short run times - for instance\n";
+  print "  using --small-test or --small-table. You can separate\n" ;
+  print "  several sql-bench-options with spaces like:\n";
+  print "  --sql_bench_options=\"--small-test --small-table\"\n";
+
+  exit 1;
+}
+
+sub print_timestamp
+{
+  my $now = qx(date "+%Y-%m-%d %H:%M:%S");
+  chomp($now);
+  
+  return $now;
+}
+
+sub kill_mysqld
+{
+  my $mariadb_datadir = $_[0];
+  my $mariadb_socket = $_[1];
+  my $temp_dir = $_[2];
+  
+  qx(killall -9 mysqld);
+  qx(rm -rf $mariadb_datadir);
+  qx(rm -f $mariadb_socket);
+
+  qx($mkdir $mariadb_datadir);
+
+  # Install system tables.
+  print "[" . print_timestamp() . "]: Installing system tables with following options:\n";
+  print "  --no-defaults\n";
+  print "  --basedir=$temp_dir/install\n";
+  print "  --datadir=$mariadb_datadir\n";
+
+  qx($temp_dir/install/bin/mysql_install_db --no-defaults --basedir=$temp_dir/install --datadir=$mariadb_datadir);
+}
+
+sub start_mysqld
+{
+  my $mariadb_datadir = $_[0];
+  my $temp_dir        = $_[1];
+  my $mariadb_socket  = $_[2];
+  my $start_options   = $_[3];
+  my $init_command    = $_[4];
+
+  my $mariadb_options = "--no-defaults --log-error=$mariadb_datadir/mysqld.err --datadir=$mariadb_datadir --tmpdir=$temp_dir --socket=$mariadb_socket $start_options";
+  my $mysql_options = "--no-defaults -uroot --socket=$mariadb_socket";
+  my $mysqladmin_options = "--no-defaults -uroot --socket=$mariadb_socket";
+
+  chdir("$temp_dir/install")
+    or die
+    "[ERROR]: cd to $temp_dir/install failed.\n";
+    "  Does your $temp_dir/install directory exist?\n";
+    "  Exiting.\n";
+
+  print "[" . print_timestamp() . "]: Starting mysqld with following mariadb_options: $mariadb_options\n";
+  system "$temp_dir/install/libexec/mysqld $mariadb_options &";
+
+  my $j = 0;
+  my $started = -1;
+  while ($j < $timeout) {
+    qx($temp_dir/install/$mysqladmin $mysqladmin_options ping > /dev/null 2>&1);
+    if ($? == 0)
+    {
+      $started = 0;
+      last;
+    }
+
+    sleep 1;
+    $j++;
+  }
+
+  if ($init_command ne '')
+  {
+    print "[" . print_timestamp() . "]: Using following init command: $init_command \n";
+    qx(echo $init_command | $temp_dir/install/$mysql $mysql_options);
+
+    if ($? != 0)
+    {
+      print "[" . print_timestamp() . "][WARNING]: $init_command failed.\n";
+      print "  Please check '$init_command'.\n";
+    }
+  }
+
+  if ($started != 0)
+  {
+    print "[ERROR]: Start of mysqld failed.\n";
+    print "  Please check your error log.\n";
+    print "  Exiting.\n";
+
+    exit 1;
+  }
+
+  print "[" . print_timestamp() . "]: Started mysqld!\n";
 }

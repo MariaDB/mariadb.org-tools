@@ -1,0 +1,26 @@
+# Compile options for debug running sql-bench on host au0013.
+#
+# Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-05-06.
+
+# Configure environment variables.
+# Note: You can set ccache in the host specific config file.
+# In this case conf/au0013.cnf.
+#
+# This configuration is taken from BUILD/compile-pentium64-debug-max --print
+# but with --with-debug instead of --with-debug=full.
+#
+$ENV{'CC'} = "gcc --pipe";
+$ENV{'CFLAGS'} = "-Wall -Wextra -Wunused -Wwrite-strings -mtune=native -m64 -DUNIV_MUST_NOT_INLINE -DEXTRA_DEBUG -DFORCE_INIT_OF_VARS -DSAFEMALLOC -DPEDANTIC_SAFEMALLOC";
+
+$ENV{'CXX'} = "g++";
+$ENV{'CXXFLAGS'} = "-Wall -Wextra -Wunused -Wwrite-strings -Wno-unused-parameter -Wnon-virtual-dtor -felide-constructors -fno-exceptions -fno-rtti -mtune=native -m64 -DUNIV_MUST_NOT_INLINE -DEXTRA_DEBUG -DFORCE_INIT_OF_VARS -DSAFEMALLOC -DPEDANTIC_SAFEMALLOC";
+$ENV{'CXXLDFLAGS'} = "";
+
+$config = {
+  # Configure invocation line.
+  # Do not use --prefix here.
+  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-aria --with-aria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-debug --with-ssl --with-plugins=max --with-embedded-server --with-libevent --enable-local-infile',
+};
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;
