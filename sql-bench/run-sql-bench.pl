@@ -82,6 +82,7 @@ our $mkdir;
 our $make;
 our $concurrency;
 our $perl;
+our $ccache;
 
 #
 # Variables.
