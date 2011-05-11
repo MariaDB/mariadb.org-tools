@@ -139,10 +139,36 @@ foreach my $compile_config (@folders) {
     last;
   }
 
+  # Configuration specific config file.
   require $compile_machine_config;
+  if ($debug eq 'yes') {
+    print "Variables read in from: $compile_machine_config\n";
+    print '$ENV{\'CC\'}: ' . $ENV{'CC'} . "\n";
+    print '$ENV{\'CFLAGS\'}: ' . $ENV{'CFLAGS'} . "\n";
+    print '$ENV{\'CXX\'}: ' . $ENV{'CXX'} . "\n";
+    print '$ENV{\'CXXFLAGS\'}: ' . $ENV{'CXXFLAGS'} . "\n";
+    print '$ENV{\'CXXLDFLAGS\'}: ' . $ENV{'CXXLDFLAGS'} . "\n";
+    print '$config->{configure_line}: ' . $config->{configure_line} . "\n";
+    print "\n";
+  }
 
   # Host specific config file.
   require './conf/' . $machine . '.cnf';
+  if ($debug eq 'yes') {
+    print 'Variables read in from:' . './conf/' . $machine . '.cnf' . "\n";
+    print '$sql_bench_results: ' . $sql_bench_results . "\n";
+    print '$work_dir: ' . $work_dir . "\n";
+    print '$bzr: ' . $bzr . "\n";
+    print '$mktemp: ' . $mktemp . "\n";
+    print '$mkdir: ' . $mkdir . "\n";
+    print '$make: ' . $make . "\n";
+    print '$concurrency: ' . $concurrency . "\n";
+    print '$perl: ' . $perl . "\n";
+    print '$ccache: ' . $ccache . "\n";
+    print '$ENV{\'CC\'}: ' . $ENV{'CC'} . "\n";
+    print '$ENV{\'CXX\'}: ' . $ENV{'CXX'} . "\n";
+    print "\n";
+  }
 
   #
   # Check system.
