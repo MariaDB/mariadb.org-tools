@@ -44,8 +44,5 @@ $perl = '/sw/bin/perl';
 # then set the path to it here.
 $ccache = '/sw/bin/ccache';
 
-$ENV{'CC'}  = $ccache . " " . $ENV{'CC'};
-$ENV{'CXX'} = $ccache . " " . $ENV{'CXX'};
-
 # This has to be the last line. See "perldoc -f require" for details.
 1;

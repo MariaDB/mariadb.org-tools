@@ -142,6 +142,7 @@ foreach my $compile_config (@folders) {
 
   # Configuration specific config file.
   require $compile_machine_config;
+
   if ($debug eq 'yes') {
     print "Variables read in from: $compile_machine_config\n";
     print '$ENV{\'CC\'}: ' . $ENV{'CC'} . "\n";
@@ -155,6 +156,9 @@ foreach my $compile_config (@folders) {
 
   # Host specific config file.
   require './conf/' . $machine . '.cnf';
+  $ENV{'CC'}  = $ccache . " " . $ENV{'CC'};
+  $ENV{'CXX'} = $ccache . " " . $ENV{'CXX'};
+
   if ($debug eq 'yes') {
     print 'Variables read in from:' . './conf/' . $machine . '.cnf' . "\n";
     print '$sql_bench_results: ' . $sql_bench_results . "\n";
