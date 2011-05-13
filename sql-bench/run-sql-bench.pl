@@ -137,7 +137,7 @@ foreach my $compile_config (@folders) {
     print "[" . print_timestamp() . "]: Skipping directory " . $compile_config . "\n";
     print "  Because $compile_machine_config was not found \n";
     
-    last;
+    next;
   }
 
   # Configuration specific config file.
