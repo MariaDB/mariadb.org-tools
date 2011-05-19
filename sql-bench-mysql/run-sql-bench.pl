@@ -41,7 +41,7 @@ my @folders;
 # you branched lp:mariadb-tools with bzr.
 #
 # Note: Mind the trailing /.
-my $path = "$ENV{'HOME'}/work/monty_program/mariadb-tools/sql-bench/";
+my $path = "$ENV{'HOME'}/work/monty_program/mariadb-tools/sql-bench-mysql/";
 
 # [CHANGEABLE]: Name of compile log file.
 # This will be prefixed whith each corresponding configuration.
@@ -135,7 +135,7 @@ foreach my $compile_config (@folders) {
   # machine specific configuration file, we skip it.
   if (!-f $compile_machine_config) {
     print "[" . print_timestamp() . "]: Skipping directory " . $compile_config . "\n";
-    print "  Because " . basename($compile_machine_config) . " was not found" . "\n";
+    print "  Because " . basename($compile_machine_config) . "was not found" . \n";
     
     last;
   }
@@ -307,7 +307,6 @@ foreach my $compile_config (@folders) {
     "  Exiting.\n";
 
   # Install system tables.
-  print "[" . print_timestamp() . "]: Installing system tables.\n";
   qx(bin/mysql_install_db --no-defaults --basedir=$temp_dir/install --datadir=$mariadb_datadir);
 
   my $mariadb_socket = "$temp_dir/mysql.sock";

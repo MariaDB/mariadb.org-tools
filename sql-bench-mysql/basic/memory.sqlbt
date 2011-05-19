@@ -11,10 +11,10 @@
 # sql_bench_options       Options given to sql-bench.
 #
 
-$sql_bench_test->{'aria-notrans'} = {
-  mysqld_start_options => '--skip-grant-tables --default-storage-engine=aria --aria-pagecache-buffer-size=256M',
+$sql_bench_test->{'memory'} = {
+  mysqld_start_options => '--skip-grant-tables --default-storage-engine=memory --max-heap-table-size=1024M',
   mysqld_init_command => '',
-  sql_bench_options => '--create-options="transactional=0 page_checksum=0" --comment="engine=aria aria-pagecache-buffer-size=256M  not transactional"',
+  sql_bench_options => '--comment="engine=memory"',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.

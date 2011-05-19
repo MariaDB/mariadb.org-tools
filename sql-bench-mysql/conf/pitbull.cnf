@@ -1,0 +1,49 @@
+# Configuration file for host: pitbull
+#
+# OS: Ubuntu 10.10
+# Platform: x86_64
+# CPU: Two socket hexa-core Intel Xeon X5660 @ 2.80GHz
+# RAM: 23GB
+# Disk(s): 1 x ST3500320NS S-ATA
+
+#
+# Adjust the following variables according to your system.
+#
+
+#
+# Directories.
+#
+
+# Where to store the test results.
+$sql_bench_results = '/home/hakan/sql-bench-results';
+
+# Where to compile the sources. You will need at least 1GB of disk space.
+# This is also the datadir directory.
+#$work_dir = '/tmp';
+#$work_dir = '/media/ssd_tmp';
+$work_dir = '/data/sql-bench';
+
+#
+# Binaries.
+#
+
+# We need bzr >= 1.18.1.
+$bzr = '/usr/bin/bzr';
+
+$mktemp = '/bin/mktemp';
+
+$mkdir = '/bin/mkdir';
+
+# Set the concurrency level (-j) to about: number of CPUs + 1.
+$make = '/usr/bin/make';
+$concurrency = 13;
+
+# Perl with DBD::MySQL.
+$perl = '/usr/bin/perl';
+
+# If you use ccache, a compiler cache, which reduces compile time,
+# then set the path to it here.
+$ccache = '/usr/bin/ccache';
+
+# This has to be the last line. See "perldoc -f require" for details.
+1;

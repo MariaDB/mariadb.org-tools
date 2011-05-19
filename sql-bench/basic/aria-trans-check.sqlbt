@@ -5,13 +5,14 @@
 # The different options which can be used are:
 #
 # mysqld_start_options    Options given to the mysqld that is started.
-#                         This is prefixed with --skip-grant.
+#                         Please keep it prefixed with --skip-grant-tables,
+#                         except for tests, which are related to GRANT.
 # mysqld_init_command     SQL commands given to mysqld before tests starts.
 # sql_bench_options       Options given to sql-bench.
 #
 
 $sql_bench_test->{'aria-trans-check'} = {
-  mysqld_start_options => '--default-storage-engine=aria --aria-pagecache-buffer-size=256M',
+  mysqld_start_options => '--skip-grant-tables --default-storage-engine=aria --aria-pagecache-buffer-size=256M',
   mysqld_init_command => '',
   sql_bench_options => '--create-options="transactional=1 page_checksum=1" --comment="engine=aria aria-pagecache-buffer-size=256M transactional page_checksum"',
 };

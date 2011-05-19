@@ -5,14 +5,15 @@
 # The different options which can be used are:
 #
 # mysqld_start_options    Options given to the mysqld that is started.
-#                         This is prefixed with --skip-grant.
+#                         Please keep it prefixed with --skip-grant-tables,
+#                         except for tests, which are related to GRANT.
 # mysqld_init_command     SQL commands given to mysqld before tests starts.
 # sql_bench_options       Options given to sql-bench.
 #
 
 # --userstat is available starting with MariaDB 5.2.
 $sql_bench_test->{'userstat'} = {
-  mysqld_start_options => '--userstat=1',
+  mysqld_start_options => '--skip-grant-tables --userstat=1',
   mysqld_init_command => '',
   sql_bench_options => '--comment="userstat=1"',
 };

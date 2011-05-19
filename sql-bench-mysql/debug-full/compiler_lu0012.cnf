@@ -1,13 +1,12 @@
-# Compile options for debug running sql-bench on host pitbull.
+# Compile options for debug-full running sql-bench on host lu0012.
 #
 # Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-11-20.
 
 # Configure environment variables.
 # Note: You can set ccache in the host specific config file.
-# In this case conf/pitbull.cnf.
+# In this case conf/lu0012.cnf.
 #
-# This configuration is taken from BUILD/compile-pentium64-debug-max --print
-# but with --with-debug instead of --with-debug=full.
+# This configuration is taken from BUILD/compile-pentium64-debug-max --print.
 #
 $ENV{'CC'} = "gcc --pipe";
 $ENV{'CFLAGS'} = "-Wall -Wextra -Wunused -Wwrite-strings -mtune=native -m64 -DUNIV_MUST_NOT_INLINE -DEXTRA_DEBUG -DFORCE_INIT_OF_VARS -DSAFEMALLOC -DPEDANTIC_SAFEMALLOC";
@@ -19,7 +18,7 @@ $ENV{'CXXLDFLAGS'} = "";
 $config = {
   # Configure invocation line.
   # Do not use --prefix here.
-  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-plugin-aria --with-aria-tmp-tables --without-plugin-innodb_plugin --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-debug --with-ssl --with-plugins=max --with-embedded-server --with-libevent --enable-local-infile',
+  configure_line => '--enable-assembler --with-extra-charsets=complex --enable-thread-safe-client --with-big-tables --with-mysqld-ldflags=-static --with-client-ldflags=-static --with-readline --with-debug=full --with-ssl --with-plugins=max --with-embedded-server --enable-local-infile',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.

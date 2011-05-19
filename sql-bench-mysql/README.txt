@@ -1,11 +1,11 @@
-0. This is fine tuned for running with MariaDB
+0. This is fine tuned for running with MySQL
 
 1. What is it?
 This wrapper scripts are meant to run the sql-bench benchmark suite
 with various compiler options and different run time configurations.
 
 2. Prerequisite
-- MariaDB bzr tree from lp:maria
+- MySQL bzr tree from lp:mysql-server
 - Perl with DBD::MySQL
 
 3. What you will find in those directories?
@@ -24,4 +24,4 @@ Note: name your test file like the $sql_bench_test array name. For
            base.sqlbt
 
 --
-Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2010-10-28.
+Hakan Kuecuekyilmaz, <hakan at askmonty dot org>, 2011-05-17.
