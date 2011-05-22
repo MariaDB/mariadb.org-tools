@@ -12,7 +12,7 @@
 #
 
 $sql_bench_test->{'memory'} = {
-  mysqld_start_options => '--skip-grant-tables --default-storage-engine=memory^ --max-heap-table-size=1024M',
+  mysqld_start_options => '--skip-grant-tables --default-storage-engine=memory --max-heap-table-size=1024M',
   mysqld_init_command => '',
   sql_bench_options => '--comment="engine=memory"',
 };
