@@ -14,7 +14,7 @@
 $sql_bench_test->{'aria-notrans'} = {
   mysqld_start_options => '--skip-grant-tables --default-storage-engine=aria --aria-pagecache-buffer-size=256M',
   mysqld_init_command => '',
-  sql_bench_options => '--create-options="transactional=0 page_checksum=0" --comment="engine=aria aria-pagecache-buffer-size=256M  not transactional"',
+  sql_bench_options => '--create-options="engine=aria transactional=0 page_checksum=0" --comment="engine=aria aria-pagecache-buffer-size=256M not transactional"',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.

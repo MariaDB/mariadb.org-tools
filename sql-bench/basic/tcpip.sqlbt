@@ -13,8 +13,8 @@
 
 $sql_bench_test->{'tcpip'} = {
   mysqld_start_options => '--skip-grant-tables',
-  mysqld_init_command => '--connect_options=\'host=LOCALHOST\'',
-  sql_bench_options => '--comment="tcp/ip connection"',
+  mysqld_init_command => '',
+  sql_bench_options => '--connect_options=\'host=LOCALHOST\' --comment="tcp/ip connection"',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.

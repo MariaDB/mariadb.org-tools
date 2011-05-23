@@ -14,7 +14,7 @@
 $sql_bench_test->{'myisam'} = {
   mysqld_start_options => '--skip-grant-tables --default-storage-engine=myisam --key-buffer-size=256M',
   mysqld_init_command => '',
-  sql_bench_options => '--comment="engine=myisam key_buffer_size=256M"',
+  sql_bench_options => '--create-options="engine=myisam" --comment="engine=myisam key_buffer_size=256M"',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.

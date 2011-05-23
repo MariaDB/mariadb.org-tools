@@ -11,10 +11,10 @@
 # sql_bench_options       Options given to sql-bench.
 #
 
-$sql_bench_test->{'innodb'} = {
-  mysqld_start_options => '--skip-grant-tables --default-storage-engine=innodb --innodb-buffer-pool-size=256M',
+$sql_bench_test->{'key-cache-segments'} = {
+  mysqld_start_options => '--skip-grant-tables --key-cache-segments=64',
   mysqld_init_command => '',
-  sql_bench_options => '--create-options="engine=innodb" --comment="engine=innodb innodb-buffer-pool-size=256M"',
+  sql_bench_options => '--comment="key-cache-segments=64"',
 };
 
 # This has to be the last line. See "perldoc -f require" for details.
