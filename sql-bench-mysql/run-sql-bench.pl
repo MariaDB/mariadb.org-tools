@@ -375,9 +375,10 @@ foreach my $compile_config (@folders) {
       print "  Please check your sql-bench error logs.\n";
     }
 
-    kill_mysqld($mariadb_datadir, $mariadb_socket, $temp_dir);
-
     print "[" . print_timestamp() . "]: Finished $sql_bench_test_file\n\n";
+
+    print "[" . print_timestamp() . "]: Killing mysqld and installing system tables.\n";
+    kill_mysqld($mariadb_datadir, $mariadb_socket, $temp_dir);
   }
 
   print "[" . print_timestamp() . "]: Finished sql-bench run for $compile_config!\n\n";
@@ -465,7 +466,7 @@ sub start_mysqld
   if ($init_command ne '')
   {
     print "[" . print_timestamp() . "]: Using following init command: $init_command \n";
-    qx(echo $init_command | $temp_dir/install/$mysql $mysql_options);
+    qx(echo "$init_command" | $temp_dir/install/$mysql $mysql_options);
 
     if ($? != 0)
     {

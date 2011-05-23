@@ -13,7 +13,7 @@
 
 $sql_bench_test->{'grant-db'} = {
   mysqld_start_options => '',
-  mysqld_init_command => 'GRANT ALL PRIVILEGES to test.* to \'test\'@\'localhost\'',
+  mysqld_init_command => 'GRANT ALL PRIVILEGES on test.* to \'test\'@\'localhost\'',
   sql_bench_options => '--comment="grant to database"',
 };
 
