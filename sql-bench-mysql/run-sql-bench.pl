@@ -204,9 +204,9 @@ foreach my $compile_config (@folders) {
 
   chdir($work_dir)
     or die
-    "[ERROR]: cd to $work_dir failed.\n";
-    "  Does your $work_dir directory exist?\n";
-    "  Exiting.\n";
+      "[ERROR]: cd to $work_dir failed.\n"
+      . "  Does your $work_dir directory exist?\n"
+      . "  Exiting.\n";
 
   # Clean up of previous runs.
   print "[NOTE]: Cleaning up previous runs and killing all mysqld processes.\n";
@@ -246,9 +246,9 @@ foreach my $compile_config (@folders) {
 
   chdir("$temp_dir/build")
     or die
-    "[ERROR]: cd to $temp_dir/build failed.\n";
-    "  Does your $temp_dir/build directory exist?\n";
-    "  Exiting.\n";
+      "[ERROR]: cd to $temp_dir/build failed.\n"
+      . "  Does your $temp_dir/build directory exist?\n"
+      . "  Exiting.\n";
 
   print "[" . print_timestamp() . "]: Running BUILD/autorun.sh\n";
   qx(BUILD/autorun.sh > $compile_log_current 2>&1);
@@ -302,9 +302,9 @@ foreach my $compile_config (@folders) {
 
   chdir("$temp_dir/install")
     or die
-    "[ERROR]: cd to $temp_dir/install failed.\n";
-    "  Does your $temp_dir/install directory exist?\n";
-    "  Exiting.\n";
+      "[ERROR]: cd to $temp_dir/install failed.\n"
+      . "  Does your $temp_dir/install directory exist?\n"
+      . "  Exiting.\n";
 
   # Install system tables.
   print "[" . print_timestamp() . "]: Installing system tables.\n";
@@ -354,9 +354,9 @@ foreach my $compile_config (@folders) {
 
     chdir("$temp_dir/install/sql-bench")
       or die
-      "[ERROR]: cd to sql-bench failed.\n";
-      "  Does your sql-bench directory exist?\n";
-      "  Exiting.\n";
+        "[ERROR]: cd to sql-bench failed.\n"
+        . "  Does your sql-bench directory exist?\n"
+        . "  Exiting.\n";
 
     $current_dir = qx(pwd);
     chomp($current_dir);
@@ -442,9 +442,9 @@ sub start_mysqld
 
   chdir("$temp_dir/install")
     or die
-    "[ERROR]: cd to $temp_dir/install failed.\n";
-    "  Does your $temp_dir/install directory exist?\n";
-    "  Exiting.\n";
+      "[ERROR]: cd to $temp_dir/install failed.\n"
+      . "  Does your $temp_dir/install directory exist?\n"
+      . "  Exiting.\n";
 
   print "[" . print_timestamp() . "]: Starting mysqld with following mariadb_options: $mariadb_options\n";
   system "$temp_dir/install/libexec/mysqld $mariadb_options &";
