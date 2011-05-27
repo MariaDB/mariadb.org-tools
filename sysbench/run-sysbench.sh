@@ -293,7 +293,7 @@ for (( i = 0 ; i < ${#SYSBENCH_TESTS[@]} ; i++ ))
     SYSBENCH_TEST=$(echo "${SYSBENCH_TESTS[$i]}" | awk '{ print $1 }')
 
     # If we run the same SysBench test with different options,
-    # then we have to take care not to overwrite our previous results.
+    # then we have to take care to not overwrite our previous results.
     m=0
     DIR_CREATED=-1
     MKDIR_RETRY=512

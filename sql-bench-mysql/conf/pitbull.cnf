@@ -34,6 +34,8 @@ $mktemp = '/bin/mktemp';
 
 $mkdir = '/bin/mkdir';
 
+$sudo = '/usr/bin/sudo';
+
 # Set the concurrency level (-j) to about: number of CPUs + 1.
 $make = '/usr/bin/make';
 $concurrency = 13;

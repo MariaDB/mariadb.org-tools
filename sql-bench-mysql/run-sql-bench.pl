@@ -79,6 +79,7 @@ our $work_dir;
 our $bzr;
 our $mktemp;
 our $mkdir;
+our $sudo;
 our $make;
 our $concurrency;
 our $perl;
@@ -349,6 +350,12 @@ foreach my $compile_config (@folders) {
     print "[" . print_timestamp() . "]: Starting test configuration: $sql_bench_test_file\n";
 
     $current_sql_bench_options = "$current_sql_bench_options --socket=$mariadb_socket $cl_sql_bench_options";
+
+    # Clear file system cache. This works only with Linux >= 2.6.16.
+    # On Mac OS X we can use sync; purge.
+    system "sync";
+    system "purge";
+    system "echo 3 | $sudo tee /proc/sys/vm/drop_caches";
 
     start_mysqld($mariadb_datadir, $temp_dir, $mariadb_socket, $current_mysqld_start_options, $current_mysqld_init_command);
 
