@@ -1,0 +1,11 @@
+set terminal jpeg
+set output "./Scenario3/scenario3_graphics.jpeg"
+set xlabel "Threads"
+set ylabel "Transactions per second"
+set key below right
+set grid
+set title "MariaDB 5.2.7 on HDD vs SSD"
+
+plot 	"./Scenario3/res_hdd_mariadb_5_2_7_innodb_final.txt" with linespoints ti "Both binlog and data on HDD", \
+		"./Scenario3/res_ssd_mariadb_5_2_7_innodb_final.txt" with linespoints ti "Both binlog and data on SSD", \
+		"./Scenario3/res_ssd_hdd_mariadb_5_2_7_innodb_final.txt" with linespoints ti "Binlog on SSD and data on HDD"

@@ -1,0 +1,10 @@
+set terminal jpeg
+set output "./Scenario1/scenario1_graphics.jpeg"
+set xlabel "Threads"
+set ylabel "Transactions per second"
+set key below right
+set grid
+set title "MariaDB 5.2.7 InnoDB vs MariaDB 5.2.7 PBXT vs MySQL 5.5.13 InnoDB"
+plot 	"./Scenario1/res_scenario1_mariadb_5_2_7_innodb_final.txt" with linespoints ti "MariaDB 5.2.7 InnoDB", \
+		"./Scenario1/res_scenario1_mariadb_5_2_7_pbxt_final.txt" with linespoints ti "MariaDB 5.2.7 PBXT", \
+		"./Scenario1/res_scenario1_mysql_5_5_13_innodb_final.txt" with linespoints ti "MySQL 5.5.13 InnoDB" 
