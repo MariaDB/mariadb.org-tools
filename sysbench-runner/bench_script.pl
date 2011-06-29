@@ -6,7 +6,9 @@ use strict;
 use Getopt::Long;
 
 my $results_output_dir 	= "./TestResults";
-my $sysbench_dir		= "../sysbench/sysbench";
+my $sysbench_dir		= "../../sysbench/sysbench";
+my $PROJECT_HOME		= $ENV{"HOME"}."/Projects/MariaDB/mariadb-tools/sysbench-runner";
+my $MYSQL_HOME			= $ENV{"HOME"}."/Projects/MariaDB/mysql-5.5.13-linux2.6-x86_64/";
 
 my $mysql_host			= "127.0.0.1";
 my $mysql_user			= "root";
@@ -19,6 +21,7 @@ my $table_engine		= "innodb";
 
 my $dry_run				= 0;
 my $noprepare			= 0;
+my $norun				= 0;
 my $nocleanup			= 0;
 my $plot_graph			= 0;
 my $parallel_prepare	= 0;
@@ -31,17 +34,17 @@ my $bReadonly			= 0; 							#execute only select operations
 my $workload			= "oltp.lua"; 					#the default workload.
 my $nowarmup			= 0; 							#by default a warmup will be performed
 my $warmup_threads_num	= 4; 							#how many threads will execute the warmup
-my $warmup_time			= 300; 							#in seconds
+my $warmup_time			= 30; #300; 							#in seconds
 
+
+my $pid;
 #mysql options (TODO: mysql parameters are under construction)
-my $mysqlDir			= "../mysql";
 my $nostart_mysql		= 0;
 my $nostop_mysql		= 0;
-my $datadir				= "./data";
-my $max_connections		= "256";
-my $key_buffer_size		= "1G";
-my $sort_buffer_size	= "24M";
-my $read_buffer_size	= "24M";
+my $datadir				= "";
+my $log_bin				= 0;
+my $log_basename		= "";
+my $config_file			= "mysql_my.cnf";
 
 
 
@@ -54,6 +57,7 @@ GetOptions ("dry-run" 				=> \$dry_run,
 			"oltp-tables-count:i" 	=> \$tables_count, 
 			"threads|t:s"			=> \@threads_count,
 			"noprepare" 			=> \$noprepare,
+			"norun"					=> \$norun,
 			"nocleanup" 			=> \$nocleanup,
 			"mysql-table-engine:s"	=> \$table_engine,
 			"table-size:i"			=> \$table_size,
@@ -70,6 +74,10 @@ GetOptions ("dry-run" 				=> \$dry_run,
 			"no-start-mysql"		=> \$nostart_mysql,
 			"no-stop-mysql"			=> \$nostop_mysql,
 			"datadir:s"				=> \$datadir,
+			"log-bin"				=> \$log_bin,
+			"log-basename:s"		=> \$log_basename,
+			"config-file:s"			=> \$config_file,
+			"mysql-home:s"			=> \$MYSQL_HOME,
 			"mysql-host:s"			=> \$mysql_host,
 			"parallel-prepare"		=> \$parallel_prepare,
 			"prepare-threads:i"		=> \$prepare_threads);  
@@ -179,26 +187,51 @@ sub PlotGraph{
 
 #Start the mysqld process with parameters (TODO)
 sub StartMysql{
-	my $mysqld_options = 	"--datadir=$datadir \\\
-							--user=$mysql_user \\\
-							--max_connections=$max_connections \\\
-							--key_buffer_size=$key_buffer_size \\\
-							--sort_buffer_size=$sort_buffer_size \\\
-							--read_buffer_size=$read_buffer_size";
 
-	chdir $mysqlDir;
+	my $started = -1;
+	my $j=0;
+	my $timeout=100;
+	my $MYSQLADMIN_OPTIONS = "";
+	my $mysqld_options = "--defaults-file=$PROJECT_HOME/config/$config_file";
+	if($datadir){
+		$mysqld_options .= " --datadir=$datadir";
+	}
+	if($log_bin){
+		$mysqld_options .= " --log-bin=1";
+	}
+	if($log_basename){
+		$mysqld_options .= " --log-basename=$log_basename";
+	}
+
+	chdir($MYSQL_HOME) or die "Cant chdir to $MYSQL_HOME $!";
 	my $startMysql_stmt = "./bin/mysqld_safe $mysqld_options &";
 	print "Starting mysqld with the following line:\n$startMysql_stmt\n\n";
 	if(!$dry_run){
-		print `$startMysql_stmt`;
+		system($startMysql_stmt);
+	
+	 	while ($j <= $timeout){	
+			system("./bin/mysqladmin $MYSQLADMIN_OPTIONS ping > /dev/null 2>&1");		
+		    if ($? == 0){
+		        $started=0;
+		        last;
+		    }
+		    sleep 1;
+		    $j = $j + 1;		
+		}
+
+		if($started != 0){
+		    print "[ERROR]: Start of mysqld failed.\n";
+		    print "  Please check your error log.\n";
+		    print "  Exiting.\n";
+		    exit 1;
+	   	}
 	}
-	#TODO: check for failure
 }
 
 
 #Stop the mysqld process (TODO)
 sub StopMysql{
-	chdir $mysqlDir;
+	chdir($MYSQL_HOME) or die "Cant chdir to $MYSQL_HOME $!";;
 	my $stopMysql_stmt = "./bin/mysqladmin --user=$mysql_user shutdown 0";
 	print "Stopping mysql with the following line:\n$stopMysql_stmt\n\n";
 	if(!$dry_run){
@@ -210,17 +243,13 @@ sub StopMysql{
 
 
 ######################################## Main program ########################################
-#TODO...
-#if(!$nostart_mysql){
-#	unless ($pid = fork) {
-#        unless (fork) {
-#			StartMysql();
-#           exit 0;
-#        }
-#        exit 0;
-#    }
-#    waitpid($pid,0);
-#}
+
+if(!$nostart_mysql){
+	StartMysql();
+	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
+}
+
+
 
 if(!$noprepare){
 	Prepare();
@@ -230,23 +259,26 @@ if(!$nowarmup){
 	Warmup();
 }
 
-
-Run();
+if(!$norun){
+	Run();
+}
 
 if(!$nocleanup){
 	Cleanup();
 }
 
 if(!$dry_run){
-	ExtractResults();
-	if($plot_graph){
-		PlotGraph();
+	if(!$norun){
+		ExtractResults();
+		if($plot_graph){
+			PlotGraph();
+		}
 	}
 }
 
-#TODO...
-#if(!$nostop_mysql){
-#	StopMysql();
-#}
+
+if(!$nostop_mysql){
+	StopMysql();
+}
 exit;
 
