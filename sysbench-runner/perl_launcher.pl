@@ -1,7 +1,11 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
+#use DBI;
+#use Mysql;
 
+# import module
+use Getopt::Long;
 
 my $MYSQLADMIN			= "./bin/mysqladmin";
 my $MYSQLADMIN_OPTIONS	= "";
@@ -12,11 +16,51 @@ my $PROJECT_HOME		= $ENV{"HOME"}."/Projects/MariaDB/mariadb-tools/sysbench-runne
 my $MYSQL_HOME			= $ENV{"HOME"}."/Projects/MariaDB/mysql-5.5.13-linux2.6-x86_64";
 my $MARIADB_HOME		= $ENV{"HOME"}."/Projects/MariaDB/mariadb-5.2.7-Linux-x86_64";
 my $TEMP_DIR			= $ENV{"HOME"}."/Projects/MariaDB/temp";
-my $SSD_HOME			= "/media/ssd_tmp";#$ENV{"HOME"}."/Projects/MariaDB/SSD";
-my $SSD_FOLDER_NAME		= "vlado_bench_ssd";
-my $MAX_TIME			= 10;
-my $WARMUP_TIME			= 30;
 
+my $SSD_HOME			= "/media/ssd_tmp";
+#my $SSD_HOME			= $ENV{"HOME"}."/Projects/MariaDB/temp/SSD";
+
+my $SSD_FOLDER_NAME		= "vlado_bench_ssd";
+my $MAX_TIME			= 600;
+my $WARMUP_TIME			= 600;
+my $TABLE_SIZE			= 2000000;
+
+my $install 			= 0;
+my $prepare 			= 0;
+my $create_db			= 0;
+my $set_transactional	= 0;
+my $scenario1			= 0;
+my $scenario3			= 0;
+my $scenario2			= 0;
+my $cleanup				= 0;
+my $bReadonly			= 0;
+my $readonly			= "";
+
+######################################## Get input parameters ########################################
+GetOptions ("max-time:i" 					=> \$MAX_TIME, 
+			"warmup-time:i"					=> \$WARMUP_TIME, 
+			"table-size:i"					=> \$TABLE_SIZE,
+			"project-home:s"				=> \$PROJECT_HOME,
+			"mysql-home:s"					=> \$MYSQL_HOME,
+			"mariadb-home:s"				=> \$MARIADB_HOME,
+			"temp-dir:s"					=> \$TEMP_DIR,
+			"ssd_home:s"					=> \$SSD_HOME,
+			"ssd_folder_name:s"				=> \$SSD_FOLDER_NAME,
+			"install"						=> \$install,
+			"create-db"						=> \$create_db,
+			"set_transactional"				=> \$set_transactional,
+			"prepare"						=> \$prepare,
+			"scenario1"						=> \$scenario1,
+			"scenario2"						=> \$scenario2,
+			"scenario3"						=> \$scenario3,
+			"cleanup"						=> \$cleanup,
+			"readonly"						=> \$bReadonly
+);
+
+
+if($bReadonly){
+	$readonly = "--readonly ";
+}
 
 sub kill_mysqld {
     system("killall -9 mysqld");
@@ -26,41 +70,97 @@ sub kill_mysqld {
 }
 
 
-sub PrepareDBs{
-	chdir($PROJECT_HOME);
+sub InstallDBs{
+	chdir($MYSQL_HOME);
+	system("./scripts/mysql_install_db --defaults-file=$PROJECT_HOME/config/mysql_my.cnf --datadir=$TEMP_DIR/innodb");
+	system("./scripts/mysql_install_db --defaults-file=$PROJECT_HOME/config/mysql_my.cnf --datadir=$TEMP_DIR/myisam");
 
-	#innodb
-	system("perl bench_script.pl --nowarmup --norun --nocleanup --mysql-table-engine=innodb --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME --parallel-prepare");
-	system("cp -r $MYSQL_HOME/data/sbtest/ $TEMP_DIR/innodb/");
-	system("cp -r $MYSQL_HOME/data/mysql/ $TEMP_DIR/mysql_innodb/");
-	#cleanup
-	system("perl bench_script.pl --nowarmup --norun --noprepare --mysql-table-engine=innodb --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME");
-
-
-	#myisam
-	system("perl bench_script.pl --nowarmup --norun --nocleanup --mysql-table-engine=myisam --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME --parallel-prepare");
-	system("cp -r $MYSQL_HOME/data/sbtest/ $TEMP_DIR/myisam/");
-	system("cp -r $MYSQL_HOME/data/mysql/ $TEMP_DIR/mysql_myisam/");
-	#cleanup
-	system("perl bench_script.pl --nowarmup --norun --noprepare --mysql-table-engine=myisam --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME");
-
-
-	#aria
-	system("perl bench_script.pl --nowarmup --norun --nocleanup --mysql-table-engine=aria --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME --parallel-prepare");
-	system("cp -r $MARIADB_HOME/data/sbtest/ $TEMP_DIR/aria/");
-	system("cp -r $MARIADB_HOME/data/mysql/ $TEMP_DIR/mysql_aria/");
-	#cleanup
-	system("perl bench_script.pl --nowarmup --norun --noprepare --mysql-table-engine=aria --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME ");
-	
-
-	#pbxt
-	system("perl bench_script.pl --nowarmup --norun --nocleanup --mysql-table-engine=pbxt --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME --parallel-prepare");
-	system("cp -r $MARIADB_HOME/data/sbtest/ $TEMP_DIR/pbxt/");
-	system("cp -r $MARIADB_HOME/data/mysql/ $TEMP_DIR/mysql_pbxt/");
-	#cleanup
-	system("perl bench_script.pl --nowarmup --norun --noprepare --mysql-table-engine=pbxt --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME");
+	chdir($MARIADB_HOME);
+	system("./scripts/mysql_install_db --defaults-file=$PROJECT_HOME/config/mariadb_my.cnf --datadir=$TEMP_DIR/pbxt");
+	system("./scripts/mysql_install_db --defaults-file=$PROJECT_HOME/config/mariadb_my.cnf --datadir=$TEMP_DIR/aria");
 }
 
+sub CreateSbtestDBs{
+	#TODO: turn this copy/paste shell commands to a script
+	#switch to MySQL folder
+	
+	#shell> ./bin/mysqld_safe --defaults-file=/home/vlado/Projects/MariaDB/mariadb-tools/sysbench-runner/config/mysql_my.cnf --datadir=/home/vlado/Projects/MariaDB/temp/innodb &
+	#shell> ./bin/mysql --user=root
+	#mysql> create database sbtest;
+	#mysql> exit;
+	#shell> ./bin/mysqladmin --user=root shutdown 0
+
+	#shell> ./bin/mysqld_safe --defaults-file=/home/vlado/Projects/MariaDB/mariadb-tools/sysbench-runner/config/mysql_my.cnf --datadir=/home/vlado/Projects/MariaDB/temp/myisam &
+	#shell> ./bin/mysql --user=root
+	#mysql> create database sbtest;
+	#mysql> exit;
+	#shell> ./bin/mysqladmin --user=root shutdown 0
+
+
+	#switch to MariaDB folder
+
+	#shell> ./bin/mysqld_safe --defaults-file=/home/vlado/Projects/MariaDB/mariadb-tools/sysbench-runner/config/mariadb_my.cnf --datadir=/home/vlado/Projects/MariaDB/temp/pbxt &
+	#shell> ./bin/mysql --user=root
+	#mysql> create database sbtest;
+	#mysql> exit;
+	#shell> ./bin/mysqladmin --user=root shutdown 0
+
+	#shell> ./bin/mysqld_safe --defaults-file=/home/vlado/Projects/MariaDB/mariadb-tools/sysbench-runner/config/mariadb_my.cnf --datadir=/home/vlado/Projects/MariaDB/temp/aria &
+	#shell> ./bin/mysql --user=root
+	#mysql> create database sbtest;
+	#mysql> exit;
+	#shell> ./bin/mysqladmin --user=root shutdown 0
+}
+
+
+sub PrepareDBs{
+	chdir($PROJECT_HOME);
+	system("perl bench_script.pl --datadir=$TEMP_DIR/innodb --nowarmup --norun --nocleanup --mysql-table-engine=innodb --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME --parallel-prepare --table-size=$TABLE_SIZE");
+
+	system("perl bench_script.pl --datadir=$TEMP_DIR/myisam --nowarmup --norun --nocleanup --mysql-table-engine=myisam --config-file=mysql_my.cnf --mysql-home=$MYSQL_HOME --parallel-prepare --table-size=$TABLE_SIZE");
+
+	system("perl bench_script.pl --datadir=$TEMP_DIR/pbxt --nowarmup --norun --nocleanup --mysql-table-engine=pbxt --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME --table-size=$TABLE_SIZE");
+
+	system("perl bench_script.pl --datadir=$TEMP_DIR/aria --nowarmup --norun --nocleanup --mysql-table-engine=aria --config-file=mariadb_my.cnf --mysql-home=$MARIADB_HOME --parallel-prepare --table-size=$TABLE_SIZE");
+}
+
+
+sub SetTransactional{
+#TODO: Make it automatic. 
+#For now start mariadb with the following line:
+#	./bin/mysqld_safe --defaults-file=/home/vlado/Projects/MariaDB/mariadb-tools/sysbench-runner/config/mariadb_my.cnf --datadir=/home/vlado/Projects/MariaDB/temp/aria &
+#	./bin/mysql --user=root
+#Copy/paste the following SQL commands
+	"USE sbtest;
+	ALTER TABLE sbtest1 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest2 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest3 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest4 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest5 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest6 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest7 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest8 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest9 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest10 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest11 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest12 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest13 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest14 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest15 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest16 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest17 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest18 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest19 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest20 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest21 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest22 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest23 TRANSACTIONAL=0 MAX_ROWS=2000000;
+	ALTER TABLE sbtest24 TRANSACTIONAL=0 MAX_ROWS=2000000;";
+#Exit and shutdown MariaDB
+#	exit;
+#	./bin/mysqladmin --user=root shutdown 0
+
+}
 
 
 
@@ -69,9 +169,9 @@ sub Scenario1{
 	chdir($PROJECT_HOME);
 
 	#1)Execute the perl script for the first test with MySQL 5.5.13 and engine InnoDB
-	system("cp -r $TEMP_DIR/innodb/* $MYSQL_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_innodb/* $MYSQL_HOME/data/mysql/");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/innodb $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly \\\
 --dbname=mysql_5_5_13 \\\
 --keyword=scenario1  \\\
 --results-output-dir=./Scenario1 \\\
@@ -79,13 +179,14 @@ sub Scenario1{
 --mysql-table-engine=innodb \\\
 --noprepare \\\
 --config-file=mysql_my.cnf \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MYSQL_HOME");
 
 
 	#2) Execute the perl script for the second test with MariaDB 5.2.7 and engine InnoDB
-	system("cp -r $TEMP_DIR/innodb/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_innodb/* $MARIADB_HOME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/innodb $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly \\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=scenario1  \\\
 --results-output-dir=./Scenario1 \\\
@@ -93,13 +194,14 @@ sub Scenario1{
 --mysql-table-engine=innodb \\\
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 
 	#3) Execute the perl script for the second test with MariaDB 5.2.7 and engine PBXT
-	system("cp -r $TEMP_DIR/pbxt/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_pbxt/* $MARIADB_HOME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/pbxt $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly \\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=scenario1  \\\
 --results-output-dir=./Scenario1 \\\
@@ -107,6 +209,7 @@ sub Scenario1{
 --mysql-table-engine=pbxt \\\
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 
@@ -123,9 +226,9 @@ sub Scenario2{
 	chdir($PROJECT_HOME);
 
 	#1)Execute the perl script for the first test with MySQL 5.5.13 and engine MyISAM
-	system("cp -r $TEMP_DIR/myisam/* $MYSQL_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_myisam/* $MYSQL_HOME/data/mysql/");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/myisam $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly \\\
 --dbname=mysql_5_5_13 \\\
 --keyword=scenario2  \\\
 --results-output-dir=./Scenario2 \\\
@@ -134,13 +237,14 @@ sub Scenario2{
 --noprepare \\\
 --config-file=mysql_my.cnf \\\
 --workload=oltp_aria.lua \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MYSQL_HOME");
 
 
 	#2) Execute the perl script for the second test with MariaDB 5.2.7 and engine Aria
-	system("cp -r $TEMP_DIR/aria/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_aria/* $MARIADB_HOME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/aria $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly \\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=scenario2  \\\
 --results-output-dir=./Scenario2 \\\
@@ -149,12 +253,13 @@ sub Scenario2{
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
 --workload=oltp_aria.lua \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 	#3) Execute the perl script for the second test with MariaDB 5.2.7 and engine MyISAM
-	system("cp -r $TEMP_DIR/myisam/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_myisam/* $MARIADB_HOME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("cp -r $TEMP_DIR/myisam $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly\\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=scenario2  \\\
 --results-output-dir=./Scenario2 \\\
@@ -163,6 +268,7 @@ sub Scenario2{
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
 --workload=oltp_aria.lua \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 
@@ -180,13 +286,14 @@ sub Scenario3{
 	
 	#1) Create a folder on the SSD drive
 	system("mkdir $SSD_HOME/$SSD_FOLDER_NAME");
+	system("mkdir $SSD_HOME/$SSD_FOLDER_NAME/trans_log_workdir");
+	system("mkdir $TEMP_DIR/trans_log_workdir");
 
-
-	#2) Execute the perl script for the first test with MariaDB + XtraDB with both data and binlog on HDD
-	system("cp -r $TEMP_DIR/innodb/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_innodb/* $MARIADB_HOME/data/mysql");
-	system("cp -r $MARIADB_HOME/data/ $SSD_HOME/$SSD_FOLDER_NAME/");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	#2) Execute the perl script for the first test with MariaDB + XtraDB with both data and transaction log on HDD
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("rm -r $TEMP_DIR/trans_log_workdir/*");
+	system("cp -r $TEMP_DIR/innodb $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly\\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=hdd  \\\
 --results-output-dir=./Scenario3 \\\
@@ -194,16 +301,16 @@ sub Scenario3{
 --mysql-table-engine=innodb \\\
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
---log-basename=hdd_binlog \\\
---log-bin \\\
---datadir=./data \\\
+--innodb_log_group_home_dir=$TEMP_DIR/trans_log_workdir \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 
-	#3) Execute the perl script for the first test with MariaDB + XtraDB with both data and binlog on SSD
-	system("cp -r $TEMP_DIR/innodb/* $SSD_HOME/$SSD_FOLDER_NAME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_innodb/* $SSD_HOME/$SSD_FOLDER_NAME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	#3) Execute the perl script for the first test with MariaDB + XtraDB with both data and transaction log on SSD
+	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME/data_workdir");
+	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME/trans_log_workdir/*");
+	system("cp -r $TEMP_DIR/innodb $SSD_HOME/$SSD_FOLDER_NAME/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly\\\
 --dbname=mariadb_5_2_7 \\\
 --keyword=ssd  \\\
 --results-output-dir=./Scenario3 \\\
@@ -211,31 +318,43 @@ sub Scenario3{
 --mysql-table-engine=innodb \\\
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
---log-basename=$SSD_HOME/$SSD_FOLDER_NAME/ssd_binlog \\\
---log-bin \\\
---datadir=$SSD_HOME/$SSD_FOLDER_NAME/data \\\
+--innodb_log_group_home_dir=$SSD_HOME/$SSD_FOLDER_NAME/trans_log_workdir \\\
+--datadir=$SSD_HOME/$SSD_FOLDER_NAME/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
 
 	#4) Execute the perl script for the first test with MariaDB + XtraDB with data on HDD, and transactional log on SSD 
-	system("cp -r $TEMP_DIR/innodb/* $MARIADB_HOME/data/sbtest");
-	system("cp -r $TEMP_DIR/mysql_innodb/* $MARIADB_HOME/data/mysql");
-	system("perl bench_script.pl --max-time=$MAX_TIME \\\
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME/trans_log_workdir/*");
+	system("cp -r $TEMP_DIR/innodb $TEMP_DIR/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly\\\
 --dbname=mariadb_5_2_7 \\\
---keyword=ssd_hdd  \\\
+--keyword=data_hdd_log_ssd  \\\
 --results-output-dir=./Scenario3 \\\
 --warmup-time=$WARMUP_TIME \\\
 --mysql-table-engine=innodb \\\
 --noprepare \\\
 --config-file=mariadb_my.cnf \\\
---log-basename=$SSD_HOME/$SSD_FOLDER_NAME/ssd_binlog \\\
---log-bin \\\
---datadir=./data \\\
+--innodb_log_group_home_dir=$SSD_HOME/$SSD_FOLDER_NAME/trans_log_workdir \\\
+--datadir=$TEMP_DIR/data_workdir \\\
 --mysql-home=$MARIADB_HOME");
 
-	
-	#5) Cleanup the files from SSD
-	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME");
+
+	#5) Execute the perl script for the first test with MariaDB + XtraDB with data on SSD, and transactional log on HDD 
+	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME/data_workdir");
+	system("rm -r $TEMP_DIR/trans_log_workdir/*");
+	system("cp -r $TEMP_DIR/innodb $SSD_HOME/$SSD_FOLDER_NAME/data_workdir");
+	system("perl bench_script.pl --max-time=$MAX_TIME $readonly\\\
+--dbname=mariadb_5_2_7 \\\
+--keyword=data_ssd_log_hdd  \\\
+--results-output-dir=./Scenario3 \\\
+--warmup-time=$WARMUP_TIME \\\
+--mysql-table-engine=innodb \\\
+--noprepare \\\
+--config-file=mariadb_my.cnf \\\
+--innodb_log_group_home_dir=$TEMP_DIR/trans_log_workdir \\\
+--datadir=$SSD_HOME/$SSD_FOLDER_NAME/data_workdir \\\
+--mysql-home=$MARIADB_HOME");
 
 	
 	#6) Run the gnuplot script to generate a graphic
@@ -246,7 +365,54 @@ sub Scenario3{
 	print "\nScenario 3 complete\n";
 }
 
-#PrepareDBs();
-#Scenario1();
-#Scenario2();
-Scenario3();
+
+sub Cleanup(){
+	system("rm -r $SSD_HOME/$SSD_FOLDER_NAME");	
+	system("rm -r $TEMP_DIR/data_workdir");
+	system("rm -r $TEMP_DIR/trans_log_workdir");
+}
+
+###### Step1: Install the 4 database engines: InnoDB, MyISAM, PBXT and Aria #####
+if($install){
+	InstallDBs();
+}
+
+
+
+##### Step2: Created the database sbtest for each database engine #####
+#TODO... For now it is manual
+if($create_db){
+	CreateSbtestDBs();
+}
+
+
+
+##### Step3: Prepare the 4 databases #####
+if($prepare){
+	PrepareDBs();
+}
+
+
+##### Step4: Set TRANSACTIONAL=0 to sbtest #####
+#TODO... For now it is manual
+if($set_transactional){
+	SetTransactional();
+}
+
+
+##### Step5: Run the scenarios #####
+if($scenario1){
+	Scenario1();
+}
+if($scenario2){
+	Scenario2();
+}
+if($scenario3){
+	Scenario3();
+}
+
+
+##### Step6: Cleanup #####
+if($cleanup){
+	Cleanup();
+}

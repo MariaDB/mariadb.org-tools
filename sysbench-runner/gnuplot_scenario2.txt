@@ -5,7 +5,8 @@ set ylabel "Transactions per second"
 set key below right
 set grid
 set title "MariaDB 5.2.7 Aria vs MySQL 5.5.13 MyISAM"
-set output "./Scenario2/scenario2_graphics.jpeg"
+set xtics (1,4,8,12,16,24,32,48,64,128,256)
+
 plot 	"./Scenario2/res_scenario2_mariadb_5_2_7_aria_final.txt" with linespoints ti "MariaDB 5.2.7 + Aria", \
-		"./Scenario2/res_scenario2_mysql_5_5_13_myisam_final.txt" with linespoints ti "MySQL 5.5.13 + MyISAM" \
+		"./Scenario2/res_scenario2_mysql_5_5_13_myisam_final.txt" with linespoints ti "MySQL 5.5.13 + MyISAM", \
 		"./Scenario2/res_scenario2_mariadb_5_2_7_myisam_final.txt" with linespoints ti "MariaDB 5.2.7 + MyISAM"
