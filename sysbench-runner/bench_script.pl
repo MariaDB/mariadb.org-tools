@@ -89,7 +89,7 @@ if($dry_run){
 }
 
 if($bReadonly){
-	$readonly = "--oltp-read-only=true";
+	$readonly = "--oltp-read-only=on";
 }
 
 if(@threads_count == 0){
