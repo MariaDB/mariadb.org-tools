@@ -23,9 +23,9 @@ my $SYSBENCH_HOME	= "";
 my $SSD_HOME		= "";
 
 my $SSD_FOLDER_NAME	= "vlado_bench_ssd";
-my $MAX_TIME		= 10;
-my $WARMUP_TIME		= 10;
-my $TABLE_SIZE		= 20000;
+my $MAX_TIME		= 600;
+my $WARMUP_TIME		= 600;
+my $TABLE_SIZE		= 2000000;
 
 my $install 		= 0;
 my $prepare 		= 0;

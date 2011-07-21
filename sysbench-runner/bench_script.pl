@@ -16,7 +16,7 @@ my $mysql_host		= "localhost";
 
 my $mysql_user		= "root";
 my $tables_count	= 24;
-my $table_size		= 20000;
+my $table_size		= 2000000;
 my @threads_count_def	= (1, 4, 8, 12, 16, 24, 32, 48, 64, 128); #default value
 my @threads_count;
 my $max_time		= 1200; #in seconds
@@ -37,7 +37,7 @@ my $bReadonly		= 0; 		#execute only select operations
 my $workload		= "oltp.lua";	#the default workload.
 my $nowarmup		= 0; 		#by default a warmup will be performed
 my $warmup_threads_num	= 4; 		#how many threads will execute the warmup
-my $warmup_time		= 30; #300; 	#in seconds
+my $warmup_time		= 600; #300; 	#in seconds
 
 
 my $pid;
