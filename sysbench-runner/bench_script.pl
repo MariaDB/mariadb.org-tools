@@ -5,84 +5,102 @@ use strict;
 # import module
 use Getopt::Long;
 
-my $results_output_dir 	= "./TestResults";
-my $sysbench_dir		= "../../sysbench/sysbench";
-my $PROJECT_HOME		= $ENV{"HOME"}."/Projects/MariaDB/mariadb-tools/sysbench-runner";
-my $MYSQL_HOME			= $ENV{"HOME"}."/Projects/MariaDB/mysql-5.5.13-linux2.6-x86_64/";
+my $results_output_dir	= "./TestResults";
 
-my $mysql_host			= "localhost";
-my $socket				= $ENV{"HOME"}."/Projects/MariaDB/temp/mysql.sock";
-my $mysql_user			= "root";
-my $tables_count		= 24;
-my $table_size			= 2000000;
+my $PROJECT_HOME	= $ENV{"HOME"}."/Projects/MariaDB";
+my $MYSQL_HOME		= "";
+my $SYSBENCH_HOME	= "";
+my $socket		= "";
+
+my $mysql_host		= "localhost";
+
+my $mysql_user		= "root";
+my $tables_count	= 24;
+my $table_size		= 20000;
 my @threads_count_def	= (1, 4, 8, 12, 16, 24, 32, 48, 64, 128); #default value
 my @threads_count;
-my $max_time			= 1200; #in seconds
-my $table_engine		= "innodb";
+my $max_time		= 1200; #in seconds
+my $table_engine	= "innodb";
 
-my $dry_run				= 0;
-my $noprepare			= 0;
-my $norun				= 0;
-my $nocleanup			= 0;
-my $plot_graph			= 0;
+my $dry_run		= 0;
+my $noprepare		= 0;
+my $norun		= 0;
+my $nocleanup		= 0;
+my $plot_graph		= 0;
 my $parallel_prepare	= 0;
-my $prepare_threads		= 24; # $tables_count should be a multiplier of $prepare_threads
-my $gnuplot_script		= "./gnuplot_scenario1.txt";
-my $dbname				= "mysql_5_5_13";
-my $keyword				= "";
-my $readonly			= "";
-my $bReadonly			= 0; 							#execute only select operations
-my $workload			= "oltp.lua"; 					#the default workload.
-my $nowarmup			= 0; 							#by default a warmup will be performed
-my $warmup_threads_num	= 4; 							#how many threads will execute the warmup
-my $warmup_time			= 30; #300; 							#in seconds
+my $prepare_threads	= 24; # $tables_count should be a multiplier of $prepare_threads
+my $gnuplot_script	= "./gnuplot_scenario1.txt";
+my $dbname		= "mysql_5_5_13";
+my $keyword		= "";
+my $readonly		= "";
+my $bReadonly		= 0; 		#execute only select operations
+my $workload		= "oltp.lua";	#the default workload.
+my $nowarmup		= 0; 		#by default a warmup will be performed
+my $warmup_threads_num	= 4; 		#how many threads will execute the warmup
+my $warmup_time		= 30; #300; 	#in seconds
 
 
 my $pid;
 #mysql options (TODO: mysql parameters are under construction)
 my $nostart_mysql		= 0;
 my $nostop_mysql		= 0;
-my $datadir				= "";
-my $log_bin				= "";
-my $innodb_log_group_home_dir = "";
-my $config_file			= "mysql_my.cnf";
+my $datadir			= "";
+my $log_bin			= "";
+my $innodb_log_group_home_dir	= "";
+my $config_file			= "$PROJECT_HOME/mariadb-tools/sysbench-runner/config/mysql_my.cnf";
 
 
 
 #my $pid; (TODO for fork)
 
 ######################################## Get input parameters ########################################
-GetOptions ("dry-run" 						=> \$dry_run, 
-			"max-time:i" 					=> \$max_time, 
-			"mysql-user:s"					=> \$mysql_user, 
-			"oltp-tables-count:i" 			=> \$tables_count, 
-			"threads|t:s"					=> \@threads_count,
-			"noprepare" 					=> \$noprepare,
-			"norun"							=> \$norun,
-			"nocleanup" 					=> \$nocleanup,
-			"mysql-table-engine:s"			=> \$table_engine,
-			"table-size:i"					=> \$table_size,
-			"plot"							=> \$plot_graph,
-			"gnuplot-script:s"				=> \$gnuplot_script,
-			"dbname:s"						=> \$dbname,
-			"keyword:s"						=> \$keyword,
-			"results-output-dir:s"			=> \$results_output_dir,
-			"readonly"						=> \$bReadonly,
-			"workload:s"					=> \$workload,
-			"nowarmup"						=> \$nowarmup,
-			"warmup-threads:i"				=> \$warmup_threads_num,
-			"warmup-time:i"					=> \$warmup_time,
-			"no-start-mysql"				=> \$nostart_mysql,
-			"no-stop-mysql"					=> \$nostop_mysql,
-			"datadir:s"						=> \$datadir,
-			"log-bin:s"						=> \$log_bin,
-			"innodb_log_group_home_dir:s" 	=> \$innodb_log_group_home_dir,
-			"config-file:s"					=> \$config_file,
-			"mysql-home:s"					=> \$MYSQL_HOME,
-			"mysql-host:s"					=> \$mysql_host,
-			"socket:s"						=> \$socket,
-			"parallel-prepare"				=> \$parallel_prepare,
-			"prepare-threads:i"				=> \$prepare_threads);  
+GetOptions ("dry-run" 					=> \$dry_run, 
+		"max-time:i" 			=> \$max_time, 
+		"mysql-user:s"			=> \$mysql_user, 
+		"oltp-tables-count:i" 		=> \$tables_count, 
+		"threads|t:s"			=> \@threads_count,
+		"noprepare" 			=> \$noprepare,
+		"norun"				=> \$norun,
+		"nocleanup" 			=> \$nocleanup,
+		"mysql-table-engine:s"		=> \$table_engine,
+		"table-size:i"			=> \$table_size,
+		"plot"				=> \$plot_graph,
+		"gnuplot-script:s"		=> \$gnuplot_script,
+		"dbname:s"			=> \$dbname,
+		"keyword:s"			=> \$keyword,
+		"results-output-dir:s"		=> \$results_output_dir,
+		"readonly"			=> \$bReadonly,
+		"workload:s"			=> \$workload,
+		"nowarmup"			=> \$nowarmup,
+		"warmup-threads:i"		=> \$warmup_threads_num,
+		"warmup-time:i"			=> \$warmup_time,
+		"no-start-mysql"		=> \$nostart_mysql,
+		"no-stop-mysql"			=> \$nostop_mysql,
+		"datadir:s"			=> \$datadir,
+		"log-bin:s"			=> \$log_bin,
+		"innodb_log_group_home_dir:s" 	=> \$innodb_log_group_home_dir,
+		"config-file:s"			=> \$config_file,
+		"project-home:s"		=> \$PROJECT_HOME,
+		"mysql-home:s"			=> \$MYSQL_HOME,
+		"sysbench-home:s"		=> \$SYSBENCH_HOME,
+		"mysql-host:s"			=> \$mysql_host,
+		"socket:s"			=> \$socket,
+		"parallel-prepare"		=> \$parallel_prepare,
+		"prepare-threads:i"		=> \$prepare_threads);  
+
+
+
+if(length($MYSQL_HOME) == 0){
+	$MYSQL_HOME	= "$PROJECT_HOME/mysql-5.5.13-linux2.6-x86_64/";
+}
+
+if(length($SYSBENCH_HOME) == 0){
+	$SYSBENCH_HOME	= "$PROJECT_HOME/sysbench/sysbench";
+}
+
+if(length($socket) == 0){
+	$socket	= "$PROJECT_HOME/temp/mysql.sock";
+}
 
 if($dry_run){
 	print "Starting program in DRY-RUN mode\n";
@@ -96,7 +114,7 @@ if(@threads_count == 0){
 	@threads_count = @threads_count_def;
 }
 
-my $result_filename			= $results_output_dir."/res_$keyword"."_$dbname"."_$table_engine"."_final.txt";
+my $result_filename = $results_output_dir."/res_$keyword"."_$dbname"."_$table_engine"."_final.txt";
 
 
 ######################################## Function declarations ########################################
@@ -109,7 +127,11 @@ sub Prepare{
 		$prepare_workload = "parallel_prepare.lua";
 	}
 
-	my $prepare_stmt = "$sysbench_dir/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$sysbench_dir/tests/db/$prepare_workload $num_prepare_threads --oltp-tables-count=$tables_count --mysql-table-engine=$table_engine --oltp-table-size=$table_size prepare";
+	my $prepare_stmt = "$SYSBENCH_HOME/sysbench --mysql-host=$mysql_host \\\
+--mysql-socket=$socket --mysql-user=$mysql_user \\\
+--test=$SYSBENCH_HOME/tests/db/$prepare_workload $num_prepare_threads \\\
+--oltp-tables-count=$tables_count --mysql-table-engine=$table_engine \\\
+--oltp-table-size=$table_size --myisam_max_rows=10000000 prepare";
 	print "\n####### Prepare statement #######\n$prepare_stmt\n##########################\n";
 	if(!$dry_run){
 		print `$prepare_stmt`;
@@ -119,7 +141,7 @@ sub Prepare{
 
 sub Warmup{
 	#warmup the caches by running for some time
-	my $warmup_stmt = "$sysbench_dir/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$sysbench_dir/tests/db/$workload --oltp-tables-count=$tables_count --max-time=$warmup_time --max-requests=0 --num-threads=$warmup_threads_num --mysql-table-engine=$table_engine $readonly run > $results_output_dir/res_$keyword"."_$dbname"."_$table_engine"."_warmup.txt"; 
+	my $warmup_stmt = "$SYSBENCH_HOME/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$SYSBENCH_HOME/tests/db/$workload --oltp-tables-count=$tables_count --max-time=$warmup_time --max-requests=0 --num-threads=$warmup_threads_num --mysql-table-engine=$table_engine $readonly run > $results_output_dir/res_$keyword"."_$dbname"."_$table_engine"."_warmup.txt"; 
 	print "\n-------- Warming up with $warmup_threads_num threads for $warmup_time seconds--------\n$warmup_stmt\n--------------------------------\n";
 	if(!$dry_run){
 		print `$warmup_stmt`;
@@ -131,7 +153,7 @@ sub Run{
 	#execute Run statements
 	print "\n####### Run statements #######";
 	foreach my $thread_num (@threads_count){
-		my $run_stmt = "$sysbench_dir/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$sysbench_dir/tests/db/$workload --oltp-tables-count=$tables_count --max-time=$max_time --max-requests=0 --num-threads=$thread_num --mysql-table-engine=$table_engine $readonly run > $results_output_dir/res_$keyword"."_$dbname"."_$table_engine"."_$thread_num.txt"; 
+		my $run_stmt = "$SYSBENCH_HOME/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$SYSBENCH_HOME/tests/db/$workload --oltp-tables-count=$tables_count --max-time=$max_time --max-requests=0 --num-threads=$thread_num --mysql-table-engine=$table_engine $readonly run > $results_output_dir/res_$keyword"."_$dbname"."_$table_engine"."_$thread_num.txt"; 
 	
 		print "\n-------- Run with $thread_num threads --------\n$run_stmt\n--------------------------------\n";
 		if(!$dry_run){
@@ -146,7 +168,7 @@ sub Run{
 sub Cleanup{
 	#execute Cleanup statement
 	if(!$nocleanup){
-		my $cleanup_stmt = "$sysbench_dir/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$sysbench_dir/tests/db/$workload --oltp-tables-count=$tables_count cleanup";
+		my $cleanup_stmt = "$SYSBENCH_HOME/sysbench --mysql-host=$mysql_host --mysql-socket=$socket --mysql-user=$mysql_user --test=$SYSBENCH_HOME/tests/db/$workload --oltp-tables-count=$tables_count cleanup";
 		print "\n####### Cleanup #######\n$cleanup_stmt\n##########################\n";
 		if(!$dry_run){
 			print `$cleanup_stmt`;
@@ -187,6 +209,15 @@ sub PlotGraph{
 	print `gnuplot $gnuplot_script`;
 }
 
+
+sub ShowGlobalStatus{
+	chdir($MYSQL_HOME) or die "Cant chdir to $MYSQL_HOME $!";
+	my $showGlobal = "./bin/mysql -uroot --socket=$socket -e \"show global status;\" > $results_output_dir/global_status_$keyword"."_$dbname"."_$table_engine".".txt";
+	print "going to $MYSQL_HOME";
+	print "Executing sql command: $showGlobal";
+	print `$showGlobal`;
+}
+
 #Start the mysqld process with parameters (TODO)
 sub StartMysql{
 
@@ -194,7 +225,7 @@ sub StartMysql{
 	my $j=0;
 	my $timeout=100;
 	my $MYSQLADMIN_OPTIONS = "--socket=$socket";
-	my $mysqld_options = "--defaults-file=$PROJECT_HOME/config/$config_file --socket=$socket ";
+	my $mysqld_options = "--defaults-file=$config_file --socket=$socket ";
 	if($datadir){
 		$mysqld_options .= " --datadir=$datadir";
 	}
@@ -248,24 +279,28 @@ sub StopMysql{
 
 if(!$nostart_mysql){
 	StartMysql();
-	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
 }
 
 
 
 if(!$noprepare){
+# 	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
 	Prepare();
 }
 
 if(!$nowarmup){
+# 	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
 	Warmup();
 }
 
 if(!$norun){
+# 	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
 	Run();
+	ShowGlobalStatus();
 }
 
 if(!$nocleanup){
+# 	chdir($PROJECT_HOME) or die "Cannot change dir to $PROJECT_HOME";
 	Cleanup();
 }
 
