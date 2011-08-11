@@ -6,7 +6,7 @@ use Getopt::Long;
 our $RUN;
 our $CLEANUP;
 our $PLOT;
-our $PROJECT_HOME;
+# our $PROJECT_HOME;
 our $SCRIPTS_HOME;
 our $SYSBENCH_HOME;
 our $TEMP_DIR;
@@ -77,7 +77,7 @@ sub RunTests{
 	my $graphics_threads		= "";
 	my $graphics_title 		= "";
 	my $graphics_result_files 	= "";
-	my $l_PLOT			= 0;
+	my $do_plot			= 0;
 
 	#put a timestamp to the results dir
 	
@@ -87,8 +87,8 @@ sub RunTests{
 
 		my $l_RUN			= $configurations[$i]{RUN}	 		// $RUN;
 		my $l_CLEANUP			= $configurations[$i]{CLEANUP}	 		// $CLEANUP;
-		$l_PLOT				= $configurations[$i]{PLOT}	 		// $PLOT;
-		my $l_PROJECT_HOME 		= $configurations[$i]{PROJECT_HOME} 		// $PROJECT_HOME;
+		my $l_PLOT			= $configurations[$i]{PLOT}	 		// $PLOT;
+# 		my $l_PROJECT_HOME 		= $configurations[$i]{PROJECT_HOME} 		// $PROJECT_HOME;
 		my $l_SCRIPTS_HOME		= $configurations[$i]{SCRIPTS_HOME} 		// $SCRIPTS_HOME;
 		my $l_SYSBENCH_HOME 		= $configurations[$i]{SYSBENCH_HOME} 		// $SYSBENCH_HOME;
 		my $l_TEMP_DIR			= $configurations[$i]{TEMP_DIR} 		// $TEMP_DIR;
@@ -96,8 +96,7 @@ sub RunTests{
 		my $l_WARMUP_TIME		= $configurations[$i]{WARMUP_TIME} 		// $WARMUP_TIME;
 		my $l_WARMUP_THREADS		= $configurations[$i]{WARMUP_THREADS} 		// $WARMUP_THREADS;
 		my $l_TABLES_COUNT		= $configurations[$i]{TABLES_COUNT} 		// $TABLES_COUNT;
-		my $l_TABLE_SIZE		= $configurations[$i]{TABLE_SIZE} 		// $TABLE_SIZE;
-		#my $l_RESULTS_OUTPUT_DIR	= $configurations[$i]{RESULTS_OUTPUT_DIR} 	// $RESULTS_OUTPUT_DIR; This should the same dir for all the tests in a scenario
+		my $l_TABLE_SIZE		= $configurations[$i]{TABLE_SIZE} 		// $TABLE_SIZE;		
 		my $l_SOCKET			= $configurations[$i]{SOCKET} 			// $SOCKET;
 		my $l_THREADS			= $configurations[$i]{THREADS} 			// $THREADS;
 
@@ -120,10 +119,11 @@ sub RunTests{
 
 
 		print "\n=== $l_DESCRIPTION ===\n";
-
-		#1)Execute the perl script for the first test with MySQL 5.5.13 and engine InnoDB
+		
 		if(-e $l_DATADIR){
-			system("rm -r $l_DATADIR");
+			#system("rm -r $l_DATADIR");
+			print "ERROR: DATADIR ($l_DATADIR) already exists.";
+			exit;
 		}
 
 
@@ -145,7 +145,7 @@ sub RunTests{
 			#if not, we should prepare the database ourselves
 
 			#1. Install DB into that folder
-			chdir($l_SCRIPTS_HOME);			
+			chdir($l_SCRIPTS_HOME) or die "Can't change dir to SCRIPTS_HOME ($l_SCRIPTS_HOME)";
 			system("perl bench_script.pl --install \\\
 --config-file=$l_CONFIG_FILE \\\
 --datadir=$l_DATADIR \\\
@@ -162,7 +162,7 @@ sub RunTests{
 				$prepare_threads	= "--prepare-threads=$l_PREPARE_THREADS";
 			}
 
-			chdir($l_SCRIPTS_HOME);
+			chdir($l_SCRIPTS_HOME) or die "Can't change dir to SCRIPTS_HOME ($l_SCRIPTS_HOME)";
 			system("perl bench_script.pl --prepare $parallel_prepare $prepare_threads \\\
 --sysbench-home=$l_SYSBENCH_HOME \\\
 --datadir=$l_DATADIR \\\
@@ -174,11 +174,13 @@ sub RunTests{
 --oltp-tables-count=$l_TABLES_COUNT \\\
 --mysql-user=$l_MYSQL_USER \\\
 --workload=$l_WORKLOAD");
+		} #else
 
-			#3. Perform additional SQL queries to the DB before running tests.
-			if($l_PRE_RUN_SQL){
-				chdir($l_SCRIPTS_HOME);
-				system("perl bench_script.pl --do-pre-run \\\
+
+		# Perform additional SQL queries to the DB before running tests.
+		if($l_PRE_RUN_SQL){
+			chdir($l_SCRIPTS_HOME) or die "Can't change dir to SCRIPTS_HOME ($l_SCRIPTS_HOME)";
+			system("perl bench_script.pl --do-pre-run \\\
 --pre-run-sql=\"$l_PRE_RUN_SQL\" \\\
 --datadir=$l_DATADIR \\\
 --mysql-table-engine=$l_TABLE_ENGINE \\\
@@ -187,7 +189,7 @@ sub RunTests{
 --socket=$l_SOCKET \\\
 --mysql-user=$l_MYSQL_USER");
 			}
-		} #else
+		
 
 
 
@@ -234,9 +236,10 @@ $threads_string");
 
 
 		if($l_PLOT){
+			$do_plot 		= 1;
 			$graphics_threads	= $l_THREADS;
 			if(!$GRAPH_HEADING){
-				$graphics_title 	.= "$l_DESCRIPTION vs. ";
+				$graphics_title .= "$l_DESCRIPTION vs. ";
 			}
 			$graphics_result_files 	.= "'$RESULTS_OUTPUT_DIR/res_$l_KEYWORD" . "_" . $l_DBNAME . "_" . $l_TABLE_ENGINE."_final.txt' with linespoints ti '$l_DESCRIPTION', ";
 		}
@@ -254,7 +257,7 @@ $threads_string");
 
 
 ################ PLOT ################
-	if($l_PLOT){
+	if($do_plot){
 		# Plot the graphics
 		$graphics_dir 		= $RESULTS_OUTPUT_DIR;
 		$graphics_title 	=~ s/ vs\. $//g;#remove the last ' vs. '

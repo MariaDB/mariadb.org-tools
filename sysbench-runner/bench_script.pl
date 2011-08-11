@@ -353,7 +353,11 @@ sub ExecutePreRunSQL{
 
 sub Install{
 	chdir($MYSQL_HOME) or die "Can't chdir to $MYSQL_HOME $!";
-	system("./scripts/mysql_install_db --defaults-file=$config_file --datadir=$datadir");
+	my $installStr = "./scripts/mysql_install_db --defaults-file=$config_file --datadir=$datadir";
+	PrintMsg("Installing database:\n $installStr \n");
+	if(!$dry_run){
+		system($installStr);
+	}
 }
 
 
