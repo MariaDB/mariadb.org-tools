@@ -281,8 +281,9 @@ sub start_kvm {
             $opt_work_image : $image);
   my @kvm_cmdline=
       ($kvm_exec, '-m', $opt_memory, '-hda', $img,
-       '-redir', "tcp:${opt_port}::22", '-boot', 'c', '-smp', $opt_smp, @cpu_fix,
-       '-nographic', '-net', 'nic,model='. $opt_netdev, '-net', 'user',
+       '-boot', 'c', '-smp', $opt_smp, @cpu_fix, '-nographic', '-net',
+       'nic,model='. $opt_netdev,
+       '-net', "user,hostfwd=tcp:127.0.0.1:${opt_port}-:22",
        '-pidfile', $pidfile,
        ($opt_win ? ('-localtime') : ()),
        @$opt_extra_kvm);
