@@ -20,7 +20,7 @@ our $MYSQL_USER		= "root";
 our $CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/mariadb_my.cnf"; #The config file that mysqld or postgres will use when starting
 our $SOCKET		= "$TEMP_DIR/mysql.sock";
 our $PORT		= 12340; 
-our $DATADIR		= "/data_old/benchmarks/datadir/mariadb/innodb_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
+our $DATADIR		= "/data_old/benchmarks/datadir/mariadb/myisam_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
 our $DBNAME		= "dbt3"; #The database name that will be used for the test
 our $NUM_TESTS		= 3; #how many times will the same query be executed in order to calculate the average run time
 our $WARMUPS_COUNT	= 0; #how many times will the query be warmed up before taking the results into account
@@ -28,11 +28,11 @@ our $CLUSTER_SIZE	= 3; #how big is one cluster with test results
 our $MAX_QUERY_TIME	= 360; #What is the maximum time allowed for testing one query.
 our $TIMEOUT		= 120; #What is the timeout of running one query, Currently works only with MariaDB/MySQL
 our $OS_STATS_INTERVAL	= 5; #what the interval between each statistics extract will be
-our $KEYWORD		= "mariadb_5_3_1_innodb"; #This text will be stored into the results database as a keyword. Also will be used as a name for a subfolder with results and statistics.
+our $KEYWORD		= "mariadb_5_3_1_myisam"; #This text will be stored into the results database as a keyword. Also will be used as a name for a subfolder with results and statistics.
 our $DBMS		= "MariaDB"; #Database Management System that will be used. Possible values: "MySQL", "MariaDB" and "PostgreSQL"
-our $STORAGE_ENGINE	= "InnoDB"; #The storage engine that was used
+our $STORAGE_ENGINE	= "MyISAM"; #The storage engine that was used
 our $STARTUP_PARAMS	= ""; #Any startup parameters that will be used while starting the mysqld process or postgres process
-our $GRAPH_HEADING	= "MariaDB 5.3.1 + InnoDB"; #The heading of the graphic
+our $GRAPH_HEADING	= "MariaDB 5.3.1 + MyISAM"; #The heading of the graphic
 
 
 our $PRE_RUN_SQL	= "flush status; set global userstat=on;"; #This only executes if $RUN is set to 1

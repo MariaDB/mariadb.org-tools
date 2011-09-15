@@ -5,27 +5,27 @@ use strict;
 our $QUERIES_AT_ONCE	= 0; #If set to 1, then all the queries are executed sequentally without restarting the server between queries.
 our $CLEAR_CACHES	= 1; #restart the server between each query. Also clear the cache
 our $USER_IS_ADMIN	= 0; #This matters only for clearing caches since the command requires super user rights
-our $WARMUP		= 1; #perform a warm-up before running the tests
+our $WARMUP		= 0; #perform a warm-up before running the tests
 our $EXPLAIN		= 1; #run an Explain command prior the run of the test
 our $RUN		= 1; #perform the actual test
 
-our $SCALE_FACTIOR	= 1; #The scale factor that will be tested against. It is used also for logging the final result into the results database.
+our $SCALE_FACTIOR	= 10; #The scale factor that will be tested against. It is used also for logging the final result into the results database.
 
 our $PROJECT_HOME	= $ENV{"HOME"}."/Projects/dbt3";
 our $TEMP_DIR		= "$PROJECT_HOME/temp";
-our $QUERIES_HOME	= "/data/benchmarks/dbt3_queries/pg_gen_s$SCALE_FACTIOR"; #Were the queries are stored.
+our $QUERIES_HOME	= "/data_old/benchmarks/dbt3_queries/pg_gen_s$SCALE_FACTIOR"; #Where the queries are stored.
 
 our $MYSQL_HOME		= "$PROJECT_HOME/PostgreSQL_bin"; #Where the instalation folder of MariaDB / MySQL / PostgreSQL is located
 our $MYSQL_USER		= "root";
 our $CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/postgresql.conf"; #The config file that mysqld or postgres will use when starting
 our $SOCKET		= "$TEMP_DIR/postgre.sock"; #We don't need socket for PostgreSQL
 our $PORT		= 12340;
-our $DATADIR		= "/data/benchmarks/datadir/postgre_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
+our $DATADIR		= "/data_old/benchmarks/datadir/postgre/postgre_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
 our $DBNAME		= "dbt3"; #The database name that will be used for the test
-our $NUM_TESTS		= 1; #how many times will the same query be executed in order to calculate the average run time
+our $NUM_TESTS		= 3; #how many times will the same query be executed in order to calculate the average run time
 our $WARMUPS_COUNT	= 0; #how many times will the query be warmed up before taking the results into account
 our $CLUSTER_SIZE	= 3; #how big is one cluster with test results
-our $MAX_QUERY_TIME	= 120; #What is the maximum time allowed for testing one query.
+our $MAX_QUERY_TIME	= 360; #What is the maximum time allowed for testing one query.
 our $TIMEOUT		= 120; #What is the timeout of running one query, Currently works only with MariaDB/MySQL
 our $OS_STATS_INTERVAL	= 5; #what the interval between each statistics extract will be
 our $KEYWORD		= "PostgreSQL_9_1"; #This text will be stored into the results database as a keyword. Also will be used as a name for a subfolder with results and statistics.
@@ -47,9 +47,9 @@ our $POST_TEST_OS	= ""; #Cannot be overridden in the different configurations. O
 
 
 #Results Database
-our $RESULTS_MYSQL_HOME		= "$PROJECT_HOME/mariadb-5.3.0-beta-Linux-x86_64";
+our $RESULTS_MYSQL_HOME		= "$PROJECT_HOME/mariadb-5.3.1_bin";
 our $RESULTS_MYSQL_USER		= "root";
-our $RESULTS_DATADIR		= "/data/benchmarks/datadir/dbt3_results_db";
+our $RESULTS_DATADIR		= "/data_old/benchmarks/datadir/dbt3_results_db";
 our $RESULTS_CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/mariadb_my.cnf";
 our $RESULTS_SOCKET		= "$TEMP_DIR/mysql_results.sock";
 our $RESULTS_PORT		= 12341; #Should be different than the $PORT value above

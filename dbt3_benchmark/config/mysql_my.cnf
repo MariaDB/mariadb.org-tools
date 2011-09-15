@@ -1,15 +1,15 @@
 # The following options will be passed to all MySQL clients
 [client]
 #password	= your_password
-port		= 3306
-socket		= /tmp/mysql.sock
+#port		= 3306
+#socket		= /tmp/mysql.sock
 
 # Here follows entries for some specific programs
 
 # The MySQL server
 [mysqld]
-port		= 3306
-socket		= /tmp/mysql.sock
+#port		= 3306
+#socket		= /tmp/mysql.sock
 skip-external-locking
 key_buffer = 16M
 max_allowed_packet = 16M
@@ -64,8 +64,8 @@ innodb_data_file_path = ibdata1:128M:autoextend
 innodb_log_group_home_dir = mysql/
 # You can set .._buffer_pool_size up to 50 - 80 %
 # of RAM but beware of setting memory usage too high
-innodb_buffer_pool_size = 128M 
-#innodb_buffer_pool_size = 12G
+#innodb_buffer_pool_size = 128M 
+innodb_buffer_pool_size = 12G
 innodb_additional_mem_pool_size = 64M
 # Set .._log_file_size to 25 % of buffer pool size
 innodb_log_file_size = 128M

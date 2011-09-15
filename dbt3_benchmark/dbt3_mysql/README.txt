@@ -5,8 +5,7 @@ These are the files that have been used while preparing the benchmark of MariaDB
 Here are the steps to build QGEN and DBGEN and generate the queries and workload for MariaDB/MySQL test
 NOTE: The folder where the branch lp:mariadb-tools have been downloaded will be referred to as {PROJECT_HOME}.
 
-1. Go to
-	http://sourceforge.net/projects/osdldbt/files/dbt3/
+1. Go to http://sourceforge.net/projects/osdldbt/files/dbt3/
 
 2. Download the archive for DBT3 1.9 into your project folder {PROJECT_HOME}
 
@@ -14,18 +13,23 @@ NOTE: The folder where the branch lp:mariadb-tools have been downloaded will be 
 	cd {PROJECT_HOME}
 	tar -zxf dbt3-1.9.tar.gz
 
-4. Copy the file tpcd.h into the dbt3 folder: 
+4. Copy the file tpcd.h into the dbt3 folder. This step includes the necessary labels for MySQL/MariaDB when building queries.
 	cp {PROJECT_HOME}/mariadb-tools/dbt3_benchmark/dbt3_mysql/tpcd.h {PROJECT_HOME}/dbt3-1.9/src/dbgen
 
 5. Copy the file Makefile into the dbt3 folder
+NOTE: This step is executed only if you want to overwrite the default behaviour of PostgreSQL settings. After copying this Makefile and building the project, QGEN will
+be set to generate queries for MariaDB/MySQL. If you skip this step, QGEN will generate queries for PostgreSQL by default.
 	cp {PROJECT_HOME}/mariadb-tools/dbt3_benchmark/dbt3_mysql/Makefile {PROJECT_HOME}/dbt3-1.9/src/dbgen
 
 6. Go to {PROJECT_HOME}/dbt3-1.9/src/dbgen and build the project
 	cd {PROJECT_HOME}/dbt3-1.9/src/dbgen
 	make
 
-7. Set the variable DSS_QUERY to the folder with template queries for MariaDB/MySQL
+7. Set the variable DSS_QUERY to the folder with template queries for MariaDB/MySQL or for PostgreSQL
+7.1. If you want to build the queries that fit MariaDB/MySQL dialect execute the following command:
 	export DSS_QUERY={PROJECT_HOME}/mariadb-tools/dbt3_benchmark/dbt3_mysql/mysql_queries
+7.2. If you want to use the default PostgreSQL templates, execute the following command:
+	export DSS_QUERY={PROJECT_HOME}/dbt3-1.9/queries/pgsql
 
 8. Create a directory to store the generated queries in
 	mkdir $DSS_QUERY/generated 
@@ -80,12 +84,13 @@ NOTE: The examples use scale factor 1. If you want different scale, change the v
 	./qgen -s 1 -x 21 > $DSS_QUERY/generated/21_explain.sql
 	./qgen -s 1 -x 22 > $DSS_QUERY/generated/22_explain.sql
 
-Now the generated queries for MariaDB/MySQL test are ready and are stored into the folder {PROJECT_HOME}/mariadb-tools/dbt3_benchmark/dbt3_mysql/mysql_queries/generated
+Now the generated queries for MariaDB/MySQL test are ready and are stored into the folder {PROJECT_HOME}/mariadb-tools/dbt3_benchmark/dbt3_mysql/mysql_queries/generated.
+Additional reorganization of directories is up to the user.
 
 11. Create a temp directory
 	mkdir {PROJECT_HOME}/temp
 
-12. Set the variable DSS_PATH to the folder with the generated table data.The generated load data for the test will be generated there.
+12. Set the variable DSS_PATH to the folder with the generated table data.The generated dataload for the test will be generated there.
 	export DSS_PATH={PROJECT_HOME}/temp
 
 13. Generate the table data
@@ -99,7 +104,7 @@ Now the generated data load is stored into the folder set in $DSS_PATH = {PROJEC
 	LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/nation.tbl' into table nation fields terminated by '|';
 They all look the same but operate with different tables.
 Replace "/data/benchmarks/dataload/dbt3s1" with it's real value {PROJECT_HOME}/temp - the path where the data load is prepared. 
-At the end the same command should look like this:
+At the end the same command could look like this:
 	LOAD DATA LOCAL INFILE '~/Projects/dbt3/temp/nation.tbl' into table nation fields terminated by '|';
 
 14. Download MariaDB and install it into a data directory for scale factor 1.
@@ -119,6 +124,6 @@ Alternatively you can log into the database and copy/paste the separate blocks o
 17. Shutdown the results db server:
 	./bin/mysqladmin --user=root --port=12340 --socket={PROJECT_HOME}/temp/mysql.sock shutdown 0
 
-Now you have a database loaded with scale 1. It's datadir is {PROJECT_HOME}/temp/data_innodb_s1.
+Now you have a database loaded with scale 1. Its datadir is {PROJECT_HOME}/temp/data_innodb_s1.
 
 The same steps can be reproduced for different scale factors and for different storage engines

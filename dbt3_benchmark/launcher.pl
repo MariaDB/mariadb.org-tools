@@ -27,7 +27,7 @@ our $RUN		= 0;
 our $USER_IS_ADMIN	= 0;
 
 our $QUERIES_HOME	= "";
-our $PROJECT_HOME	= ".";
+# our $PROJECT_HOME	= ".";
 our $MYSQL_HOME		= "";
 our $MYSQL_USER		= "";
 our $CONFIG_FILE	= "";
@@ -89,12 +89,14 @@ my $l_DBNAME		= "";
 my $l_STARTUP_PARAMS	= "";
 my $l_QUERY		= "";
 my $l_EXPLAIN_QUERY	= "";
+my $l_EXPLAIN		= 0;
 my $l_TIMEOUT		= 0;
 my $l_PRE_RUN_SQL	= "";
 my $l_POST_RUN_SQL	= "";
 my $l_PRE_RUN_OS	= "";
 my $l_POST_RUN_OS	= "";
 my $l_NUM_TESTS		= 0;
+my $l_WARMUP		= 0;
 my $l_WARMUPS_COUNT	= 0;
 my $l_MAX_QUERY_TIME	= 0;
 my $l_CLUSTER_SIZE	= 0;
@@ -180,9 +182,9 @@ sub CheckConfigParams{
 	
 	#Errors
 	
-	if(!$PROJECT_HOME){
-		$errors .= "### ERROR: Config parameter 'PROJECT_HOME' is missing. \n"
-	}
+# 	if(!$PROJECT_HOME){
+# 		$errors .= "### ERROR: Config parameter 'PROJECT_HOME' is missing. \n"
+# 	}
 
 	if(!$l_QUERIES_HOME){
 		$errors .= "### ERROR: Config parameter 'QUERIES_HOME' is missing. \n";
@@ -418,6 +420,8 @@ sub StartMysql{
 		    print "  Exiting.\n";
 		    $retVal = 0;
 	   	}
+		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
+
 	}
 
 	return $retVal;
@@ -469,6 +473,7 @@ sub StartPostgres{
 		system("cp $config_file $datadir");
 		system($cmd);
 		sleep 10;
+		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
 	}
 }
 
@@ -768,7 +773,7 @@ sub PlotGraph{
 			$keyword	= $ref->{'keyword'};
 			$storage_engine	= $ref->{'storage_engine'};
 			print RESDAT "\n\n#Version:$version; StorageEngine:$storage_engine; Keyword: $keyword\n";
-			$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index " . ($i++) . " using 2:xtic(1) ti \"$storage_engine\",";
+			$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index " . ($i++) . " using 2:xtic(1) ti \"$keyword\",";
 		}
 
 		
@@ -792,7 +797,8 @@ sub PlotGraph{
 	$maxTime = int($maxTime * 1.2 + 0.5); #add 10% and round it up to nearest integer
 
 	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt");
-	print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
+	#print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
+	print GNUFILE "set terminal jpeg nocrop enhanced size 640,480
 	set output '$RESULTS_OUTPUT_DIR/graphics.jpeg'
 	set boxwidth 0.9 absolute
 	set style fill   solid 0.5 border -1
@@ -803,6 +809,7 @@ sub PlotGraph{
 	set xlabel 'Query'
 	set ylabel 'Seconds'
 	set grid
+	set key below right
 	set title \"$graph_heading\" 
 	set yrange [ 0. : $maxTime. ] noreverse nowriteback
 	plot $plotFiles";
@@ -816,7 +823,7 @@ sub PlotGraph{
 sub RunTests{
 	my $test_file = $_[0];
 
-	chdir($PROJECT_HOME)  or die "Can't chdir to $PROJECT_HOME $!";
+# 	chdir($PROJECT_HOME)  or die "Can't chdir to $PROJECT_HOME $!";
 	require ($test_file);
 
 # 	CollectHardwareInfo($test_file);
@@ -881,8 +888,10 @@ sub RunTests{
 		$l_STARTUP_PARAMS	= $configurations[$i]{STARTUP_PARAMS}	// $STARTUP_PARAMS;
 		$l_QUERY		= $configurations[$i]{QUERY}		// $QUERY;
 		$l_EXPLAIN_QUERY	= $configurations[$i]{EXPLAIN_QUERY}	// $EXPLAIN_QUERY;
+		$l_EXPLAIN		= $configurations[$i]{EXPLAIN}		// $EXPLAIN;
 		$l_TIMEOUT		= $configurations[$i]{TIMEOUT}		// $TIMEOUT;
 		$l_NUM_TESTS		= $configurations[$i]{NUM_TESTS}	// $NUM_TESTS;
+		$l_WARMUP		= $configurations[$i]{WARMUP}		// $WARMUP;
 		$l_WARMUPS_COUNT	= $configurations[$i]{WARMUPS_COUNT}	// $WARMUPS_COUNT;
 		$l_MAX_QUERY_TIME	= $configurations[$i]{MAX_QUERY_TIME}	// $MAX_QUERY_TIME;
 		$l_PRE_RUN_SQL		= $configurations[$i]{PRE_RUN_SQL}	// $PRE_RUN_SQL;
@@ -981,7 +990,8 @@ sub RunTests{
 						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=127.0.0.1:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 					} else {
 						$dbh = DBI->connect("DBI:mysql:$l_DBNAME;host=127.0.0.1:$l_PORT;mysql_socket=$l_SOCKET", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
-					
+						$dbh->{'mysql_auto_reconnect'} = 1;
+
 						if($l_TIMEOUT > 0){
 							$dbh->do("SET GLOBAL EVENT_SCHEDULER = ON");
 						}
@@ -1003,7 +1013,7 @@ sub RunTests{
 
 					
 					############ WARMUP #############
-					if(!$warmed_up){
+					if($l_WARMUP && !$warmed_up){
 						for (my $w = 0; $w < $l_WARMUPS_COUNT; $w ++){
 							PrintMsg("\n-------- WARMUP run #".($w+1)." for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
 							LogStartRunResult($dbh_res, $test_id, $w, 1, "", "");
@@ -1026,7 +1036,10 @@ sub RunTests{
 					#####################################
 
 					
-					my $explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
+					my $explainFilename = "";
+					if($l_EXPLAIN){
+						$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
+					}
 					LogStartRunResult($dbh_res, $test_id, $j, 0, $explainFilename, $preRunSQLFilename);
 
 					
@@ -1060,7 +1073,7 @@ sub RunTests{
 
 
 					#Explain
-					if($EXPLAIN){
+					if($l_EXPLAIN){
 						ExecuteFileInShell($DBMS, "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
 					}
 
@@ -1199,6 +1212,10 @@ if(!CheckInputParams()){
 	exit;
 }else{
 	CollectHardwareInfo();
+
+	foreach my $file (@test_files){
+		$file = File::Spec->rel2abs($file);
+	}
 
 	foreach my $file (@test_files){
 		RunTests($file);

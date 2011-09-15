@@ -13,14 +13,14 @@ our $SCALE_FACTIOR	= 10; #The scale factor that will be tested against. It is us
 
 our $PROJECT_HOME	= $ENV{"HOME"}."/Projects/dbt3";
 our $TEMP_DIR		= "$PROJECT_HOME/temp";
-our $QUERIES_HOME	= "/data_old/benchmarks/dbt3_queries/gen_s$SCALE_FACTIOR"; #Were the queries are stored.
+our $QUERIES_HOME	= "/data_old/benchmarks/dbt3_queries/gen_s$SCALE_FACTIOR"; #Where the queries are stored.
 
-our $MYSQL_HOME		= "$PROJECT_HOME/mariadb-5.3.1_bin"; #Where the instalation folder of MariaDB / MySQL / PostgreSQL is located
+our $MYSQL_HOME		= "$PROJECT_HOME/mysql-5.5.15-linux2.6-x86_64"; #Where the instalation folder of MariaDB / MySQL / PostgreSQL is located
 our $MYSQL_USER		= "root";
-our $CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/mariadb_my.cnf"; #The config file that mysqld or postgres will use when starting
+our $CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/mysql_my.cnf"; #The config file that mysqld or postgres will use when starting
 our $SOCKET		= "$TEMP_DIR/mysql.sock";
 our $PORT		= 12340; 
-our $DATADIR		= "/data_old/benchmarks/datadir/mariadb/innodb_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
+our $DATADIR		= "/data_old/benchmarks/datadir/mysql/myisam_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
 our $DBNAME		= "dbt3"; #The database name that will be used for the test
 our $NUM_TESTS		= 3; #how many times will the same query be executed in order to calculate the average run time
 our $WARMUPS_COUNT	= 0; #how many times will the query be warmed up before taking the results into account
@@ -28,15 +28,15 @@ our $CLUSTER_SIZE	= 3; #how big is one cluster with test results
 our $MAX_QUERY_TIME	= 360; #What is the maximum time allowed for testing one query.
 our $TIMEOUT		= 120; #What is the timeout of running one query, Currently works only with MariaDB/MySQL
 our $OS_STATS_INTERVAL	= 5; #what the interval between each statistics extract will be
-our $KEYWORD		= "mariadb_5_3_1_innodb"; #This text will be stored into the results database as a keyword. Also will be used as a name for a subfolder with results and statistics.
-our $DBMS		= "MariaDB"; #Database Management System that will be used. Possible values: "MySQL", "MariaDB" and "PostgreSQL"
-our $STORAGE_ENGINE	= "InnoDB"; #The storage engine that was used
+our $KEYWORD		= "mysql_5_5_15_myisam"; #This text will be stored into the results database as a keyword. Also will be used as a name for a subfolder with results and statistics.
+our $DBMS		= "MySQL"; #Database Management System that will be used. Possible values: "MySQL", "MariaDB" and "PostgreSQL"
+our $STORAGE_ENGINE	= "MyISAM"; #The storage engine that was used
 our $STARTUP_PARAMS	= ""; #Any startup parameters that will be used while starting the mysqld process or postgres process
-our $GRAPH_HEADING	= "MariaDB 5.3.1 + InnoDB"; #The heading of the graphic
+our $GRAPH_HEADING	= "MySQL 5.5.15 + MyISAM"; #The heading of the graphic
 
 
 our $PRE_RUN_SQL	= "flush status; set global userstat=on;"; #This only executes if $RUN is set to 1
-our $POST_RUN_SQL	= "show status; select * from information_schema.TABLE_STATISTICS;"; #This only executes if $RUN is set to 1
+our $POST_RUN_SQL	= "show status; select * from information_schema.STATISTICS;"; #This only executes if $RUN is set to 1
 our $PRE_TEST_SQL	= ""; #Cannot be overridden in the different configurations. SQL commands are run prior the whole test
 our $POST_TEST_SQL	= ""; #Cannot be overridden in the different configurations. SQL commands are run after the whole test
 
@@ -84,14 +84,17 @@ our @configurations = (
 			EXPLAIN_QUERY	=> "6_explain.sql"
 		},
 		{
+			EXPLAIN		=> 0,	#Explain of this query takes enormous amount of time on MySQL
 			QUERY 		=> "7.sql",
 			EXPLAIN_QUERY	=> "7_explain.sql"
 		},
 		{
+			EXPLAIN		=> 0,	#Explain of this query takes enormous amount of time on MySQL
 			QUERY 		=> "8.sql",
 			EXPLAIN_QUERY	=> "8_explain.sql"
 		},
 		{
+			EXPLAIN		=> 0,	#Explain of this query takes enormous amount of time on MySQL
 			QUERY 		=> "9.sql",
 			EXPLAIN_QUERY	=> "9_explain.sql"
 		},
@@ -108,6 +111,7 @@ our @configurations = (
 			EXPLAIN_QUERY	=> "12_explain.sql"
 		},
 		{
+			EXPLAIN		=> 0,	#Explain of this query takes enormous amount of time on MySQL
 			QUERY 		=> "13.sql",
 			EXPLAIN_QUERY	=> "13_explain.sql"
 		},
