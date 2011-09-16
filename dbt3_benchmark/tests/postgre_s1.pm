@@ -20,6 +20,7 @@ our $MYSQL_USER		= "root";
 our $CONFIG_FILE	= "$PROJECT_HOME/mariadb-tools/dbt3_benchmark/config/postgresql.conf"; #The config file that mysqld or postgres will use when starting
 our $SOCKET		= "$TEMP_DIR/postgre.sock"; #We don't need socket for PostgreSQL
 our $PORT		= 12340;
+our $HOST		= "127.0.0.1";
 our $DATADIR		= "/data_old/benchmarks/datadir/postgre/postgre_s$SCALE_FACTIOR"; #Where is the datadir for mysqld or postgres
 our $DBNAME		= "dbt3"; #The database name that will be used for the test
 our $NUM_TESTS		= 3; #how many times will the same query be executed in order to calculate the average run time
@@ -55,6 +56,7 @@ our $RESULTS_SOCKET		= "$TEMP_DIR/mysql_results.sock";
 our $RESULTS_PORT		= 12341; #Should be different than the $PORT value above
 our $RESULTS_STARTUP_PARAMS	= "";
 our $RESULTS_DB_NAME		= "dbt3_results";
+our $RESULTS_HOST		= "127.0.0.1";
 
 
 #case specific

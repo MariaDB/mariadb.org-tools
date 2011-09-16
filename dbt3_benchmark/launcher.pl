@@ -8,15 +8,6 @@ use File::Path;
 use File::Copy;
 
 
-#push(@INC, "/home/vlado/Projects/dbt3/DBD-mysql-4.019/lib/");
-#push(@INC, "/home/vlado/Projects/dbt3/DBD-mysql-4.019/lib/DBD/");  
-
-# system("export PERL5LIB=/home/vlado/Projects/dbt3/DBD-mysql-4.019/lib");
-# system("export LD_LIBRARY_PATH=/home/vlado/Projects/dbt3/DBD-mysql-4.019/blib/arch/auto/DBD/mysql/:/home/vlado/Projects/dbt3/mariadb-5.3.0-beta-Linux-x86_64/lib/mysql/");
-# $ENV{PERL5LIB} = "/home/vlado/Projects/dbt3/DBD-mysql-4.019/lib";
-# $ENV{LD_LIBRARY_PATH} = "/home/vlado/Projects/dbt3/DBD-mysql-4.019/blib/arch/auto/DBD/mysql/:/home/vlado/Projects/dbt3/mariadb-5.3.0-beta-Linux-x86_64/lib/mysql/";
-
-
 use DBI;
 
 our $QUERIES_AT_ONCE	= 0;
@@ -33,6 +24,7 @@ our $MYSQL_USER		= "";
 our $CONFIG_FILE	= "";
 our $SOCKET		= "";
 our $PORT		= 0;
+our $HOST		= "";
 our $DATADIR		= "";
 our $DBNAME		= "";
 our $QUERY		= "";
@@ -70,6 +62,7 @@ our $RESULTS_SOCKET		= "";
 our $RESULTS_PORT		= 0;
 our $RESULTS_STARTUP_PARAMS	= "";
 our $RESULTS_DB_NAME		= "";
+our $RESULTS_HOST		= "";
 
 
 #input parameter variables
@@ -84,6 +77,7 @@ my $l_MYSQL_USER	= "";
 my $l_CONFIG_FILE	= "";
 my $l_SOCKET		= "";
 my $l_PORT		= 0;
+my $l_HOST		= "";
 my $l_DATADIR		= "";
 my $l_DBNAME		= "";
 my $l_STARTUP_PARAMS	= "";
@@ -264,6 +258,9 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'RESULTS_DB_NAME' is missing. \n";
 	}
 
+	if(!$RESULTS_HOST){
+		$errors .= "### ERROR: Config parameter 'RESULTS_HOST' is missing. \n";
+	}
 
 	if($warnings){
 		print $warnings;
@@ -722,15 +719,15 @@ sub LogEndRunResult{
 
 
 sub GetServerVersion{
-	my ($dbms, $dbname, $port, $socket, $mysql_user) = @_;
+	my ($dbms, $dbname, $host, $port, $socket, $mysql_user) = @_;
 
 	my $version = "";
 	my $dbh_ver;
 
 	if($dbms eq "postgre" || $dbms eq "PostgreSQL"){
-# 		$dbh_ver = DBI->connect("DBI:Pg:$dbname;host=127.0.0.1:$port;", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+# 		$dbh_ver = DBI->connect("DBI:Pg:$dbname;host=$host:$port;", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 	} else {
-		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=127.0.0.1:$port;mysql_socket=$socket", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=$host:$port;mysql_socket=$socket", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 		my $sth = $dbh_ver->prepare("select version()");
 		$sth->execute();
 		if(my $ref = $sth->fetchrow_hashref()) {
@@ -794,11 +791,11 @@ sub PlotGraph{
 	$plotFiles = substr($plotFiles, 0, -1);
 
 	$graph_heading =~ s/\"/\\\"/g;
-	$maxTime = int($maxTime * 1.2 + 0.5); #add 10% and round it up to nearest integer
+	$maxTime = int($maxTime * 1.2 + 0.5); #add 20% and round it up to nearest integer
 
 	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt");
 	#print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
-	print GNUFILE "set terminal jpeg nocrop enhanced size 640,480
+	print GNUFILE "set terminal jpeg nocrop enhanced size 800,600
 	set output '$RESULTS_OUTPUT_DIR/graphics.jpeg'
 	set boxwidth 0.9 absolute
 	set style fill   solid 0.5 border -1
@@ -833,7 +830,7 @@ sub RunTests{
 	if(!StartMysql($RESULTS_MYSQL_HOME, $RESULTS_DATADIR, $RESULTS_CONFIG_FILE, $RESULTS_SOCKET, $RESULTS_PORT, $RESULTS_STARTUP_PARAMS)){
 		die "Could not start results mysqld process";
 	}
-	my $dbh_res = DBI->connect("DBI:mysql:$RESULTS_DB_NAME;host=127.0.0.1:$RESULTS_PORT;mysql_socket=$RESULTS_SOCKET", "$RESULTS_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
+	my $dbh_res = DBI->connect("DBI:mysql:$RESULTS_DB_NAME;host=$RESULTS_HOST:$RESULTS_PORT;mysql_socket=$RESULTS_SOCKET", "$RESULTS_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
 
 	if($QUERIES_AT_ONCE){
 		#The startup variables should be set as global if we don't refresh caches between runs
@@ -842,6 +839,7 @@ sub RunTests{
 		$l_CONFIG_FILE		= $CONFIG_FILE;
 		$l_SOCKET		= $SOCKET;
 		$l_PORT			= $PORT;
+		$l_HOST			= $HOST;
 		$l_DATADIR		= $DATADIR;
 		$l_STARTUP_PARAMS	= $STARTUP_PARAMS;
 		$l_DBNAME		= $DBNAME;
@@ -883,6 +881,7 @@ sub RunTests{
 		$l_CONFIG_FILE		= $configurations[$i]{CONFIG_FILE}	// $CONFIG_FILE;
 		$l_SOCKET		= $configurations[$i]{SOCKET}		// $SOCKET;
 		$l_PORT			= $configurations[$i]{PORT}		// $PORT;
+		$l_HOST			= $configurations[$i]{HOST}		// $HOST;
 		$l_DATADIR		= $configurations[$i]{DATADIR}		// $DATADIR;
 		$l_DBNAME		= $configurations[$i]{DBNAME}		// $DBNAME;
 		$l_STARTUP_PARAMS	= $configurations[$i]{STARTUP_PARAMS}	// $STARTUP_PARAMS;
@@ -974,7 +973,7 @@ sub RunTests{
 
 
 			if($j == 1){
-				my $version = GetServerVersion($DBMS, $l_DBNAME, $l_PORT, $l_SOCKET, $l_MYSQL_USER);
+				my $version = GetServerVersion($DBMS, $l_DBNAME, $l_HOST, $l_PORT, $l_SOCKET, $l_MYSQL_USER);
 				LogStartTestResult($dbh_res, $test_id, $l_QUERY, $RESULTS_OUTPUT_DIR, "$KEYWORD/pre_test_sql_results.txt", $KEYWORD, $STORAGE_ENGINE, $SCALE_FACTOR, $version);
 			}
 
@@ -987,9 +986,9 @@ sub RunTests{
 					my $dbh;
 
 					if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=127.0.0.1:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 					} else {
-						$dbh = DBI->connect("DBI:mysql:$l_DBNAME;host=127.0.0.1:$l_PORT;mysql_socket=$l_SOCKET", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+						$dbh = DBI->connect("DBI:mysql:$l_DBNAME;host=$l_HOST:$l_PORT;mysql_socket=$l_SOCKET", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 						$dbh->{'mysql_auto_reconnect'} = 1;
 
 						if($l_TIMEOUT > 0){
