@@ -417,7 +417,7 @@ sub StartMysql{
 		    print "  Exiting.\n";
 		    $retVal = 0;
 	   	}
-		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
+# 		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
 
 	}
 
@@ -832,6 +832,11 @@ sub RunTests{
 	}
 	my $dbh_res = DBI->connect("DBI:mysql:$RESULTS_DB_NAME;host=$RESULTS_HOST:$RESULTS_PORT;mysql_socket=$RESULTS_SOCKET", "$RESULTS_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
 
+	if($l_GRAPH_HEADING && $GRAPH_HEADING){
+		$l_GRAPH_HEADING .= " vs. ";
+	}
+	$l_GRAPH_HEADING 	.= $GRAPH_HEADING;
+
 	if($QUERIES_AT_ONCE){
 		#The startup variables should be set as global if we don't refresh caches between runs
 		$l_MYSQL_HOME		= $MYSQL_HOME;
@@ -843,11 +848,6 @@ sub RunTests{
 		$l_DATADIR		= $DATADIR;
 		$l_STARTUP_PARAMS	= $STARTUP_PARAMS;
 		$l_DBNAME		= $DBNAME;
-
-		if($l_GRAPH_HEADING && $GRAPH_HEADING){
-			$l_GRAPH_HEADING .= " vs. ";
-		}
-		$l_GRAPH_HEADING 	.= $GRAPH_HEADING;
 
 		if($USER_IS_ADMIN && $CLEAR_CACHES){
 			#clear the caches prior the whole test
@@ -862,6 +862,7 @@ sub RunTests{
 				die "Could not start mysqld process";
 			}
 		}
+		copy ($l_CONFIG_FILE, "$RESULTS_OUTPUT_DIR/$KEYWORD");
 		
 		#Pre-test statements
 		if($PRE_TEST_SQL){
@@ -953,7 +954,7 @@ sub RunTests{
 						die "Could not start mysqld process";
 					}
 				}
-
+				copy ($l_CONFIG_FILE, "$RESULTS_OUTPUT_DIR/$KEYWORD");
 
 				$warmed_up = 0;
 
@@ -1051,6 +1052,8 @@ sub RunTests{
 						die "Could not fork. Resources not avilable.\n";
 					} elsif ($pid == 0) {
 						#CHILD
+						$dbh->{InactiveDestroy} = 1;
+						$dbh_res->{InactiveDestroy} = 1;
 						CollectStatistics_OS($OS_STATS_INTERVAL, 1, 1, 1, $KEYWORD, $l_QUERY, $j);
 					} else {
 						#PARENT";
