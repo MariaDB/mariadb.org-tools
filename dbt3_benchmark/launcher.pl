@@ -6,128 +6,33 @@ use strict;
 use Getopt::Long;
 use File::Path;
 use File::Copy;
-
-
+use Config::Auto;
+use Data::Dumper;
 use DBI;
-
-our $QUERIES_AT_ONCE	= 0;
-our $CLEAR_CACHES	= 0;
-our $WARMUP		= 0;
-our $EXPLAIN		= 0;
-our $RUN		= 0;
-our $USER_IS_ADMIN	= 0;
-
-our $QUERIES_HOME	= "";
-# our $PROJECT_HOME	= ".";
-our $MYSQL_HOME		= "";
-our $MYSQL_USER		= "";
-our $CONFIG_FILE	= "";
-our $SOCKET		= "";
-our $PORT		= 0;
-our $HOST		= "";
-our $DATADIR		= "";
-our $DBNAME		= "";
-our $QUERY		= "";
-our $EXPLAIN_QUERY	= "";
-our $TIMEOUT		= 0;
-our $OS_STATS_INTERVAL	= 0;
-our $PRE_RUN_SQL	= "";
-our $POST_RUN_SQL	= "";
-our $PRE_TEST_SQL	= "";
-our $POST_TEST_SQL	= "";
-our $PRE_RUN_OS		= "";
-our $POST_RUN_OS	= "";
-our $PRE_TEST_OS	= "";
-our $POST_TEST_OS	= "";
-our $NUM_TESTS		= 0;
-our $WARMUPS_COUNT	= 0;
-our $MAX_QUERY_TIME	= 0;
-our $CLUSTER_SIZE	= 0;
-our $KEYWORD		= "";
-our $DBMS		= "";
-our $STORAGE_ENGINE	= "";
-our $SCALE_FACTOR	= 0;
-our $STARTUP_PARAMS	= "";
-our $GRAPH_HEADING	= "";
-
-our @configurations;
-
-
-#Results DB configuration vars:
-our $RESULTS_MYSQL_HOME		= "";
-our $RESULTS_MYSQL_USER		= "";
-our $RESULTS_DATADIR		= "";
-our $RESULTS_CONFIG_FILE	= "";
-our $RESULTS_SOCKET		= "";
-our $RESULTS_PORT		= 0;
-our $RESULTS_STARTUP_PARAMS	= "";
-our $RESULTS_DB_NAME		= "";
-our $RESULTS_HOST		= "";
 
 
 #input parameter variables
-my @test_files;
+my $TEST_FILE		= "";
 my $RESULTS_OUTPUT_DIR	= "";
 my $dry_run		= 0;
-
-#local variables
-my $l_QUERIES_HOME	= "";
-my $l_MYSQL_HOME	= "";
-my $l_MYSQL_USER	= "";
-my $l_CONFIG_FILE	= "";
-my $l_SOCKET		= "";
-my $l_PORT		= 0;
-my $l_HOST		= "";
-my $l_DATADIR		= "";
-my $l_DBNAME		= "";
-my $l_STARTUP_PARAMS	= "";
-my $l_QUERY		= "";
-my $l_EXPLAIN_QUERY	= "";
-my $l_EXPLAIN		= 0;
-my $l_TIMEOUT		= 0;
-my $l_PRE_RUN_SQL	= "";
-my $l_POST_RUN_SQL	= "";
-my $l_PRE_RUN_OS	= "";
-my $l_POST_RUN_OS	= "";
-my $l_NUM_TESTS		= 0;
-my $l_WARMUP		= 0;
-my $l_WARMUPS_COUNT	= 0;
-my $l_MAX_QUERY_TIME	= 0;
-my $l_CLUSTER_SIZE	= 0;
-my $l_GRAPH_HEADING	= "";
+my $PROJECT_HOME	= "";
+my $DATADIR_HOME	= "";
+my $QUERIES_HOME	= "";
+my $SCALE_FACTOR	= 0;
 
 
-
-GetOptions (	"test|t:s" 			=> \@test_files,
-		"results-output-dir|r:s"	=> \$RESULTS_OUTPUT_DIR,
-		"dry-run" 			=> \$dry_run);
-
+my $GRAPH_HEADING	= "";
 
 
 ######################################## Function declarations ########################################
-sub GetTimestamp{
-	my $asFilename 	= $_[0];
-	my $retStr	= "";
-
+sub GetTimestampAsFilename{
 	my($sec, $min, $hour, $day, $month, $year) = (localtime)[0,1,2,3,4,5];
-	$sec	= sprintf '%02d', $sec;
-	$min	= sprintf '%02d', $min;
-	$hour	= sprintf '%02d', $hour;
-	$month	= sprintf '%02d', $month+1;
-	$day	= sprintf '%02d', $day;
-	$year	= $year + 1900;
-
-	if($asFilename){
-		$retStr =  $year . "-$month" . "-$day" . "_$hour$min$sec";
-	}else{
-		$retStr =  $year . "-$month" . "-$day" . " $hour" . ":$min" . ":$sec";
-	}
-
-	return $retStr;
+	return sprintf("%02d-%02d-%02d\_%02d%02d%02d", $year + 1900, $month + 1, $day, $hour, $min, $sec);
 }
 
-sub GetTimestampAsFilename{
-	return GetTimestamp(1);
+sub GetTimestamp{
+	my($sec, $min, $hour, $day, $month, $year) = (localtime)[0,1,2,3,4,5];
+	return sprintf("%02d-%02d-%02d %02d:%02d:%02d", $year + 1900, $month + 1, $day, $hour, $min, $sec);
 }
 
 
@@ -141,15 +46,32 @@ sub CheckInputParams{
 		$warnings .= "### WARNING: Starting program in DRY-RUN mode\n";
 	}
 
-	if(!@test_files){
+	if(!$TEST_FILE){
 		$errors = "### ERROR: Missing input parameter 'test'.\n";
 	}else{
-		foreach my $file (@test_files){
-			if(!(-e $file)){
-				$errors .= "### ERROR: Configuration file $file does not exist \n";
-			}
+
+		if(!(-e $TEST_FILE)){
+			$errors .= "### ERROR: Configuration file $TEST_FILE does not exist \n";
 		}
 	}
+
+# 	if(!$PROJECT_HOME){
+# 		$errors = "### ERROR: Missing input parameter 'project-home'.\n";
+# 	}else{
+# 
+# 		if(!(-e $PROJECT_HOME)){
+# 			$errors .= "### ERROR: Project home folder '$PROJECT_HOME' does not exist \n";
+# 		}
+# 	}
+# 
+# 	if(!$DATADIR_HOME){
+# 		$errors = "### ERROR: Missing input parameter 'datadir-home'.\n";
+# 	}else{
+# 
+# 		if(!(-e $DATADIR_HOME)){
+# 			$errors .= "### ERROR: Data directory home folder '$DATADIR_HOME' does not exist \n";
+# 		}
+# 	}
 
 	if(!$RESULTS_OUTPUT_DIR){
 		$errors .= "### ERROR: Config parameter 'results-output-dir' is missing. \n";
@@ -170,96 +92,113 @@ sub CheckInputParams{
 
 
 sub CheckConfigParams{
+	my ($configHash) = @_;
+
 	my $retVal 	= 1;
 	my $errors 	= "";
 	my $warnings 	= "";
 	
 	#Errors
-	
-# 	if(!$PROJECT_HOME){
-# 		$errors .= "### ERROR: Config parameter 'PROJECT_HOME' is missing. \n"
-# 	}
-
-	if(!$l_QUERIES_HOME){
+	if(!$configHash->{'queries'}->{'queries_settings'}->{'QUERIES_HOME'}){
 		$errors .= "### ERROR: Config parameter 'QUERIES_HOME' is missing. \n";
 	}
 
-	if(!$l_MYSQL_HOME){
-		$errors .= "### ERROR: Config parameter 'MYSQL_HOME' is missing. \n";
-	}
-
-	if(!$l_MYSQL_USER){
-		$errors .= "### ERROR: Config parameter 'MYSQL_USER' is missing. \n";
-	}
-
-	if(!$l_CONFIG_FILE){
-		$errors .= "### ERROR: Config parameter 'CONFIG_FILE' is missing. \n";
-	}
-
-	if(!$l_SOCKET){
-		$errors .= "### ERROR: Config parameter 'SOCKET' is missing. \n";
-	}
-
-	if(!$l_PORT){
-		$errors .= "### ERROR: Config parameter 'PORT' is missing. \n";
-	}
-
-	if(!$l_DATADIR){
-		$errors .= "### ERROR: Config parameter 'DATADIR' is missing. \n";
-	}
-
-	if(!$l_DBNAME){
-		$errors .= "### ERROR: Config parameter 'DBNAME' is missing. \n";
-	}
-	
-	if(!$DBMS){
-		$errors .= "### ERROR: Config parameter 'DBMS' is missing. \n";
+	if(!$configHash->{'db_config'}->{'DBMS_HOME'}){
+		$errors .= "### ERROR: Config parameter 'DBMS_HOME' is missing. \n";
 	}else{
-		if($DBMS ne "MariaDB" && $DBMS ne "MySQL" && $DBMS ne "PostgreSQL"){
-			$errors .= "### ERROR: Unknown value for parameter DBMS: $DBMS. Possible values are: 'MariaDB', 'MySQL' and 'PostgreSQL' \n";
+		if(! -e $configHash->{'db_config'}->{'DBMS_HOME'}){
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DBMS_HOME'}."' for parameter DBMS_HOME does not exist";
 		}
 	}
 
-	if(!$KEYWORD){
+	if(!$configHash->{'db_config'}->{'DBMS_USER'}){
+		$errors .= "### ERROR: Config parameter 'DBMS_USER' is missing. \n";
+	}
+
+	if(!$configHash->{'db_config'}->{'CONFIG_FILE'}){
+		$errors .= "### ERROR: Config parameter 'CONFIG_FILE' is missing. \n";
+	}
+
+	if(!$configHash->{'db_config'}->{'SOCKET'}){
+		$errors .= "### ERROR: Config parameter 'SOCKET' is missing. \n";
+	}
+
+	if(!$configHash->{'db_config'}->{'PORT'}){
+		$errors .= "### ERROR: Config parameter 'PORT' is missing. \n";
+	}
+
+	if(!$configHash->{'db_config'}->{'DATADIR'}){
+		$errors .= "### ERROR: Config parameter 'DATADIR' is missing. \n";
+	}else{
+		if(! -e $configHash->{'db_config'}->{'DATADIR'}){
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DATADIR'}."' for parameter DATADIR does not exist";
+		}
+	}
+
+	if(!$configHash->{'db_config'}->{'TMPDIR'}){
+		$errors .= "### ERROR: Config parameter 'TMPDIR' is missing. \n";
+	}else{
+		if(! -e $configHash->{'db_config'}->{'TMPDIR'}){
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'TMPDIR'}."' for parameter TMPDIR does not exist";
+		}
+	}
+
+	if(!$configHash->{'db_config'}->{'DBNAME'}){
+		$errors .= "### ERROR: Config parameter 'DBNAME' is missing. \n";
+	}
+	
+	if(!$configHash->{'db_config'}->{'DBMS'}){
+		$errors .= "### ERROR: Config parameter 'DBMS' is missing. \n";
+	}else{
+		if($configHash->{'db_config'}->{'DBMS'} ne "MariaDB" && $configHash->{'db_config'}->{'DBMS'} ne "MySQL" && $configHash->{'db_config'}->{'DBMS'} ne "PostgreSQL"){
+			$errors .= "### ERROR: Unknown value for parameter DBMS: ".$configHash->{'db_config'}->{'DBMS'}.". Possible values are: 'MariaDB', 'MySQL' and 'PostgreSQL' \n";
+		}
+	}
+
+	if(!$configHash->{'db_config'}->{'KEYWORD'}){
 		$errors .= "### ERROR: Config parameter 'KEYWORD' is missing. \n";
 	}
 
-# 	if(!$l_NUM_TESTS){
-# 		$errors .= "### ERROR: Config parameter 'NUM_TESTS' is missing. \n";
-# 	}
-	
 
 	#Results DB params:
-	if(!$RESULTS_MYSQL_HOME){
-		$errors .= "### ERROR: Config parameter 'RESULTS_MYSQL_HOME' is missing. \n";
+	if(!$configHash->{'results_db'}->{'DBMS_HOME'}){
+		$errors .= "### ERROR: Config parameter 'DBMS_HOME' for the results DB is missing. \n";
+	}else{
+		if(! -e $configHash->{'results_db'}->{'DBMS_HOME'}){
+			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DBMS_HOME'}."' for parameter DBMS_HOME for the results DB does not exist";
+		}
 	}
 
-	if(!$RESULTS_MYSQL_USER){
-		$errors .= "### ERROR: Config parameter 'RESULTS_MYSQL_USER' is missing. \n";
+	if(!$configHash->{'results_db'}->{'DBMS_USER'}){
+		$errors .= "### ERROR: Config parameter 'DBMS_USER' for the results DB is missing. \n";
 	}
 
-	if(!$RESULTS_DATADIR){
-		$errors .= "### ERROR: Config parameter 'RESULTS_DATADIR' is missing. \n";
+	if(!$configHash->{'results_db'}->{'DATADIR'}){
+		$errors .= "### ERROR: Config parameter 'DATADIR' for the results DB is missing. \n";
+	}else{
+		if(! -e $configHash->{'results_db'}->{'DATADIR'}){
+			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DATADIR'}."' for parameter DATADIR for the results DB does not exist";
+		}
 	}
 
-	if(!$RESULTS_CONFIG_FILE){
-		$errors .= "### ERROR: Config parameter 'RESULTS_CONFIG_FILE' is missing. \n";
+	if(!$configHash->{'results_db'}->{'CONFIG_FILE'}){
+		$errors .= "### ERROR: Config parameter 'CONFIG_FILE' for the results DB is missing. \n";
 	}
 
-	if(!$RESULTS_SOCKET){
-		$errors .= "### ERROR: Config parameter 'RESULTS_SOCKET' is missing. \n";
+	if(!$configHash->{'results_db'}->{'SOCKET'}){
+		$errors .= "### ERROR: Config parameter 'SOCKET' for the results DB is missing. \n";
 	}
 
-	if(!$RESULTS_PORT){
-		$errors .= "### ERROR: Config parameter 'RESULTS_PORT' is missing. \n";
+	if(!$configHash->{'results_db'}->{'PORT'}){
+		$errors .= "### ERROR: Config parameter 'PORT' for the results DB is missing. \n";
 	}
 
-	if(!$RESULTS_DB_NAME){
-		$errors .= "### ERROR: Config parameter 'RESULTS_DB_NAME' is missing. \n";
+	if(!$configHash->{'results_db'}->{'DBNAME'}){
+		$errors .= "### ERROR: Config parameter 'DBNAME' for the results DB is missing. \n";
 	}
 
-	if(!$RESULTS_HOST){
-		$errors .= "### ERROR: Config parameter 'RESULTS_HOST' is missing. \n";
+	if(!$configHash->{'results_db'}->{'HOST'}){
+		$errors .= "### ERROR: Config parameter 'HOST' for the results DB is missing. \n";
 	}
 
 	if($warnings){
@@ -272,6 +211,50 @@ sub CheckConfigParams{
 	}
 
 	return $retVal;
+}
+
+
+sub ReplaceWithParam{
+	my ($paramName, $str, $replacStr, $replacement, $paramIsFolder) = @_;
+
+	if($str =~ m/$replacStr/){
+		if(!$replacement){
+			die "Input parameter '$paramName' is missing";
+		}else{
+			if($paramIsFolder && ! -e $replacement){
+				die "Queries home directory '$replacement' does not exist";
+			}else{
+				$str =~ s/$replacStr/$replacement/g;
+			}
+		}
+	}
+	return $str;
+}
+
+
+sub ParseConfigFile{
+	my ($filename, $format) = @_;
+	my $config = Config::Auto->new( source => $filename, format => $format);
+	my $parsed = $config->parse; 
+	
+	foreach my $key (keys(%{$parsed})){
+		if(ref($parsed->{$key}) eq "HASH"){
+			foreach my $key1 (keys (%{$parsed->{$key}})){
+				$parsed->{$key}->{$key1} = ReplaceWithParam('project-home', $parsed->{$key}->{$key1}, "\\\$PROJECT_HOME", $PROJECT_HOME, 1);
+				$parsed->{$key}->{$key1} = ReplaceWithParam('datadir-home', $parsed->{$key}->{$key1}, "\\\$DATADIR_HOME", $DATADIR_HOME, 1);
+				$parsed->{$key}->{$key1} = ReplaceWithParam('queries-home', $parsed->{$key}->{$key1}, "\\\$QUERIES_HOME", $QUERIES_HOME, 1);
+				$parsed->{$key}->{$key1} = ReplaceWithParam('scale-factor', $parsed->{$key}->{$key1}, "\\\$SCALE_FACTOR", $SCALE_FACTOR, 0);
+
+			}
+		}else{
+			$parsed->{$key} = ReplaceWithParam('project-home', $parsed->{$key}, "\\\$PROJECT_HOME", $PROJECT_HOME, 1);
+			$parsed->{$key} = ReplaceWithParam('datadir-home', $parsed->{$key}, "\\\$DATADIR_HOME", $DATADIR_HOME, 1);
+			$parsed->{$key} = ReplaceWithParam('queries-home', $parsed->{$key}, "\\\$QUERIES_HOME", $QUERIES_HOME, 1);
+			$parsed->{$key} = ReplaceWithParam('scale-factor', $parsed->{$key}, "\\\$SCALE_FACTOR", $SCALE_FACTOR, 0);
+		}
+	}
+ 
+	return $parsed;
 }
 
 
@@ -288,13 +271,7 @@ sub CollectHardwareInfo{
 
 
 sub CollectStatistics_OS{
-	my $sleepTime 	= $_[0];
-	my $cpuStats 	= $_[1];
-	my $ioStats	= $_[2];
-	my $memoryStats	= $_[3];
-	my $keyword	= $_[4];
-	my $queryName	= $_[5];
-	my $queryRunNo	= $_[6];
+	my ($sleepTime, $cpuStats, $ioStats, $memoryStats, $keyword, $queryName, $queryRunNo) = @_;
 	
 	if($sleepTime == 0){
 		$sleepTime = 1; #min interval - 1 second
@@ -371,13 +348,15 @@ sub CollectStatistics_OS{
 
 #Start the mysqld process with parameters
 sub StartMysql{
-	my $mysql_home		= $_[0];
-	my $datadir		= $_[1];
-	my $config_file		= $_[2];
-	my $socket		= $_[3];
-	my $port		= $_[4];
-	my $startup_params	= $_[5];
+	my ($mysqlHash) = @_;
 
+	my $mysql_home		= $mysqlHash->{'DBMS_HOME'};
+	my $datadir		= $mysqlHash->{'DATADIR'};
+	my $config_file 	= $mysqlHash->{'CONFIG_FILE'};
+	my $socket		= $mysqlHash->{'SOCKET'};
+	my $port		= $mysqlHash->{'PORT'};
+	my $tmpdir		= $mysqlHash->{'TMPDIR'};
+	my $startup_params	= $mysqlHash->{'STARTUP_PARAMS'};
 
 
 	my $retVal = 1;
@@ -389,6 +368,10 @@ sub StartMysql{
 	my $mysqld_options = "--defaults-file=$config_file --port=$port --socket=$socket --read-only ";
 	if($datadir){
 		$mysqld_options .= " --datadir=$datadir";
+	}
+
+	if($tmpdir){
+		$mysqld_options .= " --tmpdir=$tmpdir";
 	}
 
 	if($startup_params){
@@ -427,11 +410,11 @@ sub StartMysql{
 
 #Stop the mysqld process 
 sub StopMysql{
-	my $mysql_home	= $_[0];
-	my $socket	= $_[1];
-	my $port	= $_[2];
-	my $mysql_user	= $_[3];
-
+	my ($mysqlHash) = @_;
+	my $mysql_home	= $mysqlHash->{'DBMS_HOME'};
+	my $socket	= $mysqlHash->{'SOCKET'};
+	my $port	= $mysqlHash->{'PORT'};
+	my $mysql_user	= $mysqlHash->{'DBMS_USER'};
 
 	my $retVal = 1;
 
@@ -449,13 +432,16 @@ sub StopMysql{
 
 #PostgreSQL
 sub StartPostgres{
-	my $postgres_home	= $_[0];
-	my $datadir		= $_[1];
-	my $config_file		= $_[2];
-	my $port		= $_[3];
-	my $startup_params	= $_[4];
+# 	my ($postgres_home, $datadir, $config_file, $port, $startup_params) = @_;
+	my ($postgreHash) = @_;
 
-	
+	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
+	my $datadir		= $postgreHash->{'DATADIR'};
+	my $config_file		= $postgreHash->{'CONFIG_FILE'};
+	my $port		= $postgreHash->{'PORT'};
+	my $startup_params	= $postgreHash->{'STARTUP_PARAMS'};
+
+
 	chdir($postgres_home) or die "Can't chdir to $postgres_home $!";
 
 	if (-e "$datadir/postmaster.pid"){
@@ -470,15 +456,18 @@ sub StartPostgres{
 		system("cp $config_file $datadir");
 		system($cmd);
 		sleep 10;
-		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
+		copy ($config_file, "$RESULTS_OUTPUT_DIR/") or die "Could not copy $config_file to directory '$RESULTS_OUTPUT_DIR'";
 	}
 }
 
 
 sub StopPostgres{
-	my $postgres_home	= $_[0];
-	my $datadir		= $_[1];
-	my $port		= $_[2];
+# 	my ($postgres_home, $datadir, $port) = @_;
+	my ($postgreHash) = @_;
+
+	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
+	my $datadir		= $postgreHash->{'DATADIR'};
+	my $port		= $postgreHash->{'PORT'};
 
 	chdir($postgres_home) or die "Can't chdir to $postgres_home $!";
 	if (-e "$datadir/postmaster.pid"){
@@ -498,16 +487,13 @@ sub StopPostgres{
 
 sub ExecuteWithTimeout{
 	# TODO: Implement timeout algorithm for PostgreSQL. Currently it is not working
-	my $dbms	= $_[0];
-	my $dbh 	= $_[1];
-	my $run_stmts	= $_[2];
-	my $timeout 	= $_[3];
+	my ($dbms, $dbh, $run_stmts, $timeout) = @_;
 
 	my $timeout_exceeded 	= 0;
 	my $startTime		= 0;
 	my $elapsedTime		= 0;
 	
-	if($timeout && $dbms ne "postgres" && $dbms ne "PostgreSQL"){
+	if($timeout && $dbms ne "PostgreSQL"){
 		my $connection_id = $dbh->selectrow_array("SELECT CONNECTION_ID()");
 		$dbh->do("DROP EVENT IF EXISTS timeout");
 		$dbh->do("CREATE EVENT timeout ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL $timeout SECOND DO KILL QUERY $connection_id");
@@ -528,7 +514,7 @@ sub ExecuteWithTimeout{
 		}
 	};
 
-	if($timeout && $dbms ne "postgres" && $dbms ne "PostgreSQL"){
+	if($timeout && $dbms ne "PostgreSQL"){
 		$dbh->do("DROP EVENT IF EXISTS timeout");
 	}
 
@@ -537,11 +523,12 @@ sub ExecuteWithTimeout{
 
 
 sub ExecuteInShell{
-	my $dbms	= $_[0];
-	my $stmt 	= $_[1];
-	my $keyword	= $_[2];
-	my $resultFile	= $_[3];
-	my $stmtIsFile	= $_[4] || 0;
+	my ($dbms_hash, $stmt, $stmtFilename, $keyword, $resultFile) = @_;
+
+	my $port 	= $dbms_hash->{'PORT'};
+	my $socket	= $dbms_hash->{'SOCKET'};
+	my $dbname	= $dbms_hash->{'DBNAME'};
+	my $dbms_user	= $dbms_hash->{'DBMS_USER'};
 
 	my $startTime		= 0;
 	my $elapsedTime		= 0;
@@ -549,15 +536,15 @@ sub ExecuteInShell{
 	PrintMsg("\n***Executing in shell $stmt\n");
 	if(!$dry_run){
 		if($keyword && !(-e "$RESULTS_OUTPUT_DIR/$keyword")){
-			mkpath("$RESULTS_OUTPUT_DIR/$keyword");
+			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or die "Could not make path '$RESULTS_OUTPUT_DIR/$keyword'";
 		}
 
 		$startTime = time;
-		if($stmtIsFile){
-			if($dbms eq "postgre" || $dbms eq "PostgreSQL"){
-				system ("./bin/psql -p $l_PORT -d $l_DBNAME -f $stmt >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+		if($stmtFilename){
+			if($dbms_hash->{'DBMS'} eq "PostgreSQL"){
+				system ("./bin/psql -p $port -d $dbname -f $stmtFilename > $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			} else {
-				system ("./bin/mysql -S $l_SOCKET -P $l_PORT -u $l_MYSQL_USER $l_DBNAME < $stmt >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname < $stmtFilename > $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			}
 		}else{
 			if(!(-e "$RESULTS_OUTPUT_DIR/$keyword/$resultFile")){
@@ -565,10 +552,10 @@ sub ExecuteInShell{
 				print MYFILE "SQL_command:\n$stmt\n\n===Results===\n";
 				close (MYFILE); 
 			}
-			if($dbms eq "postgre" || $dbms eq "PostgreSQL"){
-				system ("./bin/psql -p $l_PORT -d $l_DBNAME -c \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+			if($dbms_hash->{'DBMS'} eq "PostgreSQL"){
+				system ("./bin/psql -p $port -d $dbname -c \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			} else {
-				system ("./bin/mysql -S $l_SOCKET -P $l_PORT -u $l_MYSQL_USER $l_DBNAME -e \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname -e \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			}
 		}
 		$elapsedTime = time - $startTime;
@@ -579,54 +566,10 @@ sub ExecuteInShell{
 }
 
 
-sub ExecuteFileInShell{
-	my $dbms	= $_[0];
-	my $fileToExec 	= $_[1];
-	my $keyword	= $_[2];
-	my $resultFile	= $_[3];
-
-	return ExecuteInShell($dbms, $fileToExec, $keyword, $resultFile, 1);
-}
-
-
-
-# NOTE: This algorithm is not ready and is replaced by GetBestCluster. However, leaving it for ideas referrences.
-# sub FindClusters{
-# 	my $queryResults 	= $_[0];
-# 	my $clusterSize		= $_[1];
-# 	
-# 	if(scalar(@$queryResults) < $clusterSize){
-# 		return 0;
-# 	}
-# 
-# 
-# 	my $sumTimeDiff	= 0;
-# 	for (my $i = 1; $i < scalar(@$queryResults); $i++){
-# 		$sumTimeDiff += @$queryResults[$i] - @$queryResults[$i-1];
-# 	}
-# 	my $avgTimeDiff = $sumTimeDiff / (scalar(@$queryResults) - 1);
-# 	print "\nAverage time: $avgTimeDiff";
-# 
-# 	my $upperLimit = @$queryResults[0] + ($clusterSize) * $avgTimeDiff;
-#  	print "\nupperLimit = $upperLimit";
-# 	for (my $i = 0; $i <= scalar(@$queryResults) - $clusterSize; $i++){
-# 		if(@$queryResults[$i + $clusterSize - 1] <= $upperLimit){
-# 			my $sumClusterTime = 0;
-# 			for (my $j = $i; $j < $clusterSize; $j++){
-# 				$sumClusterTime += @$queryResults[$j];
-# 			}
-# 			return $sumClusterTime / $clusterSize;
-# 		}
-# 	}
-# 
-# 	return 0;
-# }
 
 
 sub GetBestCluster{
-	my $queryResults 	= $_[0];
-	my $clusterSize		= $_[1];
-	my $getBestAvailable	= $_[2]; #Get the best available result no matter what the clusterSize should be. It gets the most scored result
+	my ($queryResults, $clusterSize, $getBestAvailable) = @_;
 
 	if(!$getBestAvailable && scalar(@$queryResults) < $clusterSize){
 		#Not enough results to form a cluster.
@@ -689,6 +632,114 @@ sub GetBestCluster{
 }
 
 
+
+sub GetBestExplainCluster{
+	my ($explainResultsRef, $clusterSize, $getBestAvailable) = @_;
+
+	my $retVal	= 0;
+	my $min		= 10000000;
+# 	my $minkey	= "";
+	my $minCount	= 0;
+	while (my ($key, $value) = each(%{$explainResultsRef})){
+		#get the average
+		my $avg		= 0;
+		my $count	= 0;
+		foreach my $tmp (@{ $value }){
+			$count++;
+			$avg += $tmp;
+			if($tmp == -1){#timeout
+				$avg = -1;
+				last;
+			}
+		}
+		if($count && $avg != -1){
+			$avg = $avg / $count;
+			if($min > $avg){
+				$min		= $avg;
+# 				$minkey		= $key;
+				$minCount	= $count;
+			}
+		}
+	}
+	if($getBestAvailable || $minCount >= $clusterSize){
+		if($min == 10000000){
+			$retVal = -1;
+		}else{
+			$retVal = $min;
+		}
+	}
+	return $retVal;
+}
+
+
+
+#Analyzes explain results and returns the explain string as a key for the %GlobalExplainResults hash.
+# Parameters:
+#	The first parameter is the file that contians the explain results
+#	The second parameter is a reference to the %GlobalExplainResults hash with explain as a key and fastest query time as value
+#If this explain (calculated execution plan) is new for the test, then the test should be run and the results recorded
+#If this explain has already been run and it is not the best resulting execution plan, then return "" and no another run is necessary, so just restart the server and seek for the best execution plan
+sub AnalyzeExplain{
+	my ($file, $explainResultsRef) = @_;
+
+	my $expl 	= "";
+	my $retVal 	= "";
+
+	#exclude the column 'rows'
+	my $wholeFile = "";
+
+	#first read the whole file since it doesn't handle newline breaks properly if read line by line
+	open ( my $explain_fh, "<", $file)  or die $!;
+	while (<$explain_fh>) {		
+		$wholeFile .= $_;
+	}
+	close ($explain_fh);
+
+	#then split it by newlines and then to tabs
+	my @lines = split ("\n", $wholeFile);
+	foreach my $line (@lines){
+ 		my ($id, $select_type, $table, $type, $possible_keys, $key, $key_len, $ref, $rows, $extra) =  split(/\t/, $line);
+ 		$expl .= "$id\t$select_type\t$table\t$type\t$possible_keys\t$key\t$key_len\t$ref\t###########\t$extra";
+	}
+
+
+	if(! exists $explainResultsRef->{$expl}){
+		#run for the first time with such explain
+		$explainResultsRef->{$expl} = [];
+		$retVal = $expl;
+	}else{
+		#running the best execution plan so far
+		my $min = 10000000;
+		my $minkey = "";
+		while (my ($key, $value) = each(%{$explainResultsRef})){
+			#get the average
+			my $avg		= 0;
+			my $count	= 0;
+			foreach my $tmp (@{ $value }){
+				$count++;
+				$avg += $tmp;
+				if($tmp == -1){#timeout
+					$avg = -1;
+					last;
+				}
+			}
+			if($count && $avg != -1){
+				$avg = $avg / $count;
+				if($min > $avg){
+					$min = $avg;
+					$minkey = $key;
+				}
+			}
+		}
+		if($expl eq $minkey){
+			$retVal = $expl;
+		}
+	}
+	PrintMsg("Analyzing explain returns\n$retVal");
+	return $retVal; 
+}
+
+
 sub LogStartTestResult{
 	my ($dbh, $test_id, $query_name, $results_output_dir, $pre_test_sql, $keyword, $storage_engine, $scale_factor, $version) = @_;
 
@@ -719,15 +770,24 @@ sub LogEndRunResult{
 
 
 sub GetServerVersion{
-	my ($dbms, $dbname, $host, $port, $socket, $mysql_user) = @_;
+# 	my ($dbms, $dbname, $host, $port, $socket, $dbms_user) = @_;
+	my ($dbms_hash) = @_;
+
+	my $dbms 	= $dbms_hash->{'DBMS'};
+	my $dbname	= $dbms_hash->{'DBNAME'};
+	my $host	= $dbms_hash->{'HOST'};
+	my $port	= $dbms_hash->{'PORT'};
+	my $socket	= $dbms_hash->{'SOCKET'};
+	my $dbms_user	= $dbms_hash->{'DBMS_USER'};
 
 	my $version = "";
 	my $dbh_ver;
 
-	if($dbms eq "postgre" || $dbms eq "PostgreSQL"){
+	if($dbms eq "PostgreSQL"){
+		# TODO
 # 		$dbh_ver = DBI->connect("DBI:Pg:$dbname;host=$host:$port;", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 	} else {
-		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=$host:$port;mysql_socket=$socket", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=$host:$port;mysql_socket=$socket", $dbms_user, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 		my $sth = $dbh_ver->prepare("select version()");
 		$sth->execute();
 		if(my $ref = $sth->fetchrow_hashref()) {
@@ -818,96 +878,154 @@ sub PlotGraph{
 
 
 sub RunTests{
-	my $test_file = $_[0];
+# 	my $test_file = $_[0];
+# 	require ($test_file);
+# 	copy ($test_file, "$RESULTS_OUTPUT_DIR/") || die "Could not copy configuration file '$test_file'!";
 
-# 	chdir($PROJECT_HOME)  or die "Can't chdir to $PROJECT_HOME $!";
-	require ($test_file);
+	my $configHash = $_[0];
 
-# 	CollectHardwareInfo($test_file);
-	copy ($test_file, "$RESULTS_OUTPUT_DIR/");
+	my $KEYWORD 		= $configHash->{'db_config'}->{'KEYWORD'};
+	my $STORAGE_ENGINE	= $configHash->{'db_config'}->{'STORAGE_ENGINE'};
+	my $PRE_TEST_SQL	= $configHash->{'db_config'}->{'PRE_TEST_SQL'}		// "";
+	my $POST_TEST_SQL	= $configHash->{'db_config'}->{'POST_TEST_SQL'}		// "";
+	my $PRE_TEST_OS		= $configHash->{'test_config'}->{'PRE_TEST_OS'}		// "";
+	my $POST_TEST_OS	= $configHash->{'test_config'}->{'POST_TEST_OS'}	// "";
+	my $CLEAR_CACHES	= $configHash->{'command_line'}->{'CLEAR_CACHES'}	// $configHash->{'test_config'}->{'CLEAR_CACHES'}	// 0;
+# 	my $SCALE_FACTOR	= $configHash->{'command_line'}->{'SCALE_FACTOR'}	// $configHash->{'test_config'}->{'SCALE_FACTOR'};
+	my $QUERIES_AT_ONCE	= $configHash->{'command_line'}->{'QUERIES_AT_ONCE'}	// $configHash->{'test_config'}->{'QUERIES_AT_ONCE'}	// 0;
+	
+	if(ref($PRE_TEST_SQL) eq "ARRAY"){
+		$PRE_TEST_SQL	= join(" ", @$PRE_TEST_SQL);
+	}
+	if(ref($POST_TEST_SQL) eq "ARRAY"){	
+		$POST_TEST_SQL	= join(" ", @$POST_TEST_SQL);
+	}
+	if(ref($PRE_TEST_OS) eq "ARRAY"){	
+		$PRE_TEST_OS	= join(" ", @$PRE_TEST_OS);
+	}
+	if(ref($POST_TEST_OS) eq "ARRAY"){	
+		$POST_TEST_OS	= join(" ", @$POST_TEST_OS);
+	}
+
+	if($KEYWORD && !(-e "$RESULTS_OUTPUT_DIR/$KEYWORD")){
+		mkpath("$RESULTS_OUTPUT_DIR/$KEYWORD") or die "Could not make path '$RESULTS_OUTPUT_DIR/$KEYWORD'";
+	}
+
 
 	#Start the results DB server
-	if(!StartMysql($RESULTS_MYSQL_HOME, $RESULTS_DATADIR, $RESULTS_CONFIG_FILE, $RESULTS_SOCKET, $RESULTS_PORT, $RESULTS_STARTUP_PARAMS)){
+	if(!StartMysql($configHash->{'results_db'})){
 		die "Could not start results mysqld process";
 	}
-	my $dbh_res = DBI->connect("DBI:mysql:$RESULTS_DB_NAME;host=$RESULTS_HOST:$RESULTS_PORT;mysql_socket=$RESULTS_SOCKET", "$RESULTS_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
+	my $dbh_res = DBI->connect("DBI:mysql:".$configHash->{'results_db'}->{'DBNAME'}.";host=".$configHash->{'results_db'}->{'HOST'}.":".$configHash->{'results_db'}->{'PORT'}.";mysql_socket=".$configHash->{'results_db'}->{'SOCKET'}, $configHash->{'results_db'}->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
 
-	if($l_GRAPH_HEADING && $GRAPH_HEADING){
-		$l_GRAPH_HEADING .= " vs. ";
-	}
-	$l_GRAPH_HEADING 	.= $GRAPH_HEADING;
+
 
 	if($QUERIES_AT_ONCE){
 		#The startup variables should be set as global if we don't refresh caches between runs
-		$l_MYSQL_HOME		= $MYSQL_HOME;
-		$l_MYSQL_USER		= $MYSQL_USER;
-		$l_CONFIG_FILE		= $CONFIG_FILE;
-		$l_SOCKET		= $SOCKET;
-		$l_PORT			= $PORT;
-		$l_HOST			= $HOST;
-		$l_DATADIR		= $DATADIR;
-		$l_STARTUP_PARAMS	= $STARTUP_PARAMS;
-		$l_DBNAME		= $DBNAME;
-
-		if($USER_IS_ADMIN && $CLEAR_CACHES){
+		
+		if($CLEAR_CACHES){
 			#clear the caches prior the whole test
 			system("echo 1 > /proc/sys/vm/drop_caches");
 		}
-		if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-			if(!StartPostgres($l_MYSQL_HOME, $l_DATADIR, $l_CONFIG_FILE, $l_PORT, $l_STARTUP_PARAMS)){
+		if($configHash->{'db_config'}->{'DBMS'} eq "PostgreSQL"){
+			if(!StartPostgres($configHash->{'db_config'})){
 				die "Could not start PostgreSQL process";
 			}
 		}else{
-			if(!StartMysql($l_MYSQL_HOME, $l_DATADIR, $l_CONFIG_FILE, $l_SOCKET, $l_PORT, $l_STARTUP_PARAMS)){
+			if(!StartMysql($configHash->{'db_config'})){
 				die "Could not start mysqld process";
 			}
 		}
-		copy ($l_CONFIG_FILE, "$RESULTS_OUTPUT_DIR/$KEYWORD");
+		copy ($configHash->{'db_config'}->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or die "Could not copy file ".$configHash->{'db_config'}->{'CONFIG_FILE'}." to folder '$RESULTS_OUTPUT_DIR/$KEYWORD/'";
 		
 		#Pre-test statements
 		if($PRE_TEST_SQL){
-			ExecuteInShell($DBMS, "$PRE_TEST_SQL", $KEYWORD, "pre_test_sql_results.txt");
+			ExecuteInShell($configHash->{'db_config'}, $PRE_TEST_SQL, "", $KEYWORD, "pre_test_sql_results.txt");
 		}
 
 		if($PRE_TEST_OS){
-			system("$PRE_TEST_OS >$RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
+			system("$PRE_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
 		}
 	}
 
 
-	for (my $i=0; $i < scalar(@configurations); $i++){
-		$l_QUERIES_HOME		= $configurations[$i]{QUERIES_HOME}	// $QUERIES_HOME;
-		$l_MYSQL_HOME		= $configurations[$i]{MYSQL_HOME}	// $MYSQL_HOME;
-		$l_MYSQL_USER		= $configurations[$i]{MYSQL_USER}	// $MYSQL_USER;
-		$l_CONFIG_FILE		= $configurations[$i]{CONFIG_FILE}	// $CONFIG_FILE;
-		$l_SOCKET		= $configurations[$i]{SOCKET}		// $SOCKET;
-		$l_PORT			= $configurations[$i]{PORT}		// $PORT;
-		$l_HOST			= $configurations[$i]{HOST}		// $HOST;
-		$l_DATADIR		= $configurations[$i]{DATADIR}		// $DATADIR;
-		$l_DBNAME		= $configurations[$i]{DBNAME}		// $DBNAME;
-		$l_STARTUP_PARAMS	= $configurations[$i]{STARTUP_PARAMS}	// $STARTUP_PARAMS;
-		$l_QUERY		= $configurations[$i]{QUERY}		// $QUERY;
-		$l_EXPLAIN_QUERY	= $configurations[$i]{EXPLAIN_QUERY}	// $EXPLAIN_QUERY;
-		$l_EXPLAIN		= $configurations[$i]{EXPLAIN}		// $EXPLAIN;
-		$l_TIMEOUT		= $configurations[$i]{TIMEOUT}		// $TIMEOUT;
-		$l_NUM_TESTS		= $configurations[$i]{NUM_TESTS}	// $NUM_TESTS;
-		$l_WARMUP		= $configurations[$i]{WARMUP}		// $WARMUP;
-		$l_WARMUPS_COUNT	= $configurations[$i]{WARMUPS_COUNT}	// $WARMUPS_COUNT;
-		$l_MAX_QUERY_TIME	= $configurations[$i]{MAX_QUERY_TIME}	// $MAX_QUERY_TIME;
-		$l_PRE_RUN_SQL		= $configurations[$i]{PRE_RUN_SQL}	// $PRE_RUN_SQL;
-		$l_POST_RUN_SQL		= $configurations[$i]{POST_RUN_SQL}	// $POST_RUN_SQL;
-		$l_PRE_RUN_OS		= $configurations[$i]{PRE_RUN_OS}	// $PRE_RUN_OS;
-		$l_POST_RUN_OS		= $configurations[$i]{POST_RUN_OS}	// $POST_RUN_OS;
-		$l_CLUSTER_SIZE		= $configurations[$i]{CLUSTER_SIZE}	// $CLUSTER_SIZE;
-		
+	if($GRAPH_HEADING && $configHash->{'db_config'}->{'GRAPH_HEADING'}){
+		$GRAPH_HEADING .= "\\n vs. ";
+	}
+	$GRAPH_HEADING .= $configHash->{'db_config'}->{'GRAPH_HEADING'};
 
-		if(!CheckConfigParams()){
+
+	my $i = 0;
+	my $l_CONFIG_QUERY_HOME = "";
+	foreach my $queryKey ( keys(%{ $configHash->{'queries'} }) ){
+# 		print "\n\n===== key = $queryKey =====\n\n";
+		if($queryKey eq "queries_settings"){
+			#Get the main configuration parameters
+			$l_CONFIG_QUERY_HOME = $configHash->{'queries'}->{$queryKey}->{'QUERIES_HOME'};
+			next;
+		}
+
+		$i++;
+
+		#DB settings
+		my $DBMS_hash = {};
+		$DBMS_hash->{'DBMS'}		= $configHash->{'db_config'}->{'DBMS'};
+		$DBMS_hash->{'DBMS_HOME'}	= $configHash->{'db_config'}->{'DBMS_HOME'};
+		$DBMS_hash->{'DBMS_USER'}	= $configHash->{'db_config'}->{'DBMS_USER'};
+		$DBMS_hash->{'DATADIR'}		= $configHash->{'db_config'}->{'DATADIR'};
+		$DBMS_hash->{'DBNAME'}		= $configHash->{'db_config'}->{'DBNAME'};
+		$DBMS_hash->{'SOCKET'}		= $configHash->{'db_config'}->{'SOCKET'};
+		$DBMS_hash->{'PORT'}		= $configHash->{'db_config'}->{'PORT'};
+		$DBMS_hash->{'HOST'}		= $configHash->{'db_config'}->{'HOST'};
+		$DBMS_hash->{'CONFIG_FILE'}	= $configHash->{'queries'}->{'queries_settings'}->{'CONFIG_FILE'}	// $configHash->{'queries'}->{$queryKey}->{'CONFIG_FILE'}	// $configHash->{'db_config'}->{'CONFIG_FILE'};
+		$DBMS_hash->{'TMPDIR'}		= $configHash->{'queries'}->{$queryKey}->{'TMPDIR'}			// $configHash->{'db_config'}->{'TMPDIR'}			// "";
+		$DBMS_hash->{'STARTUP_PARAMS'}	= $configHash->{'queries'}->{$queryKey}->{'STARTUP_PARAMS'}		// $configHash->{'db_config'}->{'STARTUP_PARAMS'};
+		my $l_PRE_RUN_SQL		= $configHash->{'queries'}->{$queryKey}->{'PRE_RUN_SQL'}		// $configHash->{'db_config'}->{'PRE_RUN_SQL'}			// "";
+		my $l_POST_RUN_SQL		= $configHash->{'queries'}->{$queryKey}->{'POST_RUN_SQL'}		// $configHash->{'db_config'}->{'POST_RUN_SQL'}			// "";
+
+		#query settings
+		my $l_QUERIES_HOME	= $configHash->{'command_line'}->{'QUERIES_HOME'} 		// $l_CONFIG_QUERY_HOME	// $configHash->{'test_config'}->{'QUERIES_HOME'};
+		my $l_QUERY		= $configHash->{'queries'}->{$queryKey}->{'QUERY'};
+		my $l_EXPLAIN_QUERY	= $configHash->{'queries'}->{$queryKey}->{'EXPLAIN_QUERY'}	// "";
+		
+		#test settings
+		my $l_RUN		= $configHash->{'command_line'}->{'RUN'}		// $configHash->{'queries'}->{$queryKey}->{'RUN'}		// $configHash->{'test_config'}->{'RUN'}		// 0;
+		my $l_EXPLAIN		= $configHash->{'command_line'}->{'EXPLAIN'}		// $configHash->{'queries'}->{$queryKey}->{'EXPLAIN'}		// $configHash->{'test_config'}->{'EXPLAIN'}		// 0;
+		my $l_TIMEOUT		= $configHash->{'command_line'}->{'TIMEOUT'}		// $configHash->{'queries'}->{$queryKey}->{'TIMEOUT'}		// $configHash->{'test_config'}->{'TIMEOUT'};
+		my $l_NUM_TESTS		= $configHash->{'command_line'}->{'NUM_TESTS'}		// $configHash->{'queries'}->{$queryKey}->{'NUM_TESTS'}		// $configHash->{'test_config'}->{'NUM_TESTS'};
+		my $l_MAX_SKIPPED_TESTS	= $configHash->{'command_line'}->{'MAX_SKIPPED_TESTS'}	// $configHash->{'queries'}->{$queryKey}->{'MAX_SKIPPED_TESTS'}	// $configHash->{'test_config'}->{'MAX_SKIPPED_TESTS'};
+		my $l_WARMUP		= $configHash->{'command_line'}->{'WARMUP'}		// $configHash->{'queries'}->{$queryKey}->{'WARMUP'}		// $configHash->{'test_config'}->{'WARMUP'};
+		my $l_WARMUPS_COUNT	= $configHash->{'command_line'}->{'WARMUPS_COUNT'}	// $configHash->{'queries'}->{$queryKey}->{'WARMUPS_COUNT'}	// $configHash->{'test_config'}->{'WARMUPS_COUNT'};
+		my $l_MAX_QUERY_TIME	= $configHash->{'command_line'}->{'MAX_QUERY_TIME'}	// $configHash->{'queries'}->{$queryKey}->{'MAX_QUERY_TIME'}	// $configHash->{'test_config'}->{'MAX_QUERY_TIME'};
+		my $l_CLUSTER_SIZE	= $configHash->{'command_line'}->{'CLUSTER_SIZE'}	// $configHash->{'queries'}->{$queryKey}->{'CLUSTER_SIZE'}	// $configHash->{'test_config'}->{'CLUSTER_SIZE'};
+		my $l_PRE_RUN_OS	= $configHash->{'command_line'}->{'PRE_RUN_OS'}		// $configHash->{'queries'}->{$queryKey}->{'PRE_RUN_OS'}	// $configHash->{'test_config'}->{'PRE_RUN_OS'}		// "";
+		my $l_POST_RUN_OS	= $configHash->{'command_line'}->{'POST_RUN_OS'}	// $configHash->{'queries'}->{$queryKey}->{'POST_RUN_OS'}	// $configHash->{'test_config'}->{'POST_RUN_OS'}	// "";
+		my $l_OS_STATS_INTERVAL	= $configHash->{'command_line'}->{'OS_STATS_INTERVAL'}	// $configHash->{'queries'}->{$queryKey}->{'OS_STATS_INTERVAL'}	// $configHash->{'test_config'}->{'OS_STATS_INTERVAL'}	// 1;
+	
+# 		$l_QUERIES_HOME 	=~ s/\$SCALE_FACTOR/$SCALE_FACTOR/g;
+# 		$DBMS_hash->{'DATADIR'}	=~ s/\$SCALE_FACTOR/$SCALE_FACTOR/g;
+
+		if(ref($l_PRE_RUN_SQL) eq "ARRAY"){
+			$l_PRE_RUN_SQL 	= join(" ", @$l_PRE_RUN_SQL);
+		}
+		if(ref($l_POST_RUN_SQL) eq "ARRAY"){
+			$l_POST_RUN_SQL = join(" ", @$l_POST_RUN_SQL);
+		}
+		if(ref($l_PRE_RUN_OS) eq "ARRAY"){
+			$l_PRE_RUN_OS 	= join(" ", @$l_PRE_RUN_OS);
+		}
+		if(ref($l_POST_RUN_OS) eq "ARRAY"){
+			$l_POST_RUN_OS 	= join(" ", @$l_POST_RUN_OS);
+		}
+
+
+		if(!CheckConfigParams($configHash)){
 			exit;
 		}
 
 		#Read the passed file
 		my @run_stmts;
-		if($RUN){
+		if($l_RUN){
 			$/ = ';';
 			open FH, "< $l_QUERIES_HOME/$l_QUERY";
 			while (<FH>) {
@@ -927,45 +1045,47 @@ sub RunTests{
 		my $queryStartTime	= time;
 		my @queryResults;
 		my $j 			= 0;
+		my $skippedTestsCount	= 0;
 		
 		my $test_id = time; #This will be the ID of the test into the results DB
 		my $test_comments = ""; #If any comments arise during the test they will be stored into the database
-
+		my %GlobalExplainResults; # a hash with explain string as a key and the fastest running query for that explain as value
 		
 
 		while (!$mainClusterAvg){
 			$j ++;
-			my $noMoreTests = 0;
+			my $noMoreTests 	= 0;
+			my $skipCurrentRun 	= 0;
 
 			
 			if(!$QUERIES_AT_ONCE){
 				#start mysql
-				if($USER_IS_ADMIN && $CLEAR_CACHES){
+				if($CLEAR_CACHES){
 					#clear the caches prior the whole test
 					system("echo 1 > /proc/sys/vm/drop_caches");
 				}
 
-				if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-					if(!StartPostgres($l_MYSQL_HOME, $l_DATADIR, $l_CONFIG_FILE, $l_PORT, $l_STARTUP_PARAMS)){
+				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+					if(!StartPostgres($DBMS_hash)){
 						die "Could not start mysqld process";
 					}
 				}else{
-					if(!StartMysql($l_MYSQL_HOME, $l_DATADIR, $l_CONFIG_FILE, $l_SOCKET, $l_PORT, $l_STARTUP_PARAMS)){
+					if(!StartMysql($DBMS_hash)){
 						die "Could not start mysqld process";
 					}
 				}
-				copy ($l_CONFIG_FILE, "$RESULTS_OUTPUT_DIR/$KEYWORD");
+				copy ($DBMS_hash->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or die "Could not copy config file '".$DBMS_hash->{'CONFIG_FILE'}."' to directory '$RESULTS_OUTPUT_DIR/$KEYWORD/'";
 
 				$warmed_up = 0;
 
 				#if that's the first run, perform the pre-test statements
 				if($i == 0 && $j == 1){
 					if($PRE_TEST_SQL){
-						ExecuteInShell($DBMS, "$PRE_TEST_SQL", $KEYWORD, "pre_test_sql_results.txt");
+						ExecuteInShell($DBMS_hash, $PRE_TEST_SQL, "", $KEYWORD, "pre_test_sql_results.txt");
 					}
 
 					if($PRE_TEST_OS){
-						system("$PRE_TEST_OS >$RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
+						system("$PRE_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
 					}
 				}
 
@@ -974,22 +1094,22 @@ sub RunTests{
 
 
 			if($j == 1){
-				my $version = GetServerVersion($DBMS, $l_DBNAME, $l_HOST, $l_PORT, $l_SOCKET, $l_MYSQL_USER);
+				my $version = GetServerVersion($DBMS_hash);
 				LogStartTestResult($dbh_res, $test_id, $l_QUERY, $RESULTS_OUTPUT_DIR, "$KEYWORD/pre_test_sql_results.txt", $KEYWORD, $STORAGE_ENGINE, $SCALE_FACTOR, $version);
 			}
 
 
 
 			#Run
-			if($RUN){
+			if($l_RUN){
 				if(!$dry_run){
 					my $elapsedTime = 0;
 					my $dbh;
 
-					if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
+					if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
 						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 					} else {
-						$dbh = DBI->connect("DBI:mysql:$l_DBNAME;host=$l_HOST:$l_PORT;mysql_socket=$l_SOCKET", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+						$dbh = DBI->connect("DBI:mysql:".$DBMS_hash->{'DBNAME'}.";host=".$DBMS_hash->{'HOST'}.":".$DBMS_hash->{'PORT'}.";mysql_socket=".$DBMS_hash->{'SOCKET'}, $DBMS_hash->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
 						$dbh->{'mysql_auto_reconnect'} = 1;
 
 						if($l_TIMEOUT > 0){
@@ -999,8 +1119,8 @@ sub RunTests{
 
 					#Pre-run statements
 					my $preRunSQLFilename = "pre_run_sql_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-					if($l_PRE_RUN_SQL){
-						ExecuteInShell($DBMS, $l_PRE_RUN_SQL, $KEYWORD, $preRunSQLFilename);
+					if($l_PRE_RUN_SQL){						
+						ExecuteInShell($DBMS_hash, $l_PRE_RUN_SQL, "", $KEYWORD, $preRunSQLFilename);
 					}
 
 					my $preRunOSFilename = "pre_run_os_q_" . $l_QUERY. "_no_$j" . "_results.txt";
@@ -1011,121 +1131,146 @@ sub RunTests{
 
 
 
-					
-					############ WARMUP #############
-					if($l_WARMUP && !$warmed_up){
-						for (my $w = 0; $w < $l_WARMUPS_COUNT; $w ++){
-							PrintMsg("\n-------- WARMUP run #".($w+1)." for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
-							LogStartRunResult($dbh_res, $test_id, $w, 1, "", "");
+					############ EXPLAIN #############
+					my $explainFilename 	= "";
+					my $executionPlan	= "no_explain";
+					if($l_EXPLAIN && $l_EXPLAIN_QUERY){
+						$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
+						ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
 
-							if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-								$elapsedTime = ExecuteFileInShell($DBMS, "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_warmup_output.txt");
-							} else {
-								$elapsedTime = ExecuteWithTimeout($DBMS, $dbh, \@run_stmts, $l_TIMEOUT);
-							}
-							print "Warmup! Time: $elapsedTime";
 
-							my $warmup_comments = "";
-							if($elapsedTime == -1){
-								$warmup_comments = "Timeout exceeded";
+# 						my $l_ANALYZE_EXPLAIN = 0; # TODO: put this into the configuration file
+# 						if($l_ANALYZE_EXPLAIN){
+							#Analyze the explain results and skip test if that's not the fastest execution plan
+							if($DBMS_hash->{'DBMS'} ne "PostgreSQL"){
+								# TODO: Make this algorithm for PostgreSQL if needed
+								$executionPlan = AnalyzeExplain("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", \%GlobalExplainResults);
+								if($executionPlan eq "" && !$QUERIES_AT_ONCE){
+									#skip this run
+									$skipCurrentRun = 1;
+									$skippedTestsCount ++;
+									
+									#adjust $j since there is no actual test performed
+									$j--;
+
+									if($skippedTestsCount >= $l_MAX_SKIPPED_TESTS){
+										$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
+										$noMoreTests = 1;
+									}
+								}
 							}
-							LogEndRunResult($dbh_res, $test_id, $w, 1, $elapsedTime, "", $warmup_comments);
-						}
-						$warmed_up = 1;
+# 						}
 					}
 					#####################################
 
-					
-					my $explainFilename = "";
-					if($l_EXPLAIN){
-						$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
-					}
-					LogStartRunResult($dbh_res, $test_id, $j, 0, $explainFilename, $preRunSQLFilename);
 
-					
+					if(!$skipCurrentRun){
 
-########				############ ACTUAL RUN #############
-					PrintMsg("\n-------- Test run #$j for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
-					
-					my $pid = fork();
-					if (not defined $pid) {
-						die "Could not fork. Resources not avilable.\n";
-					} elsif ($pid == 0) {
-						#CHILD
-						$dbh->{InactiveDestroy} = 1;
-						$dbh_res->{InactiveDestroy} = 1;
-						CollectStatistics_OS($OS_STATS_INTERVAL, 1, 1, 1, $KEYWORD, $l_QUERY, $j);
-					} else {
-						#PARENT";
-						if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-							$elapsedTime = ExecuteFileInShell($DBMS, "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_output.txt");
+						############ WARMUP #############
+						if($l_WARMUP && !$warmed_up){
+							for (my $w = 0; $w < $l_WARMUPS_COUNT; $w ++){
+								PrintMsg("\n-------- WARMUP run #".($w+1)." for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
+								LogStartRunResult($dbh_res, $test_id, $w, 1, "", "");
+
+								if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+									$elapsedTime = ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_warmup_output.txt");
+								} else {
+									$elapsedTime = ExecuteWithTimeout($DBMS_hash->{'DBMS'}, $dbh, \@run_stmts, $l_TIMEOUT);
+								}
+								print "Warmup! Time: $elapsedTime";
+
+								my $warmup_comments = "";
+								if($elapsedTime == -1){
+									$warmup_comments = "Timeout exceeded";
+								}
+								LogEndRunResult($dbh_res, $test_id, $w, 1, $elapsedTime, "", $warmup_comments);
+							}
+							$warmed_up = 1;
+						}
+						#####################################
+
+		
+						LogStartRunResult($dbh_res, $test_id, $j, 0, $explainFilename, $preRunSQLFilename);
+
+
+	########				############ ACTUAL RUN #############
+						PrintMsg("\n-------- Test run #$j for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
+						
+						my $pid = fork();
+						if (not defined $pid) {
+							die "Could not fork. Resources not avilable.\n";
+						} elsif ($pid == 0) {
+							#CHILD
+							$dbh->{InactiveDestroy} = 1;
+							$dbh_res->{InactiveDestroy} = 1;
+							CollectStatistics_OS($l_OS_STATS_INTERVAL, 1, 1, 1, $KEYWORD, $l_QUERY, $j);
 						} else {
-							$elapsedTime = ExecuteWithTimeout($DBMS, $dbh, \@run_stmts, $l_TIMEOUT);
-							$dbh->disconnect();
+							#PARENT";
+							if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+								$elapsedTime = ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_output.txt");
+							} else {
+								$elapsedTime = ExecuteWithTimeout($DBMS_hash->{'DBMS'}, $dbh, \@run_stmts, $l_TIMEOUT);
+								$dbh->disconnect();
+							}
+							
+							kill("KILL", $pid);
 						}
-						
-						kill("KILL", $pid);
-					}
-########				#####################################
+	########				#####################################
 
 
-					print "Time elapsed: $elapsedTime";
-					push(@queryResults, $elapsedTime);
-					@queryResults = sort(@queryResults);
+						print "Time elapsed: $elapsedTime";
 
 
-					#Explain
-					if($l_EXPLAIN){
-						ExecuteFileInShell($DBMS, "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
-					}
+						#Push the elapsed time into the hash with different execution plans					
+						push(@{ $GlobalExplainResults{$executionPlan} }, $elapsedTime);
 
 
 
-
-					#Post-run statements
-					my $postRunSQLFilename = "post_run_sql_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-					if($l_POST_RUN_SQL){
-						ExecuteInShell($DBMS, "$l_POST_RUN_SQL", $KEYWORD, $postRunSQLFilename);
-					}
-
-
-					my $postRunOSFilename = "post_run_os_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-					if($l_POST_RUN_OS){
-						system("$l_POST_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$postRunOSFilename");
-					}
+						#Post-run statements
+						my $postRunSQLFilename = "post_run_sql_q_" . $l_QUERY. "_no_$j" . "_results.txt";
+						if($l_POST_RUN_SQL){
+							ExecuteInShell($DBMS_hash, $l_POST_RUN_SQL, "", $KEYWORD, $postRunSQLFilename);
+						}
 
 
-					my $run_comments = "";
-					if($elapsedTime == -1){
-						$run_comments = "Timeout exceeded";
-					}
-
-					LogEndRunResult($dbh_res, $test_id, $j, 0, $elapsedTime, $postRunSQLFilename, $run_comments);
+						my $postRunOSFilename = "post_run_os_q_" . $l_QUERY. "_no_$j" . "_results.txt";
+						if($l_POST_RUN_OS){
+							system("$l_POST_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$postRunOSFilename");
+						}
 
 
+						my $run_comments = "";
+						if($elapsedTime == -1){
+							$run_comments = "Timeout exceeded";
+						}
 
-					if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
-						($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
-						#There is no time for new test. Get the best cluster and show a warning
-						$mainClusterAvg = GetBestCluster(\@queryResults, $l_CLUSTER_SIZE, 1);
+						LogEndRunResult($dbh_res, $test_id, $j, 0, $elapsedTime, $postRunSQLFilename, $run_comments);
 
-						if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
-							PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: $mainClusterAvg\n\n");
+
+
+						#Check the results. If time limit is reached or target queries run is reached, stop the test for that query
+						if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
+							($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
+							#There is no time for new test. Get the best cluster and show a warning
+							$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
+
+							if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
+								PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: $mainClusterAvg\n\n");
+							}else{
+								PrintMsg("\n\n No time for next run. Getting the best result available: $mainClusterAvg\n\n");
+								$test_comments .= "No time for next run. Getting the best result available.\n";
+							}
+							$noMoreTests = 1;
 						}else{
-							PrintMsg("\n\n No time for next run. Getting the best result available: $mainClusterAvg\n\n");
-							$test_comments .= "No time for next run. Getting the best result available.\n";
+							#Hide the results if there are more tests to be run. We will stop if we complete NUM_TESTS or exceed time limit
+							if($l_NUM_TESTS != 0){
+								$mainClusterAvg = 0;
+							}else{
+								#There is enough time to perform another test
+								$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 0);
+							}
 						}
-						
-						$noMoreTests = 1;
-					}else{
-						#Hide the results if there are more tests to be run. We will stop if we complete NUM_TESTS or exceed time limit
-						if($l_NUM_TESTS != 0){
-							$mainClusterAvg = 0;
-						}else{
-							#There is enough time to perform another test
-							$mainClusterAvg = GetBestCluster(\@queryResults, $l_CLUSTER_SIZE, 0);
-						}
-					}
+					}#if(!$skipCurrentRun)
 
 				}
 			}
@@ -1134,9 +1279,9 @@ sub RunTests{
 			#stop mysql
 			if(!$QUERIES_AT_ONCE){
 				#if that's the last test and last run, perform the post-test before stopping mysqld
-				if($noMoreTests && $i+1 == scalar(@configurations)){
+				if($noMoreTests && $i+1 == scalar(keys %{ $configHash->{'queries'} })){
 					if($POST_TEST_SQL){
-						ExecuteInShell($DBMS, "$POST_TEST_SQL", $KEYWORD, "post_test_sql_results.txt");
+						ExecuteInShell($DBMS_hash, $POST_TEST_SQL, "", $KEYWORD, "post_test_sql_results.txt");
 					}
 
 					if($POST_TEST_OS){
@@ -1144,12 +1289,12 @@ sub RunTests{
 					}
 				}
 
-				if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-					if(!StopPostgres($l_MYSQL_HOME, $l_DATADIR, $l_PORT)){
+				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+					if(!StopPostgres($DBMS_hash)){
 						die "Could not stop postgres process";
 					}
 				}else{
-					if(!StopMysql($l_MYSQL_HOME, $l_SOCKET, $l_PORT, $l_MYSQL_USER)){
+					if(!StopMysql($DBMS_hash)){
 						die "Could not stop mysqld process";
 					}
 				}
@@ -1161,12 +1306,12 @@ sub RunTests{
 			}
 		}#while
 
-		print "\nRESULT FOR QUERY: $mainClusterAvg";
+		PrintMsg("\nRESULT FOR QUERY: $mainClusterAvg");
 		LogEndTestResult($dbh_res, $test_id, $mainClusterAvg, "$KEYWORD/post_test_sql_results.txt", $test_comments);
 		
 		
 		#Plot the graph
-		PlotGraph($dbh_res, $l_GRAPH_HEADING);
+		PlotGraph($dbh_res, $GRAPH_HEADING);
 
 		sleep 1; #wait at least a second here to avoid two tests in one second that coauses PRIMARY KEY violation.
 		
@@ -1176,19 +1321,19 @@ sub RunTests{
 	if($QUERIES_AT_ONCE){
 		#Post-test statements
 		if($POST_TEST_SQL){
-			ExecuteInShell($DBMS, "$POST_TEST_SQL", $KEYWORD, "post_test_sql_results.txt");
+			ExecuteInShell($configHash->{'db_config'}, $POST_TEST_SQL, "", $KEYWORD, "post_test_sql_results.txt");
 		}
 
 		if($POST_TEST_OS){
 			system("$POST_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/post_test_os_results.txt");
 		}
 
-		if($DBMS eq "postgre" || $DBMS eq "PostgreSQL"){
-			if(!StopPostgres($l_MYSQL_HOME, $l_DATADIR, $l_PORT)){
+		if($configHash->{'db_config'}->{'DBMS'} eq "PostgreSQL"){
+			if(!StopPostgres($configHash->{'db_config'})){
 				die "Could not start postgres process";
 			}
 		}else{
-			if(!StopMysql($l_MYSQL_HOME, $l_SOCKET, $l_PORT, $l_MYSQL_USER)){
+			if(!StopMysql($configHash->{'db_config'})){
 				die "Could not stop mysqld process";
 			}
 		}
@@ -1196,7 +1341,8 @@ sub RunTests{
 
 	#Stop results DB server
 	$dbh_res->disconnect();
-	if(!StopMysql($RESULTS_MYSQL_HOME, $RESULTS_SOCKET, $RESULTS_PORT, $RESULTS_MYSQL_USER)){
+
+	if(!StopMysql($configHash->{'results_db'})){
 		die "Could not stop Results' mysqld process";
 	}
 }
@@ -1210,18 +1356,89 @@ sub PrintMsg{
 }
 
 ######################################## Main program ########################################
+
+my %testingConfiguration;
+my $command_line_hash = {};
+
+GetOptions (	"test|t:s" 			=> \$TEST_FILE,
+		"results-output-dir|r:s"	=> \$RESULTS_OUTPUT_DIR,
+		"dry-run" 			=> \$dry_run,
+		"project-home:s"		=> \$PROJECT_HOME,
+		"datadir-home:s"		=> \$DATADIR_HOME,
+		"queries-home:s"		=> \$QUERIES_HOME,
+		"scale-factor|sf:s"		=> \$SCALE_FACTOR,
+
+		#overriding parameters
+		"CLEAR_CACHES:s"		=> \$command_line_hash->{'CLEAR_CACHES'},
+# 		"SCALE_FACTOR:s"		=> \$command_line_hash->{'SCALE_FACTOR'},
+		"QUERIES_AT_ONCE:s"		=> \$command_line_hash->{'QUERIES_AT_ONCE'},
+		"QUERIES_HOME:s"		=> \$command_line_hash->{'QUERIES_HOME'},
+		"RUN:s" 			=> \$command_line_hash->{'RUN'},
+		"EXPLAIN:s" 			=> \$command_line_hash->{'EXPLAIN'},
+		"TIMEOUT:s" 			=> \$command_line_hash->{'TIMEOUT'},
+		"NUM_TESTS:s" 			=> \$command_line_hash->{'NUM_TESTS'},
+		"MAX_SKIPPED_TESTS:s" 		=> \$command_line_hash->{'MAX_SKIPPED_TESTS'},
+		"WARMUP:s" 			=> \$command_line_hash->{'WARMUP'},
+		"WARMUPS_COUNT:s" 		=> \$command_line_hash->{'WARMUPS_COUNT'},
+		"MAX_QUERY_TIME:s" 		=> \$command_line_hash->{'MAX_QUERY_TIME'},
+		"CLUSTER_SIZE:s" 		=> \$command_line_hash->{'CLUSTER_SIZE'},
+		"PRE_RUN_OS:s" 			=> \$command_line_hash->{'PRE_RUN_OS'},
+		"POST_RUN_OS:s" 		=> \$command_line_hash->{'POST_RUN_OS'},
+		"OS_STATS_INTERVAL:s" 		=> \$command_line_hash->{'OS_STATS_INTERVAL'}
+);
+
+$testingConfiguration{'command_line'} = $command_line_hash;
+
+
 if(!CheckInputParams()){
 	exit;
 }else{
 	CollectHardwareInfo();
 
-	foreach my $file (@test_files){
-		$file = File::Spec->rel2abs($file);
+	
+
+	my $scenarioConfig = ParseConfigFile($TEST_FILE, "ini");	
+
+	if(! -e $scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}){
+		die "Configuration file ".$scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}." does not exist!";
+	}else{
+		$testingConfiguration{'results_db'} = ParseConfigFile($scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}, "equal");
 	}
 
-	foreach my $file (@test_files){
-		RunTests($file);
+	if(! -e $scenarioConfig->{'common'}->{'TEST_CONFIG'}){
+		die "Configuration file ".$scenarioConfig->{'common'}->{'TEST_CONFIG'}." does not exist!";
+	}else{
+		$testingConfiguration{'test_config'} = ParseConfigFile($scenarioConfig->{'common'}->{'TEST_CONFIG'}, "equal");
+	}
+
+
+	while ( my ($key, $value) = each(%{$scenarioConfig}) ) {
+		
+		if($key eq "common"){
+			next;
+		}		
+
+		delete($testingConfiguration{'queries'});
+		delete($testingConfiguration{'db_config'});
+
+		if(! -e $scenarioConfig->{$key}->{'QUERIES_CONFIG'}){
+			die "Configuration file ".$scenarioConfig->{$key}->{'QUERIES_CONFIG'}." does not exist!";
+		}else{
+			$testingConfiguration{'queries'} = ParseConfigFile($scenarioConfig->{$key}->{'QUERIES_CONFIG'}, "ini");
+		}
+
+		if(! -e $scenarioConfig->{$key}->{'DB_CONFIG'}){
+			die "Configuration file ".$scenarioConfig->{$key}->{'DB_CONFIG'}." does not exist!";
+		}else{
+			$testingConfiguration{'db_config'} = ParseConfigFile($scenarioConfig->{$key}->{'DB_CONFIG'}, "ini")->{'db_settings'};
+		}
+
+
+		RunTests(\%testingConfiguration);
 	}
 }
+
+
+
 
 exit;

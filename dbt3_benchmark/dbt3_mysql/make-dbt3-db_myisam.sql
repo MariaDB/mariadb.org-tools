@@ -1,5 +1,7 @@
 DROP DATABASE IF EXISTS dbt3;
 
+SET sql_mode='NO_ENGINE_SUBSTITUTION';
+
 CREATE DATABASE dbt3;
 
 USE dbt3;
@@ -98,14 +100,14 @@ ALTER TABLE lineitem DISABLE KEYS;
 ALTER TABLE nation   DISABLE KEYS;
 ALTER TABLE region   DISABLE KEYS;
 
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/nation.tbl' into table nation fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/region.tbl' into table region fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/supplier.tbl' into table supplier fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/part.tbl' into table part fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/customer.tbl' into table customer fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/orders.tbl' into table orders fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/partsupp.tbl' into table partsupp fields terminated by '|';
-LOAD DATA LOCAL INFILE '/data/benchmarks/dataload/dbt3s1/lineitem.tbl' into table lineitem fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/nation.tbl' into table nation fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/region.tbl' into table region fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/supplier.tbl' into table supplier fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/part.tbl' into table part fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/customer.tbl' into table customer fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/orders.tbl' into table orders fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/partsupp.tbl' into table partsupp fields terminated by '|';
+LOAD DATA INFILE '/backup/benchmarks/dataload/dbt3s30/lineitem.tbl' into table lineitem fields terminated by '|';
 
 ALTER TABLE supplier ENABLE KEYS;
 ALTER TABLE part     ENABLE KEYS;
