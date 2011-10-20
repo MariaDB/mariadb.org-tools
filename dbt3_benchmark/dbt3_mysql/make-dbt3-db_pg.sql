@@ -86,14 +86,14 @@ CREATE TABLE time_statistics (
 
 
 
-COPY nation FROM '/data/benchmarks/dataload/dbt3s1/nation.tbl' USING DELIMITERS '|';
-COPY region FROM '/data/benchmarks/dataload/dbt3s1/region.tbl' USING DELIMITERS '|';
-COPY supplier FROM '/data/benchmarks/dataload/dbt3s1/supplier.tbl' USING DELIMITERS '|';
-COPY part FROM '/data/benchmarks/dataload/dbt3s1/part.tbl' USING DELIMITERS '|';
-COPY customer FROM '/data/benchmarks/dataload/dbt3s1/customer.tbl' USING DELIMITERS '|';
-COPY orders FROM '/data/benchmarks/dataload/dbt3s1/orders.tbl' USING DELIMITERS '|';
-COPY partsupp FROM '/data/benchmarks/dataload/dbt3s1/partsupp.tbl' USING DELIMITERS '|';
-COPY lineitem FROM '/data/benchmarks/dataload/dbt3s1/lineitem.tbl' USING DELIMITERS '|';
+COPY nation FROM '/backup/benchmarks/dataload/dbt3s30/nation.tbl' USING DELIMITERS '|';
+COPY region FROM '/backup/benchmarks/dataload/dbt3s30/region.tbl' USING DELIMITERS '|';
+COPY supplier FROM '/backup/benchmarks/dataload/dbt3s30/supplier.tbl' USING DELIMITERS '|';
+COPY part FROM '/backup/benchmarks/dataload/dbt3s30/part.tbl' USING DELIMITERS '|';
+COPY customer FROM '/backup/benchmarks/dataload/dbt3s30/customer.tbl' USING DELIMITERS '|';
+COPY orders FROM '/backup/benchmarks/dataload/dbt3s30/orders.tbl' USING DELIMITERS '|';
+COPY partsupp FROM '/backup/benchmarks/dataload/dbt3s30/partsupp.tbl' USING DELIMITERS '|';
+COPY lineitem FROM '/backup/benchmarks/dataload/dbt3s30/lineitem.tbl' USING DELIMITERS '|';
 
 
 /*

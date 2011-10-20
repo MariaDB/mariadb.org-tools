@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS test_result (
 	query_name 		VARCHAR(100) NOT NULL,		/*The query that is tested*/
 	start_time		DATETIME,			/*When the test started*/
 	end_time		DATETIME,			/*When the test ended*/
-	elapsed_time 		FLOAT,				/*The elapsed time for the test. It is calculated between the 3 best results and with a scoring algorithm in launcher.pl. If the query timed out, the value will be -1*/
+	min_elapsed_time 	FLOAT,				/*The minimal elapsed time for the test. If the query has timed out, the value will be -1*/
+	max_elapsed_time	FLOAT,				/*The maximal elapsed time for the test. If the query has timed out, the value will be -1*/
+	avg_elapsed_time	FLOAT,				/*The average elapsed time for the test. If the query has timed out, the value will be -1*/
 	results_output_dir	VARCHAR(255),			/*Where the results of the test are stored on the file system. This dir contains files with OS statistics and pre/post run sql/os commands results*/
 	pre_test_sql		VARCHAR(255),			/*The filename that pre test sql results are stored into the results_output_dir*/
 	post_test_sql		VARCHAR(255),			/*The filename that post test sql results are stored into the results_output_dir*/	
@@ -34,4 +36,3 @@ CREATE TABLE IF NOT EXISTS query_result(
 	comments	TEXT,								/*Any comments during the run. Example: Query timed out*/
 	PRIMARY KEY (test_id, run_id, is_warmup)
 ) engine=innodb;
-

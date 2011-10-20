@@ -9,6 +9,7 @@ use File::Copy;
 use Config::Auto;
 use Data::Dumper;
 use DBI;
+use IPC::Open3;
 
 
 #input parameter variables
@@ -99,6 +100,16 @@ sub CheckConfigParams{
 	my $warnings 	= "";
 	
 	#Errors
+	if(!$configHash->{'test_config'}->{'MIN_MAX_OUT_OF_N'} && !$configHash->{'test_config'}->{'ANALYZE_EXPLAIN'} && !$configHash->{'test_config'}->{'SIMPLE_AVERAGE'}){
+		$errors .= "### ERROR: At least one of the following should be set to true in the test configuration: MIN_MAX_OUT_OF_N, ANALYZE_EXPLAIN or SIMPLE_AVERAGE \n";
+	}elsif($configHash->{'test_config'}->{'MIN_MAX_OUT_OF_N'} + $configHash->{'test_config'}->{'ANALYZE_EXPLAIN'} + $configHash->{'test_config'}->{'SIMPLE_AVERAGE'} > 1){
+		$errors .= "### ERROR: Only one of the three options should be set: MIN_MAX_OUT_OF_N or ANALYZE_EXPLAIN or SIMPLE_AVERAGE\n";
+	}elsif($configHash->{'test_config'}->{'MIN_MAX_OUT_OF_N'} && !$configHash->{'test_config'}->{'NUM_TESTS'}){
+		$errors .= "### ERROR: When MIN_MAX_OUT_OF_N is set to true, then NUM_TESTS should be greater than 0 \n";
+	}elsif($configHash->{'test_config'}->{'SIMPLE_AVERAGE'} && !$configHash->{'test_config'}->{'NUM_TESTS'}){
+		$errors .= "### ERROR: When SIMPLE_AVERAGE is set to true, then NUM_TESTS should be greater than 0 \n";
+	}
+
 	if(!$configHash->{'queries'}->{'queries_settings'}->{'QUERIES_HOME'}){
 		$errors .= "### ERROR: Config parameter 'QUERIES_HOME' is missing. \n";
 	}
@@ -107,7 +118,7 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'DBMS_HOME' is missing. \n";
 	}else{
 		if(! -e $configHash->{'db_config'}->{'DBMS_HOME'}){
-			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DBMS_HOME'}."' for parameter DBMS_HOME does not exist";
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DBMS_HOME'}."' for parameter DBMS_HOME does not exist \n";
 		}
 	}
 
@@ -131,7 +142,7 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'DATADIR' is missing. \n";
 	}else{
 		if(! -e $configHash->{'db_config'}->{'DATADIR'}){
-			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DATADIR'}."' for parameter DATADIR does not exist";
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'DATADIR'}."' for parameter DATADIR does not exist \n";
 		}
 	}
 
@@ -139,7 +150,7 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'TMPDIR' is missing. \n";
 	}else{
 		if(! -e $configHash->{'db_config'}->{'TMPDIR'}){
-			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'TMPDIR'}."' for parameter TMPDIR does not exist";
+			$errors .= "### ERROR: Directory '".$configHash->{'db_config'}->{'TMPDIR'}."' for parameter TMPDIR does not exist \n";
 		}
 	}
 
@@ -165,7 +176,7 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'DBMS_HOME' for the results DB is missing. \n";
 	}else{
 		if(! -e $configHash->{'results_db'}->{'DBMS_HOME'}){
-			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DBMS_HOME'}."' for parameter DBMS_HOME for the results DB does not exist";
+			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DBMS_HOME'}."' for parameter DBMS_HOME for the results DB does not exist \n";
 		}
 	}
 
@@ -177,7 +188,7 @@ sub CheckConfigParams{
 		$errors .= "### ERROR: Config parameter 'DATADIR' for the results DB is missing. \n";
 	}else{
 		if(! -e $configHash->{'results_db'}->{'DATADIR'}){
-			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DATADIR'}."' for parameter DATADIR for the results DB does not exist";
+			$errors .= "### ERROR: Directory '".$configHash->{'results_db'}->{'DATADIR'}."' for parameter DATADIR for the results DB does not exist \n";
 		}
 	}
 
@@ -672,7 +683,6 @@ sub GetBestExplainCluster{
 }
 
 
-
 #Analyzes explain results and returns the explain string as a key for the %GlobalExplainResults hash.
 # Parameters:
 #	The first parameter is the file that contians the explain results
@@ -740,6 +750,64 @@ sub AnalyzeExplain{
 }
 
 
+sub GetMinMax{
+	my ($explainResultsRef) = @_;
+	
+	my $retVal = {'min' => 'null', 'max' => 'null', 'avg' => 'null'};
+	my $min = 10000000;
+	my $max = 0;
+	while (my ($key, $value) = each(%{$explainResultsRef})){
+		foreach my $tmp (@{ $value }){
+			if($tmp == -1){
+				if($min == 10000000){
+					$min = $tmp;
+				}
+				if($max == 0){
+					$max = $tmp;
+				}
+			}else{
+				if($tmp < $min || $min == -1){
+					$min = $tmp;
+				}
+
+				if($tmp > $max && $max != -1){
+					$max = $tmp;
+				}
+			}
+		}
+	}
+
+	$retVal->{'min'} = $min;
+	$retVal->{'max'} = $max;
+	return $retVal;
+}
+
+
+sub GetSimpleAverage{
+	my ($explainResultsRef) = @_;
+
+	my $retVal 	= -1;
+	my $sum 	= 0;
+	my $count 	= 0;
+	while (my ($key, $value) = each(%{$explainResultsRef})){
+		foreach my $tmp (@{ $value }){
+			if($tmp == -1){
+				$retVal = -1;
+				last;
+			}else{
+				$sum += $tmp;
+				$count ++;
+			}
+		}
+	}	
+	if($count > 0){
+		$retVal = $sum / $count;
+	}
+
+	return $retVal;
+}
+
+
 sub LogStartTestResult{
 	my ($dbh, $test_id, $query_name, $results_output_dir, $pre_test_sql, $keyword, $storage_engine, $scale_factor, $version) = @_;
 
@@ -749,9 +817,9 @@ sub LogStartTestResult{
 
 
 sub LogEndTestResult{
-	my ($dbh, $test_id, $elapsed_time, $post_test_sql, $test_comments) = @_;
+	my ($dbh, $test_id, $min_elapsed_time, $max_elapsed_time, $avg_elapsed_time, $post_test_sql, $test_comments) = @_;
 	$test_comments =~ s/\'/\\\'/g;
-	$dbh->do("update test_result set end_time = now(), elapsed_time = $elapsed_time, post_test_sql = '$post_test_sql', comments = '$test_comments' where test_id = $test_id");
+	$dbh->do("update test_result set end_time = now(), min_elapsed_time = $min_elapsed_time, max_elapsed_time = $max_elapsed_time, avg_elapsed_time = $avg_elapsed_time, post_test_sql = '$post_test_sql', comments = '$test_comments' where test_id = $test_id");
 }
 
 
@@ -802,25 +870,51 @@ sub GetServerVersion{
 }
 
 
+sub ClearTheCaches{
+	system ("free -m");
+	print "\nClearing the caches...\n";
+# 	system ("sync ; echo 3 | sudo tee /proc/sys/vm/drop_caches");
+	system ("sudo /sbin/sysctl vm.drop_caches=3");
+	system ("free -m");
+}
+
+
 sub PlotGraph{
 	my ($dbh, $graph_heading) = @_;
 
 	my $plotFiles		= "";
 	my $query_name		= "";
-	my $elapsed_time 	= "";
+	my $min_elapsed_time 	= "";
+	my $max_elapsed_time 	= "";
+	my $avg_elapsed_time 	= "";
 	my $version		= "";
 	my $keyword		= "";
 	my $storage_engine	= "";
 
 	open (RESDAT, ">$RESULTS_OUTPUT_DIR/results.dat");
 
-	my $sth = $dbh->prepare("select query_name, elapsed_time, version, keyword, storage_engine from test_result where results_output_dir = '$RESULTS_OUTPUT_DIR'");
+	my $sth = $dbh->prepare("SELECT query_name, min_elapsed_time, max_elapsed_time, avg_elapsed_time, version, keyword, storage_engine FROM test_result WHERE results_output_dir = '$RESULTS_OUTPUT_DIR'");
 	$sth->execute();
 	my $maxTime = 1;
 	my $i = 0;
+	my $baseHash = {};
+
+
 	while(my $ref = $sth->fetchrow_hashref()) {
-		$query_name	= $ref->{'query_name'};
-		$elapsed_time 	= $ref->{'elapsed_time'};
+		$query_name		= $ref->{'query_name'};
+		$min_elapsed_time 	= $ref->{'min_elapsed_time'}	// "";
+		$max_elapsed_time 	= $ref->{'max_elapsed_time'}	// "";
+		$avg_elapsed_time 	= $ref->{'avg_elapsed_time'}	// "";
+
+		if(!exists $baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
+			$baseHash->{$query_name."_min"} = $min_elapsed_time;
+		}
+		if(!exists $baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
+			$baseHash->{$query_name."_max"} = $max_elapsed_time;
+		}
+		if(!exists $baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
+			$baseHash->{$query_name."_avg"} = $avg_elapsed_time;
+		}
 		
 		if(	$version 	ne $ref->{'version'} || 
 			$keyword 	ne $ref->{'keyword'} ||
@@ -830,19 +924,73 @@ sub PlotGraph{
 			$keyword	= $ref->{'keyword'};
 			$storage_engine	= $ref->{'storage_engine'};
 			print RESDAT "\n\n#Version:$version; StorageEngine:$storage_engine; Keyword: $keyword\n";
-			$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index " . ($i++) . " using 2:xtic(1) ti \"$keyword\",";
+			
+			
+			my $j = 2; #start from the second column
+			if($min_elapsed_time ne ""){
+				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword min\",";
+			}
+			if($max_elapsed_time ne ""){
+				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword max\",";
+			}
+			if($avg_elapsed_time ne ""){
+				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword avg\",";
+			}
+			$i++;
 		}
 
 		
-		if($elapsed_time > $maxTime){
-			$maxTime = $elapsed_time;
+		if($min_elapsed_time ne "" && $min_elapsed_time > $maxTime){
+			$maxTime = $min_elapsed_time;
+		}
+
+		if($avg_elapsed_time ne "" && $avg_elapsed_time > $maxTime){
+			$maxTime = $avg_elapsed_time;
+		}
+
+		if($max_elapsed_time ne "" && $max_elapsed_time > $maxTime){
+			$maxTime = $max_elapsed_time;
 		}
 
 		#if query timed out
-		if($elapsed_time == -1){
-			$elapsed_time = 100000;
+		if($min_elapsed_time ne "" && $min_elapsed_time == -1){
+			$min_elapsed_time = 100000;
 		}
-		print RESDAT "$query_name\t$elapsed_time\n";
+		if($avg_elapsed_time ne "" && $avg_elapsed_time == -1){
+			$avg_elapsed_time = 100000;
+		}
+		if($max_elapsed_time ne "" && $max_elapsed_time == -1){
+			$max_elapsed_time = 100000;
+		}
+
+		my $str = "";
+		if($min_elapsed_time ne ""){ $str .= $min_elapsed_time."\t";}
+		if($max_elapsed_time ne ""){ $str .= $max_elapsed_time."\t";}
+		if($avg_elapsed_time ne ""){ $str .= $avg_elapsed_time."\t";}
+
+		if($baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
+			if($baseHash->{$query_name."_min"} == 100000 || $min_elapsed_time == 100000){
+				$str .= "\t";
+			}else{
+				$str .= ($min_elapsed_time / $baseHash->{$query_name."_min"}) . "\t";
+			}
+		}
+		if($baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
+			if($baseHash->{$query_name."_max"} == 100000 || $max_elapsed_time == 100000){
+				$str .= "\t";
+			}else{
+				$str .= ($max_elapsed_time / $baseHash->{$query_name."_max"}) . "\t";
+			}
+		}
+		if($baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
+			if($baseHash->{$query_name."_avg"} == 100000 || $avg_elapsed_time == 100000){
+				$str .= "\t";
+			}else{
+				$str .= ($avg_elapsed_time / $baseHash->{$query_name."_avg"});
+			}
+		}
+
+		print RESDAT "$query_name\t$str\n";
 	}
 	$sth->finish();
 
@@ -855,7 +1003,7 @@ sub PlotGraph{
 
 	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt");
 	#print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
-	print GNUFILE "set terminal jpeg nocrop enhanced size 800,600
+	print GNUFILE "set terminal jpeg nocrop enhanced size 1280,1024
 	set output '$RESULTS_OUTPUT_DIR/graphics.jpeg'
 	set boxwidth 0.9 absolute
 	set style fill   solid 0.5 border -1
@@ -886,13 +1034,14 @@ sub RunTests{
 
 	my $KEYWORD 		= $configHash->{'db_config'}->{'KEYWORD'};
 	my $STORAGE_ENGINE	= $configHash->{'db_config'}->{'STORAGE_ENGINE'};
-	my $PRE_TEST_SQL	= $configHash->{'db_config'}->{'PRE_TEST_SQL'}		// "";
-	my $POST_TEST_SQL	= $configHash->{'db_config'}->{'POST_TEST_SQL'}		// "";
-	my $PRE_TEST_OS		= $configHash->{'test_config'}->{'PRE_TEST_OS'}		// "";
-	my $POST_TEST_OS	= $configHash->{'test_config'}->{'POST_TEST_OS'}	// "";
-	my $CLEAR_CACHES	= $configHash->{'command_line'}->{'CLEAR_CACHES'}	// $configHash->{'test_config'}->{'CLEAR_CACHES'}	// 0;
-# 	my $SCALE_FACTOR	= $configHash->{'command_line'}->{'SCALE_FACTOR'}	// $configHash->{'test_config'}->{'SCALE_FACTOR'};
-	my $QUERIES_AT_ONCE	= $configHash->{'command_line'}->{'QUERIES_AT_ONCE'}	// $configHash->{'test_config'}->{'QUERIES_AT_ONCE'}	// 0;
+	my $PRE_TEST_SQL	= $configHash->{'db_config'}->{'PRE_TEST_SQL'}			// "";
+	my $POST_TEST_SQL	= $configHash->{'db_config'}->{'POST_TEST_SQL'}			// "";
+	my $PRE_TEST_OS		= $configHash->{'test_config'}->{'PRE_TEST_OS'}			// "";
+	my $POST_TEST_OS	= $configHash->{'test_config'}->{'POST_TEST_OS'}		// "";
+	my $CLEAR_CACHES	= $configHash->{'command_line'}->{'CLEAR_CACHES'}		// $configHash->{'test_config'}->{'CLEAR_CACHES'}		// 0;
+# 	my $CLEAR_CACHES_PROGRAM= $configHash->{'command_line'}->{'CLEAR_CACHES_PROGRAM'}	// $configHash->{'test_config'}->{'CLEAR_CACHES_PROGRAM'}	// "";
+# 	my $SCALE_FACTOR	= $configHash->{'command_line'}->{'SCALE_FACTOR'}		// $configHash->{'test_config'}->{'SCALE_FACTOR'};
+	my $QUERIES_AT_ONCE	= $configHash->{'command_line'}->{'QUERIES_AT_ONCE'}		// $configHash->{'test_config'}->{'QUERIES_AT_ONCE'}		// 0;
 	
 	if(ref($PRE_TEST_SQL) eq "ARRAY"){
 		$PRE_TEST_SQL	= join(" ", @$PRE_TEST_SQL);
@@ -905,10 +1054,6 @@ sub RunTests{
 	}
 	if(ref($POST_TEST_OS) eq "ARRAY"){	
 		$POST_TEST_OS	= join(" ", @$POST_TEST_OS);
-	}
-
-	if($KEYWORD && !(-e "$RESULTS_OUTPUT_DIR/$KEYWORD")){
-		mkpath("$RESULTS_OUTPUT_DIR/$KEYWORD") or die "Could not make path '$RESULTS_OUTPUT_DIR/$KEYWORD'";
 	}
 
 
@@ -925,7 +1070,7 @@ sub RunTests{
 		
 		if($CLEAR_CACHES){
 			#clear the caches prior the whole test
-			system("echo 1 > /proc/sys/vm/drop_caches");
+			ClearTheCaches();
 		}
 		if($configHash->{'db_config'}->{'DBMS'} eq "PostgreSQL"){
 			if(!StartPostgres($configHash->{'db_config'})){
@@ -953,6 +1098,9 @@ sub RunTests{
 		$GRAPH_HEADING .= "\\n vs. ";
 	}
 	$GRAPH_HEADING .= $configHash->{'db_config'}->{'GRAPH_HEADING'};
+
+
+	PrintMsg("\n\n============ Working now for ".$configHash->{'db_config'}->{'GRAPH_HEADING'}." ============\n\n");
 
 
 	my $i = 0;
@@ -1002,6 +1150,10 @@ sub RunTests{
 		my $l_POST_RUN_OS	= $configHash->{'command_line'}->{'POST_RUN_OS'}	// $configHash->{'queries'}->{$queryKey}->{'POST_RUN_OS'}	// $configHash->{'test_config'}->{'POST_RUN_OS'}	// "";
 		my $l_OS_STATS_INTERVAL	= $configHash->{'command_line'}->{'OS_STATS_INTERVAL'}	// $configHash->{'queries'}->{$queryKey}->{'OS_STATS_INTERVAL'}	// $configHash->{'test_config'}->{'OS_STATS_INTERVAL'}	// 1;
 	
+		my $l_MIN_MAX_OUT_OF_N	= $configHash->{'command_line'}->{'MIN_MAX_OUT_OF_N'}	// $configHash->{'test_config'}->{'MIN_MAX_OUT_OF_N'}		// 0;
+		my $l_ANALYZE_EXPLAIN	= $configHash->{'command_line'}->{'ANALYZE_EXPLAIN'}	// $configHash->{'test_config'}->{'ANALYZE_EXPLAIN'}		// 0;
+		my $l_SIMPLE_AVERAGE	= $configHash->{'command_line'}->{'SIMPLE_AVERAGE'}	// $configHash->{'test_config'}->{'SIMPLE_AVERAGE'}		// 0;
+
 # 		$l_QUERIES_HOME 	=~ s/\$SCALE_FACTOR/$SCALE_FACTOR/g;
 # 		$DBMS_hash->{'DATADIR'}	=~ s/\$SCALE_FACTOR/$SCALE_FACTOR/g;
 
@@ -1041,28 +1193,29 @@ sub RunTests{
 
 
 		my $warmed_up		= 0;
-		my $mainClusterAvg 	= 0;
+		my $resultHash 	= {'min' => "null", 'max' => "null", 'avg' => "null"};
 		my $queryStartTime	= time;
 		my @queryResults;
 		my $j 			= 0;
 		my $skippedTestsCount	= 0;
 		
-		my $test_id = time; #This will be the ID of the test into the results DB
-		my $test_comments = ""; #If any comments arise during the test they will be stored into the database
+		my $test_id 		= time; #This will be the ID of the test into the results DB
+		my $test_comments 	= ""; #If any comments arise during the test they will be stored into the database
 		my %GlobalExplainResults; # a hash with explain string as a key and the fastest running query for that explain as value
-		
+		my $noMoreTests 	= 0;
 
-		while (!$mainClusterAvg){
+		while (!$noMoreTests){
 			$j ++;
-			my $noMoreTests 	= 0;
-			my $skipCurrentRun 	= 0;
+
+			$noMoreTests = 0;
+			my $skipCurrentRun = 0;
 
 			
 			if(!$QUERIES_AT_ONCE){
 				#start mysql
 				if($CLEAR_CACHES){
 					#clear the caches prior the whole test
-					system("echo 1 > /proc/sys/vm/drop_caches");
+					ClearTheCaches();
 				}
 
 				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
@@ -1079,7 +1232,7 @@ sub RunTests{
 				$warmed_up = 0;
 
 				#if that's the first run, perform the pre-test statements
-				if($i == 0 && $j == 1){
+				if($i == 1 && $j == 1){
 					if($PRE_TEST_SQL){
 						ExecuteInShell($DBMS_hash, $PRE_TEST_SQL, "", $KEYWORD, "pre_test_sql_results.txt");
 					}
@@ -1088,8 +1241,6 @@ sub RunTests{
 						system("$PRE_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
 					}
 				}
-
-		
 			}
 
 
@@ -1139,8 +1290,8 @@ sub RunTests{
 						ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
 
 
-# 						my $l_ANALYZE_EXPLAIN = 0; # TODO: put this into the configuration file
-# 						if($l_ANALYZE_EXPLAIN){
+						my $l_ANALYZE_EXPLAIN = 0; # TODO: put this into the configuration file
+						if($l_ANALYZE_EXPLAIN){
 							#Analyze the explain results and skip test if that's not the fastest execution plan
 							if($DBMS_hash->{'DBMS'} ne "PostgreSQL"){
 								# TODO: Make this algorithm for PostgreSQL if needed
@@ -1154,12 +1305,12 @@ sub RunTests{
 									$j--;
 
 									if($skippedTestsCount >= $l_MAX_SKIPPED_TESTS){
-										$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
+										$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
 										$noMoreTests = 1;
 									}
 								}
 							}
-# 						}
+						}
 					}
 					#####################################
 
@@ -1248,26 +1399,38 @@ sub RunTests{
 
 
 
-						#Check the results. If time limit is reached or target queries run is reached, stop the test for that query
-						if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
-							($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
-							#There is no time for new test. Get the best cluster and show a warning
-							$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
+						if($l_ANALYZE_EXPLAIN){
+							#Check the results. If time limit is reached or target queries run is reached, stop the test for that query
+							if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
+								($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
+								#There is no time for new test. Get the best cluster and show a warning
+								$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
 
-							if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
-								PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: $mainClusterAvg\n\n");
+								if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
+									PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: ".$resultHash->{'min'}."\n\n");
+								}else{
+									PrintMsg("\n\n No time for next run. Getting the best result available: ".$resultHash->{'min'}."\n\n");
+									$test_comments .= "No time for next run. Getting the best result available.\n";
+								}
+								$noMoreTests = 1;
 							}else{
-								PrintMsg("\n\n No time for next run. Getting the best result available: $mainClusterAvg\n\n");
-								$test_comments .= "No time for next run. Getting the best result available.\n";
+								if($l_NUM_TESTS == 0){
+									#There is enough time to perform another test
+									$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 0);
+									if($resultHash->{'min'}){
+										$noMoreTests = 1;
+									}
+								}
 							}
-							$noMoreTests = 1;
-						}else{
-							#Hide the results if there are more tests to be run. We will stop if we complete NUM_TESTS or exceed time limit
-							if($l_NUM_TESTS != 0){
-								$mainClusterAvg = 0;
-							}else{
-								#There is enough time to perform another test
-								$mainClusterAvg = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 0);
+						}elsif($l_MIN_MAX_OUT_OF_N){
+							if($j >= $l_NUM_TESTS){
+								$resultHash = GetMinMax(\%GlobalExplainResults);
+								$noMoreTests = 1;
+							}
+						}elsif($l_SIMPLE_AVERAGE){
+							if($j >= $l_NUM_TESTS){
+								$resultHash->{'avg'} = GetSimpleAverage(\%GlobalExplainResults);
+								$noMoreTests = 1;
 							}
 						}
 					}#if(!$skipCurrentRun)
@@ -1301,13 +1464,13 @@ sub RunTests{
 			}
 
 
-			if($noMoreTests){
-				last;
-			}
+# 			if($noMoreTests){
+# 				last;
+# 			}
 		}#while
 
-		PrintMsg("\nRESULT FOR QUERY: $mainClusterAvg");
-		LogEndTestResult($dbh_res, $test_id, $mainClusterAvg, "$KEYWORD/post_test_sql_results.txt", $test_comments);
+		PrintMsg("\nRESULT FOR QUERY: min=".$resultHash->{'min'}."   max=".$resultHash->{'max'}."   avg=".$resultHash->{'avg'});
+		LogEndTestResult($dbh_res, $test_id, $resultHash->{'min'}, $resultHash->{'max'}, $resultHash->{'avg'}, "$KEYWORD/post_test_sql_results.txt", $test_comments);
 		
 		
 		#Plot the graph
@@ -1372,7 +1535,7 @@ GetOptions (	"test|t:s" 			=> \$TEST_FILE,
 		"CLEAR_CACHES:s"		=> \$command_line_hash->{'CLEAR_CACHES'},
 # 		"SCALE_FACTOR:s"		=> \$command_line_hash->{'SCALE_FACTOR'},
 		"QUERIES_AT_ONCE:s"		=> \$command_line_hash->{'QUERIES_AT_ONCE'},
-		"QUERIES_HOME:s"		=> \$command_line_hash->{'QUERIES_HOME'},
+# 		"QUERIES_HOME:s"		=> \$command_line_hash->{'QUERIES_HOME'},
 		"RUN:s" 			=> \$command_line_hash->{'RUN'},
 		"EXPLAIN:s" 			=> \$command_line_hash->{'EXPLAIN'},
 		"TIMEOUT:s" 			=> \$command_line_hash->{'TIMEOUT'},
@@ -1398,17 +1561,24 @@ if(!CheckInputParams()){
 	
 
 	my $scenarioConfig = ParseConfigFile($TEST_FILE, "ini");	
+	copy ($TEST_FILE, "$RESULTS_OUTPUT_DIR/") or die "Could not copy test configuration file to $RESULTS_OUTPUT_DIR";
 
 	if(! -e $scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}){
 		die "Configuration file ".$scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}." does not exist!";
 	}else{
 		$testingConfiguration{'results_db'} = ParseConfigFile($scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}, "equal");
+		$testingConfiguration{'results_db'}->{'config_filename'} = $scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'};
+		
+		copy ($testingConfiguration{'results_db'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or die "Could not copy results_db configuration file to $RESULTS_OUTPUT_DIR";
 	}
 
 	if(! -e $scenarioConfig->{'common'}->{'TEST_CONFIG'}){
 		die "Configuration file ".$scenarioConfig->{'common'}->{'TEST_CONFIG'}." does not exist!";
 	}else{
 		$testingConfiguration{'test_config'} = ParseConfigFile($scenarioConfig->{'common'}->{'TEST_CONFIG'}, "equal");
+		$testingConfiguration{'test_config'}->{'config_filename'} = $scenarioConfig->{'common'}->{'TEST_CONFIG'};
+		
+		copy ($testingConfiguration{'test_config'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or die "Could not copy test_config configuration file to $RESULTS_OUTPUT_DIR";
 	}
 
 
@@ -1433,6 +1603,14 @@ if(!CheckInputParams()){
 			$testingConfiguration{'db_config'} = ParseConfigFile($scenarioConfig->{$key}->{'DB_CONFIG'}, "ini")->{'db_settings'};
 		}
 
+		my $keyword = $testingConfiguration{'db_config'}->{'KEYWORD'};
+		if($keyword && !(-e "$RESULTS_OUTPUT_DIR/$keyword")){
+			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or die "Could not make path '$RESULTS_OUTPUT_DIR/$keyword'";
+		}
+
+		
+		copy ($scenarioConfig->{$key}->{'DB_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or die "Could not copy '".$scenarioConfig->{$key}->{'DB_CONFIG'}."'db_config configuration file to $RESULTS_OUTPUT_DIR/$keyword/";
+		copy ($scenarioConfig->{$key}->{'QUERIES_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or die "Could not copy queries configuration file to $RESULTS_OUTPUT_DIR/$keyword/";
 
 		RunTests(\%testingConfiguration);
 	}
