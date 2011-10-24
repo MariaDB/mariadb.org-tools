@@ -31,11 +31,6 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 
-datadir         = ./data
-
-
-
-
 #All settings to off
 optimizer_switch='default'
 
@@ -85,16 +80,6 @@ optimizer_switch='default'
 #mrr_buffer_size = 32M
 #tmp_table_size = 32M
 #max_heap_table_size = 32M
-
-
-
-
-
-
-
-
-
-
 
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
