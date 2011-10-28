@@ -311,40 +311,40 @@ sub CollectStatistics_OS{
 		#if that's the first time
 		if($i == 1){
 			if($cpuStats){
-				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt");
+				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or die "Error while opening file: $!";
 				print SAR_U $sar_u;
 				close (SAR_U); 
 			}
 			
 			if($ioStats){
-				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt");
+				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or die "Error while opening file: $!";
 				print SAR_B $sar_b;
 				close (SAR_B); 
 			}
 
 			if($memoryStats){
-				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt");
+				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or die "Error while opening file: $!";
 				print SAR_R $sar_r;
 				close (SAR_R); 
 			}
 		}else {
 			if($cpuStats){
 				my @arr1 = split(/\n/, $sar_u);
-				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt");
+				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or die "Error while opening file: $!";
 				print SAR_U $arr1[3] . "\n";
 				close (SAR_U); 
 			}
 
 			if($ioStats){
 				my @arr2 = split(/\n/, $sar_b);
-				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt");
+				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or die "Error while opening file: $!";
 				print SAR_B $arr2[3] . "\n";
 				close (SAR_B);
 			}
 
 			if($memoryStats){
 				my @arr3 = split(/\n/, $sar_r);
-				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt");
+				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or die "Error while opening file: $!";
 				print SAR_R $arr3[3] . "\n";
 				close (SAR_R); 
 			}
@@ -390,9 +390,18 @@ sub StartMysql{
 	}
 
 	chdir($mysql_home) or die "Can't chdir to $mysql_home $!";
+
 	my $startMysql_stmt = "./bin/mysqld_safe $mysqld_options &";
 	PrintMsg("Starting mysqld with the following line:\n$startMysql_stmt\n\n");
 	if(!$dry_run){
+		#check for previously started server - TODO
+# 		system("./bin/mysqladmin $mysql_admin_options ping > /dev/null 2>&1");
+# 		if ($? == 0){
+# 			print "\n\n==========\n$prevServer\n\n";
+# 			print "[ERROR]: There is a mysql server already started on socket '$socket'.\n Exiting.\n";
+# 			return 0;
+# 		}
+
 		system($startMysql_stmt);
 	
 	 	while ($j <= $timeout){	
@@ -544,7 +553,12 @@ sub ExecuteInShell{
 	my $startTime		= 0;
 	my $elapsedTime		= 0;
 
-	PrintMsg("\n***Executing in shell $stmt\n");
+	if($stmt){
+		PrintMsg("\n***Executing in shell \n$stmt\n");
+	}elsif($stmtFilename){
+		PrintMsg("\n***Executing in shell \n$stmtFilename\n");
+	}
+
 	if(!$dry_run){
 		if($keyword && !(-e "$RESULTS_OUTPUT_DIR/$keyword")){
 			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or die "Could not make path '$RESULTS_OUTPUT_DIR/$keyword'";
@@ -555,18 +569,18 @@ sub ExecuteInShell{
 			if($dbms_hash->{'DBMS'} eq "PostgreSQL"){
 				system ("./bin/psql -p $port -d $dbname -f $stmtFilename > $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			} else {
-				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname < $stmtFilename > $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname -t < $stmtFilename > $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			}
 		}else{
 			if(!(-e "$RESULTS_OUTPUT_DIR/$keyword/$resultFile")){
-				open (MYFILE, ">>$RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+				open (MYFILE, ">>$RESULTS_OUTPUT_DIR/$keyword/$resultFile") or die "Error while opening file: $!";
 				print MYFILE "SQL_command:\n$stmt\n\n===Results===\n";
 				close (MYFILE); 
 			}
 			if($dbms_hash->{'DBMS'} eq "PostgreSQL"){
 				system ("./bin/psql -p $port -d $dbname -c \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			} else {
-				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname -e \"$stmt\" >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
+				system ("./bin/mysql -S $socket -P $port -u $dbms_user $dbname -e \"$stmt\" -t >> $RESULTS_OUTPUT_DIR/$keyword/$resultFile");
 			}
 		}
 		$elapsedTime = time - $startTime;
@@ -699,7 +713,7 @@ sub AnalyzeExplain{
 	my $wholeFile = "";
 
 	#first read the whole file since it doesn't handle newline breaks properly if read line by line
-	open ( my $explain_fh, "<", $file)  or die $!;
+	open ( my $explain_fh, "<", $file) or die "Error while opening file: $!";
 	while (<$explain_fh>) {		
 		$wholeFile .= $_;
 	}
@@ -879,8 +893,30 @@ sub ClearTheCaches{
 }
 
 
+sub AppendFileToAnother{
+	my ($source, $dest, $header, $footer) = @_;
+	
+	open(INPUT, $source) or die "Could not open source file '$source': $!";
+	open(OUTPUT, ">>$dest") or die "Could not open destination file '$dest': $!";
+
+	if($header){
+		print OUTPUT "$header\n";
+	}
+	
+	while(<INPUT>)
+	{
+		print OUTPUT $_;
+	}
+
+	if($footer){
+		print OUTPUT "$footer\n";
+	}
+	close( INPUT );
+	close( OUTPUT );
+}
+
 sub PlotGraph{
-	my ($dbh, $graph_heading) = @_;
+	my ($dbh, $graph_heading, $analyze_explain, $min_max_out_of_n, $simple_average) = @_;
 
 	my $plotFiles		= "";
 	my $query_name		= "";
@@ -891,7 +927,7 @@ sub PlotGraph{
 	my $keyword		= "";
 	my $storage_engine	= "";
 
-	open (RESDAT, ">$RESULTS_OUTPUT_DIR/results.dat");
+	open (RESDAT, ">$RESULTS_OUTPUT_DIR/results.dat") or die "Error while opening file: $!";
 
 	my $sth = $dbh->prepare("SELECT query_name, min_elapsed_time, max_elapsed_time, avg_elapsed_time, version, keyword, storage_engine FROM test_result WHERE results_output_dir = '$RESULTS_OUTPUT_DIR'");
 	$sth->execute();
@@ -905,16 +941,6 @@ sub PlotGraph{
 		$min_elapsed_time 	= $ref->{'min_elapsed_time'}	// "";
 		$max_elapsed_time 	= $ref->{'max_elapsed_time'}	// "";
 		$avg_elapsed_time 	= $ref->{'avg_elapsed_time'}	// "";
-
-		if(!exists $baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
-			$baseHash->{$query_name."_min"} = $min_elapsed_time;
-		}
-		if(!exists $baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
-			$baseHash->{$query_name."_max"} = $max_elapsed_time;
-		}
-		if(!exists $baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
-			$baseHash->{$query_name."_avg"} = $avg_elapsed_time;
-		}
 		
 		if(	$version 	ne $ref->{'version'} || 
 			$keyword 	ne $ref->{'keyword'} ||
@@ -927,13 +953,11 @@ sub PlotGraph{
 			
 			
 			my $j = 2; #start from the second column
-			if($min_elapsed_time ne ""){
-				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword min\",";
-			}
-			if($max_elapsed_time ne ""){
-				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword max\",";
-			}
-			if($avg_elapsed_time ne ""){
+			if($min_max_out_of_n && $min_elapsed_time ne "" && $max_elapsed_time ne ""){
+				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j+2).":(0):(\$2):xtic(1) ti \"$keyword\",";
+			}elsif($analyze_explain && $min_elapsed_time ne ""){
+ 				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword min\",";
+ 			}elsif($simple_average && $avg_elapsed_time ne ""){
 				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword avg\",";
 			}
 			$i++;
@@ -968,25 +992,36 @@ sub PlotGraph{
 		if($max_elapsed_time ne ""){ $str .= $max_elapsed_time."\t";}
 		if($avg_elapsed_time ne ""){ $str .= $avg_elapsed_time."\t";}
 
-		if($baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
+
+		if(!exists $baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
+			$baseHash->{$query_name."_min"} = $min_elapsed_time || 1;
+		}
+		if(!exists $baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
+			$baseHash->{$query_name."_max"} = $max_elapsed_time || 1;
+		}
+		if(!exists $baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
+			$baseHash->{$query_name."_avg"} = $avg_elapsed_time || 1;
+		}
+
+		if(exists $baseHash->{$query_name."_min"} && $min_elapsed_time ne ""){
 			if($baseHash->{$query_name."_min"} == 100000 || $min_elapsed_time == 100000){
 				$str .= "\t";
 			}else{
-				$str .= ($min_elapsed_time / $baseHash->{$query_name."_min"}) . "\t";
+				$str .= sprintf("%.2f\t", ($min_elapsed_time / $baseHash->{$query_name."_min"}));
 			}
 		}
-		if($baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
+		if(exists $baseHash->{$query_name."_max"} && $max_elapsed_time ne ""){
 			if($baseHash->{$query_name."_max"} == 100000 || $max_elapsed_time == 100000){
 				$str .= "\t";
 			}else{
-				$str .= ($max_elapsed_time / $baseHash->{$query_name."_max"}) . "\t";
+				$str .= sprintf("%.2f\t", ($max_elapsed_time / $baseHash->{$query_name."_max"}));
 			}
 		}
-		if($baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
+		if(exists $baseHash->{$query_name."_avg"} && $avg_elapsed_time ne ""){
 			if($baseHash->{$query_name."_avg"} == 100000 || $avg_elapsed_time == 100000){
 				$str .= "\t";
 			}else{
-				$str .= ($avg_elapsed_time / $baseHash->{$query_name."_avg"});
+				$str .= sprintf("%.2f", ($avg_elapsed_time / $baseHash->{$query_name."_avg"}));
 			}
 		}
 
@@ -1001,14 +1036,20 @@ sub PlotGraph{
 	$graph_heading =~ s/\"/\\\"/g;
 	$maxTime = int($maxTime * 1.2 + 0.5); #add 20% and round it up to nearest integer
 
-	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt");
+	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt") or die "Error while opening file: $!";
 	#print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
 	print GNUFILE "set terminal jpeg nocrop enhanced size 1280,1024
 	set output '$RESULTS_OUTPUT_DIR/graphics.jpeg'
 	set boxwidth 0.9 absolute
-	set style fill   solid 0.5 border -1
-	set style histogram clustered gap 1 title  offset character 0, 0, 0
-	set datafile missing '-'
+	set style fill solid 0.5 border -1\n";
+
+	if($min_max_out_of_n){
+		print GNUFILE "	set style histogram errorbars gap 1 lw 3 title offset character 0, 0, 0\n";
+	}else{
+		print GNUFILE "	set style histogram clustered gap 1 title offset character 0, 0, 0\n";
+	}
+
+	print GNUFILE "	set datafile missing '-'
 	set style data histograms
 	set xtics border in scale 1,0.5 nomirror rotate by -45  offset character 0, 0, 0 
 	set xlabel 'Query'
@@ -1179,7 +1220,7 @@ sub RunTests{
 		my @run_stmts;
 		if($l_RUN){
 			$/ = ';';
-			open FH, "< $l_QUERIES_HOME/$l_QUERY";
+			open (FH, "< $l_QUERIES_HOME/$l_QUERY") or die "Error while opening file: $!";
 			while (<FH>) {
 				my $tmp = $_;
 				$tmp =~ s/^\s+//;
@@ -1288,6 +1329,13 @@ sub RunTests{
 					if($l_EXPLAIN && $l_EXPLAIN_QUERY){
 						$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
 						ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
+
+						if($j == 1){
+							AppendFileToAnother("$l_QUERIES_HOME/$l_EXPLAIN_QUERY", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "\n\n\n===== $l_EXPLAIN_QUERY =====\nSTARTUP_PARAMS: ".$DBMS_hash->{'STARTUP_PARAMS'}."\n\n" );
+							AppendFileToAnother("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "--- Results ---");
+						}
+
+
 
 
 						my $l_ANALYZE_EXPLAIN = 0; # TODO: put this into the configuration file
@@ -1469,13 +1517,12 @@ sub RunTests{
 # 			}
 		}#while
 
-		PrintMsg("\nRESULT FOR QUERY: min=".$resultHash->{'min'}."   max=".$resultHash->{'max'}."   avg=".$resultHash->{'avg'});
+		PrintMsg("\nRESULT FOR QUERY: min=".$resultHash->{'min'}."   max=".$resultHash->{'max'}."   avg=".$resultHash->{'avg'}."\n\n");
 		LogEndTestResult($dbh_res, $test_id, $resultHash->{'min'}, $resultHash->{'max'}, $resultHash->{'avg'}, "$KEYWORD/post_test_sql_results.txt", $test_comments);
 		
 		
 		#Plot the graph
-		PlotGraph($dbh_res, $GRAPH_HEADING);
-
+		PlotGraph($dbh_res, $GRAPH_HEADING, $l_ANALYZE_EXPLAIN, $l_MIN_MAX_OUT_OF_N, $l_SIMPLE_AVERAGE);
 		sleep 1; #wait at least a second here to avoid two tests in one second that coauses PRIMARY KEY violation.
 		
 	}#for

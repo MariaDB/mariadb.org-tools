@@ -31,35 +31,35 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 
-#All settings to off
-optimizer_switch='default'
+#All settings to default
+#optimizer_switch='default'
 
-#optimizer_switch='index_merge=off'
-#optimizer_switch='index_merge_union=off'
-#optimizer_switch='index_merge_sort_union=off'
-#optimizer_switch='index_merge_intersection=off'
-#optimizer_switch='index_merge_sort_intersection=off'
-#optimizer_switch='index_condition_pushdown=off'
-#optimizer_switch='derived_merge=off'
-#optimizer_switch='derived_with_keys=off'
-#optimizer_switch='firstmatch=off'
-#optimizer_switch='loosescan=off'
-#optimizer_switch='materialization=off'
-#optimizer_switch='in_to_exists=off'
-#optimizer_switch='semijoin=off'
-#optimizer_switch='partial_match_rowid_merge=off'
-#optimizer_switch='partial_match_table_scan=off'
-#optimizer_switch='subquery_cache=off'
-#optimizer_switch='mrr=off'
-#optimizer_switch='mrr_cost_based=off'
-#optimizer_switch='mrr_sort_keys=off'
-#optimizer_switch='outer_join_with_cache=off'
-#optimizer_switch='semijoin_with_cache=off'
-#optimizer_switch='join_cache_incremental=off'
-#optimizer_switch='join_cache_hashed=off'
-#optimizer_switch='join_cache_bka=off'
-#optimizer_switch='optimize_join_buffer_size=off'
-#optimizer_switch='table_elimination=off'
+optimizer_switch='index_merge=on'
+optimizer_switch='index_merge_union=on'
+optimizer_switch='index_merge_sort_union=on'
+optimizer_switch='index_merge_intersection=on'
+optimizer_switch='index_merge_sort_intersection=off'
+optimizer_switch='index_condition_pushdown=off'
+optimizer_switch='derived_merge=off'
+optimizer_switch='derived_with_keys=off'
+optimizer_switch='firstmatch=off'
+optimizer_switch='loosescan=off'
+optimizer_switch='materialization=off'
+optimizer_switch='in_to_exists=on'
+optimizer_switch='semijoin=off'
+optimizer_switch='partial_match_rowid_merge=on'
+optimizer_switch='partial_match_table_scan=on'
+optimizer_switch='subquery_cache=off'
+optimizer_switch='mrr=off'
+optimizer_switch='mrr_cost_based=off'
+optimizer_switch='mrr_sort_keys=off'
+optimizer_switch='outer_join_with_cache=off'
+optimizer_switch='semijoin_with_cache=off'
+optimizer_switch='join_cache_incremental=on'
+optimizer_switch='join_cache_hashed=on'
+optimizer_switch='join_cache_bka=on'
+optimizer_switch='optimize_join_buffer_size=off'
+optimizer_switch='table_elimination=on'
 
 
 #Igor's settings
@@ -76,7 +76,7 @@ optimizer_switch='default'
 
 #join_buffer_space_limit = 1024M
 #join_buffer_size = 512M
-#join_cache_level = 6
+#join_cache_level = 8
 #mrr_buffer_size = 32M
 #tmp_table_size = 32M
 #max_heap_table_size = 32M

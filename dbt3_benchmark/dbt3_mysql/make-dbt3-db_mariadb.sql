@@ -85,39 +85,64 @@ CREATE TABLE region (
 
 CREATE TABLE time_statistics (
 	task_name VARCHAR(40),
-	s_time TIMESTAMP,
-	e_time TIMESTAMP,
-	int_time INTEGER);
+	timest TIMESTAMP);
 
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/nation.tbl' into table nation fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/region.tbl' into table region fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/supplier.tbl' into table supplier fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/part.tbl' into table part fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/customer.tbl' into table customer fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/orders.tbl' into table orders fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/partsupp.tbl' into table partsupp fields terminated by '|';
-LOAD DATA INFILE '/media/benchmark/gen_data/s10/lineitem.tbl' into table lineitem fields terminated by '|';
+
+
+INSERT INTO time_statistics (task_name, timest) VALUES ('loading database started', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/nation.tbl' into table nation fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load nation table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/region.tbl' into table region fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load region table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/supplier.tbl' into table supplier fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load supplier table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/part.tbl' into table part fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load part table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/customer.tbl' into table customer fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load customer table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/orders.tbl' into table orders fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load orders table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/partsupp.tbl' into table partsupp fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load partsupp table', now());
+
+LOAD DATA INFILE '~/benchmarks/gen_data/s100/lineitem.tbl' into table lineitem fields terminated by '|';
+INSERT INTO time_statistics (task_name, timest) VALUES ('load lineitem table', now());
+
+
+
 
 ALTER TABLE supplier
   ADD PRIMARY KEY (s_suppkey),
   ADD INDEX i_s_nationkey (s_nationkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added supplier indexes', now());
 
 ALTER TABLE part
   ADD PRIMARY KEY (p_partkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added part indexes', now());
 
 ALTER TABLE partsupp 
   ADD PRIMARY KEY (ps_partkey, ps_suppkey),
   ADD INDEX i_ps_partkey (ps_partkey),
   ADD INDEX i_ps_suppkey (ps_suppkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added partsupp indexes', now());
 
 ALTER TABLE customer
   ADD PRIMARY KEY (c_custkey),
   ADD INDEX i_c_nationkey (c_nationkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added customer indexes', now());
 
 ALTER TABLE orders
   ADD PRIMARY KEY (o_orderkey),
   ADD INDEX i_o_orderdate (o_orderdate),
   ADD INDEX i_o_custkey (o_custkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added orders indexes', now());
 
 ALTER TABLE lineitem 
   ADD PRIMARY KEY (l_orderkey, l_linenumber),
@@ -129,19 +154,40 @@ ALTER TABLE lineitem
   ADD INDEX i_l_orderkey (l_orderkey),
   ADD INDEX i_l_orderkey_quantity (l_orderkey, l_quantity),
   ADD INDEX i_l_commitdate (l_commitdate);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added lineitem indexes', now());
 
 ALTER TABLE nation
   ADD PRIMARY KEY (n_nationkey),
   ADD INDEX i_n_regionkey (n_regionkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added nation indexes', now());
 
 ALTER TABLE region
   ADD PRIMARY KEY (r_regionkey);
+INSERT INTO time_statistics (task_name, timest) VALUES ('added region indexes', now());
+
+
+
 
 ANALYZE TABLE supplier;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed supplier table', now());
+
 ANALYZE TABLE part;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed part table', now());
+
 ANALYZE TABLE partsupp;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed partsupp table', now());
+
 ANALYZE TABLE customer;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed customer table', now());
+
 ANALYZE TABLE orders;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed orders table', now());
+
 ANALYZE TABLE lineitem;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed lineitem table', now());
+
 ANALYZE TABLE nation;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed nation table', now());
+
 ANALYZE TABLE region;
+INSERT INTO time_statistics (task_name, timest) VALUES ('analyzed region table', now());
