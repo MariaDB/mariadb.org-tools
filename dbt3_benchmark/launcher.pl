@@ -21,9 +21,9 @@ my $DATADIR_HOME	= "";
 my $QUERIES_HOME	= "";
 my $SCALE_FACTOR	= 0;
 
-
 my $GRAPH_HEADING	= "";
 
+my $startedServers 	= {}; #a hash with all the started MySQL and PostgreSQL servers
 
 ######################################## Function declarations ########################################
 sub GetTimestampAsFilename{
@@ -230,10 +230,10 @@ sub ReplaceWithParam{
 
 	if($str =~ m/$replacStr/){
 		if(!$replacement){
-			die "Input parameter '$paramName' is missing";
+			SafelyDie("Input parameter '$paramName' is missing", __LINE__);
 		}else{
 			if($paramIsFolder && ! -e $replacement){
-				die "Queries home directory '$replacement' does not exist";
+				SafelyDie("Queries home directory '$replacement' does not exist", __LINE__);
 			}else{
 				$str =~ s/$replacStr/$replacement/g;
 			}
@@ -311,40 +311,40 @@ sub CollectStatistics_OS{
 		#if that's the first time
 		if($i == 1){
 			if($cpuStats){
-				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or die "Error while opening file: $!";
+				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_U $sar_u;
 				close (SAR_U); 
 			}
 			
 			if($ioStats){
-				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or die "Error while opening file: $!";
+				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_B $sar_b;
 				close (SAR_B); 
 			}
 
 			if($memoryStats){
-				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or die "Error while opening file: $!";
+				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_R $sar_r;
 				close (SAR_R); 
 			}
 		}else {
 			if($cpuStats){
 				my @arr1 = split(/\n/, $sar_u);
-				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or die "Error while opening file: $!";
+				open (SAR_U, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_u.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_U $arr1[3] . "\n";
 				close (SAR_U); 
 			}
 
 			if($ioStats){
 				my @arr2 = split(/\n/, $sar_b);
-				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or die "Error while opening file: $!";
+				open (SAR_B, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_b.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_B $arr2[3] . "\n";
 				close (SAR_B);
 			}
 
 			if($memoryStats){
 				my @arr3 = split(/\n/, $sar_r);
-				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or die "Error while opening file: $!";
+				open (SAR_R, ">> $RESULTS_OUTPUT_DIR/$keyword/$queryName"."_no_$queryRunNo"."_sar_r.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 				print SAR_R $arr3[3] . "\n";
 				close (SAR_R); 
 			}
@@ -359,7 +359,7 @@ sub CollectStatistics_OS{
 
 #Start the mysqld process with parameters
 sub StartMysql{
-	my ($mysqlHash) = @_;
+	my ($mysqlHash, $stServers) = @_;
 
 	my $mysql_home		= $mysqlHash->{'DBMS_HOME'};
 	my $datadir		= $mysqlHash->{'DATADIR'};
@@ -389,18 +389,17 @@ sub StartMysql{
 		$mysqld_options .= " $startup_params";
 	}
 
-	chdir($mysql_home) or die "Can't chdir to $mysql_home $!";
+	chdir($mysql_home) or SafelyDie("Can't chdir to $mysql_home $!", __LINE__);
 
 	my $startMysql_stmt = "./bin/mysqld_safe $mysqld_options &";
 	PrintMsg("Starting mysqld with the following line:\n$startMysql_stmt\n\n");
 	if(!$dry_run){
 		#check for previously started server - TODO
-# 		system("./bin/mysqladmin $mysql_admin_options ping > /dev/null 2>&1");
-# 		if ($? == 0){
-# 			print "\n\n==========\n$prevServer\n\n";
-# 			print "[ERROR]: There is a mysql server already started on socket '$socket'.\n Exiting.\n";
-# 			return 0;
-# 		}
+		system("./bin/mysqladmin $mysql_admin_options ping > /dev/null 2>&1");
+		if ($? == 0){
+			print "[ERROR]: There is a mysql server already started on socket '$socket'\n";
+			return 0;
+		}
 
 		system($startMysql_stmt);
 	
@@ -408,6 +407,7 @@ sub StartMysql{
 			system("./bin/mysqladmin $mysql_admin_options ping > /dev/null 2>&1");		
 		    if ($? == 0){
 		        $started=0;
+			$stServers->{$socket."_".$port} = $mysqlHash;
 		        last;
 		    }
 		    sleep 1;
@@ -419,9 +419,7 @@ sub StartMysql{
 		    print "  Please check your error log.\n";
 		    print "  Exiting.\n";
 		    $retVal = 0;
-	   	}
-# 		copy ($config_file, "$RESULTS_OUTPUT_DIR/");
-
+		}
 	}
 
 	return $retVal;
@@ -430,7 +428,7 @@ sub StartMysql{
 
 #Stop the mysqld process 
 sub StopMysql{
-	my ($mysqlHash) = @_;
+	my ($mysqlHash, $stServers) = @_;
 	my $mysql_home	= $mysqlHash->{'DBMS_HOME'};
 	my $socket	= $mysqlHash->{'SOCKET'};
 	my $port	= $mysqlHash->{'PORT'};
@@ -438,11 +436,12 @@ sub StopMysql{
 
 	my $retVal = 1;
 
-	chdir($mysql_home) or die "Can't chdir to $mysql_home $!";
+	chdir($mysql_home) or SafelyDie("Can't chdir to $mysql_home $!", __LINE__);
 	my $stopMysql_stmt = "./bin/mysqladmin --socket=$socket --port=$port --user=$mysql_user shutdown 0";
 	PrintMsg("Stopping mysql with the following line:\n$stopMysql_stmt\n\n");
 	if(!$dry_run){
 		print `$stopMysql_stmt`;
+		delete($stServers->{$socket."_".$port});
 	}
 	# TODO: check for failure
 	return $retVal;
@@ -453,7 +452,7 @@ sub StopMysql{
 #PostgreSQL
 sub StartPostgres{
 # 	my ($postgres_home, $datadir, $config_file, $port, $startup_params) = @_;
-	my ($postgreHash) = @_;
+	my ($postgreHash, $stServers) = @_;
 
 	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
 	my $datadir		= $postgreHash->{'DATADIR'};
@@ -462,7 +461,7 @@ sub StartPostgres{
 	my $startup_params	= $postgreHash->{'STARTUP_PARAMS'};
 
 
-	chdir($postgres_home) or die "Can't chdir to $postgres_home $!";
+	chdir($postgres_home) or SafelyDie("Can't chdir to $postgres_home $!", __LINE__);
 
 	if (-e "$datadir/postmaster.pid"){
 		print "PostgresSQL is already started.";
@@ -476,20 +475,22 @@ sub StartPostgres{
 		system("cp $config_file $datadir");
 		system($cmd);
 		sleep 10;
-		copy ($config_file, "$RESULTS_OUTPUT_DIR/") or die "Could not copy $config_file to directory '$RESULTS_OUTPUT_DIR'";
+		copy ($config_file, "$RESULTS_OUTPUT_DIR/") or SafelyDie("Could not copy $config_file to directory '$RESULTS_OUTPUT_DIR'", __LINE__);
+		$stServers->{"postgres_".$port} = $postgreHash;
 	}
+	return 1;
 }
 
 
 sub StopPostgres{
 # 	my ($postgres_home, $datadir, $port) = @_;
-	my ($postgreHash) = @_;
+	my ($postgreHash, $stServers) = @_;
 
 	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
 	my $datadir		= $postgreHash->{'DATADIR'};
 	my $port		= $postgreHash->{'PORT'};
 
-	chdir($postgres_home) or die "Can't chdir to $postgres_home $!";
+	chdir($postgres_home) or SafelyDie("Can't chdir to $postgres_home $!", __LINE__);
 	if (-e "$datadir/postmaster.pid"){
 		sleep 1;
 		my $cmd = "./bin/pg_ctl -D $datadir -p $port stop";
@@ -497,11 +498,35 @@ sub StopPostgres{
 		if(!$dry_run){
 			print `$cmd`;
 			sleep 1;
+			delete($stServers->{"postgres_".$port});
 		}
 	}
+
+	# TODO - check for failed stop of server
+	return 1;
 }
 
 
+
+sub SafelyDie{
+	my ($errorMsg, $line) = @_;
+	PrintMsg("\n[ERROR on line $line]: $errorMsg\n\n Exiting.\n");
+	
+	#kill the started mysql/postgres servers
+	while (my ($key, $value) = each(%{$startedServers})){
+		my $processes;
+		if($value->{'DBMS'} eq "PostgreSQL"){
+			$processes = `ps -ef |grep \`whoami\`| grep postgre | grep $value->{'PORT'} | cut -c10-15`;
+		}else{
+			$processes = `ps -ef |grep \`whoami\`| grep mysqld | grep $value->{'SOCKET'} | cut -c10-15`;
+		}
+		foreach my $procId (split(' ', $processes)){
+			print "\nkilling procId = $procId end\n";
+			system("kill -9 $procId > /dev/null 2>&1");
+		}
+	}
+	exit 0;
+}
 
 
 
@@ -561,7 +586,7 @@ sub ExecuteInShell{
 
 	if(!$dry_run){
 		if($keyword && !(-e "$RESULTS_OUTPUT_DIR/$keyword")){
-			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or die "Could not make path '$RESULTS_OUTPUT_DIR/$keyword'";
+			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or SafelyDie("Could not make path '$RESULTS_OUTPUT_DIR/$keyword'", __LINE__);
 		}
 
 		$startTime = time;
@@ -573,7 +598,7 @@ sub ExecuteInShell{
 			}
 		}else{
 			if(!(-e "$RESULTS_OUTPUT_DIR/$keyword/$resultFile")){
-				open (MYFILE, ">>$RESULTS_OUTPUT_DIR/$keyword/$resultFile") or die "Error while opening file: $!";
+				open (MYFILE, ">>$RESULTS_OUTPUT_DIR/$keyword/$resultFile") or SafelyDie("Error while opening file: $!", __LINE__);
 				print MYFILE "SQL_command:\n$stmt\n\n===Results===\n";
 				close (MYFILE); 
 			}
@@ -713,7 +738,7 @@ sub AnalyzeExplain{
 	my $wholeFile = "";
 
 	#first read the whole file since it doesn't handle newline breaks properly if read line by line
-	open ( my $explain_fh, "<", $file) or die "Error while opening file: $!";
+	open ( my $explain_fh, "<", $file) or SafelyDie("Error while opening file: $!", __LINE__);
 	while (<$explain_fh>) {		
 		$wholeFile .= $_;
 	}
@@ -867,9 +892,9 @@ sub GetServerVersion{
 
 	if($dbms eq "PostgreSQL"){
 		# TODO
-# 		$dbh_ver = DBI->connect("DBI:Pg:$dbname;host=$host:$port;", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+# 		$dbh_ver = DBI->connect("DBI:Pg:$dbname;host=$host:$port;", "$mysql_user", "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
 	} else {
-		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=$host:$port;mysql_socket=$socket", $dbms_user, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+		$dbh_ver = DBI->connect("DBI:mysql:$dbname;host=$host:$port;mysql_socket=$socket", $dbms_user, "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
 		my $sth = $dbh_ver->prepare("select version()");
 		$sth->execute();
 		if(my $ref = $sth->fetchrow_hashref()) {
@@ -896,8 +921,8 @@ sub ClearTheCaches{
 sub AppendFileToAnother{
 	my ($source, $dest, $header, $footer) = @_;
 	
-	open(INPUT, $source) or die "Could not open source file '$source': $!";
-	open(OUTPUT, ">>$dest") or die "Could not open destination file '$dest': $!";
+	open(INPUT, $source) or SafelyDie("Could not open source file '$source': $!", __LINE__);
+	open(OUTPUT, ">>$dest") or SafelyDie("Could not open destination file '$dest': $!", __LINE__);
 
 	if($header){
 		print OUTPUT "$header\n";
@@ -927,7 +952,7 @@ sub PlotGraph{
 	my $keyword		= "";
 	my $storage_engine	= "";
 
-	open (RESDAT, ">$RESULTS_OUTPUT_DIR/results.dat") or die "Error while opening file: $!";
+	open (RESDAT, ">$RESULTS_OUTPUT_DIR/results.dat") or SafelyDie("Error while opening file: $!", __LINE__);
 
 	my $sth = $dbh->prepare("SELECT query_name, min_elapsed_time, max_elapsed_time, avg_elapsed_time, version, keyword, storage_engine FROM test_result WHERE results_output_dir = '$RESULTS_OUTPUT_DIR'");
 	$sth->execute();
@@ -1036,7 +1061,7 @@ sub PlotGraph{
 	$graph_heading =~ s/\"/\\\"/g;
 	$maxTime = int($maxTime * 1.2 + 0.5); #add 20% and round it up to nearest integer
 
-	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt") or die "Error while opening file: $!";
+	open (GNUFILE, ">$RESULTS_OUTPUT_DIR/gnuplot_script.txt") or SafelyDie("Error while opening file: $!", __LINE__);
 	#print GNUFILE "set terminal jpeg nocrop enhanced font arial 8 size 640,480
 	print GNUFILE "set terminal jpeg nocrop enhanced size 1280,1024
 	set output '$RESULTS_OUTPUT_DIR/graphics.jpeg'
@@ -1069,9 +1094,10 @@ sub PlotGraph{
 sub RunTests{
 # 	my $test_file = $_[0];
 # 	require ($test_file);
-# 	copy ($test_file, "$RESULTS_OUTPUT_DIR/") || die "Could not copy configuration file '$test_file'!";
+# 	copy ($test_file, "$RESULTS_OUTPUT_DIR/") || SafelyDie("Could not copy configuration file '$test_file'!", __LINE__);
 
 	my $configHash = $_[0];
+
 
 	my $KEYWORD 		= $configHash->{'db_config'}->{'KEYWORD'};
 	my $STORAGE_ENGINE	= $configHash->{'db_config'}->{'STORAGE_ENGINE'};
@@ -1099,10 +1125,10 @@ sub RunTests{
 
 
 	#Start the results DB server
-	if(!StartMysql($configHash->{'results_db'})){
-		die "Could not start results mysqld process";
+	if(!StartMysql($configHash->{'results_db'}, $startedServers)){
+		SafelyDie("Could not start results mysqld process", __LINE__);
 	}
-	my $dbh_res = DBI->connect("DBI:mysql:".$configHash->{'results_db'}->{'DBNAME'}.";host=".$configHash->{'results_db'}->{'HOST'}.":".$configHash->{'results_db'}->{'PORT'}.";mysql_socket=".$configHash->{'results_db'}->{'SOCKET'}, $configHash->{'results_db'}->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";	
+	my $dbh_res = DBI->connect("DBI:mysql:".$configHash->{'results_db'}->{'DBNAME'}.";host=".$configHash->{'results_db'}->{'HOST'}.":".$configHash->{'results_db'}->{'PORT'}.";mysql_socket=".$configHash->{'results_db'}->{'SOCKET'}, $configHash->{'results_db'}->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);	
 
 
 
@@ -1114,15 +1140,15 @@ sub RunTests{
 			ClearTheCaches();
 		}
 		if($configHash->{'db_config'}->{'DBMS'} eq "PostgreSQL"){
-			if(!StartPostgres($configHash->{'db_config'})){
-				die "Could not start PostgreSQL process";
+			if(!StartPostgres($configHash->{'db_config'}, $startedServers)){
+				SafelyDie("Could not start PostgreSQL process", __LINE__);
 			}
 		}else{
-			if(!StartMysql($configHash->{'db_config'})){
-				die "Could not start mysqld process";
+			if(!StartMysql($configHash->{'db_config'}, $startedServers)){
+				SafelyDie("Could not start mysqld process", __LINE__);
 			}
 		}
-		copy ($configHash->{'db_config'}->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or die "Could not copy file ".$configHash->{'db_config'}->{'CONFIG_FILE'}." to folder '$RESULTS_OUTPUT_DIR/$KEYWORD/'";
+		copy ($configHash->{'db_config'}->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or SafelyDie("Could not copy file ".$configHash->{'db_config'}->{'CONFIG_FILE'}." to folder '$RESULTS_OUTPUT_DIR/$KEYWORD/'", __LINE__);
 		
 		#Pre-test statements
 		if($PRE_TEST_SQL){
@@ -1213,14 +1239,14 @@ sub RunTests{
 
 
 		if(!CheckConfigParams($configHash)){
-			exit;
+			SafelyDie("Incorrect config parameters", __LINE__);
 		}
 
 		#Read the passed file
 		my @run_stmts;
 		if($l_RUN){
 			$/ = ';';
-			open (FH, "< $l_QUERIES_HOME/$l_QUERY") or die "Error while opening file: $!";
+			open (FH, "< $l_QUERIES_HOME/$l_QUERY") or SafelyDie("Error while opening file: $!", __LINE__);
 			while (<FH>) {
 				my $tmp = $_;
 				$tmp =~ s/^\s+//;
@@ -1231,7 +1257,6 @@ sub RunTests{
 			}
 			close FH;
 		}
-
 
 		my $warmed_up		= 0;
 		my $resultHash 	= {'min' => "null", 'max' => "null", 'avg' => "null"};
@@ -1260,15 +1285,15 @@ sub RunTests{
 				}
 
 				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
-					if(!StartPostgres($DBMS_hash)){
-						die "Could not start mysqld process";
+					if(!StartPostgres($DBMS_hash, $startedServers)){
+						SafelyDie("Could not start mysqld process", __LINE__);
 					}
 				}else{
-					if(!StartMysql($DBMS_hash)){
-						die "Could not start mysqld process";
+					if(!StartMysql($DBMS_hash, $startedServers)){
+						SafelyDie("Could not start mysqld process", __LINE__);
 					}
 				}
-				copy ($DBMS_hash->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or die "Could not copy config file '".$DBMS_hash->{'CONFIG_FILE'}."' to directory '$RESULTS_OUTPUT_DIR/$KEYWORD/'";
+				copy ($DBMS_hash->{'CONFIG_FILE'}, "$RESULTS_OUTPUT_DIR/$KEYWORD/") or SafelyDie("Could not copy config file '".$DBMS_hash->{'CONFIG_FILE'}."' to directory '$RESULTS_OUTPUT_DIR/$KEYWORD/'", __LINE__);
 
 				$warmed_up = 0;
 
@@ -1299,9 +1324,9 @@ sub RunTests{
 					my $dbh;
 
 					if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
-						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
 					} else {
-						$dbh = DBI->connect("DBI:mysql:".$DBMS_hash->{'DBNAME'}.";host=".$DBMS_hash->{'HOST'}.":".$DBMS_hash->{'PORT'}.";mysql_socket=".$DBMS_hash->{'SOCKET'}, $DBMS_hash->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || die "Could not connect to database: $DBI::errstr";
+						$dbh = DBI->connect("DBI:mysql:".$DBMS_hash->{'DBNAME'}.";host=".$DBMS_hash->{'HOST'}.":".$DBMS_hash->{'PORT'}.";mysql_socket=".$DBMS_hash->{'SOCKET'}, $DBMS_hash->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
 						$dbh->{'mysql_auto_reconnect'} = 1;
 
 						if($l_TIMEOUT > 0){
@@ -1319,8 +1344,6 @@ sub RunTests{
 					if($l_PRE_RUN_OS){
 						system("$l_PRE_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$preRunOSFilename");
 					}
-
-
 
 
 					############ EXPLAIN #############
@@ -1397,7 +1420,7 @@ sub RunTests{
 						
 						my $pid = fork();
 						if (not defined $pid) {
-							die "Could not fork. Resources not avilable.\n";
+							SafelyDie("Could not fork. Resources not avilable.\n", __LINE__);
 						} elsif ($pid == 0) {
 							#CHILD
 							$dbh->{InactiveDestroy} = 1;
@@ -1482,7 +1505,6 @@ sub RunTests{
 							}
 						}
 					}#if(!$skipCurrentRun)
-
 				}
 			}
 
@@ -1501,12 +1523,12 @@ sub RunTests{
 				}
 
 				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
-					if(!StopPostgres($DBMS_hash)){
-						die "Could not stop postgres process";
+					if(!StopPostgres($DBMS_hash, $startedServers)){
+						SafelyDie("Could not stop postgres process", __LINE__);
 					}
 				}else{
-					if(!StopMysql($DBMS_hash)){
-						die "Could not stop mysqld process";
+					if(!StopMysql($DBMS_hash, $startedServers)){
+						SafelyDie("Could not stop mysqld process", __LINE__);
 					}
 				}
 			}
@@ -1524,7 +1546,6 @@ sub RunTests{
 		#Plot the graph
 		PlotGraph($dbh_res, $GRAPH_HEADING, $l_ANALYZE_EXPLAIN, $l_MIN_MAX_OUT_OF_N, $l_SIMPLE_AVERAGE);
 		sleep 1; #wait at least a second here to avoid two tests in one second that coauses PRIMARY KEY violation.
-		
 	}#for
 
 
@@ -1539,12 +1560,12 @@ sub RunTests{
 		}
 
 		if($configHash->{'db_config'}->{'DBMS'} eq "PostgreSQL"){
-			if(!StopPostgres($configHash->{'db_config'})){
-				die "Could not start postgres process";
+			if(!StopPostgres($configHash->{'db_config'}, $startedServers)){
+				SafelyDie("Could not start postgres process", __LINE__);
 			}
 		}else{
-			if(!StopMysql($configHash->{'db_config'})){
-				die "Could not stop mysqld process";
+			if(!StopMysql($configHash->{'db_config'}, $startedServers)){
+				SafelyDie("Could not stop mysqld process", __LINE__);
 			}
 		}
 	}
@@ -1552,8 +1573,8 @@ sub RunTests{
 	#Stop results DB server
 	$dbh_res->disconnect();
 
-	if(!StopMysql($configHash->{'results_db'})){
-		die "Could not stop Results' mysqld process";
+	if(!StopMysql($configHash->{'results_db'}, $startedServers)){
+		SafelyDie("Could not stop Results' mysqld process", __LINE__);
 	}
 }
 
@@ -1608,24 +1629,24 @@ if(!CheckInputParams()){
 	
 
 	my $scenarioConfig = ParseConfigFile($TEST_FILE, "ini");	
-	copy ($TEST_FILE, "$RESULTS_OUTPUT_DIR/") or die "Could not copy test configuration file to $RESULTS_OUTPUT_DIR";
+	copy ($TEST_FILE, "$RESULTS_OUTPUT_DIR/") or SafelyDie("Could not copy test configuration file to $RESULTS_OUTPUT_DIR", __LINE__);
 
 	if(! -e $scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}){
-		die "Configuration file ".$scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}." does not exist!";
+		SafelyDie("Configuration file ".$scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}." does not exist!", __LINE__);
 	}else{
 		$testingConfiguration{'results_db'} = ParseConfigFile($scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'}, "equal");
 		$testingConfiguration{'results_db'}->{'config_filename'} = $scenarioConfig->{'common'}->{'RESULTS_DB_CONFIG'};
 		
-		copy ($testingConfiguration{'results_db'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or die "Could not copy results_db configuration file to $RESULTS_OUTPUT_DIR";
+		copy ($testingConfiguration{'results_db'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or SafelyDie("Could not copy results_db configuration file to $RESULTS_OUTPUT_DIR", __LINE__);
 	}
 
 	if(! -e $scenarioConfig->{'common'}->{'TEST_CONFIG'}){
-		die "Configuration file ".$scenarioConfig->{'common'}->{'TEST_CONFIG'}." does not exist!";
+		SafelyDie("Configuration file ".$scenarioConfig->{'common'}->{'TEST_CONFIG'}." does not exist!", __LINE__);
 	}else{
 		$testingConfiguration{'test_config'} = ParseConfigFile($scenarioConfig->{'common'}->{'TEST_CONFIG'}, "equal");
 		$testingConfiguration{'test_config'}->{'config_filename'} = $scenarioConfig->{'common'}->{'TEST_CONFIG'};
 		
-		copy ($testingConfiguration{'test_config'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or die "Could not copy test_config configuration file to $RESULTS_OUTPUT_DIR";
+		copy ($testingConfiguration{'test_config'}->{'config_filename'}, "$RESULTS_OUTPUT_DIR/") or SafelyDie("Could not copy test_config configuration file to $RESULTS_OUTPUT_DIR", __LINE__);
 	}
 
 
@@ -1639,25 +1660,25 @@ if(!CheckInputParams()){
 		delete($testingConfiguration{'db_config'});
 
 		if(! -e $scenarioConfig->{$key}->{'QUERIES_CONFIG'}){
-			die "Configuration file ".$scenarioConfig->{$key}->{'QUERIES_CONFIG'}." does not exist!";
+			SafelyDie("Configuration file ".$scenarioConfig->{$key}->{'QUERIES_CONFIG'}." does not exist!", __LINE__);
 		}else{
 			$testingConfiguration{'queries'} = ParseConfigFile($scenarioConfig->{$key}->{'QUERIES_CONFIG'}, "ini");
 		}
 
 		if(! -e $scenarioConfig->{$key}->{'DB_CONFIG'}){
-			die "Configuration file ".$scenarioConfig->{$key}->{'DB_CONFIG'}." does not exist!";
+			SafelyDie("Configuration file ".$scenarioConfig->{$key}->{'DB_CONFIG'}." does not exist!", __LINE__);
 		}else{
 			$testingConfiguration{'db_config'} = ParseConfigFile($scenarioConfig->{$key}->{'DB_CONFIG'}, "ini")->{'db_settings'};
 		}
 
 		my $keyword = $testingConfiguration{'db_config'}->{'KEYWORD'};
 		if($keyword && !(-e "$RESULTS_OUTPUT_DIR/$keyword")){
-			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or die "Could not make path '$RESULTS_OUTPUT_DIR/$keyword'";
+			mkpath("$RESULTS_OUTPUT_DIR/$keyword") or SafelyDie("Could not make path '$RESULTS_OUTPUT_DIR/$keyword'", __LINE__);
 		}
 
 		
-		copy ($scenarioConfig->{$key}->{'DB_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or die "Could not copy '".$scenarioConfig->{$key}->{'DB_CONFIG'}."'db_config configuration file to $RESULTS_OUTPUT_DIR/$keyword/";
-		copy ($scenarioConfig->{$key}->{'QUERIES_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or die "Could not copy queries configuration file to $RESULTS_OUTPUT_DIR/$keyword/";
+		copy ($scenarioConfig->{$key}->{'DB_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or SafelyDie("Could not copy '".$scenarioConfig->{$key}->{'DB_CONFIG'}."'db_config configuration file to $RESULTS_OUTPUT_DIR/$keyword/", __LINE__);
+		copy ($scenarioConfig->{$key}->{'QUERIES_CONFIG'}, "$RESULTS_OUTPUT_DIR/$keyword/") or SafelyDie("Could not copy queries configuration file to $RESULTS_OUTPUT_DIR/$keyword/", __LINE__);
 
 		RunTests(\%testingConfiguration);
 	}
@@ -1666,4 +1687,4 @@ if(!CheckInputParams()){
 
 
 
-exit;
+exit 1;
