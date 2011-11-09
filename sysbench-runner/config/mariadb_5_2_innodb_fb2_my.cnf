@@ -1,0 +1,159 @@
+# The following options will be passed to all MySQL clients
+[client]
+#password	= your_password
+#port		= 3306
+#socket		= /tmp/mysql.sock
+
+# Here follows entries for some specific programs
+
+# The MySQL server
+[mysqld]
+#port		= 3306
+#socket		= /tmp/mysql.sock
+tmpdir		= /home/mariadb/benchmark/dbt3/temp
+
+net_read_timeout = 300
+net_write_timeout = 600
+
+key_buffer_size = 24G
+
+skip-external-locking
+key_buffer = 16M
+max_allowed_packet = 16M
+table_open_cache = 1024
+thread_cache = 512
+sort_buffer_size = 512K
+net_buffer_length = 8K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+max_connections = 256
+query_cache_size = 0
+query_cache_type = 0
+sql-mode = NO_ENGINE_SUBSTITUTION
+
+#All settings to on
+optimizer_switch='index_merge=on'
+optimizer_switch='index_merge_union=on'
+optimizer_switch='index_merge_sort_union=on'
+optimizer_switch='index_merge_intersection=on'
+#optimizer_switch='index_merge_sort_intersection=off'
+#optimizer_switch='index_condition_pushdown=off'
+#optimizer_switch='derived_merge=off'
+#optimizer_switch='derived_with_keys=off'
+#optimizer_switch='firstmatch=on'
+#optimizer_switch='loosescan=on'
+#optimizer_switch='materialization=off'
+#optimizer_switch='in_to_exists=on'
+#optimizer_switch='semijoin=on'
+#optimizer_switch='partial_match_rowid_merge=on'
+#optimizer_switch='partial_match_table_scan=on'
+#optimizer_switch='subquery_cache=on'
+#optimizer_switch='mrr=off'
+#optimizer_switch='mrr_cost_based=off'
+#optimizer_switch='mrr_sort_keys=off'
+#optimizer_switch='outer_join_with_cache=off'
+#optimizer_switch='semijoin_with_cache=off'
+#optimizer_switch='join_cache_incremental=on'
+#optimizer_switch='join_cache_hashed=on'
+#optimizer_switch='join_cache_bka=on'
+#optimizer_switch='optimize_join_buffer_size=off'
+#optimizer_switch='table_elimination=on'
+
+
+#join_buffer_space_limit = 1024M
+join_buffer_size = 512M
+#join_cache_level = 8
+#mrr_buffer_size = 32M
+tmp_table_size = 32M
+max_heap_table_size = 32M
+
+
+# Don't listen on a TCP/IP port at all. This can be a security enhancement,
+# if all processes that need to connect to mysqld run on the same host.
+# All interaction with mysqld must be made via Unix sockets or named pipes.
+# Note that using this option without enabling named pipes on Windows
+# (via the "enable-named-pipe" option) will render mysqld useless!
+# 
+#skip-networking
+
+# Disable other storage engines
+skip-federated
+skip-pbxt
+
+# Replication Master Server (default)
+# binary logging is required for replication
+#log-bin=mysql-bin
+
+# Binary logging format: [ROW | STATEMENT | MIXED].
+# Default is STATEMENT.
+#binlog_format = ROW
+
+# required unique id between 1 and 2^32 - 1
+# defaults to 1 if master-host is not set
+# but will not function as a master if omitted
+server-id	= 1
+
+default-storage-engine=InnoDB
+
+# Uncomment the following if you are using InnoDB tables
+
+innodb_file_per_table=1
+innodb_file_format=barracuda
+#innodb_strict_mode=1
+
+innodb_data_file_path = ibdata1:128M:autoextend
+innodb_log_group_home_dir = mysql/
+# You can set .._buffer_pool_size up to 50 - 80 %
+# of RAM but beware of setting memory usage too high
+#innodb_buffer_pool_size = 1G
+innodb_buffer_pool_size = 52G
+innodb_additional_mem_pool_size = 64M
+# Set .._log_file_size to 25 % of buffer pool size
+innodb_log_file_size = 256M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 2
+innodb_file_per_table
+innodb_log_files_in_group = 2
+innodb_lock_wait_timeout = 80
+
+skip-innodb_doublewrite
+
+innodb_flush_method = O_DIRECT
+innodb_thread_concurrency = 0
+innodb_adaptive_flushing = 1
+innodb_max_dirty_pages_pct = 85
+#innodb_read_ahead = none
+#innodb_flush_neighbor_pages = 0
+#innodb_io_capacity = 2000
+
+
+# The safe_mysqld script
+[safe_mysqld]
+log-error = mysql/mysqld.err
+nice      = 0
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+[mysql]
+#no-auto-rehash
+# Remove the next comment character if you are not familiar with SQL
+#safe-updates
+prompt=[\R:\m] \u@\d>
+
+[isamchk]
+key_buffer = 20M
+sort_buffer_size = 20M
+read_buffer = 2M
+write_buffer = 2M
+
+[myisamchk]
+key_buffer = 20M
+sort_buffer_size = 20M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout

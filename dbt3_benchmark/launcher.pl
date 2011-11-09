@@ -434,24 +434,29 @@ sub StopMysql{
 	my $port	= $mysqlHash->{'PORT'};
 	my $mysql_user	= $mysqlHash->{'DBMS_USER'};
 
-	my $retVal = 1;
 
 	chdir($mysql_home) or SafelyDie("Can't chdir to $mysql_home $!", __LINE__);
 	my $stopMysql_stmt = "./bin/mysqladmin --socket=$socket --port=$port --user=$mysql_user shutdown 0";
 	PrintMsg("Stopping mysql with the following line:\n$stopMysql_stmt\n\n");
 	if(!$dry_run){
 		print `$stopMysql_stmt`;
+		
+		# check for failure
+		system("./bin/mysqladmin --socket=$socket --port=$port ping > /dev/null 2>&1");
+		if ($? == 0){
+			print "[ERROR]: MySQL/MariaDB server did not start properly on socket '$socket'\n";
+			return 0;
+		}
+
 		delete($stServers->{$socket."_".$port});
 	}
-	# TODO: check for failure
-	return $retVal;
+	return 1;
 }
 
 
 
 #PostgreSQL
 sub StartPostgres{
-# 	my ($postgres_home, $datadir, $config_file, $port, $startup_params) = @_;
 	my ($postgreHash, $stServers) = @_;
 
 	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
@@ -483,7 +488,6 @@ sub StartPostgres{
 
 
 sub StopPostgres{
-# 	my ($postgres_home, $datadir, $port) = @_;
 	my ($postgreHash, $stServers) = @_;
 
 	my $postgres_home	= $postgreHash->{'DBMS_HOME'};
@@ -498,11 +502,16 @@ sub StopPostgres{
 		if(!$dry_run){
 			print `$cmd`;
 			sleep 1;
+			
+			#check for usuccessfully stopped server
+			if (-e "$datadir/postmaster.pid"){
+				print "PostgresSQL could not be stopped.";
+				return 0;
+			}
+
 			delete($stServers->{"postgres_".$port});
 		}
 	}
-
-	# TODO - check for failed stop of server
 	return 1;
 }
 
