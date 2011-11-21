@@ -38,6 +38,8 @@ my $warmup_time		= 0;	#in seconds
 my $pre_run_sql		= "";
 my $do_pre_run		= 0;
 my $mysqld_start_params = "";
+my $warmup_delay	= 0;	#How many seconds should the warmup run be delayed after prepare
+my $run_delay		= 0;	#How many seconds should the actual run be delayed after warmup or prepare
 
 my $nostart_mysql		= 0;
 my $nostop_mysql		= 0;
@@ -81,7 +83,9 @@ GetOptions ("dry-run" 				=> \$dry_run,
 		"prepare-threads:i"		=> \$prepare_threads,
 		"pre-run-sql:s"			=> \$pre_run_sql,
 		"do-pre-run"			=> \$do_pre_run,
-		"mysqld-start-params:s"		=> \$mysqld_start_params);  
+		"mysqld-start-params:s"		=> \$mysqld_start_params,
+		"warmup-delay:i"		=> \$warmup_delay,
+		"run-delay:i"			=> \$run_delay);  
 
 
 
@@ -461,10 +465,18 @@ if($do_pre_run){
 }
 
 if($warmup){
+	if($warmup_delay > 0){
+		print "Delaying warmup with $warmup_delay seconds.";
+		sleep $warmup_delay;
+	}
 	Warmup();
 }
 
 if($run){
+	if($run_delay > 0){
+		print "Delaying run with $run_delay seconds.";
+		sleep $run_delay;
+	}
 	Run();
 	ShowGlobalStatus();
 	ShowVariables();

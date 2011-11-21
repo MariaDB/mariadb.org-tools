@@ -1,20 +1,15 @@
 # The following options will be passed to all MySQL clients
 [client]
-#password	= your_password
-#port		= 3306
-#socket		= /tmp/mysql.sock
 
 # Here follows entries for some specific programs
 
 # The MySQL server
 [mysqld]
-#port		= 3306
-#socket		= /tmp/mysql.sock
 
 net_read_timeout = 300
 net_write_timeout = 600
 
-key_buffer_size = 3G
+key_buffer_size = 1G
 
 skip-external-locking
 key_buffer = 16M
@@ -25,7 +20,7 @@ sort_buffer_size = 512K
 net_buffer_length = 8K
 read_buffer_size = 256K
 read_rnd_buffer_size = 512K
-myisam_sort_buffer_size = 8M
+myisam_sort_buffer_size = 4G
 max_connections = 256
 query_cache_size = 0
 query_cache_type = 0
@@ -72,7 +67,6 @@ default-storage-engine=MyISAM
 # You can set .._buffer_pool_size up to 50 - 80 %
 # of RAM but beware of setting memory usage too high
 #innodb_buffer_pool_size = 1G
-#innodb_buffer_pool_size = 3G
 #innodb_additional_mem_pool_size = 64M
 # Set .._log_file_size to 25 % of buffer pool size
 #innodb_log_file_size = 256M
@@ -88,7 +82,6 @@ default-storage-engine=MyISAM
 #innodb_thread_concurrency = 0
 #innodb_adaptive_flushing = 1
 #innodb_max_dirty_pages_pct = 85
-
 
 
 # The safe_mysqld script

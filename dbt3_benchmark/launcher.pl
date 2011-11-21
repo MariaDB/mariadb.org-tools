@@ -56,24 +56,6 @@ sub CheckInputParams{
 		}
 	}
 
-# 	if(!$PROJECT_HOME){
-# 		$errors = "### ERROR: Missing input parameter 'project-home'.\n";
-# 	}else{
-# 
-# 		if(!(-e $PROJECT_HOME)){
-# 			$errors .= "### ERROR: Project home folder '$PROJECT_HOME' does not exist \n";
-# 		}
-# 	}
-# 
-# 	if(!$DATADIR_HOME){
-# 		$errors = "### ERROR: Missing input parameter 'datadir-home'.\n";
-# 	}else{
-# 
-# 		if(!(-e $DATADIR_HOME)){
-# 			$errors .= "### ERROR: Data directory home folder '$DATADIR_HOME' does not exist \n";
-# 		}
-# 	}
-
 	if(!$RESULTS_OUTPUT_DIR){
 		$errors .= "### ERROR: Config parameter 'results-output-dir' is missing. \n";
 	}
@@ -377,6 +359,25 @@ sub StartMysql{
 	my $timeout=100;
 	my $mysql_admin_options = "--socket=$socket";
 	my $mysqld_options = "--defaults-file=$config_file --port=$port --socket=$socket --read-only ";
+
+
+	#make one datadir to work for both MariaDB and MySQL. The problem is the following query: SET GLOBAL EVENT_SCHEDULER = ON;
+	#So each datadir that you want to make available for both MariaDB and MySQL should have the following folders:
+	# - mysql_mysql - a directory that runs MySQL properly
+	# - mylsq_mariadb - a directory that runs MariaDB properly
+	#Then a symbolic link is created to the necessary folder based on the $mysqlHash->{'DBMS'} parameter
+	if(-e "$datadir/mysql_mysql" && -e "$datadir/mysql_mariadb"){
+		if(-e "$datadir/mysql"){
+			unlink "$datadir/mysql" or SafelyDie("Could not unlink mysql folder: $!", __LINE__);
+		}
+		if($mysqlHash->{'DBMS'} eq "MySQL" && -e "$datadir/mysql_mysql"){
+			symlink ("$datadir/mysql_mysql", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
+		}elsif($mysqlHash->{'DBMS'} eq "MariaDB" && -e "$datadir/mysql_mariadb"){
+			symlink ("$datadir/mysql_mariadb", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
+		}
+	}
+
+
 	if($datadir){
 		$mysqld_options .= " --datadir=$datadir";
 	}
@@ -394,7 +395,7 @@ sub StartMysql{
 	my $startMysql_stmt = "./bin/mysqld_safe $mysqld_options &";
 	PrintMsg("Starting mysqld with the following line:\n$startMysql_stmt\n\n");
 	if(!$dry_run){
-		#check for previously started server - TODO
+		#check for previously started server
 		system("./bin/mysqladmin $mysql_admin_options ping > /dev/null 2>&1");
 		if ($? == 0){
 			print "[ERROR]: There is a mysql server already started on socket '$socket'\n";
@@ -530,7 +531,6 @@ sub SafelyDie{
 			$processes = `ps -ef |grep \`whoami\`| grep mysqld | grep $value->{'SOCKET'} | cut -c10-15`;
 		}
 		foreach my $procId (split(' ', $processes)){
-			print "\nkilling procId = $procId end\n";
 			system("kill -9 $procId > /dev/null 2>&1");
 		}
 	}
@@ -540,7 +540,7 @@ sub SafelyDie{
 
 
 sub ExecuteWithTimeout{
-	# TODO: Implement timeout algorithm for PostgreSQL. Currently it is not working
+	# TODO: Implement timeout algorithm for PostgreSQL. Currently it is working only with MariaDB and MySQL
 	my ($dbms, $dbh, $run_stmts, $timeout) = @_;
 
 	my $timeout_exceeded 	= 0;
@@ -564,7 +564,7 @@ sub ExecuteWithTimeout{
 		if($DBI::errstr eq "Query execution was interrupted"){
 			$timeout_exceeded = 1;
 		}else{
-			print "\nDBI resulted with an error: $DBI::errstr";
+			SafelyDie("\nDBI resulted with an error: $DBI::errstr", __LINE__);
 		}
 	};
 
@@ -621,7 +621,6 @@ sub ExecuteInShell{
 	}
 
 	return $elapsedTime;
-	# TODO: Log the results into a database
 }
 
 
@@ -988,7 +987,7 @@ sub PlotGraph{
 			
 			my $j = 2; #start from the second column
 			if($min_max_out_of_n && $min_elapsed_time ne "" && $max_elapsed_time ne ""){
-				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j+2).":(0):(\$2):xtic(1) ti \"$keyword\",";
+				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using (\$3):(0):(\$2):xtic(1) ti \"$keyword\",";
 			}elsif($analyze_explain && $min_elapsed_time ne ""){
  				$plotFiles .= "'$RESULTS_OUTPUT_DIR/results.dat' index $i using ".($j++).":xtic(1) ti \"$keyword min\",";
  			}elsif($simple_average && $avg_elapsed_time ne ""){
@@ -1112,8 +1111,8 @@ sub RunTests{
 	my $STORAGE_ENGINE	= $configHash->{'db_config'}->{'STORAGE_ENGINE'};
 	my $PRE_TEST_SQL	= $configHash->{'db_config'}->{'PRE_TEST_SQL'}			// "";
 	my $POST_TEST_SQL	= $configHash->{'db_config'}->{'POST_TEST_SQL'}			// "";
-	my $PRE_TEST_OS		= $configHash->{'test_config'}->{'PRE_TEST_OS'}			// "";
-	my $POST_TEST_OS	= $configHash->{'test_config'}->{'POST_TEST_OS'}		// "";
+	my $PRE_TEST_OS		= $configHash->{'db_config'}->{'PRE_TEST_OS'}			// $configHash->{'test_config'}->{'PRE_TEST_OS'}		// "";
+	my $POST_TEST_OS	= $configHash->{'db_config'}->{'POST_TEST_OS'}			// $configHash->{'test_config'}->{'POST_TEST_OS'}		// "";
 	my $CLEAR_CACHES	= $configHash->{'command_line'}->{'CLEAR_CACHES'}		// $configHash->{'test_config'}->{'CLEAR_CACHES'}		// 0;
 # 	my $CLEAR_CACHES_PROGRAM= $configHash->{'command_line'}->{'CLEAR_CACHES_PROGRAM'}	// $configHash->{'test_config'}->{'CLEAR_CACHES_PROGRAM'}	// "";
 # 	my $SCALE_FACTOR	= $configHash->{'command_line'}->{'SCALE_FACTOR'}		// $configHash->{'test_config'}->{'SCALE_FACTOR'};
@@ -1287,6 +1286,11 @@ sub RunTests{
 
 			
 			if(!$QUERIES_AT_ONCE){
+				if($i == 1 && $j == 1 && $PRE_TEST_OS){
+					print "\n\n============\n$PRE_TEST_OS\n==============\n\n";
+					system("$PRE_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
+				}
+
 				#start mysql
 				if($CLEAR_CACHES){
 					#clear the caches prior the whole test
@@ -1310,10 +1314,6 @@ sub RunTests{
 				if($i == 1 && $j == 1){
 					if($PRE_TEST_SQL){
 						ExecuteInShell($DBMS_hash, $PRE_TEST_SQL, "", $KEYWORD, "pre_test_sql_results.txt");
-					}
-
-					if($PRE_TEST_OS){
-						system("$PRE_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/pre_test_os_results.txt");
 					}
 				}
 			}
@@ -1367,10 +1367,6 @@ sub RunTests{
 							AppendFileToAnother("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "--- Results ---");
 						}
 
-
-
-
-						my $l_ANALYZE_EXPLAIN = 0; # TODO: put this into the configuration file
 						if($l_ANALYZE_EXPLAIN){
 							#Analyze the explain results and skip test if that's not the fastest execution plan
 							if($DBMS_hash->{'DBMS'} ne "PostgreSQL"){
@@ -1525,10 +1521,6 @@ sub RunTests{
 					if($POST_TEST_SQL){
 						ExecuteInShell($DBMS_hash, $POST_TEST_SQL, "", $KEYWORD, "post_test_sql_results.txt");
 					}
-
-					if($POST_TEST_OS){
-						system("$POST_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/post_test_os_results.txt");
-					}
 				}
 
 				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
@@ -1540,12 +1532,14 @@ sub RunTests{
 						SafelyDie("Could not stop mysqld process", __LINE__);
 					}
 				}
+
+				if($noMoreTests && $i+1 == scalar(keys %{ $configHash->{'queries'} })){
+					if($POST_TEST_OS){
+						system("$POST_TEST_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/post_test_os_results.txt");
+					}
+				}
 			}
 
-
-# 			if($noMoreTests){
-# 				last;
-# 			}
 		}#while
 
 		PrintMsg("\nRESULT FOR QUERY: min=".$resultHash->{'min'}."   max=".$resultHash->{'max'}."   avg=".$resultHash->{'avg'}."\n\n");
@@ -1610,9 +1604,7 @@ GetOptions (	"test|t:s" 			=> \$TEST_FILE,
 
 		#overriding parameters
 		"CLEAR_CACHES:s"		=> \$command_line_hash->{'CLEAR_CACHES'},
-# 		"SCALE_FACTOR:s"		=> \$command_line_hash->{'SCALE_FACTOR'},
 		"QUERIES_AT_ONCE:s"		=> \$command_line_hash->{'QUERIES_AT_ONCE'},
-# 		"QUERIES_HOME:s"		=> \$command_line_hash->{'QUERIES_HOME'},
 		"RUN:s" 			=> \$command_line_hash->{'RUN'},
 		"EXPLAIN:s" 			=> \$command_line_hash->{'EXPLAIN'},
 		"TIMEOUT:s" 			=> \$command_line_hash->{'TIMEOUT'},

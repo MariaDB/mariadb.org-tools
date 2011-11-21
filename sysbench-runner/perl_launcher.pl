@@ -2,7 +2,9 @@
 use warnings;
 use strict;
 use Getopt::Long;
+use File::Copy;
 
+our $WARMUP;
 our $RUN;
 our $CLEANUP;
 our $PLOT;
@@ -35,6 +37,8 @@ our $PARALLEL_PREPARE;
 our $PREPARE_THREADS;
 our $PRE_RUN_SQL;
 our $GRAPH_HEADING;
+our $WARMUP_DELAY;
+our $RUN_DELAY;
 
 our @configurations;
 
@@ -85,6 +89,7 @@ sub RunTests{
 
 	for (my $i=0; $i < scalar(@configurations); $i++){
 
+		my $l_WARMUP			= $configurations[$i]{WARMUP}	 		// $WARMUP;
 		my $l_RUN			= $configurations[$i]{RUN}	 		// $RUN;
 		my $l_CLEANUP			= $configurations[$i]{CLEANUP}	 		// $CLEANUP;
 		my $l_PLOT			= $configurations[$i]{PLOT}	 		// $PLOT;
@@ -116,14 +121,16 @@ sub RunTests{
 		my $l_PREPARE_THREADS		= $configurations[$i]{PREPARE_THREADS} 		// $PREPARE_THREADS;
 		my $l_PRE_RUN_SQL		= $configurations[$i]{PRE_RUN_SQL}		// $PRE_RUN_SQL;
 
+		my $l_WARMUP_DELAY		= $configurations[$i]{WARMUP_DELAY}		// $WARMUP_DELAY	// 0;
+		my $l_RUN_DELAY			= $configurations[$i]{RUN_DELAY}		// $RUN_DELAY		// 0;
+
 
 
 		print "\n=== $l_DESCRIPTION ===\n";
 		
 		if(-e $l_DATADIR){
 			#system("rm -r $l_DATADIR");
-			print "ERROR: DATADIR ($l_DATADIR) already exists.";
-			exit;
+			die "ERROR: DATADIR ($l_DATADIR) already exists.";
 		}
 
 
@@ -132,14 +139,13 @@ sub RunTests{
 		if($l_DATA_SOURCE_DIR){
 			#if we have ready folder to copy from
 			if(!(-e $l_DATA_SOURCE_DIR)){
-				print "ERROR: DATA_SOURCE_DIR ($l_DATA_SOURCE_DIR) does not exits";
-				exit;
+				die "ERROR: DATA_SOURCE_DIR ($l_DATA_SOURCE_DIR) does not exits";
 			}
 			if(-e $l_DATADIR){
-				print "ERROR: DATADIR ($l_DATADIR) already exists.";
-				exit;
+				die "ERROR: DATADIR ($l_DATADIR) already exists.";
 			}else{
-				system("cp -r $l_DATA_SOURCE_DIR $l_DATADIR");
+				print "Copying datadir from '$l_DATA_SOURCE_DIR' to '$l_DATADIR'";
+				system ("cp -r $l_DATA_SOURCE_DIR $l_DATADIR");# or die "Could not copy datadir to $l_DATA_SOURCE_DIR: $!";
 			}
 		} else {
 			#if not, we should prepare the database ourselves
@@ -207,6 +213,16 @@ sub RunTests{
 				$readonly = "--readonly ";
 			}
 
+			my $warmup = "";
+			if($l_WARMUP){
+				$warmup = "--warmup";
+			}
+
+			my $cleanup = "";
+			if($l_CLEANUP){
+				$cleanup = "--cleanup";
+			}
+
 			#Threads string
 			my $threads_string = "";
 			for my $thr (split(',', $l_THREADS)){
@@ -215,7 +231,7 @@ sub RunTests{
 			}
 
 			chdir($l_SCRIPTS_HOME);
-			system("perl bench_script.pl --warmup --run --cleanup $mysqld_start_params \\\
+			system("perl bench_script.pl $warmup --run $cleanup $mysqld_start_params \\\
 --max-time=$l_MAX_TIME $readonly \\\
 --sysbench-home=$l_SYSBENCH_HOME \\\
 --dbname=$l_DBNAME \\\
@@ -231,6 +247,8 @@ sub RunTests{
 --mysql-home=$l_MYSQL_HOME \\\
 --mysql-user=$l_MYSQL_USER \\\
 --socket=$l_SOCKET \\\
+--warmup-delay=$l_WARMUP_DELAY \\\
+--run-delay=$l_RUN_DELAY \\\
 $threads_string");
 		} #if($l_RUN)
 

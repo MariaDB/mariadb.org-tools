@@ -1,15 +1,10 @@
 # The following options will be passed to all MySQL clients
 [client]
-#password	= your_password
-#port		= 3306
-#socket		= /tmp/mysql.sock
 
 # Here follows entries for some specific programs
 
 # The MySQL server
 [mysqld]
-#port		= 3306
-#socket		= /tmp/mysql.sock
 
 net_read_timeout = 300
 net_write_timeout = 600
@@ -31,54 +26,9 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 
-#All settings to on
-optimizer_switch='index_merge=on'
-optimizer_switch='index_merge_union=on'
-optimizer_switch='index_merge_sort_union=on'
-optimizer_switch='index_merge_intersection=on'
-optimizer_switch='index_merge_sort_intersection=on'
-optimizer_switch='index_condition_pushdown=on'
-optimizer_switch='derived_merge=on'
-optimizer_switch='derived_with_keys=on'
-optimizer_switch='firstmatch=on'
-optimizer_switch='loosescan=on'
-optimizer_switch='materialization=on'
-optimizer_switch='in_to_exists=on'
-optimizer_switch='semijoin=on'
-optimizer_switch='partial_match_rowid_merge=on'
-optimizer_switch='partial_match_table_scan=on'
-optimizer_switch='subquery_cache=on'
-optimizer_switch='mrr=on'
-optimizer_switch='mrr_cost_based=on'
-optimizer_switch='mrr_sort_keys=on'
-optimizer_switch='outer_join_with_cache=on'
-optimizer_switch='semijoin_with_cache=on'
-optimizer_switch='join_cache_incremental=on'
-optimizer_switch='join_cache_hashed=on'
-optimizer_switch='join_cache_bka=on'
-optimizer_switch='optimize_join_buffer_size=on'
-optimizer_switch='table_elimination=on'
-
-
-#Igor's settings
-#optimizer_switch='mrr=on'
-#optimizer_switch='mrr_sort_keys=on'
-#optimizer_switch='derived_merge=on'
-#optimizer_switch='optimize_join_buffer_size=on'
-#optimizer_switch='outer_join_with_cache=on'
-#optimizer_switch='derived_with_keys=on'
-#optimizer_switch='materialization=on'
-#optimizer_switch='semijoin=on'
-#optimizer_switch='in_to_exists=off'
-
-
-join_buffer_space_limit = 1024M
 join_buffer_size = 512M
-join_cache_level = 8
-mrr_buffer_size = 32M
 tmp_table_size = 32M
 max_heap_table_size = 32M
-
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
 # if all processes that need to connect to mysqld run on the same host.
@@ -111,13 +61,10 @@ default-storage-engine=InnoDB
 
 innodb_file_per_table=1
 innodb_file_format=barracuda
-#innodb_strict_mode=1
-
 innodb_data_file_path = ibdata1:128M:autoextend
 innodb_log_group_home_dir = mysql/
 # You can set .._buffer_pool_size up to 50 - 80 %
 # of RAM but beware of setting memory usage too high
-#innodb_buffer_pool_size = 1G
 innodb_buffer_pool_size = 3G
 innodb_additional_mem_pool_size = 64M
 # Set .._log_file_size to 25 % of buffer pool size
@@ -134,9 +81,6 @@ innodb_flush_method = O_DIRECT
 innodb_thread_concurrency = 0
 innodb_adaptive_flushing = 1
 innodb_max_dirty_pages_pct = 85
-#innodb_read_ahead = none
-#innodb_flush_neighbor_pages = 0
-#innodb_io_capacity = 2000
 
 
 # The safe_mysqld script
