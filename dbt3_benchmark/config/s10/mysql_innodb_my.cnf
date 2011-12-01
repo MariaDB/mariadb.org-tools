@@ -39,8 +39,8 @@ max_heap_table_size = 32M
 #skip-networking
 
 # Disable other storage engines
-#skip-federated
-#skip-pbxt
+skip-federated
+skip-pbxt
 
 # Replication Master Server (default)
 # binary logging is required for replication

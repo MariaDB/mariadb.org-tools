@@ -91,28 +91,28 @@ CREATE TABLE time_statistics (
 
 INSERT INTO time_statistics (task_name, timest) VALUES ('loading database started', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/nation.tbl' into table nation fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/nation.tbl' into table nation fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load nation table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/region.tbl' into table region fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/region.tbl' into table region fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load region table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/supplier.tbl' into table supplier fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/supplier.tbl' into table supplier fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load supplier table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/part.tbl' into table part fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/part.tbl' into table part fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load part table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/customer.tbl' into table customer fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/customer.tbl' into table customer fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load customer table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/orders.tbl' into table orders fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/orders.tbl' into table orders fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load orders table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/partsupp.tbl' into table partsupp fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/partsupp.tbl' into table partsupp fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load partsupp table', now());
 
-LOAD DATA INFILE '~/benchmarks/gen_data/s100/lineitem.tbl' into table lineitem fields terminated by '|';
+LOAD DATA INFILE '/home/mariadb/benchmark/dbt3/gen_data/s30/lineitem.tbl' into table lineitem fields terminated by '|';
 INSERT INTO time_statistics (task_name, timest) VALUES ('load lineitem table', now());
 
 

@@ -26,7 +26,7 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 
-#All settings to default
+#All settings to default (per query optimizations)
 #optimizer_switch='default'
 
 optimizer_switch='index_merge=on'
@@ -64,6 +64,7 @@ optimizer_switch='table_elimination=on'
 #tmp_table_size = 96M
 #max_heap_table_size = 96M
 
+
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
 # if all processes that need to connect to mysqld run on the same host.
 # All interaction with mysqld must be made via Unix sockets or named pipes.
@@ -73,16 +74,8 @@ optimizer_switch='table_elimination=on'
 #skip-networking
 
 # Disable other storage engines
-#skip-federated
-#skip-pbxt
-
-# Replication Master Server (default)
-# binary logging is required for replication
-#log-bin=mysql-bin
-
-# Binary logging format: [ROW | STATEMENT | MIXED].
-# Default is STATEMENT.
-#binlog_format = ROW
+skip-federated
+skip-pbxt
 
 # required unique id between 1 and 2^32 - 1
 # defaults to 1 if master-host is not set

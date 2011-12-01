@@ -26,45 +26,34 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 
-#All settings to on
-#optimizer_switch='index_merge=on'
-#optimizer_switch='index_merge_union=on'
-#optimizer_switch='index_merge_sort_union=on'
-#optimizer_switch='index_merge_intersection=on'
-#optimizer_switch='index_merge_sort_intersection=on'
-#optimizer_switch='index_condition_pushdown=on'
-#optimizer_switch='derived_merge=on'
-#optimizer_switch='derived_with_keys=on'
-#optimizer_switch='firstmatch=on'
-#optimizer_switch='loosescan=on'
-#optimizer_switch='materialization=on'
-#optimizer_switch='in_to_exists=on'
-#optimizer_switch='semijoin=on'
-#optimizer_switch='partial_match_rowid_merge=on'
-#optimizer_switch='partial_match_table_scan=on'
-#optimizer_switch='subquery_cache=on'
-#optimizer_switch='mrr=on'
-#optimizer_switch='mrr_cost_based=on'
-#optimizer_switch='mrr_sort_keys=on'
-#optimizer_switch='outer_join_with_cache=on'
-#optimizer_switch='semijoin_with_cache=on'
-#optimizer_switch='join_cache_incremental=on'
-#optimizer_switch='join_cache_hashed=on'
-#optimizer_switch='join_cache_bka=on'
-#optimizer_switch='optimize_join_buffer_size=on'
-#optimizer_switch='table_elimination=on'
-
-
-#Igor's settings
-optimizer_switch='mrr=on'
-optimizer_switch='mrr_sort_keys=on'
+#Per-test optimizations
+optimizer_switch='index_merge=on'
+optimizer_switch='index_merge_union=on'
+optimizer_switch='index_merge_sort_union=on'
+optimizer_switch='index_merge_intersection=on'
+optimizer_switch='index_merge_sort_intersection=off'
+optimizer_switch='index_condition_pushdown=off'
 optimizer_switch='derived_merge=on'
-optimizer_switch='optimize_join_buffer_size=on'
-optimizer_switch='outer_join_with_cache=on'
 optimizer_switch='derived_with_keys=on'
+optimizer_switch='firstmatch=off'
+optimizer_switch='loosescan=off'
 optimizer_switch='materialization=on'
+optimizer_switch='in_to_exists=on'
 optimizer_switch='semijoin=on'
-#optimizer_switch='in_to_exists=off'
+optimizer_switch='partial_match_rowid_merge=on'
+optimizer_switch='partial_match_table_scan=on'
+optimizer_switch='subquery_cache=off'
+optimizer_switch='mrr=on'
+optimizer_switch='mrr_cost_based=off'
+optimizer_switch='mrr_sort_keys=on'
+optimizer_switch='outer_join_with_cache=on'
+optimizer_switch='semijoin_with_cache=off'
+optimizer_switch='join_cache_incremental=on'
+optimizer_switch='join_cache_hashed=on'
+optimizer_switch='join_cache_bka=on'
+optimizer_switch='optimize_join_buffer_size=on'
+optimizer_switch='table_elimination=on'
+
 
 join_buffer_space_limit = 3072M
 join_buffer_size = 1536M
@@ -72,6 +61,7 @@ join_cache_level = 6
 mrr_buffer_size = 96M
 tmp_table_size = 96M
 max_heap_table_size = 96M
+
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
 # if all processes that need to connect to mysqld run on the same host.
@@ -82,16 +72,8 @@ max_heap_table_size = 96M
 #skip-networking
 
 # Disable other storage engines
-#skip-federated
-#skip-pbxt
-
-# Replication Master Server (default)
-# binary logging is required for replication
-#log-bin=mysql-bin
-
-# Binary logging format: [ROW | STATEMENT | MIXED].
-# Default is STATEMENT.
-#binlog_format = ROW
+skip-federated
+skip-pbxt
 
 # required unique id between 1 and 2^32 - 1
 # defaults to 1 if master-host is not set

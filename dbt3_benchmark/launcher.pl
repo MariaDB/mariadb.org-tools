@@ -153,6 +153,11 @@ sub CheckConfigParams{
 	}
 
 
+	if($configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'} && -e $DBMS_hash->{'MYSQL_SYSTEM_DIR'}= $configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'}){
+		$errors .= "### ERROR: MySQL sysetem directory set by the parameter MYSQL_SYSTEM_DIR = '".$configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'}."' does not exist \n";
+	}
+
+
 	#Results DB params:
 	if(!$configHash->{'results_db'}->{'DBMS_HOME'}){
 		$errors .= "### ERROR: Config parameter 'DBMS_HOME' for the results DB is missing. \n";
@@ -350,6 +355,8 @@ sub StartMysql{
 	my $port		= $mysqlHash->{'PORT'};
 	my $tmpdir		= $mysqlHash->{'TMPDIR'};
 	my $startup_params	= $mysqlHash->{'STARTUP_PARAMS'};
+	my $read_only		= $mysqlHash->{'READ_ONLY'};
+	my $mysql_system_dir	= $mysqlHash->{'MYSQL_SYSTEM_DIR'};
 
 
 	my $retVal = 1;
@@ -358,7 +365,7 @@ sub StartMysql{
 	my $j=0;
 	my $timeout=100;
 	my $mysql_admin_options = "--socket=$socket";
-	my $mysqld_options = "--defaults-file=$config_file --port=$port --socket=$socket --read-only ";
+	my $mysqld_options = "--defaults-file=$config_file --port=$port --socket=$socket";
 
 
 	#make one datadir to work for both MariaDB and MySQL. The problem is the following query: SET GLOBAL EVENT_SCHEDULER = ON;
@@ -366,15 +373,23 @@ sub StartMysql{
 	# - mysql_mysql - a directory that runs MySQL properly
 	# - mylsq_mariadb - a directory that runs MariaDB properly
 	#Then a symbolic link is created to the necessary folder based on the $mysqlHash->{'DBMS'} parameter
-	if(-e "$datadir/mysql_mysql" && -e "$datadir/mysql_mariadb"){
+# 	if(-e "$datadir/mysql_mysql" && -e "$datadir/mysql_mariadb"){
+# 		if(-e "$datadir/mysql"){
+# 			unlink "$datadir/mysql" or SafelyDie("Could not unlink mysql folder: $!", __LINE__);
+# 		}
+# 		if($mysqlHash->{'DBMS'} eq "MySQL" && -e "$datadir/mysql_mysql"){
+# 			symlink ("$datadir/mysql_mysql", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
+# 		}elsif($mysqlHash->{'DBMS'} eq "MariaDB" && -e "$datadir/mysql_mariadb"){
+# 			symlink ("$datadir/mysql_mariadb", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
+# 		}
+# 	}
+
+	if($mysql_system_dir && -e "$mysql_system_dir"){
 		if(-e "$datadir/mysql"){
 			unlink "$datadir/mysql" or SafelyDie("Could not unlink mysql folder: $!", __LINE__);
 		}
-		if($mysqlHash->{'DBMS'} eq "MySQL" && -e "$datadir/mysql_mysql"){
-			symlink ("$datadir/mysql_mysql", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
-		}elsif($mysqlHash->{'DBMS'} eq "MariaDB" && -e "$datadir/mysql_mariadb"){
-			symlink ("$datadir/mysql_mariadb", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
-		}
+
+		symlink ("$mysql_system_dir", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
 	}
 
 
@@ -388,6 +403,10 @@ sub StartMysql{
 
 	if($startup_params){
 		$mysqld_options .= " $startup_params";
+	}
+	
+	if($read_only){
+		$mysqld_options .= " --read-only";
 	}
 
 	chdir($mysql_home) or SafelyDie("Can't chdir to $mysql_home $!", __LINE__);
@@ -1200,6 +1219,8 @@ sub RunTests{
 		$DBMS_hash->{'SOCKET'}		= $configHash->{'db_config'}->{'SOCKET'};
 		$DBMS_hash->{'PORT'}		= $configHash->{'db_config'}->{'PORT'};
 		$DBMS_hash->{'HOST'}		= $configHash->{'db_config'}->{'HOST'};
+		$DBMS_hash->{'MYSQL_SYSTEM_DIR'}= $configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'};
+		$DBMS_hash->{'READ_ONLY'}	= $configHash->{'db_config'}->{'READ_ONLY'};
 		$DBMS_hash->{'CONFIG_FILE'}	= $configHash->{'queries'}->{'queries_settings'}->{'CONFIG_FILE'}	// $configHash->{'queries'}->{$queryKey}->{'CONFIG_FILE'}	// $configHash->{'db_config'}->{'CONFIG_FILE'};
 		$DBMS_hash->{'TMPDIR'}		= $configHash->{'queries'}->{$queryKey}->{'TMPDIR'}			// $configHash->{'db_config'}->{'TMPDIR'}			// "";
 		$DBMS_hash->{'STARTUP_PARAMS'}	= $configHash->{'queries'}->{$queryKey}->{'STARTUP_PARAMS'}		// $configHash->{'db_config'}->{'STARTUP_PARAMS'};
