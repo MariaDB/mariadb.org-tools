@@ -153,7 +153,7 @@ sub CheckConfigParams{
 	}
 
 
-	if($configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'} && -e $DBMS_hash->{'MYSQL_SYSTEM_DIR'}= $configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'}){
+	if($configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'} && !-e $configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'}){
 		$errors .= "### ERROR: MySQL sysetem directory set by the parameter MYSQL_SYSTEM_DIR = '".$configHash->{'db_config'}->{'MYSQL_SYSTEM_DIR'}."' does not exist \n";
 	}
 
@@ -388,7 +388,6 @@ sub StartMysql{
 		if(-e "$datadir/mysql"){
 			unlink "$datadir/mysql" or SafelyDie("Could not unlink mysql folder: $!", __LINE__);
 		}
-
 		symlink ("$mysql_system_dir", "$datadir/mysql") or SafelyDie("Could not create link: $!", __LINE__);
 	}
 

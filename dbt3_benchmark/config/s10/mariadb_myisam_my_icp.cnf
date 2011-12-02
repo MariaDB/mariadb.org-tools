@@ -9,7 +9,7 @@ tmpdir = mysql
 net_read_timeout = 300
 net_write_timeout = 600
 
-key_buffer_size = 3G
+key_buffer_size = 1G
 
 skip-external-locking
 key_buffer = 16M
@@ -55,12 +55,12 @@ optimizer_switch='optimize_join_buffer_size=on'
 optimizer_switch='table_elimination=on'
 
 
-join_buffer_space_limit = 3072M
-join_buffer_size = 1536M
+join_buffer_space_limit = 1024M
+join_buffer_size = 512M
 join_cache_level = 6
-mrr_buffer_size = 96M
-tmp_table_size = 96M
-max_heap_table_size = 96M
+mrr_buffer_size = 32M
+tmp_table_size = 32M
+max_heap_table_size = 32M
 
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,

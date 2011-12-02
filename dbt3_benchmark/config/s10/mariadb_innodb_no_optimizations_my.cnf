@@ -5,7 +5,7 @@
 
 # The MySQL server
 [mysqld]
-
+tmpdir = mysql
 net_read_timeout = 300
 net_write_timeout = 600
 

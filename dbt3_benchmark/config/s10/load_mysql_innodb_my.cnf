@@ -5,7 +5,7 @@
 
 # The MySQL server
 [mysqld]
-
+tmpdir = mysql
 net_read_timeout = 300
 net_write_timeout = 600
 
@@ -26,6 +26,7 @@ query_cache_size = 0
 query_cache_type = 0
 sql-mode = NO_ENGINE_SUBSTITUTION
 myisam_max_sort_file_size = 24G
+myisam_max_extra_sort_file_size = 24G
 
 join_buffer_size = 512M
 tmp_table_size = 32M
