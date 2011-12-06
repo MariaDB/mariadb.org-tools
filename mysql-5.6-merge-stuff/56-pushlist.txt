@@ -1,0 +1,2091 @@
+andrei.elkin@oracle.com-20111122094519-a137q41qekykl590
+jimmy.yang@oracle.com-20111122083633-kpl8cqvzr75psxif
+tor.didriksen@oracle.com-20111122073720-b7dvunqiiqbsska7
+tor.didriksen@oracle.com-20111122072602-w73nydxrscqxb24i
+sunny.bains@oracle.com-20111122072755-y9hkl01oyvr0lik7
+ashish.y.agarwal@oracle.com-20111122054559-kd2w4gxbt2uux1bb
+jimmy.yang@oracle.com-20111122044855-nto5ioeyce5el4wy
+sunny.bains@oracle.com-20111122025100-zaispl5kphamji3u
+M sunny.bains@oracle.com-20111122003548-u6owi0sdpdebr0hv
+    Merge WL#6012 - Use the same compiler for InnoDB as the server (C++)
+sunny.bains@oracle.com-20111121231510-w1431agvwpfsotuk
+andrei.elkin@oracle.com-20111121195117-rjojf4p587hex2k0
+vasil.dimov@oracle.com-20111121175151-2zonmaedcayq4y9a
+jimmy.yang@oracle.com-20111121170908-obf4tqxenvo2y76m
+manish.4.kumar@oracle.com-20111121132504-13xvk17604cpp451
+sneha.modi@oracle.com-20111121113749-4do2e7ap079prnuv
+bjorn.munch@oracle.com-20111121113127-lyy53kfo3q06rxl3
+evgeny.potemkin@oracle.com-20111121101910-0ag41xtwhya9ja11
+georgi.kodinov@oracle.com-20111121100234-6t5h0qq78uodfdtp
+jorgen.loland@oracle.com-20111121085157-ukkb680qor2yoxzt
+vasil.dimov@oracle.com-20111121083629-glpf9bpv6d4kly45
+marko.makela@oracle.com-20111121081955-7swepqssvrj8lfca
+sneha.modi@oracle.com-20111121053150-8j5utwnf4rqq0516
+sunny.bains@oracle.com-20111121044631-xx7qstku1jlf26de
+jimmy.yang@oracle.com-20111121023519-i8yuqv2wtlfx7g8b
+kevin.lewis@oracle.com-20111121011944-7chd02qkdbjk4u50
+M sunny.bains@oracle.com-20111120202539-tsreibci7v0r92e0
+    Merge WL#6046 - Special handling of read-only transactions
+kevin.lewis@oracle.com-20111120210025-ad3uy1k73lcexpru
+    WL#5756 - Complete patch for mysql-trunk to support innodb-page-size ...
+inaam.rana@oracle.com-20111119171845-icczpm6knqvojd7s
+georgi.kodinov@oracle.com-20111119082638-kxtn03n6k38o17wb
+jorgen.loland@oracle.com-20111118145140-5j3k8vq95ro0wtf0
+vinay.fisrekar@oracle.com-20111118141655-hgyejhgivl7zh857
+jorgen.loland@oracle.com-20111118121745-zuc75utmhw21o02k
+ashish.y.agarwal@oracle.com-20111118060629-ra0sqv4ontf60s5a
+tor.didriksen@oracle.com-20111117145128-f4ejcsgamk0zedgk
+jimmy.yang@oracle.com-20111117142659-0amc9ywmmchte9rg
+oystein.grovlen@oracle.com-20111117140741-ks1dkds70ds1hba3
+rafal.somla@oracle.com-20111117114029-tulcxfkdsbkg24ur
+jimmy.yang@oracle.com-20111117110253-p9gmdh807d39cr7j
+jorgen.loland@oracle.com-20111117100913-qrgj9kfg9kqr18nn
+jimmy.yang@oracle.com-20111116164812-pgthrbjxot0xoxii
+M jimmy.yang@oracle.com-20111114171811-ge4iipyjks70ole7
+    Merge WL#5538 InnoDB Full-Text Search Support
+mattias.jonsson@oracle.com-20111116152404-ax6eqg8f6qzn4050
+luis.soares@oracle.com-20111116011940-t1xpclly833ogjss
+dmitry.lenev@oracle.com-20111115185144-93lfcfljxc8yam50
+luis.soares@oracle.com-20111115144004-hxtm9s24rikyymoa
+luis.soares@oracle.com-20111115130411-xjulydx3e3bxassk
+nirbhay.choubey@oracle.com-20111115123423-e6ig9pw10wqznp8j
+marc.alff@oracle.com-20111115105552-xv1gikw22ucuu9cp
+tor.didriksen@oracle.com-20111115092413-jkh20enbaj0y6ldr
+andrei.elkin@oracle.com-20111114154442-t4ols92xsjjf6xyi
+inaam.rana@oracle.com-20111114143539-ni2fy6gegz7te3pf
+vasil.dimov@oracle.com-20111114142913-oxg0nhx1mzv8nes7
+marko.makela@oracle.com-20111114110534-thrwpxv5hdro99yv
+chuck.bell@oracle.com-20111111195936-jfg6a561uhb8e0n8
+luis.soares@oracle.com-20111111174428-d4mm7hc12tbtuegc
+norvald.ryeng@oracle.com-20111111152618-a96amhqxgvtu3do3
+jorgen.loland@oracle.com-20111111123601-hizjetrcz3k1kko7
+M sergey.glukhov@oracle.com-20111111081708-hh46sgmuwk6olct3
+    [opt] Merge optimiser tree
+tor.didriksen@oracle.com-20111111122523-px6yqbs79rk16qi7
+sergey.glukhov@oracle.com-20111111101535-grnhespmqcvx8vtm
+M sergey.glukhov@oracle.com-20111111100813-els7dby2087el4du
+luis.soares@oracle.com-20111111100639-qeo5nndt2p3ayzii
+M luis.soares@oracle.com-20111109132247-9rpj37aonl1wj44n
+    Merge WL#4143
+sneha.modi@oracle.com-20111111092518-7ocp4flb7oa1sdd4
+jon.hauglid@oracle.com-20111111084343-tu9bc91f99g8bptn
+jorgen.loland@oracle.com-20111111081138-oj1j5nqmz1l58duu
+sunny.bains@oracle.com-20111111061411-0yuhqm400lawsl6g
+olav.sandstaa@oracle.com-20111110181544-w5buosc931ron14g
+marko.makela@oracle.com-20111110145837-zsc0uw41ewffar2e
+sneha.modi@oracle.com-20111110115923-du28omtojnhtcxoi
+kevin.lewis@oracle.com-20111110115542-xfu8onihkd3cmk65
+marko.makela@oracle.com-20111110112809-3z1fdldi28pt0xht
+sergey.vojtovich@oracle.com-20111110095651-nb70cea4lgvf8w3a
+sergey.vojtovich@oracle.com-20111110095520-6o071713in04e7yu
+raghav.kapoor@oracle.com-20111110065327-87nlc9vqomi3vj2b
+sneha.modi@oracle.com-20111110063703-l6rs6iucwg1rh3ql
+anitha.gopi@oracle.com-20111110060006-u4gb9m0tilid09we
+kevin.lewis@oracle.com-20111109141159-txh1y36qi2llw8j1
+bjorn.munch@oracle.com-20111109131706-07s6913pvrz2h7qd
+bjorn.munch@oracle.com-20111109131602-jd4beqtt7qopk4su
+raghav.kapoor@oracle.com-20111109105544-1sx3f851qqy1b88o
+guilhem.bichot@oracle.com-20111108195219-itwi5gmnf23gksyw
+manish.4.kumar@oracle.com-20111108145444-801t7fzwfk8i0yxj
+tor.didriksen@oracle.com-20111108144833-dv90zslpuikm1hto
+tor.didriksen@oracle.com-20111108143341-qqg6kjouyzvo70yo
+marko.makela@oracle.com-20111108123519-qn155hpzytdq0fdt
+jon.hauglid@oracle.com-20111108095912-9zq0umymaoj37fy7
+tor.didriksen@oracle.com-20111108075149-4n8a6zjvib7mkwwf
+marko.makela@oracle.com-20111108070203-3sc14hk9oizioqhi
+mayank.prasad@oracle.com-20111108064003-mdyr6c1binmjo1ke
+marc.alff@oracle.com-20111108042805-88m1nku46uxos9cb
+tor.didriksen@oracle.com-20111107153236-d5kak4rgkn8086kr
+tor.didriksen@oracle.com-20111107121724-5xuh6t38fh9z854a
+marko.makela@oracle.com-20111107120441-qc4yeadq7u1izh76
+marko.makela@oracle.com-20111107120116-jxm6wrtzzdpw463s
+marko.makela@oracle.com-20111107080013-tw27s0x7ilctnq44
+jorgen.loland@oracle.com-20111104152250-nva153mcrf4bry4r
+jorgen.loland@oracle.com-20111104152013-3uk7jcxelo99wna7
+jon.hauglid@oracle.com-20111104141517-xuwyx0qdiviyzy0i
+tor.didriksen@oracle.com-20111104131150-szkv1lfeqpehlv9m
+chuck.bell@oracle.com-20111104130448-myk7i3ey2v7sagka
+bjorn.munch@oracle.com-20111104125152-3xw7t9enz2c80u7j
+mayank.prasad@oracle.com-20111104091836-5ainpkzhwsldrwyk
+sunny.bains@oracle.com-20111104060542-3pfj26f65791250h
+hery.ramilison@oracle.com-20111103194003-y9lhxm3ebqjz00tv
+andrei.elkin@oracle.com-20111103183301-v4x9fex19xajhnt1
+tor.didriksen@oracle.com-20111103161053-8oazihif64by5c7s
+jimmy.yang@oracle.com-20111103111052-0l5g761cc13ok5d7
+norvald.ryeng@oracle.com-20111103101506-5zf6p7hh08xiun4u
+anitha.gopi@oracle.com-20111103082046-pdtvlxuq1azdl9qo
+anitha.gopi@oracle.com-20111103080539-wv8a3zsd636jqq9q
+sneha.modi@oracle.com-20111103070149-udwdl2fj2nsor1xw
+marc.alff@oracle.com-20111102232901-3a9u8li1tkh7945f
+marc.alff@oracle.com-20111102181126-le8znmlgxaf5cvmy
+marc.alff@oracle.com-20111102160718-dyw1ax34poptk3lg
+sneha.modi@oracle.com-20111102132815-h8m2qak47b2sw2e3
+M sneha.modi@oracle.com-20111102131252-x10j2io3a74tiei9
+    [5.5] Merge of 5.5
+
+marc.alff@oracle.com-20111102115503-nimsuiwynn63mjp0
+
+marc.alff@oracle.com-20111102113835-ou5phkqa0umu93hi
+M marc.alff@oracle.com-20111102113746-smltn87y0i540vv0
+
+sneha.modi@oracle.com-20111102112707-oehjs7zlux3sb9e9
+M sneha.modi@oracle.com-20111102112341-vhdyalonc86lpvwl
+    [5.5] Merge of 5.5
+
+norvald.ryeng@oracle.com-20111101135456-21jt52vmlator1o9
+    Bug #13098726
+
+tor.didriksen@oracle.com-20111101114827-6myauimw4v1ib9gx
+    minor mtr stuff
+
+jon.hauglid@oracle.com-20111101084732-3gtindt59qsrzzs9
+    Bug#13326965
+
+tor.didriksen@oracle.com-20111101065343-ha3d79h1ayk9j7x9
+M tor.didriksen@oracle.com-20111101065204-b60mao0k38w6capc
+    [5.5] Null merge from 5.1/5.5
+
+andrei.elkin@oracle.com-20111031135232-q13pfsaieo8ujekj
+    Minor test adjustment
+
+alexander.nozdrin@oracle.com-20111031115220-01la8vj7ssmcm0mc
+    Bug#61392
+
+tor.didriksen@oracle.com-20111031091354-8p6s03s1zxerrp8p
+M tor.didriksen@oracle.com-20111031091220-l8dd0fqjbl6at3km
+    [5.5] Null merge Bug#12406055 from 5.1/5.5
+
+jorgen.loland@oracle.com-20111031081122-dnufl9r4li0i3ni6
+M jorgen.loland@oracle.com-20111027115333-o4rk5li2kbmn1kfv
+    [opt] Larger merge from optimiser tree
+
+andrei.elkin@oracle.com-20111028212219-cdcuh37i70k9o4ms
+M andrei.elkin@oracle.com-20111028210716-k1pll5ujub5yd5yo
+    [5.5] Merge Bug#56299 (?) from 5.5
+
+andrei.elkin@oracle.com-20111028130851-mz4p2mg28y14wb7k
+M andrei.elkin@oracle.com-20111027192815-e5o4lwl0ag7riqsr
+
+sergey.glukhov@oracle.com-20111028094528-enre87osw9u4qjy7
+    [opt] Bug#32254 post-merge fix (optimiser)
+
+tor.didriksen@oracle.com-20111028092548-a3gjubgmwuhdunfj
+    Bug#11747423 post-merge fix
+
+tor.didriksen@oracle.com-20111028091835-xqavfrxkc50gbsxq
+    "Default value for sort_buffer_size changed from 2M to 256K"
+
+marc.alff@oracle.com-20111028072500-z7bh2329w2p4uo6q
+
+sunny.bains@oracle.com-20111028051142-c0uze42upc7pginc
+
+chris.powers@oracle.com-20111027211819-7ly7r7vyg1z1o5vv
+M marc.alff@oracle.com-20111025225630-lb8g8y8zb6fucru7
+    wl5908 "PERFORMANCE_SCHEMA File IO Summary Extensions"
+
+kevin.lewis@oracle.com-20111027200613-pok7hwkl53at25fd
+
+kevin.lewis@oracle.com-20111027140911-ijph31ta0u4r185p
+
+andrei.elkin@oracle.com-20111027132831-no4rlthinwkacri7
+    Misc. minor cleanup
+
+marko.makela@oracle.com-20111027123916-ga25h0dk0ed1p1aa
+M marko.makela@oracle.com-20111027122358-w6efutfhyc4eio11
+    [5.5] Merge Bug#62146 from 5.1/5.5
+
+jon.hauglid@oracle.com-20111027121346-er1ze1yx4yh1ijqo
+    Bug#13251277
+
+alfranio.correia@oracle.com-20111027111932-ty1l1ki0sty46203
+M alfranio.correia@oracle.com-20111020130658-iz723pe7gc3dww4l
+    Bug#60902: "MYSQLDUMP DOES NOT DUMP THE REPLICATION *_INFO TABLES"
+
+inaam.rana@oracle.com-20111027110944-m7gd8vzmvzqsqv0a
+M inaam.rana@oracle.com-20111025163223-rwzhsi4dz3f9tqhw
+    Bug#13006056 "ASSERT AT BUF0BUF.IC IN THE TEST INNODB_BUG59733"
+
+jon.hauglid@oracle.com-20111027092631-tjkatbopoop2kbwq
+    Bug#13113222 "RQG_SIGNAL_RESIGNAL FAILED WITH ASSERTION."
+
+jimmy.yang@oracle.com-20111027090740-52lfkdvut9vvhk7v
+    Bug #12622592
+
+sergey.glukhov@oracle.com-20111027084356-tb9bd9eq3cnhmf36
+    Bug#24986: "CALLS TO HANDLER::RND_INIT AND HANDLER::INDEX_INIT IGNORE RETURN VALUE"
+
+sergey.glukhov@oracle.com-20111027084040-yux97hgvenekmn0y
+    Bug#32254: INDEX MERGE USED UNNECESSARILY
+
+jimmy.yang@oracle.com-20111027082056-7v209pmbne4870kw
+    Bug#47764: PARTITIONED INNODB TABLES CAN'T BE MOVED DIRECTLY ...
+
+jimmy.yang@oracle.com-20111027081022-sq2y3zd08dyddr6r
+M jimmy.yang@oracle.com-20111027074053-ay64atqfxz8zuo00
+    [5.5] Merge from 5.5
+
+norvald.ryeng@oracle.com-20111027080846-02l0162cx3o5oqpy
+    [opt] Bug #57197: EVEN MORE USER VARIABLE CRASHING FUN
+
+marc.alff@oracle.com-20111027073010-pc1s57kg6e0y8aqc
+M marc.alff@oracle.com-20111027071223-88mex8mi9ar3iyrg
+    "WL#5863 PERFORMANCE SCHEMA, NESTED-SET data model"
+
+norvald.ryeng@oracle.com-20111027070349-206n2kiwhm89am8y
+    Bug #57692: CRASH IN ITEM_FUNC_IN::VAL_INT() WITH ZEROFILL
+
+alexander.nozdrin@oracle.com-20111027061758-b0vwkz82s3324ozh
+M alexander.nozdrin@oracle.com-20111027061636-l1dw2smjvlbf3wak
+    [5.5] Null merge from 5.5
+
+nirbhay.choubey@oracle.com-20111024082032-ijkkjp9yptebfzu1
+M nirbhay.choubey@oracle.com-20111024081854-7cbp0kj2g31jmd5z
+    [5.5] Merge from 5.5
+
+dmitry.lenev@oracle.com-20111024074946-jbrfepqmj0n2y051
+M dmitry.lenev@oracle.com-20111023053735-xtu0xhctx8zfae4e
+    bug #13116518 "OPEN_TABLES() SHOULD NOT ALLOCATE ..."
+
+ashish.y.agarwal@oracle.com-20111022132718-861ixy6v7xv9osh0
+M ashish.y.agarwal@oracle.com-20111022113438-raa3a4ohu23xayli
+    [5.5] Merge Bug#51252 from 5.5 (archive table crashes)
+
+kevin.lewis@oracle.com-20111021154657-ie0hoohrk0t8ynwk
+    WL5873 - TABLE FLAGS REFACTORING
+
+vasil.dimov@oracle.com-20111021145952-wivq0g2ncso9me7c
+    "Revert vasil.dimov@oracle.com-20111021105028-0qlfem4n84d6uf2l"
+
+nirbhay.choubey@oracle.com-20111021130010-72435t3h6fuw5rzu
+M nirbhay.choubey@oracle.com-20111021124435-0dc0542a57vhpaqm
+    [5.5] Merge of fix for bug#13106585 from mysql-5.5
+
+olav.sandstaa@oracle.com-20111021111305-6xnkdhfwrot0n760
+    Bug#13242509
+
+vasil.dimov@oracle.com-20111021105028-0qlfem4n84d6uf2l
+    Bug#12661768 "UPDATE IGNORE CRASHES SERVER IF TABLE IS INNODB AND ..."
+
+sergey.vojtovich@oracle.com-20111021054201-46yom9gu0c0tjbwh
+M sergey.vojtovich@oracle.com-20111021053507-unagdnmnw67sdgka
+    [5.5] Merge from 5.5
+
+marko.makela@oracle.com-20111021040407-wyhi6v4upyd40dd4
+M marko.makela@oracle.com-20111021035449-b8hltz3y0i7am6zb
+    [5.5] Merge from 5.5
+
+jimmy.yang@oracle.com-20111021011511-x48wlrwkvpchu39k
+    [inno] Bug #12941439
+
+jimmy.yang@oracle.com-20111020015527-pxho17co62bn5qk7
+    [inno] Bug #12320827
+
+bjorn.munch@oracle.com-20111019214922-p7gneow1ripm23jo
+M bjorn.munch@oracle.com-20111019214417-emnbuy049uf2qp16
+    "Removing copyright headers from test files"
+
+marc.alff@oracle.com-20111019175604-395zhv07k6w528p9
+    after-merge fixes (?)
+
+joerg.bruehe@oracle.com-20111019114246-ucuklsu5yzscldv5
+M joerg.bruehe@oracle.com-20111019113943-i4zjjt5ltg2s7qms
+    [5.5] Merge from 5.5
+
+sayantan.dutta@oracle.com-20111019072957-ak3rtp0v2cl27ki7
+M sayantan.dutta@oracle.com-20111019072352-8020hqt0pk1akwbo
+    [5.5] Merge from 5.5
+
+jorgen.loland@oracle.com-20111019061335-hiepzj875om00lq6
+M jorgen.loland@oracle.com-20111018143502-ftxugg4uhxcdj9em
+    [opt] Larger merge of optimiser team tree.
+
+nirbhay.choubey@oracle.com-20111018172525-i7a397hj51l4ejne
+M nirbhay.choubey@oracle.com-20111018172305-oaiwft9m7skkihkq
+    [5.5] Merge bug#13102538 from 5.5
+
+jorgen.loland@oracle.com-20111018142748-3t37nml30j9qyqjs
+    [opt] "WL#5953: Optimize away useless subquery clauses"
+
+tor.didriksen@oracle.com-20111018134529-7x17flu4hhp1jwna
+    Bug#12582849
+
+chuck.bell@oracle.com-20111018123326-y821iw90dd5tuxny
+M chuck.bell@oracle.com-20111017193354-fjfzt68p35m63zko
+    [5.5] Merge from 5.5
+
+sneha.modi@oracle.com-20111018111744-ajqt09iej9sae0jp
+    mtr fixes
+
+jorgen.loland@oracle.com-20111018102309-gkgn1tkkpohhv9he
+M jorgen.loland@oracle.com-20110826081616-bghq0vh43oe5j6sr
+    [opt] WL#5953 - Optimize away useless subquery clauses
+
+raghav.kapoor@oracle.com-20111018085754-wfj586uneevcx5dt
+    Bug#49556
+
+kevin.lewis@oracle.com-20111018035801-kdqxekzav18zgx7e
+    "Cleanup some comments"
+
+alfranio.correia@oracle.com-20111018004955-po25s5v8ghsgz74z
+    After-merge fixes for Bug#60902
+
+jorgen.loland@oracle.com-20111017135227-qi8m0ohel02oan12
+    [opt] Bug#13068506: "QUERY WITH GROUP BY ON NON-AGGR COLUMN ..."
+
+marko.makela@oracle.com-20111017115406-3zapwn2sky8s053q
+    [inno] after-merge fix
+
+jon.hauglid@oracle.com-20111014153824-uszcs6t4uypwuwt1
+M jon.hauglid@oracle.com-20111013123308-5z7v0mnjtwca525k
+    "WL#2111 Stored Procedures: Implement GET DIAGNOSTICS"
+
+bjorn.munch@oracle.com-20111014151318-at90f2t2hnhkichc
+    Bug #13016347 "FAILURE AT CHECK-WARNINGS FOR WINDOWS ON DAILY-TRUNK"
+
+jon.hauglid@oracle.com-20111014150441-wlwmzc4dbc69msva
+M alexander.nozdrin@oracle.com-20111011150102-832lp2lw24pcf0k8
+    WL#5986 Stored programs: Make condition handlers closer to the standard
+
+jon.hauglid@oracle.com-20111014144515-h4d4zfhrgpi7iime
+    Minor compilation fix
+
+alfranio.correia@oracle.com-20111014133757-10hubcmin83aqj49
+M alfranio.correia@oracle.com-20111014132415-184hi1b26vq2mqhi
+    [5.5] Merge from 5.5
+
+luis.soares@oracle.com-20111014012512-onni4cl2k7j2bupm
+    Revert of BUG#11747887
+
+nirbhay.choubey@oracle.com-20111013195721-v8kmqgm8yb0k1ahj
+M nirbhay.choubey@oracle.com-20111013194746-qjq3rio2dfhqbcr7
+    [5.5] Merge from 5.5 (WL#5945 : Improve libedit library)
+
+alfranio.correia@oracle.com-20111013145348-wnkwkbzoeunetoks
+M alfranio.correia@oracle.com-20111013140150-n723c5963xea8fy8
+    Bug#60902: "MYSQLDUMP DOES NOT DUMP THE REPLICATION *_INFO TABLES"
+
+andrei.elkin@oracle.com-20111013121219-kx3c6y6u60ybgkv8
+    Bug#13033076 - "OCCASIONAL CRASH OF RPL.RPL_PARALLEL_DDL"
+
+tor.didriksen@oracle.com-20111013075452-8xcn6yynft0rl30g
+M tor.didriksen@oracle.com-20111012133210-mzcviyukj1gm32q3
+    [opt] Larger merge of optimiser team tree
+
+andrei.elkin@oracle.com-20111012192312-gb17d66un2tiebng
+    Minor mtr stuff
+
+sergey.glukhov@oracle.com-20111012140459-u2e4icyd0f8qevvc
+M sergey.glukhov@oracle.com-20111012140205-wg5118efi11j8srv
+    [5.5] Merge from 5.5
+
+sergey.glukhov@oracle.com-20111012140253-a0by3xnjv7x2a90h
+M sergey.glukhov@oracle.com-20111012135831-jwpb2hvp51hdqdq8
+    [5.5] Merge from 5.5
+
+marko.makela@oracle.com-20111012134634-lajsw6m1t4ko20d1
+M marko.makela@oracle.com-20111012062133-vskls9k2rv0u6x1o
+    [5.5] [inno] Merge from 5.5
+
+vinay.fisrekar@oracle.com-20111012045607-lkrrnd0de8eymqob
+M vinay.fisrekar@oracle.com-20111012044946-opcog0m4f4285ci9
+    [5.5] Merge from 5.5 (mtr stuff)
+
+joerg.bruehe@oracle.com-20111010120609-pmqlkvqo2aifq95y
+M joerg.bruehe@oracle.com-20111010120329-byaz6ai9e1jvo5tp
+    [5.5] Merge from 5.5 (mtr stuff)
+
+raghav.kapoor@oracle.com-20111010065958-8eeurh9wd7k51qxb
+    Bug#58534: MYSQL_INSTALL_DB PRINTS INCOMPLETE OPTION NAME
+
+manish.4.kumar@oracle.com-20111010062213-a1g6nm547al43whh
+    Bug#34386
+
+sergey.vojtovich@oracle.com-20111008171828-vje5pumzvl04rdbb
+    Bug#48633: "ARCHIVE TABLES ARE NOT UPGRADEABLE"
+
+mattias.jonsson@oracle.com-20111007142021-5ohj9csiz45bqsyc
+    [part] Bug#56590
+
+andrei.elkin@oracle.com-20111007083604-o8t1el8y33xyj3a0
+    Bug#12960284 - "RPL.RPL_PARALLEL_SWITCH_SEQUENTIAL TEST FAILED I..."
+
+mattias.jonsson@oracle.com-20111007083001-kavmsd2f1xpubenn
+    Bug#13007154: Crash in keys_to_use_for_scanning with ORDER BY and PARTITIONING
+
+sergey.vojtovich@oracle.com-20111007060314-qpsk38lvezjxqloz
+M sergey.vojtovich@oracle.com-20111006135128-puj82hiat85bqoin
+    Merge Bug#48633: ARCHIVE TABLES ARE NOT UPGRADEABLE
+
+marc.alff@oracle.com-20111006171547-vwmt5fdyohq2qrb6
+    After-merge fixes
+
+andrei.elkin@oracle.com-20111006162924-lwpdsyb5d05qv562
+M alfranio.correia@oracle.com-20110914161222-pc58haldudx2u1mc
+    Merge Bug#12981684 (mtr stuff)
+
+andrei.elkin@oracle.com-20111006153221-1lc359lp81o7djli
+M andrei.elkin@oracle.com-20111006134838-2q2w95hnv1vb8hyu
+    Merge Bug#13022841 - ASSERT AT RPL_RLI_PDB.CC, LINE 956
+
+marc.alff@oracle.com-20111006143318-tryynk9o13fssrev
+    Minor build cleanup
+
+magne.mahre@oracle.com-20111006121521-53z1jwvv0aiirrz3
+M magne.mahre@oracle.com-20111006121323-t8citbq0ulpwbf1n
+    [5.5] Merge from 5.5 (Bug#12912112)
+
+tor.didriksen@oracle.com-20111006110634-3kdsm4wqsup6186u
+    [opt] code cleanup
+
+mattias.jonsson@oracle.com-20111006095040-wr46uq6btn24q8yx
+M mattias.jonsson@oracle.com-20110404100130-a5v56soukiuxffa0
+    Bug#60681: CHECKSUM TABLE RETURNS 0 FOR PARTITIONED TABLE
+
+bjorn.munch@oracle.com-20111005214508-lcln926ega3q7wy2
+M bjorn.munch@oracle.com-20111005205531-p837c0mit02qo304
+    [5.5] Null merge from 5.5
+
+bjorn.munch@oracle.com-20111005211503-qp4sr17fdo42sqe1
+M bjorn.munch@oracle.com-20111005140827-g4ty9w80btmc7n69
+    Larger merge of mtr tree
+
+joerg.bruehe@oracle.com-20111005142714-bl37gofvu09xyh3o
+M joerg.bruehe@oracle.com-20111005131638-q50h1mbg38gpbsnb
+    Merge misc. fixes done after 5.6.3 clone-off
+
+sergey.glukhov@oracle.com-20111005102839-bwz91lls9vp4eqke
+M sergey.glukhov@oracle.com-20111005102638-7oooozq94lf71e3w
+    [5.5] Merge from 5.5
+
+sergey.glukhov@oracle.com-20111005102448-5e0wzfjs6xc02wla
+M sergey.glukhov@oracle.com-20111005101950-b4cko4hoi1tqfx2q
+    [5.5] Merge from 5.5
+
+marko.makela@oracle.com-20111005091410-89jnv7ssh4aqe6hm
+M marko.makela@oracle.com-20111005090738-dn4jhnpq6gfo25yf
+    [5.5] [inno] Merge from 5.5
+
+sneha.modi@oracle.com-20111005062808-m0aydm09yv1b6zi6
+    Bug#12664445 (mtr stuff)
+
+marko.makela@oracle.com-20111004182431-r49po11cgy45a7it
+M marko.makela@oracle.com-20111004182045-8jxf4xnzni6l01tq
+    [5.5] Merge from 5.5
+
+kevin.lewis@oracle.com-20111004154135-2uqwn1l069pqn5df
+M kevin.lewis@oracle.com-20111004151922-s71st1jtnl3rz7mo
+    [5.5] Merge from 5.5
+
+joerg.bruehe@oracle.com-20111004152649-u8up5xf5soy9maqt
+M joerg.bruehe@oracle.com-20111004152033-welk7e9fpqpxbyto
+    [5.5] Empty merge from 5.5
+
+joerg.bruehe@oracle.com-20111004152245-qts6elijd97j3idy
+M joerg.bruehe@oracle.com-20111004151323-jmbp3brndfc2eexj
+    [5.5] Merge from 5.5 (rpm stuff)
+
+tor.didriksen@oracle.com-20111004140531-rr3ee5cl2a0psvzn
+    [opt] After-merge fixes
+
+tor.didriksen@oracle.com-20111004140234-vu5mag2dd4g3gx1q
+M tor.didriksen@oracle.com-20111004105509-7p66zatlgrd6u40s
+    [opt] Larger merge from optimiser team tree.
+
+marko.makela@oracle.com-20111004070634-6kajpldmc1t5414d
+    [inno] Bug#13056253 "PERSISTENT STATS, ASSERT IN ANALYZE, HEAP == NUL..."
+
+inaam.rana@oracle.com-20111003175354-4ww5itiev1sfq7md
+    [inno] Bug#51325
+
+norvald.ryeng@oracle.com-20111003122221-3ybc3y7ei2j1bvp0
+    [part] Bug #12330344 "CRASH AND/OR VALGRIND ERRORS IN FREE_IO_CACHE WITH ..."
+
+andrei.elkin@oracle.com-20111003114938-3rfhrikolwysyfgs
+    Bug#11747416
+
+rohit.kalhans@oracle.com-20111003111606-nj2zxomb5iedf2sa
+    BUG#11747866:REPLICATE-REWRITE-DB DOESN'T WORK WITH SINGLE CHARACTER DATABASE NAMES
+
+rohit.kalhans@oracle.com-20111003104554-n3vauov64k2q8jla
+M rohit.kalhans@oracle.com-20111003103552-xd9xaa6ya3yyrw06
+    [5.5] Merge from 5.5
+
+vasil.dimov@oracle.com-20111003084306-0cvd35dlxmf0f9vw
+    [inno] "Enforce a 512GiB limit on the combined log size."
+
+jon.hauglid@oracle.com-20111003073648-ei897y4pnvoywolu
+M jon.hauglid@oracle.com-20111003073155-l1zyt3f4l1vd3cur
+    [5.5] Merge from 5.5 (Bug#62533, Mac compile problem)
+
+vasil.dimov@oracle.com-20110930155618-tnq4jclfmignjrmq
+    [inno] "Do not skip InnoDB during install step on Windows."
+
+vasil.dimov@oracle.com-20110929175119-zuwzmeegzjcir0z2
+    [inno] "Use btr_cur_get_index(cur) instead of cur->index"
+
+bjorn.munch@oracle.com-20110930132712-y25r0c0zvfj6zo7c
+M bjorn.munch@oracle.com-20110930132519-y8gwc31dteu8skw3
+    [5.5] Merge from 5.5 (after-fix for 12956584)
+
+andrei.elkin@oracle.com-20110930131437-7obd81hl5bu3umkq
+M andrei.elkin@oracle.com-20110930125802-prv9lanwbscjl3aa
+    [5.5] Merge from 5.5
+
+inaam.rana@oracle.com-20110930124933-553qmyo3z2syyicz
+M inaam.rana@oracle.com-20110930110219-vnpaqghj9hm0grds
+    [5.5] Null merge from 5.5
+
+rohit.kalhans@oracle.com-20110930123340-n07t8216cwutfhno
+M rohit.kalhans@oracle.com-20110930094635-hjhrv55tg6z6pz7y
+    [5.5] Merge from 5.5 (mtr stuff)
+
+rafal.somla@oracle.com-20110930122708-m7wdxap6bo2ofoun
+M rafal.somla@oracle.com-20110929150216-jl3y54s54w04y2vu
+    Bug#12982926
+
+guilhem.bichot@oracle.com-20110930122004-3jw70shhcgywb4qz
+    [opt] Bug#13040136
+
+vasil.dimov@oracle.com-20110928141751-rk5rrlgrx5k129zp
+    "Fix coding style"
+
+marko.makela@oracle.com-20110929133905-00mtryd4tg5ew312
+M marko.makela@oracle.com-20110929132301-1a8tigojm2jfmxek
+    [inno] Bug#13034962
+
+jorgen.loland@oracle.com-20110929132522-9cx405msultddz3t
+    Bug#12838171 after-merge fixes
+
+marko.makela@oracle.com-20110929125506-b0fvixx3ivcey3tj
+M marko.makela@oracle.com-20110929123146-03lcg1vixncyviyn
+    [5.5] Merge from 5.5
+
+jorgen.loland@oracle.com-20110929124732-t0s1x214cu3nkngu
+    [opt] Bug#12838171
+
+jorgen.loland@oracle.com-20110929122917-fpxr1wiv5nsvg8z1
+    [opt] Bug#12838171
+
+andrei.elkin@oracle.com-20110929115531-gsv2cmv94nqbkktf
+M andrei.elkin@oracle.com-20110929111443-8ke9binjq2srblyg
+    [5.5] [rpl] Merge from 5.5 (Bug#32228)
+
+rohit.kalhans@oracle.com-20110929104253-ho58u4lun13yqpn3
+M rohit.kalhans@oracle.com-20110929091727-yx5glkejnmnbr5zx
+    [5.5] [rpl] Merge from 5.5 (Bug#50439)
+
+raghav.kapoor@oracle.com-20110928113846-1utruy6yasgnhzaq
+M raghav.kapoor@oracle.com-20110928112415-h7f0u6f7ujal0u00
+    [5.5] Null merge from 5.5 (bug#11758062)
+
+bjorn.munch@oracle.com-20110928102100-f7f6bxzfxgsk90bs
+M bjorn.munch@oracle.com-20110928092028-zstc9kxoxe7r57ym
+    mtr stuff
+
+joerg.bruehe@oracle.com-20110928093007-1id6ldtg6h2t92nj
+M joerg.bruehe@oracle.com-20110927172140-livyt3160ux0oq05
+    [5.5] Null merge from 5.5
+
+tor.didriksen@oracle.com-20110928080303-l2h428x2gzs3oiu2
+    [opt] After-merge fixes
+
+tor.didriksen@oracle.com-20110928074255-41dvsmguztd9k18z
+M tor.didriksen@oracle.com-20110927092308-qr5im7cki865ytzp
+    [opt] Larger merge of optimiser tree
+
+ashish.y.agarwal@oracle.com-20110927121743-xa7wcagrwtwa9ppu
+M ashish.y.agarwal@oracle.com-20110927121431-b9xqi2inkxnm9p41
+    [5.5] Merge from 5.5 (Bug#51655)
+
+jon.hauglid@oracle.com-20110927094616-sqy594hybrkgzvij
+M tor.didriksen@oracle.com-20110926122927-vvkpa33bjnj663wg
+    [5.5] Null merge from 5.5
+
+vasil.dimov@oracle.com-20110927084207-efdu14cyom26nh5a
+    [inno] Remove assert
+
+vasil.dimov@oracle.com-20110927080237-0ozopfh85l1dxc7d
+    [inno] Add assert
+
+luis.soares@oracle.com-20110926153900-gen9h1n794b0tibx
+    BUG#12978113 / BUG#12947248
+
+jorgen.loland@oracle.com-20110926134806-lqe4oy267ncybepl
+    [opt] BUG#12837714: ADDITIONAL NULL IN 5.6 ON GROUPED SELECT
+
+tor.didriksen@oracle.com-20110926122706-t7eeiv0cpluieq9y
+M tor.didriksen@oracle.com-20110926122128-dc70owdvxq7gyxbz
+    [5.5] [opt] Merge from 5.5
+
+bjorn.munch@oracle.com-20110926115126-cky3xjo0tdfalpdo
+M bjorn.munch@oracle.com-20110926104618-dyj3iuq2y6rbg8mi
+    [5.5] Null merge from 5.5
+
+bjorn.munch@oracle.com-20110926112001-ljmxkkwjh77tk0rl
+M bjorn.munch@oracle.com-20110926091912-jinnwwi1nd0fwve4
+    Larger merge of mtr tree
+
+daniel.fischer@oracle.com-20110926103449-pnykibhd07ancbyu
+    After-merge fix
+
+marko.makela@oracle.com-20110926071904-epqjztouj8caekfh
+M marko.makela@oracle.com-20110926070842-3mkoiyubtzzmsi0f
+    [5.5] [inno] Merge from 5.5
+
+rohit.kalhans@oracle.com-20110923190636-lmditmrow84gdbe6
+    BUG#12765441:Enabled test rpl.rpl_row_ignorable_event.
+
+inaam.rana@oracle.com-20110923134913-msrvk1v9sp78efju
+    Report accurate log i/o's/second.
+
+daniel.fischer@oracle.com-20110923122258-6jj42m2xuje8dj11
+    more 5.5.16 fixes
+
+luis.soares@oracle.com-20110923114235-9v1exxwo01mfdfpa
+M luis.soares@oracle.com-20110923113908-ubd104g2klf0hglx
+   [5.5] Merge from 5.5 (BUG#13001711)
+
+daniel.fischer@oracle.com-20110923110958-vo0tb9iwaajg3o22
+    After-merge fix for wl5973
+
+daniel.fischer@oracle.com-20110923105510-9k5x6ewc4npp4iaz
+M daniel.fischer@oracle.com-20110923101815-32uepd96orfxgwcb
+    [5.5] Merge from 5.5
+
+daniel.fischer@oracle.com-20110923101937-0fhj1sw9dcl80uyw
+M daniel.fischer@oracle.com-20110921114900-vdis9epc1vkbmjfn
+    [5.5] Merge from 5.5 releases (5.5.14->5.5.16) + after-merge fixes
+
+raghav.kapoor@oracle.com-20110922104210-jvcqaw9abwfe2h61
+    BUG#12735829
+
+tor.didriksen@oracle.com-20110922082608-wy5bceqjdfo9rsgd
+    [opt] After-merge fix for WL#4897: Add EXPLAIN INSERT/UPDATE/DELETE
+
+sunny.bains@oracle.com-20110922074419-sfthubbcg24uzp2c
+    Bug# 13011596
+
+magnus.blaudd@oracle.com-20110922072132-9gfburhm8lj3c8i3
+M magnus.blaudd@oracle.com-20110920123554-uydjop94atj17ue2
+    Bug#13002546
+
+magnus.blaudd@oracle.com-20110922071433-0tb2qi63s7qgsakx
+M magnus.blaudd@oracle.com-20110920142418-w5znrbkify5recd4
+    Bug#12762395
+
+sunny.bains@oracle.com-20110922063538-0x0fhe3eslcxlzzw
+    [inno] Bug#13011344
+
+marc.alff@oracle.com-20110921185210-6pm7xhhoia4s27yz
+M marc.alff@oracle.com-20110921154150-ael5vubmbtzvfzb1
+    BUG#12993572 - P_S STANDBY MODE CAUSES PERFORMANCE DROP
+
+raghav.kapoor@oracle.com-20110921120009-w362qseif16e8ig3
+    Bug#55925
+
+tor.didriksen@oracle.com-20110921115514-ez4r49i4iokai658
+M tor.didriksen@oracle.com-20110921114649-deytbdrd2o6uhmzb
+    [5.5] Merge from 5.5 (Bug#12985030)
+
+kevin.lewis@oracle.com-20110921002459-900johq1mxzrcaqp
+M kevin.lewis@oracle.com-20110921001736-5xklesgogo361qo1
+    [5.5] [inno] Merge from 5.5 (Bug#12963823)
+
+jonathan.perkin@oracle.com-20110920154937-t8gdjc90jr0sffl5
+M jonathan.perkin@oracle.com-20110920154753-b3yve1kogdjnwq7h
+    [5.5] Merge from 5.5
+
+marc.alff@oracle.com-20110920154223-i0opx5f28lsvbeq1
+    Build/mtr stuff
+
+tor.didriksen@oracle.com-20110920091702-uveee67772our00y
+M tor.didriksen@oracle.com-20110920085948-ins35zjk33pxjy4t
+    [5.5] Merge from 5.5
+
+jonathan.perkin@oracle.com-20110919191736-dk9gg37h12d6ucwf
+M jonathan.perkin@oracle.com-20110919191601-uzh0uelyk24k6u8n
+    [5.5] Merge from 5.5
+
+tor.didriksen@oracle.com-20110919145043-kphsnixpj0044wd7
+    [opt] After-merge fix for Bug#12981106 ADD OPTIMIZER TRACES FOR FOR FILESORT
+
+tor.didriksen@oracle.com-20110919140830-jr9fu6zjeerq1mh0
+    [opt] Bug#12856915 VALGRIND FAILURE IN FILESORT/CREATE_SORT_INDEX
+
+tor.didriksen@oracle.com-20110919112921-onspqzhnysvmhiek
+    [opt] WL#5834 / Bug#12981106 ADD OPTIMIZER TRACES FOR FOR FILESORT
+
+rohit.kalhans@oracle.com-20110919090342-wv5yfbli6cfcigw5
+    [rpl] BUG#12765441:RPL_ROW_IGNORABLE_EVENT FAILS SPORADICALLY
+
+rafal.somla@oracle.com-20110916124615-n23x6k37n152cseu
+M rafal.somla@oracle.com-20110916123525-e5o3f22y0kteby6i
+    [rpl] Fix for auth_rpl test.
+
+sergey.vojtovich@oracle.com-20110916122408-tryy8r9vd2xy0ybb
+M sergey.vojtovich@oracle.com-20110916122105-78yqwpfaebq9s70j
+    [5.5] Merge from 5.5 (Bug#53646)
+
+evgeny.potemkin@oracle.com-20110916101249-5e1d35kbhqioc5b0
+    [opt] Bug#12977203: SERVER CRASH ON A DERIVED TABLE ...
+
+tor.didriksen@oracle.com-20110916071830-v3xrasclrcix6y2o
+    Bug#12879084 VALGRIND FAILURE IN INNODB.INNODB_BUFFER_POOL_LOAD
+
+rafal.somla@oracle.com-20110915171821-82srzvj9v2b8eb8u
+M rafal.somla@oracle.com-20110914141018-2mfz7pcmicvm693d
+    [5.5] Merge from 5.5 (Bug#12897501)
+
+tor.didriksen@oracle.com-20110915105841-ubu879e7ljuw2dvf
+evgeny.potemkin@oracle.com-20110915103738-4hhbjq44mq2p0s48
+M evgeny.potemkin@oracle.com-20110915081138-nvzxzywj4icylp9d
+marc.alff@oracle.com-20110915094251-rzo7gisw3k9543az
+dmitry.lenev@oracle.com-20110914150355-o3nhscy0iggsobdb
+marko.makela@oracle.com-20110914124734-3rjmy4y2i73c3fs5
+jorgen.loland@oracle.com-20110914112346-ep1ucgcr44n75cym
+marc.alff@oracle.com-20110914104254-dc11qvvxklhrucf0
+marc.alff@oracle.com-20110913232317-kf9igg81gyjjwhyg
+marc.alff@oracle.com-20110913205814-ny8lq5im1v1ri1s1
+vasil.dimov@oracle.com-20110913143335-e94ac1y1kugqjiex
+vasil.dimov@oracle.com-20110913142713-gico3o5tqmadfopm
+jonathan.perkin@oracle.com-20110913142150-mg6bx0v2ub58ta71
+joerg.bruehe@oracle.com-20110913112136-gly2arzeu90oiv6v
+marc.alff@oracle.com-20110913101628-n50q41bya1rwe8yh
+M marc.alff@oracle.com-20110913101431-ec2357c3op2kmo9b
+marko.makela@oracle.com-20110913062425-75iht9ywdsn0qlld
+jonathan.perkin@oracle.com-20110912184649-6vs1bs329kbni5m5
+marc.alff@oracle.com-20110912162355-z1kopgkmm8345jcb
+jonathan.perkin@oracle.com-20110912123348-z6ta75cajnnf2rkv
+marko.makela@oracle.com-20110912073128-tb219x6sf32zepn2
+rohit.kalhans@oracle.com-20110909161830-kc535k5tmztaj7nv
+vasil.dimov@oracle.com-20110909071920-d36032kxkwcn719n
+bjorn.munch@oracle.com-20110908144520-r3183c9kk49faq83
+marko.makela@oracle.com-20110908132905-c5v3nmmeke6lxczt
+rohit.kalhans@oracle.com-20110908102253-1a0q864jxpuw6bsp
+luis.soares@oracle.com-20110908101408-vef8lhs5sntgx83l
+jimmy.yang@oracle.com-20110908100538-n2eume2vk61up7ju
+rohit.kalhans@oracle.com-20110908100250-efhupg7kb1mtdibr
+luis.soares@oracle.com-20110908095216-8y3bqnj62jyz3170
+marko.makela@oracle.com-20110908064651-kjbucmoy91d4u9zu
+vasil.dimov@oracle.com-20110907152557-4fjpv8juoo0208wy
+olav.sandstaa@oracle.com-20110907124153-99s4z9ygkjh52l3v
+sunny.bains@oracle.com-20110907062542-rvixplrwioy20sor
+nirbhay.choubey@oracle.com-20110906162343-d58ernm0u0uizoi4
+nirbhay.choubey@oracle.com-20110906155912-6o8ltjrd8o3ugjuo
+nirbhay.choubey@oracle.com-20110906154217-ldrqedt1i5ztqf2d
+olav.sandstaa@oracle.com-20110906124557-rrub4u038eb7mtsd
+tor.didriksen@oracle.com-20110906084308-2gfsxghvg1kcu9xa
+marko.makela@oracle.com-20110906072627-odp0wjbl541n63km
+marko.makela@oracle.com-20110906072258-kibr2sf791a6t640
+sunny.bains@oracle.com-20110906031344-p7z7fw1bhm7qapj7
+sunny.bains@oracle.com-20110905210427-gj3jdiysqkyz5me3
+tor.didriksen@oracle.com-20110905141327-tl6lc4tcfcbheoec
+nirbhay.choubey@oracle.com-20110902112509-ip6lkk56x116l5ab
+marko.makela@oracle.com-20110901185944-j8dj2bm329hk2avj
+georgi.kodinov@oracle.com-20110901122610-74oe0dcb437733qr
+olav.sandstaa@oracle.com-20110901083818-s9z8yb467111i0a6
+tor.didriksen@oracle.com-20110901060234-em3t7pl7r6o036o0
+tor.didriksen@oracle.com-20110831145356-yr1lzt3s7bxij11b
+bjorn.munch@oracle.com-20110830220144-5mw2jufmu4lky319
+bjorn.munch@oracle.com-20110830212842-2hg20rrc56mm77td
+joerg.bruehe@oracle.com-20110830111213-xeip0eskwchuspl8
+jorgen.loland@oracle.com-20110830100445-or5h9ihfitzeojvi
+tor.didriksen@oracle.com-20110830092302-468ccbw2md0gfjzy
+tor.didriksen@oracle.com-20110830092102-5b2rql1x8palzu9y
+M tor.didriksen@oracle.com-20110830091906-2a3xc5lqzvme1sn9
+norvald.ryeng@oracle.com-20110830090105-vbxyc2hpympa93w9
+dmitry.shulga@oracle.com-20110830042818-mkq418g0b5p52k0o
+vasil.dimov@oracle.com-20110829125811-vfnxa7ee1o1esd2b
+tor.didriksen@oracle.com-20110829103057-o5qyh4r1erfxf489
+M tor.didriksen@oracle.com-20110829102851-p5el9vkxj6bkg25c
+jimmy.yang@oracle.com-20110829101232-8sjhhq2qmhlg4gb4
+tor.didriksen@oracle.com-20110829091715-8qjwc02s743yhycp
+M tor.didriksen@oracle.com-20110829084245-an2cyzfi0y9k4u3q
+jimmy.yang@oracle.com-20110829085834-jcqyw8wetzaetpei
+marko.makela@oracle.com-20110829084530-06tqwgvcnotrlcug
+rohit.kalhans@oracle.com-20110829075918-r1c6hhla2912itsf
+sunny.bains@oracle.com-20110829071448-8m4e0jgy84gl94u0
+sunny.bains@oracle.com-20110829070818-cp7mje75ugpd0w0l
+dmitry.shulga@oracle.com-20110829065325-tyh37tdbsxbljh33
+matthias.leich@oracle.com-20110827125019-hob6yy1i93myoow9
+marko.makela@oracle.com-20110826192704-9z3o5qn54p8vi8sk
+tor.didriksen@oracle.com-20110826132633-5ebj11gzcub858ys
+tor.didriksen@oracle.com-20110826111640-y7j63x34ug6pwalu
+tor.didriksen@oracle.com-20110825105434-ll28zinu0nhazt3z
+rohit.kalhans@oracle.com-20110826101824-85oc00co0chw2wx4
+evgeny.potemkin@oracle.com-20110826085810-4s72u70f3yiyiq76
+M evgeny.potemkin@oracle.com-20110826085554-ack472f0ekfzxsj3
+tor.didriksen@oracle.com-20110826070635-uxy3o2hp4ey4yldg
+marc.alff@oracle.com-20110825150950-61yn26fu3miaqky7
+M marc.alff@oracle.com-20110825150815-5qmonnqii9v95yss
+joerg.bruehe@oracle.com-20110825150121-9evbc1optre1r6zq
+joerg.bruehe@oracle.com-20110825145023-qglv5xq0jomnfuhi
+M hery.ramilison@oracle.com-20110816223411-egzepsn9flvvf5j2
+hery.ramilison@oracle.com-20110825103332-98up67p7s29trvno
+evgeny.potemkin@oracle.com-20110824150200-f7sochssy6p1822v
+M evgeny.potemkin@oracle.com-20110824144726-v851jqsrb3spowrr
+vasil.dimov@oracle.com-20110824142607-yjlaj0ft2grwuen5
+matthias.leich@oracle.com-20110824140920-3wtr9jabdxpxu3nc
+vasil.dimov@oracle.com-20110824135645-5141n3eugnl8wthp
+vasil.dimov@oracle.com-20110823070219-xamws69eh150hz55
+vasil.dimov@oracle.com-20110822142717-7ukrvhhvpybf75qr
+georgi.kodinov@oracle.com-20110823132016-ti1omu4u9wvo32y4
+matthias.leich@oracle.com-20110823101213-qp9gpxupphpl36h5
+evgeny.potemkin@oracle.com-20110823055308-4i452mwuqm4jvuug
+M evgeny.potemkin@oracle.com-20110823054543-4js5jz4szopjh36p
+andrei.elkin@oracle.com-20110822150409-93bczvehxn4vdupd
+jon.hauglid@oracle.com-20110822102831-c04mlz4rauqm5q12
+vasil.dimov@oracle.com-20110822075215-kngylsa9ymthh93z
+vasil.dimov@oracle.com-20110822074651-jrkvgkvhj3h4tnk4
+andrei.elkin@oracle.com-20110822061459-29of91bcw1f0cohh
+marc.alff@oracle.com-20110820012311-gdkpge07sjx55cue
+andrei.elkin@oracle.com-20110819234434-7mpo371opm3yimpc
+andrei.elkin@oracle.com-20110819181646-pn5yc000rb6lw9ud
+M andrei.elkin@oracle.com-20110819181359-j7olvpxgcl4eeyz5
+    [rpl] Main push of WL#5569, multi-threaded slave
+joerg.bruehe@oracle.com-20110819174938-8tb8syp0deockjg6
+M joerg.bruehe@oracle.com-20110819173326-nl7gxcmr9o1j57sa
+marc.alff@oracle.com-20110819154804-ft067h1vdb1j87sm
+jimmy.yang@oracle.com-20110819134127-zbia4sg9yjzafv0g
+georgi.kodinov@oracle.com-20110722143209-3ha25bxe8aux0npr
+georgi.kodinov@oracle.com-20110819132424-7uqihs7v0dhp8o4r
+jorgen.loland@oracle.com-20110819114138-1g846busigkz1ucs
+jorgen.loland@oracle.com-20110819113915-bc5nxep1d3o8ujx5
+M oystein.grovlen@oracle.com-20110818123945-j3kddljo7jtm52zt
+jorgen.loland@oracle.com-20110819102723-gsd687nbuxwdb4pz
+M jorgen.loland@oracle.com-20110817105336-zayt8lh3vciq621y
+jimmy.yang@oracle.com-20110819092711-5kglkd11ucyapmup
+sunny.bains@oracle.com-20110819061333-xuto1yfxep6pkrjx
+tatjana.nuernberg@oracle.com-20110819004528-odtu7ql1ytx8bvw0
+tatjana.nuernberg@oracle.com-20110818180545-9wywh2i132fbfe8t
+M tatjana.nuernberg@oracle.com-20110818152705-ng0j04xtjzrc36ye
+evgeny.potemkin@oracle.com-20110818112559-d145lrsw1ozqf39r
+marko.makela@oracle.com-20110818102653-h4pw4crgc3s6920r
+georgi.kodinov@oracle.com-20110818093924-m3ajqn3ct2yn5eog
+vasil.dimov@oracle.com-20110818091300-4jwwt52902l08pz9
+georgi.kodinov@oracle.com-20110818083108-qa3h3ufqu4zne80a
+georgi.kodinov@oracle.com-20110818081424-g7xt0n7y4t1ci6lb
+vasil.dimov@oracle.com-20110817185046-qrdhzm2ow34oca2i
+georgi.kodinov@oracle.com-20110817143345-vp9q2v5b3pphbhr9
+jimmy.yang@oracle.com-20110817095451-v5xt2ometpuixqcc
+vasil.dimov@oracle.com-20110817093853-2r159tzwojhpxqn6
+alexander.nozdrin@oracle.com-20110817081113-qdqsdatma81m9zhl
+jorgen.loland@oracle.com-20110817073204-fkmc83qbw2fved7g
+jorgen.loland@oracle.com-20110817065351-yyqo5acbnvo71zz3
+anitha.gopi@oracle.com-20110817054539-hyiftoirgqoec4gn
+jimmy.yang@oracle.com-20110817044200-43prm29coscztp3q
+evgeny.potemkin@oracle.com-20110816193303-ntku52h0fqq5b8dd
+M evgeny.potemkin@oracle.com-20110816113203-466dchohpbl3uot0
+    [opt] Merge of WL#5274 Postpone materialization of views/subqueries in FROM clause.
+rohit.kalhans@oracle.com-20110816163011-7pwx4b36m1pqs2qj
+sneha.modi@oracle.com-20110816104010-eqdjwm61xtmtnd43
+joerg.bruehe@oracle.com-20110815190048-m6lm7hubgiquas9t
+joerg.bruehe@oracle.com-20110815184440-kowuea1f6bzyb447
+marko.makela@oracle.com-20110815093439-fdpckudrxinwphcw
+jorgen.loland@oracle.com-20110815085805-7ii8z619yj8aycfl
+M jorgen.loland@oracle.com-20110812090518-vmlrny2r3keyquzz
+    [opt]
+georgi.kodinov@oracle.com-20110812135706-86fanoytrgphesqr
+georgi.kodinov@oracle.com-20110812113336-t5qqwrjse9pxnn4w
+bjorn.munch@oracle.com-20110812105326-86d64g63klch1pgh
+sunny.bains@oracle.com-20110811202310-a8mqdztmicstxux9
+sunny.bains@oracle.com-20110811195901-nn54pgx0k06gorl0
+dmitry.lenev@oracle.com-20110811185346-qm54f8g1sqtf75ce
+tatjana.nuernberg@oracle.com-20110811164800-jkahqxeac2hh1dug
+tatjana.nuernberg@oracle.com-20110811113603-swwpazx3li839zai
+tatjana.nuernberg@oracle.com-20110811113334-5em9v2yvdfjxe8na
+marc.alff@oracle.com-20110811102112-jlw16fa2ydwtskcd
+jorgen.loland@oracle.com-20110811055213-sfx9eki6lnahbojw
+marc.alff@oracle.com-20110811000406-fh3p9nsdssvka4cw
+M marc.alff@oracle.com-20110810162834-dp15kxsfrox9x65u
+    WL#5378 PERFORMANCE SCHEMA SUMMARY BY USER / HOST
+inaam.rana@oracle.com-20110810180743-cn5yqda3r0favfij
+M inaam.rana@oracle.com-20110810062639-wucshtazrqtzjrc1
+    [inno] WL#5580: Changes to LRU flushing (InnoDB)
+olav.sandstaa@oracle.com-20110810144526-nxu8kfqeptn0tr96
+sven.sandberg@oracle.com-20110810114049-4mibcp7fgmtpy6qy
+vinay.fisrekar@oracle.com-20110810105357-2hou3pdoiyv3feb0
+marko.makela@oracle.com-20110810100749-lmuyubl762kkduc4
+marc.alff@oracle.com-20110809163916-78zil67xxph6luqw
+marko.makela@oracle.com-20110808094209-n82941oqh202e6b9
+jorgen.loland@oracle.com-20110805102613-a0ycrg4g5b1pv6gi
+M tor.didriksen@oracle.com-20110722075838-ygjbe4wi9h7q95yo
+    [opt] Merge from optimiser tree
+olav.sandstaa@oracle.com-20110805083706-3fmdqoi7gcuq5i7y
+marc.alff@oracle.com-20110804163117-iz3yr3molm8sne5s
+vasil.dimov@oracle.com-20110804143312-ey0t07v5aa26x1qj
+anitha.gopi@oracle.com-20110804073012-qxybfd8op3mp6wpt
+vasil.dimov@oracle.com-20110803163956-294y8ai4uvfa82jw
+marc.alff@oracle.com-20110803151523-8exwv941n23t8nl6
+M marc.alff@oracle.com-20110803150320-sszlf43ta8shazdd
+gleb.shchepa@oracle.com-20110803140233-pjnd6qwk4oucr8iu
+vasil.dimov@oracle.com-20110803112904-wurw682u5pfmdiaj
+vasil.dimov@oracle.com-20110803112301-y43ownutt52unmfu
+marc.alff@oracle.com-20110803092328-ni7r4y8f20hk0vo6
+M marc.alff@oracle.com-20110803090926-q6ur8kx5xo36tx07
+olav.sandstaa@oracle.com-20110803072117-aiqo499ud5crpmtq
+marc.alff@oracle.com-20110803070205-zj4o3i366x9ux1xr
+alexander.nozdrin@oracle.com-20110802174700-kdv0nvkfullxi0rf
+alexander.nozdrin@oracle.com-20110802083430-ay7ruyo0oen576w8
+alexander.nozdrin@oracle.com-20110802083354-rcg623lzctdkpn63
+sergey.glukhov@oracle.com-20110802081426-13bgb8qavuiedn9y
+alexander.nozdrin@oracle.com-20110801194746-ym94qyce5jf22une
+vasil.dimov@oracle.com-20110729103942-iiu0jnb23gdh0gl8
+vasil.dimov@oracle.com-20110729091333-q2d81wxwcqua29h9
+vasil.dimov@oracle.com-20110729082038-pv9an3xs6lgrf49p
+guilhem.bichot@oracle.com-20110729073916-9inmumwyxds64awa
+luis.soares@oracle.com-20110729000201-irdbx7r9y7xk1st7
+luis.soares@oracle.com-20110729000109-1zayji7x0nukhb0k
+vasil.dimov@oracle.com-20110728132531-h1jhg1xk01xd1oiq
+vasil.dimov@oracle.com-20110728130652-735stdow5xo5t2ds
+alexander.nozdrin@oracle.com-20110728105444-801ibrlphvn6irge
+alexander.nozdrin@oracle.com-20110728104514-23gatj6mst8ls2sb
+alexander.nozdrin@oracle.com-20110728103601-imij982ug4466y7r
+alexander.nozdrin@oracle.com-20110728091237-5xjjfd96t7p5ozzp
+alexander.nozdrin@oracle.com-20110728090409-30ccgbh0jkaom1f3
+alexander.nozdrin@oracle.com-20110728090043-mnp555puzb8sywhu
+alexander.nozdrin@oracle.com-20110728085505-pg5ns617f3n7hcam
+alexander.nozdrin@oracle.com-20110728085225-yku0gploji2hfdxq
+alexander.nozdrin@oracle.com-20110728084852-lpachhu5da8a4oub
+alexander.nozdrin@oracle.com-20110728083136-q6yj42p1e6mp28qi
+alexander.nozdrin@oracle.com-20110728081240-t6eaw8odqz5s7l00
+sven.sandberg@oracle.com-20110727104024-8yc74bgzzcaow686
+sven.sandberg@oracle.com-20110727103742-la18f5mj3uh0pj01
+sergey.glukhov@oracle.com-20110727090344-ybkc44jo0ipy2og2
+M sergey.glukhov@oracle.com-20110727090052-ivl9gis39imv5w79
+    [5.5] Merge from 5.5
+vasil.dimov@oracle.com-20110727085819-xddaau3v9qp1bwtt
+sergey.glukhov@oracle.com-20110727080639-xihx7e2edla3rsw0
+sergey.glukhov@oracle.com-20110727073835-oaoljv3dnecnabzp
+sunny.bains@oracle.com-20110726235759-3zs7bf3w2a1mya00
+sunny.bains@oracle.com-20110726110842-lbn31ziqnn1auo2j
+georgi.kodinov@oracle.com-20110725151306-vs9d09yet2rqrz32
+sunny.bains@oracle.com-20110726040546-jeqj7d7a66ni5apa
+sunny.bains@oracle.com-20110726032133-gqs9kyxcn8oizh7x
+sunny.bains@oracle.com-20110726025449-nxizah1wg8voxm7x
+vasil.dimov@oracle.com-20110725172537-0pacd1ic7h4meg75
+marc.alff@oracle.com-20110725140536-e8q1sqrgb8xmdv38
+magne.mahre@oracle.com-20110725105406-kwpzpksmrsjgeloe
+sunny.bains@oracle.com-20110725095447-rtc0brkrfwpm10pg
+georgi.kodinov@oracle.com-20110725092608-j0je5k4atgkm65bh
+anitha.gopi@oracle.com-20110725043818-a3e6yncfqdvcctzk
+alfranio.correia@oracle.com-20110724112953-brck6k4wdh3yqo03
+dmitry.lenev@oracle.com-20110722155242-q9dnvtbwcxvhb2fh
+tor.didriksen@oracle.com-20110722093204-36ib5dfa2f42whda
+sunanda.menon@oracle.com-20110722083751-pduej713fy833v3e
+alexander.nozdrin@oracle.com-20110722081035-500crkbtxal55veg
+marc.alff@oracle.com-20110722075614-imd49kh6njipp16n
+tor.didriksen@oracle.com-20110722072140-f60nlg5pjlvn0v9a
+marc.alff@oracle.com-20110721224931-kgydfeuj1ow4y2qy
+marc.alff@oracle.com-20110721213755-ejizh2301dkh24xt
+M marc.alff@oracle.com-20110721162714-q10127lepzreohpu
+jon.hauglid@oracle.com-20110721162239-2n0pfav87yw0sftc
+tor.didriksen@oracle.com-20110721151109-6h7ltgjhf1pggujj
+bjorn.munch@oracle.com-20110721121409-yjtw61l1glhcz8v1
+marc.alff@oracle.com-20110720190303-2oqqa14hed0un8of
+M marc.alff@oracle.com-20110720141427-u6c2ga9fsfkh5bb1
+anitha.gopi@oracle.com-20110720172638-ngiri867ynfea54o
+anitha.gopi@oracle.com-20110720172259-8db1mia7gt0f832s
+tor.didriksen@oracle.com-20110720144052-jyvvxmhxh4ejkkmm
+M tor.didriksen@oracle.com-20110720133212-c094h9jgmx8pfh3o
+    [opt] Merge from optimiser tree
+tor.didriksen@oracle.com-20110720133615-vkidky80spsi9b5w
+alfranio.correia@oracle.com-20110720102414-qso8zt2pyf2w3m7b
+alfranio.correia@oracle.com-20110720085556-yk80x9a09ls08ppz
+tor.didriksen@oracle.com-20110720071942-srtr38inaf4vwpj1
+sunny.bains@oracle.com-20110720044344-hgikxd2ezdtih9pi
+inaam.rana@oracle.com-20110719150748-cso15bzk6ccyoao1
+jon.hauglid@oracle.com-20110719121921-ubcngmepbmle52su
+sunanda.menon@oracle.com-20110719085022-g2395npqenw5quls
+sunny.bains@oracle.com-20110719080419-z8qmdegoxmkmb40w
+sunny.bains@oracle.com-20110719002520-c2vlkxclmlhm7cv1
+    [inno] WL#5535 - Separate tablespace(s) for the InnoDB undo log
+sven.sandberg@oracle.com-20110718162654-zcofejcx5q038tg5
+sven.sandberg@oracle.com-20110718162052-2591f98my646w3l1
+sven.sandberg@oracle.com-20110718161902-b1iul68q90v5y51z
+bjorn.munch@oracle.com-20110718102544-asroox28nc8pkyg4
+bjorn.munch@oracle.com-20110718102440-rmwfm92tu8lm0ra9
+anitha.gopi@oracle.com-20110718100514-wcxjeg9se89hr8h8
+tor.didriksen@oracle.com-20110718093813-cjk38vxw3z3ul1ov
+tor.didriksen@oracle.com-20110718080621-yjgx9tkc4ns14h2j
+marc.alff@oracle.com-20110715193732-88rpldf5qwiyp6ad
+alexander.nozdrin@oracle.com-20110715123222-xrh462gs2b833xvz
+luis.soares@oracle.com-20110715114835-z8vfhuf0ovz85ad3
+gleb.shchepa@oracle.com-20110714155310-eh6erwhj05ri7bmu
+luis.soares@oracle.com-20110714124600-6zpex8bxxyc01h8a
+luis.soares@oracle.com-20110714124435-s4s19hmvcefzgznw
+anitha.gopi@oracle.com-20110714093727-qgue93mai2lyvhdb
+jon.hauglid@oracle.com-20110714080512-n15qyzdvuyv83kbl
+jon.hauglid@oracle.com-20110714073201-4zwlw43gkl95vzbf
+jon.hauglid@oracle.com-20110713102951-muxnsrfzfnomuj7v
+sunny.bains@oracle.com-20110713050821-fn52u9b5vm9ubqdf
+marc.alff@oracle.com-20110712121020-iae2zswhopdyvyv5
+luis.soares@oracle.com-20110712111632-m2datre9v16kklc1
+sergey.vojtovich@oracle.com-20110712065018-ld7no7u929wj575l
+luis.soares@oracle.com-20110711162146-hy4n1ddtrryatht1
+kevin.lewis@oracle.com-20110708134010-d0wxkydl6kdvb9vu
+nirbhay.choubey@oracle.com-20110708130703-fkd3ad0soq7ntbnd
+davi.arnaut@oracle.com-20110707142636-ox242vm05c6x2t26
+georgi.kodinov@oracle.com-20110708123052-re4u3rbhiee5dqmo
+marc.alff@oracle.com-20110707193507-a39d408dsp2mt4yb
+marc.alff@oracle.com-20110707175735-9l1llt05dbimwn81
+M marc.alff@oracle.com-20110706185853-uc02qvsf2wfok1c9
+joerg.bruehe@oracle.com-20110707152936-nlh5anspd3xiunqs
+olav.sandstaa@oracle.com-20110707132243-0ovk76qrpvv35vyz
+tor.didriksen@oracle.com-20110707130134-gvpcqbsc97np1d7g
+tor.didriksen@oracle.com-20110707124434-wtqfc5ni6ccbyei3
+M gleb.shchepa@oracle.com-20110705083907-6zy37gsxw360quaw
+    [opt] Merge from optimiser tree
+tor.didriksen@oracle.com-20110707115159-hbhmite0xwrv3512
+M tor.didriksen@oracle.com-20110705050844-h2y383v380kquvm4
+    [opt] Merge from optimiser tree
+davi.arnaut@oracle.com-20110707112433-q1is22yisfj11zjn
+georgi.kodinov@oracle.com-20110707105754-eydsj2m4bwzksnup
+M georgi.kodinov@oracle.com-20110707105338-uno16ksu5b2ua8ew
+jon.hauglid@oracle.com-20110707102551-thqx0z3los6lhpoz
+anitha.gopi@oracle.com-20110706074410-cqo7mukiryqjky8m
+georgi.kodinov@oracle.com-20110705160634-09icq72tko1fbczf
+magne.mahre@oracle.com-20110705103217-0xlmmod240nxp2vr
+marc.alff@oracle.com-20110705081552-qqh1kx9cnoa5u82l
+M marc.alff@oracle.com-20110701084620-umpabehg9up8y9ca
+luis.soares@oracle.com-20110704155500-us8lej0j6vbym2tq
+tor.didriksen@oracle.com-20110704122846-xgvwokeomyx7rv6a
+tor.didriksen@oracle.com-20110704122237-cytufzt4owk3vj8s
+jon.hauglid@oracle.com-20110704075326-w2b7x64tk14vazam
+kent.boortz@oracle.com-20110704002546-ry9eqe2fvfkbexqn
+kent.boortz@oracle.com-20110703235647-rl1pp68gsfi1ozfl
+M kent.boortz@oracle.com-20110630155045-wrd94eqzp5uxt7w0
+georgi.kodinov@oracle.com-20110701143236-ltnx69rgztlxw31o
+georgi.kodinov@oracle.com-20110621100548-bil778ihsa1e2avq
+tor.didriksen@oracle.com-20110701081729-90dsn3afimq1l48d
+tor.didriksen@oracle.com-20110701070841-lxizi6wvmmze2dxp
+sunny.bains@oracle.com-20110701041220-nnj3pcqiffz04iej
+tor.didriksen@oracle.com-20110630125720-57l28er1fsh0fj5j
+marko.makela@oracle.com-20110630102826-2cp6f3llqclldng2
+sunny.bains@oracle.com-20110630055250-e8slwpjt5n2caprd
+luis.soares@oracle.com-20110629214432-6yvfz2r6l4r92h0w
+marc.alff@oracle.com-20110629202537-ptqcvt2311tgjfcz
+jon.hauglid@oracle.com-20110629144658-99a50k4om2mn77wp
+marko.makela@oracle.com-20110629141051-8mbddpjn3sjbhk12
+vasil.dimov@oracle.com-20110629113327-unira05u7y3kqh62
+marc.alff@oracle.com-20110629085839-2vbrn9bl7y8ym8q4
+marko.makela@oracle.com-20110629073100-a3sbmjywa44u9fgo
+marko.makela@oracle.com-20110628123614-di9ixvbj3jrnzycj
+marko.makela@oracle.com-20110628093032-gq5gwkdq2py6aaos
+tor.didriksen@oracle.com-20110628072409-w7tbqtb1r81g92gq
+M tor.didriksen@oracle.com-20110627150732-mnux2qxdiz2ftk4f
+    [opt] Merge from optimiser tree
+tor.didriksen@oracle.com-20110624092907-sy16mrj8w9vz6266
+dmitry.shulga@oracle.com-20110623173408-mmu678f32403knsn
+vasil.dimov@oracle.com-20110623132926-cyok7kpe8p12nbs8
+marko.makela@oracle.com-20110623130309-e7m10c0boa62nsum
+marko.makela@oracle.com-20110623095141-379yy9lk2mt6x30y
+vasil.dimov@oracle.com-20110623064848-cdjl7c0kg3z4b8vo
+    Implement WL#5712 InnoDB: preload buffer pool
+guilhem.bichot@oracle.com-20110622104022-zs7cgfx290ezdr1t
+guilhem.bichot@oracle.com-20110617132925-7wttzk62q7eqiygr
+mayank.prasad@oracle.com-20110622114629-ff9dqhwcif0rxw0x
+marko.makela@oracle.com-20110622084010-fdpilo8m8mys0wtz
+marko.makela@oracle.com-20110622083241-qanvfneai10tjvkf
+matthias.leich@oracle.com-20110621133803-dbrics1pynl8e47g
+jon.hauglid@oracle.com-20110621075731-cu9xolvtrastrrdx
+dmitry.lenev@oracle.com-20110620120706-etqnkczu8doethhl
+inaam.rana@oracle.com-20110620044501-cxep1iq8rdhllrqw
+inaam.rana@oracle.com-20110617203242-8ya3td65kg7qjc32
+alexander.nozdrin@oracle.com-20110617141935-ppvppxel9nb30yg1
+alexander.nozdrin@oracle.com-20110617134844-j50v0h6h7bym7w96
+jon.hauglid@oracle.com-20110617075559-c5bt1ybrftcdtmys
+dmitry.lenev@oracle.com-20110616234558-v90j59rogqny7jdx
+matthias.leich@oracle.com-20110616204554-oywm3mp20ct1e058
+dmitry.lenev@oracle.com-20110616160632-4ox3ayc63a9bub7f
+mayank.prasad@oracle.com-20110616135645-uoj8xj01zgrpqpb6
+vasil.dimov@oracle.com-20110616131548-alqyoust272pk230
+marko.makela@oracle.com-20110616123320-vhjkv8xrx6hsa1wc
+marko.makela@oracle.com-20110616092609-4zizcp5lrgp4gw3p
+jorgen.loland@oracle.com-20110616063016-j92jd8cgxk1zx1cg
+vinay.fisrekar@oracle.com-20110616043547-80a54m61ijarlw36
+davi.arnaut@oracle.com-20110615223143-234u0qk3c7gzo29l
+davi.arnaut@oracle.com-20110615190026-yqxr2jafi702ttsb
+davi.arnaut@oracle.com-20110615170124-5qjvs03rvsh3xehg
+davi.arnaut@oracle.com-20110615131306-bt1ij3d74zu4azzh
+dmitry.shulga@oracle.com-20110615101948-9p22b09g8ytr2ctb
+vasil.dimov@oracle.com-20110615080211-bml42gc1b1gndci6
+marko.makela@oracle.com-20110615073302-q9kt3q24z0ebkp0u
+anitha.gopi@oracle.com-20110615030610-1xlf39g3a35ve1mf
+mattias.jonsson@oracle.com-20110614123644-h4pobxtwk3xm5khy
+marko.makela@oracle.com-20110614054938-s4ym2mxxmxtvyazd
+mayank.prasad@oracle.com-20110613184641-urwe16r0ikrb86l8
+cpowers@tma-1-20110613170425-o8ev227orn2d0uij
+cpowers@tma-1-20110613162834-9fe473ts6agcp03n
+mattias.jonsson@oracle.com-20110613105558-t228qhuhcz3iead4
+mattias.jonsson@oracle.com-20110613093342-7jfihnup06d9i3we
+anitha.gopi@oracle.com-20110613041723-1iodtowx0t1j78aq
+karen.langford@oracle.com-20110610182025-0l4od4ntf1v55e5o
+alexander.nozdrin@oracle.com-20110610165701-h1rkmrf9jkykeq11
+mayank.prasad@oracle.com-20110610152904-3spvt0c1s11tgojc
+alexander.nozdrin@oracle.com-20110610151742-qxscgpt0yvcghmm3
+daniel.fischer@oracle.com-20110610141238-s4kxi8odepqpbrrk
+dmitry.shulga@oracle.com-20110610133109-kemr1ntq3ln392x4
+jon.hauglid@oracle.com-20110610100522-u5030fex1hg5kpvz
+tor.didriksen@oracle.com-20110610095257-ulh6hd2evlxkkx6d
+alexander.nozdrin@oracle.com-20110610084229-vkhv26z6u6sr1qav
+M alexander.nozdrin@oracle.com-20110610083315-krt7o59yfr64e2qv
+jorgen.loland@oracle.com-20110610083413-h04ebcci99oj9c19
+alexander.nozdrin@oracle.com-20110610074917-y5w3cr4imhwujcko
+dmitry.shulga@oracle.com-20110610073806-fnfdefu19gab5xwp
+tor.didriksen@oracle.com-20110610071351-nykxw30y6ly819hg
+marko.makela@oracle.com-20110609191337-tli2imqg5vjori3m
+dmitry.shulga@oracle.com-20110609181822-31azhx0e1qg3msyn
+luis.soares@oracle.com-20110609174421-0viq72mc1g4rf3ql
+luis.soares@oracle.com-20110609141422-p7p7ldaekppldc2c
+alexander.nozdrin@oracle.com-20110609135340-rxpubkgzwm49dt26
+dmitry.lenev@oracle.com-20110609131529-d4l4dhcnv4d4ufr5
+marko.makela@oracle.com-20110609110038-cvwxeo05q0x4nsdk
+alexander.nozdrin@oracle.com-20110609090318-06lrupk3f8wnz9ps
+alexander.nozdrin@oracle.com-20110609085841-dcsp0ccmbv253c0z
+olav.sandstaa@oracle.com-20110609062239-4w7ssunpxaapjruj
+ramil@mysql.com-20110608172416-f1nb2k710vhjusvr
+dmitry.shulga@oracle.com-20110608134725-09kxjiz0aukwe9vs
+olav.sandstaa@oracle.com-20110607162807-dmpg1vuwf6g97141
+ramil@mysql.com-20110607160042-o69buws4ic1nmfc3
+alexander.nozdrin@oracle.com-20110607130728-i5yespk5frhhihyc
+luis.soares@oracle.com-20110607085552-yk3d3wld2l1j1wup
+guilhem.bichot@oracle.com-20110606191654-iztzn1s89hgc3q49
+inaam.rana@oracle.com-20110606173709-sbxrpcumoa0optjh
+M inaam.rana@oracle.com-20110606172631-edvai9qpkwqrhqzn
+inaam.rana@oracle.com-20110606170314-ei2yddkd5hcyvmfy
+marko.makela@oracle.com-20110606132831-lvvmxzkq1edxt3st
+olav.sandstaa@oracle.com-20110606124955-vts4ql8y5c8n3tqu
+guilhem.bichot@oracle.com-20110502135251-kvgne8am1xfe9r1h
+georgi.kodinov@oracle.com-20110606102945-eqfo51a64b4qg7i7
+sunny.bains@oracle.com-20110606093520-xo3w7x5zsqdxjgh6
+rafal.somla@oracle.com-20110603131735-0qhh0vnaf7o83yq3
+vasil.dimov@oracle.com-20110603105014-bibzetex31kt075f
+anitha.gopi@oracle.com-20110603091145-uvoynqmhrcpq0kkv
+anitha.gopi@oracle.com-20110603090953-b23nemxvhzidh5pf
+M anitha.gopi@oracle.com-20110603085455-7u9d0ug7gvi7x9oa
+sergey.vojtovich@oracle.com-20110603080042-arr35tr9yqnpwwxe
+sunny.bains@oracle.com-20110603055924-aobm3t5f3kc1gy95
+alexander.nozdrin@oracle.com-20110602140133-dyutjimqdjriavvc
+vinay.fisrekar@oracle.com-20110602094818-yib1tmrbpvzs7v0s
+sunny.bains@oracle.com-20110602071145-kvk8h2g7u6sdpc12
+sunny.bains@oracle.com-20110602070542-3cvs2im99yx2g7u8
+bjorn.munch@oracle.com-20110601132230-jlhznq8h0do1x7ja
+tor.didriksen@oracle.com-20110601124346-ay5pikeas9qu2rl0
+jon.hauglid@oracle.com-20110601122451-ivwiuys5oku9tb41
+bjorn.munch@oracle.com-20110601101632-3qjbjz1uz4mfm578
+vinay.fisrekar@oracle.com-20110601100048-a6cp7k1u3881czlt
+vasil.dimov@oracle.com-20110601094210-30n6zs3vibtva04v
+vasil.dimov@oracle.com-20110601094103-eq32iq3w8j23zw15
+jon.hauglid@oracle.com-20110601091128-fciowxq3khf3vkxp
+davi.arnaut@oracle.com-20110531135209-8kxz4np8c4gav6s2
+jimmy.yang@oracle.com-20110531093059-3x1f93rnspltp3h6
+marko.makela@oracle.com-20110531081827-mkqxrlx0ilddhc7m
+davi.arnaut@oracle.com-20110530151912-vjbq0n6ojdc752ru
+bjorn.munch@oracle.com-20110530140014-2ecq78s68fo68q84
+vasil.dimov@oracle.com-20110530135601-376gh2x4hj7f3d3u
+davi.arnaut@oracle.com-20110530114203-3kz6yirg2tlv09uk
+alexander.nozdrin@oracle.com-20110530072659-hg5jaxisod09ltjh
+tor.didriksen@oracle.com-20110530070039-nkc735j0loztdnf7
+alfranio.correia@oracle.com-20110530062547-3sj55p3r5nlbqvk5
+    [rpl] WL#4832 Write more binlog events through cache rather than direct
+bjorn.munch@oracle.com-20110527124538-zhvt2lb7nylg2vb0
+dmitry.shulga@oracle.com-20110527115052-f7p1tv8qyrgo11m8
+tor.didriksen@oracle.com-20110526152009-mdn9u03pruj0mf2z
+tatjana.nuernberg@oracle.com-20110527102409-9dsjc3mr69nx97r8
+anitha.gopi@oracle.com-20110527090647-lmo54kehnnil78qs
+tor.didriksen@oracle.com-20110525141953-n0xe4jtdhsvr9lo2
+anitha.gopi@oracle.com-20110527045335-moc6fhbj6tfici2w
+M anitha.gopi@oracle.com-20110527045239-d9e9a3tngn3b9nbc
+sunny.bains@oracle.com-20110527033633-pw0cghxlx54103v9
+dmitry.lenev@oracle.com-20110526162352-fn2bpbczt5163pwp
+tatjana.nuernberg@oracle.com-20110526123657-rxq2y72hy2ilqy7q
+sven.sandberg@oracle.com-20110526111845-umuh5xh2iwtir7uc
+jorgen.loland@oracle.com-20110526110957-hri6lm8atmw2oh46
+sergey.glukhov@oracle.com-20110526101307-qu3hi0klo14vtnzk
+tor.didriksen@oracle.com-20110526083940-71hlwwh0jkd2itbg
+   [opt] Merge from optimiser tree
+bjorn.munch@oracle.com-20110526082005-nxi1glsqe8s4b12g
+bjorn.munch@oracle.com-20110526081910-84samgo4hpwfg11g
+tor.didriksen@oracle.com-20110526081409-npgrjt1gpv2fza7o
+vasil.dimov@oracle.com-20110525134330-dbozc3xo1yzczyi4
+marko.makela@oracle.com-20110526062948-hd04ybuz4qr6ijby
+dmitry.shulga@oracle.com-20110525164828-h71zhjn7nj07jn7g
+anitha.gopi@oracle.com-20110525141040-75k9hoorn1p18xfx
+anitha.gopi@oracle.com-20110525113616-3cph7q6rg994get3
+anitha.gopi@oracle.com-20110525110125-x97pcil75467b4np
+mikael@dator9-20110525101808-zhqd5az1tffaa3hu
+anitha.gopi@oracle.com-20110525053040-c36iudjb9t326fmc
+anitha.gopi@oracle.com-20110525042344-8kcrftq29ddoo2vd
+marko.makela@oracle.com-20110524202208-u00luqvqwfqcod2g
+anitha.gopi@oracle.com-20110524162824-fgm0rz95kjfv8429
+anitha.gopi@oracle.com-20110524101851-yazabkeu8bzkdxe2
+anitha.gopi@oracle.com-20110524064200-6zlfgpeqpr4bd24t
+anitha.gopi@oracle.com-20110524045726-b53sw9ntkv9yei2b
+anitha.gopi@oracle.com-20110524043512-yyrc1sahl2yne7nj
+luis.soares@oracle.com-20110523233447-pnf6pmdtslsgfnjy
+anitha.gopi@oracle.com-20110523115813-ggo3wmzmu8pk3jzo
+vasil.dimov@oracle.com-20110522201906-af9nnm7885va1zrg
+vasil.dimov@oracle.com-20110522201742-a6mffrl4hzv03mg7
+    [inno] Merge innodb tree
+guilhem.bichot@oracle.com-20110521093119-gcah2075gh411s0t
+guilhem.bichot@oracle.com-20110521093035-zrjde8fxtt1ndlbm
+M guilhem.bichot@oracle.com-20110521082533-8hiorkxngykdbnqq
+dmitry.shulga@oracle.com-20110520190931-imdp7k2jt9wi83or
+mayank.prasad@oracle.com-20110520092354-7sr3ixi04rnoqxwl
+luis.soares@oracle.com-20110519154905-vhfhan4ab055qjsc
+mikael@dator9-20110519140036-u4vrj8u5rirzot5j
+M mikael.ronstrom@oracle.com-20110519095340-0wm1u3f4suln5gut
+jon.hauglid@oracle.com-20110519124326-25jaq6p8zk89ys1p
+jorgen.loland@oracle.com-20110519120355-qn7eprkad9jqwu5j
+    [opt] BUG#11765831: 'RANGE ACCESS' MAY INCORRECTLY FILTER ...
+mayank.prasad@oracle.com-20110518143645-bdxv4udzrmqsjmhq
+tor.didriksen@oracle.com-20110518104346-m0a38mt7li4iucc3
+M tor.didriksen@oracle.com-20110513131027-r34fey4ms1my4b5d
+    [opt] Merge optimiser tree
+tor.didriksen@oracle.com-20110518082946-h2oxanu2lqthr64c
+sergey.glukhov@oracle.com-20110518070752-dudqede7tc6c8oj3
+luis.soares@oracle.com-20110517225916-koq8sear3ug2gvbg
+marc.alff@oracle.com-20110517091547-3bok4hfsp2o01o2b
+marc.alff@oracle.com-20110516210738-yfwy1n02swyw55vh
+andrei.elkin@oracle.com-20110516184622-7vr7do47i8tmg97g
+M andrei.elkin@oracle.com-20110516184244-0khjknei5n8izfia
+kent.boortz@oracle.com-20110516183847-hgf3tsp83w8gtlom
+alfranio.correia@oracle.com-20110516172611-537aai57t7f6z6wk
+davi.arnaut@oracle.com-20110516143054-9719kgj4l17ahg73
+davi.arnaut@oracle.com-20110516113207-iljwd0w7vy9vcb0q
+luis.soares@oracle.com-20110516111048-b8zr9gms8l2s9lxz
+sergey.glukhov@oracle.com-20110516110128-pt8eq343xtfdhiez
+andrei.elkin@oracle.com-20110516093551-93n3pu5b4moj8wsy
+alexander.nozdrin@oracle.com-20110516085210-lae2hjr4w7ng0230
+vinay.fisrekar@oracle.com-20110514163213-ru8dt0skhxgf1ywe
+marc.alff@oracle.com-20110513161527-l9p5sjpmocoamgkn
+M marc.alff@oracle.com-20110513134431-v3y2t88tzgsrgn0g
+alfranio.correia@oracle.com-20110513134151-w88c6oo5lsd4ukgc
+bjorn.munch@oracle.com-20110513115802-6z0pqy6wm04e73jb
+tor.didriksen@oracle.com-20110513093613-uvazltd2qb22rrrv
+bjorn.munch@oracle.com-20110513092201-7ddtbc95ctu22ori
+alfranio.correia@oracle.com-20110512172919-c1b5kmum4h52g0ni
+jon.hauglid@oracle.com-20110512150229-auvc2rj7wfe9k8sk
+bjorn.munch@oracle.com-20110512144027-8k1qhsy1s6q5h804
+M bjorn.munch@oracle.com-20110512134950-bfwhsnylrsfba5t1
+tatjana.nuernberg@oracle.com-20110512141829-d356g1nkucpvaa6e
+    fix broken merge
+tatjana.nuernberg@oracle.com-20110512125011-8tt9kods36wupmsx
+tatjana.nuernberg@oracle.com-20110512124739-0hw4yg3k5wwqjdb3
+tatjana.nuernberg@oracle.com-20110512095000-at7jmzk9lv3wsgcr
+M tatjana.nuernberg@oracle.com-20110512093909-lcgv7mo2dmp85bs2
+jon.hauglid@oracle.com-20110512074956-l74pfdv493fw8d3s
+tatjana.nuernberg@oracle.com-20110512042833-mdigivgh3oflv18p
+M tatjana.nuernberg@oracle.com-20110512033108-eqyuf4xrrsyw4wop
+luis.soares@oracle.com-20110511141951-0kq0kjnsevroknos
+luis.soares@oracle.com-20110511140725-07ev25rycih828e5
+magnus.blaudd@oracle.com-20110511131934-004lcqa8mnkzhlj3
+alexander.nozdrin@oracle.com-20110511124711-l89r036xarfrzwsr
+georgi.kodinov@oracle.com-20110511123526-w3livfe5jw0rkatb
+georgi.kodinov@oracle.com-20110511123423-hx63q57kye3xjbsd
+M georgi.kodinov@oracle.com-20110511123223-sj5jivjzdp2lfyq0
+dmitry.lenev@oracle.com-20110511113127-kfqwyqbo50ilzrto
+georgi.kodinov@oracle.com-20110510134134-dccrlz780k8960u2
+georgi.kodinov@oracle.com-20110510133737-4d1jn7bg183hjzdj
+jon.hauglid@oracle.com-20110510105534-bn0il5kmt6av3jcj
+horst.hunger@sun.com-20110510090631-mwq95b8vhg2q3c08
+serge.kozlov@oracle.com-20110509194430-liiegqtwc4lrs0md
+andrei.elkin@oracle.com-20110509174444-joicmpyxcszx3ir4
+alexander.nozdrin@oracle.com-20110509084822-rllafhgeclo0yt46
+luis.soares@oracle.com-20110506222403-l71h2y48ln7ngbtc
+alexander.nozdrin@oracle.com-20110506134657-8zhfg4wtf62pdwf5
+alexander.nozdrin@oracle.com-20110506133253-bw06jl9xxkydr7yb
+jorgen.loland@oracle.com-20110506132631-5wickj6dvrh1dpj6
+alexander.nozdrin@oracle.com-20110506132138-46459va9vcbd4nz0
+alexander.nozdrin@oracle.com-20110506125636-fch21zuu1xdbbq0t
+alexander.nozdrin@oracle.com-20110506124937-zdewge4n9ldagig4
+alexander.nozdrin@oracle.com-20110506124737-3n99oz0gyh29nj8q
+luis.soares@oracle.com-20110506103810-z3k5pza2n49cpl2w
+magnus.blaudd@oracle.com-20110506092343-w44iqn04a542c1ms
+magnus.blaudd@oracle.com-20110506085453-ohx3f9rv7yp8xa4p
+nirbhay.choubey@oracle.com-20110506082600-3ug6glzno5gv4pr3
+luis.soares@oracle.com-20110505235911-kwcglio0a1vwaxws
+luis.soares@oracle.com-20110505235244-f1u7rfy8rjh95r0z
+luis.soares@oracle.com-20110505231747-qmqga2viax5s24og
+luis.soares@oracle.com-20110505230723-19jdnu7hfrbz1fxf
+serge.kozlov@oracle.com-20110505140728-cc3uvvmmc0quoay9
+azundris@sun.com-20110505105234-zwr6oenmsq5nd3zm
+azundris@sun.com-20110505065553-hc0w7p6jfaczp5er
+alexander.nozdrin@oracle.com-20110504183304-d3cemadwrnzsbgdf
+alexander.nozdrin@oracle.com-20110504134913-7ex6j8jorj3phhj6
+alexander.nozdrin@oracle.com-20110503180621-dwgae5s7fl7ahm1e
+alexander.nozdrin@oracle.com-20110503180537-xps69vmeno0vj1os
+kent.boortz@oracle.com-20110503142336-330esry0pasef5dv
+alexander.nozdrin@oracle.com-20110503130400-xy365zff0vd1fsu9
+alexander.nozdrin@oracle.com-20110503130300-c59865kipmt0xzj7
+tor.didriksen@oracle.com-20110503064606-jc6s4pp4a020dciy
+vasil.dimov@oracle.com-20110502162052-1596ds1clw32j6du
+    [inno] merge innodb tree
+sven.sandberg@oracle.com-20110502144345-ulgpfczfr3u032fl
+jorgen.loland@oracle.com-20110502115141-oe6j6jhj6pemxx6p
+jorgen.loland@oracle.com-20110502111636-38kjeb31mgn7kj12
+vasil.dimov@oracle.com-20110502095307-2ju0wd8vpgrhlkjc
+bjorn.munch@oracle.com-20110502094438-3kb0dqeu1aay3ux6
+bjorn.munch@oracle.com-20110502094329-ao58f58wivjsewnq
+M bjorn.munch@oracle.com-20110429141209-qqeqkpy8hqjx27o9
+marc.alff@oracle.com-20110430163516-akk1js76ogd4idi2
+nirbhay.choubey@oracle.com-20110430053644-jska5zi39lf1dv1f
+marc.alff@oracle.com-20110430001444-jyyjv5ijzc7mz8he
+davi.arnaut@oracle.com-20110429215346-a45s45pi0p2lf945
+rafal.somla@oracle.com-20110429150913-4gt812yd8fg90frm
+bjorn.munch@oracle.com-20110429130139-gcfvze0x39hyx16u
+bjorn.munch@oracle.com-20110429130031-9f93f6ekxu32ui39
+vasil.dimov@oracle.com-20110429111848-zuhj6vyjkoajb8bc
+    [inno] Merge innodb tree
+mattias.jonsson@oracle.com-20110429084639-1kfdsn1x96ibob10
+mattias.jonsson@oracle.com-20110429084552-nasiqe9subq2awlg
+georgi.kodinov@oracle.com-20110429083743-8lmpnvuq628q3yjc
+marc.alff@oracle.com-20110428220107-qky2956tychat5kz
+davi.arnaut@oracle.com-20110428165010-i250drgt65lgb7wx
+georgi.kodinov@oracle.com-20110428101818-az8w55v7ki6z3j7s
+georgi.kodinov@oracle.com-20110428101657-il29s1p75rorgxea
+tor.didriksen@oracle.com-20110428082818-crm9rh7lwwrs9j2b
+M tor.didriksen@oracle.com-20110427091649-v8c2cn0p200swk0l
+    [opt] Merge optimiser tree
+marc.alff@oracle.com-20110428050754-mfv50i3aak8b3ika
+vasil.dimov@oracle.com-20110428044206-8zxddgtmtlwcts9i
+    [inno] Merge innodb tree
+marc.alff@oracle.com-20110428031143-3zrbmfn71buqawzu
+serge.kozlov@oracle.com-20110427210554-dvn3gov77d5kjkv7
+sven.sandberg@oracle.com-20110427125939-c46jcvdtabt1ytpb
+nirbhay.choubey@oracle.com-20110427120034-7ub5ddh617pj13ht
+magnus.blaudd@oracle.com-20110427090459-oph0wpcvwpb94nrv
+sergey.glukhov@oracle.com-20110427075504-b4jn9d63oqjtsbsh
+marc.alff@oracle.com-20110426203524-imfwuci0h9slqx4y
+M marc.alff@oracle.com-20110419032906-rccwzmubt6u3yo80
+guilhem.bichot@oracle.com-20110426113014-pffnx6cimh08ww9v
+guilhem.bichot@oracle.com-20110426111918-4nv2mnji9ogxp7df
+M guilhem.bichot@oracle.com-20110426101232-f8pfcmu3ekhiy7sl
+mattias.jonsson@oracle.com-20110426100110-zw32wzppuebk2ld3
+build@mysql.com-20110426002147-3le97cvzpvkpxgev
+serge.kozlov@oracle.com-20110425201422-vuakcsq22m6c7uby
+mattias.jonsson@oracle.com-20110423211337-1kij2wls83qzw0xu
+mattias.jonsson@oracle.com-20110423205425-w4blc7wciram03m3
+dmitry.lenev@oracle.com-20110422125910-i2165o2ktxegw3an
+sergey.glukhov@oracle.com-20110422080502-nrb1q534ymnjyqbx
+sergey.vojtovich@oracle.com-20110422070259-co6cbnqx0mti9a3l
+vasil.dimov@oracle.com-20110421075949-vga61crkz2sztp05
+vasil.dimov@oracle.com-20110421075904-ivig364q3xxgih00
+M vasil.dimov@oracle.com-20110421075617-5a0e48zmr0kx6fw3
+    [inno] Merge innodb tree
+vasil.dimov@oracle.com-20110421053623-3f5o395q7ji65qke
+vasil.dimov@oracle.com-20110421053517-paozohzqkmgg9gb1
+M marko.makela@oracle.com-20110420104727-utvkhnq24qze1udr
+    [inno] Merge innodb tree
+marc.alff@oracle.com-20110420175653-3m3cyf28bx1av8ws
+jon.hauglid@oracle.com-20110420104022-ltewvyapt0n52itj
+sergey.glukhov@oracle.com-20110420075657-sz0kich51soqk105
+marc.alff@oracle.com-20110419164749-zrvb8fl5v6vd2y81
+M marc.alff@oracle.com-20110418230527-0mg33yrf3d1gnkel
+marc.alff@oracle.com-20110418234145-zvklhp3jqo3js56d
+serge.kozlov@oracle.com-20110418202304-defobc052e4khvvf
+sven.sandberg@oracle.com-20110418142038-tov8n4l0du2azs3q
+sven.sandberg@oracle.com-20110418125043-m3mtjug305b4csb0
+martin.hansson@oracle.com-20110418084741-a2e8di1vxhlrlauk
+bjorn.munch@oracle.com-20110416161309-0b9jwvy94a5x53fd
+bjorn.munch@oracle.com-20110416154516-1k7ceuwc00e95qls
+alexander.nozdrin@oracle.com-20110415121435-c24cmv7xz31ahtex
+alexander.nozdrin@oracle.com-20110415094259-22923jpricrots8n
+alexander.nozdrin@oracle.com-20110415093946-2ltfssbkvqcg6eu5
+alexander.nozdrin@oracle.com-20110415093358-838p6rdv9fpoh9dp
+alexander.nozdrin@oracle.com-20110415090421-io2etb9tn2knwl73
+sergey.glukhov@oracle.com-20110415090216-rj95aq0qmvhk8cky
+tor.didriksen@oracle.com-20110415081149-deq6rp83twv8u6q0
+olav.sandstaa@oracle.com-20110414122514-j8i2y8ra7n4cvwqw
+olav.sandstaa@oracle.com-20110414120453-7gkjhhpuc9il3g9y
+serge.kozlov@oracle.com-20110414115758-k43k8odgjsa2s1sw
+sergey.glukhov@oracle.com-20110414093734-m1difp5m53lwjyp9
+sergey.glukhov@oracle.com-20110414093602-4q1spxwynjmk3ih9
+M sergey.glukhov@oracle.com-20110414093217-e53s187y8epeynvg
+jon.hauglid@oracle.com-20110414084714-3nkimc3wcv5zkj7c
+magne.mahre@oracle.com-20110414080949-ryodxcli6iptdzvu
+anitha.gopi@oracle.com-20110414053357-f2h4i4w9zusvzoam
+serge.kozlov@oracle.com-20110413210310-c50aqnm6x0o1rc6j
+davi.arnaut@oracle.com-20110413191645-42lqxp32gvvjry5c
+build@mysql.com-20110413184308-2hl5tmxuwvrn14dx
+M magne.mahre@oracle.com-20110314133103-35abxo8oi4t0nzun
+    Merge 5.6.2 release branch
+build@mysql.com-20110413181709-fs2zy0745jiu37tz
+M build@mysql.com-20110321201605-wf1rdtghfdlftpr9
+davi.arnaut@oracle.com-20110413113144-h4a3ywdxnvamghe3
+anitha.gopi@oracle.com-20110413112112-swxytwupnmurey97
+dmitry.lenev@oracle.com-20110413071313-y1ul3rr7f9ay2npo
+dmitry.shulga@oracle.com-20110412124826-yvcnuhl4hf4aec4o
+jon.hauglid@oracle.com-20110412114017-8xpm0j95y0b9eo05
+jon.hauglid@oracle.com-20110412105959-2h5bs6nps46pakeq
+sergey.glukhov@oracle.com-20110412103658-swej8opqeuc64gy3
+sergey.glukhov@oracle.com-20110412103538-mmmwwlsviw613ltp
+M sergey.glukhov@oracle.com-20110412103130-5et196ym7db1q5eb
+sven.sandberg@oracle.com-20110412094853-mlhrikk0h1wksz51
+sven.sandberg@oracle.com-20110411141348-wusk6o4412eriktb
+sven.sandberg@oracle.com-20110411135453-t3h2taqwervabg6o
+davi.arnaut@oracle.com-20110411115224-kwazs67xi8a6j2wp
+dmitry.shulga@oracle.com-20110411102836-xg3lxye6eeucozsw
+alexander.nozdrin@oracle.com-20110411100925-mt3bq771x7fwy3rq
+alexander.barkov@oracle.com-20110408134138-71l52ua9ntizewih
+alexander.nozdrin@oracle.com-20110408103240-e74cs8d61tmqcez3
+gleb.shchepa@oracle.com-20110408081519-0jnpi1ch4gbqtbtw
+nirbhay.choubey@oracle.com-20110408070757-0vxiwor3u4frkroo
+jorgen.loland@oracle.com-20110407142447-uqf1btsg4ezb9gwu
+bjorn.munch@oracle.com-20110407123151-1zo05n4brg2qseg5
+bjorn.munch@oracle.com-20110407120644-4srd0odrxusyt3n0
+jorgen.loland@oracle.com-20110407104524-w0brup3u7x6rzdoy
+M jorgen.loland@oracle.com-20110406121143-9dnv26mvktphis79
+    [opt] Merge optimiser tree
+georgi.kodinov@oracle.com-20110407095759-s7e43hf9fhvrj48j
+georgi.kodinov@oracle.com-20110407095509-5idqpfy9xz0w80la
+georgi.kodinov@oracle.com-20110406152105-nk0yajrv8uo08vxf
+alfranio.correia@oracle.com-20110406133337-kfz587gzza336qx3
+georgi.kodinov@oracle.com-20110405131738-i1cl5q3znfn0jj9e
+anitha.gopi@oracle.com-20110406043138-rsjw44x5ldjxx5c9
+alfranio.correia@oracle.com-20110405164624-yd48tlizqffruh4f
+alfranio.correia@oracle.com-20110405155115-ae0y3voh0nmw8obd
+georgi.kodinov@oracle.com-20110405123940-y55f71ahi5rbnwuf
+alfranio.correia@oracle.com-20110404205928-74vdhj8hw75d90x5
+marc.alff@oracle.com-20110404150903-d2w5ezkfexjy7no0
+M marc.alff@oracle.com-20110404143442-yr2qiakzktqg181g
+tor.didriksen@oracle.com-20110404134951-vatvwi09qhqxf8gt
+alfranio.correia@oracle.com-20110404100613-nk1mbe89kyiy45og
+alfranio.correia@oracle.com-20110404094222-t3kfwx19mv93iekd
+tor.didriksen@oracle.com-20110404084725-k8mehtjjg83uyueg
+vasil.dimov@oracle.com-20110404061715-3v7e8evt7o12ssu0
+vasil.dimov@oracle.com-20110404061446-1kqrdxlquhzbw6j3
+M vasil.dimov@oracle.com-20110330122045-4xm0yf7bt9gw6das
+    [inno] Merge innodb tree
+gleb.shchepa@oracle.com-20110402194250-42ut015lx64u726y
+jorgen.loland@oracle.com-20110401140452-dc3lfm7m6ii3auna
+    [opt] BUG#11882131: OPTIMIZER CHOOSES FILESORT WHEN REVERSE ...
+mattias.jonsson@oracle.com-20110331143551-q8lg4fcceeof0yrl
+magne.mahre@oracle.com-20110330141702-ct75u2mrtimpskvj
+dmitry.lenev@oracle.com-20110330114332-6dcte6tltmq1n0l6
+sergey.glukhov@oracle.com-20110330074419-gv9l0kxhy8mrqqmu
+M sergey.glukhov@oracle.com-20110330074203-58if6x38iqlc4s7l
+vasil.dimov@oracle.com-20110330073434-tl0hw788nw404c4q
+M inaam.rana@oracle.com-20110328130920-llcs0qui5wx11rik
+    [inno] Merge innodb tree
+andrei.elkin@oracle.com-20110329145716-hpp1cnld04yxc9ne
+M andrei.elkin@oracle.com-20110329145601-asqy5hj1a1gzrlra
+magne.mahre@oracle.com-20110329125634-hzbz8ycxn7srnrvp
+gkodinov@mysql.com-20110329125202-rsdqmfyh22e230pj
+jon.hauglid@oracle.com-20110329084229-lmkvlgdbzdjm3qu2
+gkodinov@mysql.com-20110329083458-1w0rb7bxa2c3umj0
+georgi.kodinov@oracle.com-20110329080107-akvgisr5zn63uh7n
+jorgen.loland@oracle.com-20110329072017-9ffigj7078n61hhb
+M jorgen.loland@oracle.com-20110328111112-my0rpo665c3x9838
+    [opt] Merge optimiser tree
+mayank.prasad@oracle.com-20110328154305-0ffwvfo371b32lxa
+sergey.glukhov@oracle.com-20110328134233-nxb1ncydopmcf3nt
+sergey.glukhov@oracle.com-20110328134127-zexglkmzr5gq8rxz
+M sergey.glukhov@oracle.com-20110328133803-ylaba0zy4sav8p21
+georgi.kodinov@oracle.com-20110328133430-7t99cee7uiphbi41
+mattias.jonsson@oracle.com-20110328114815-7dp3vsh250pgcwab
+georgi.kodinov@oracle.com-20110328111042-n0s6yb0m3hzczdls
+sergey.glukhov@oracle.com-20110328091402-p8i196oqscgxlru9
+sergey.glukhov@oracle.com-20110328090959-tcdj6z9qogkhqvsx
+M sergey.glukhov@oracle.com-20110328090413-8a99g6gidiu6uct4
+magne.mahre@oracle.com-20110328085135-plnpc76dn3080moy
+sergey.glukhov@oracle.com-20110328081039-xo46p80jxgfkn2f9
+sven.sandberg@oracle.com-20110325152025-bk4g5142itsk0436
+jon.hauglid@oracle.com-20110325151341-zo0aj156m01whtrx
+georgi.kodinov@oracle.com-20110325143808-lw2g411ffimrgmtt
+M georgi.kodinov@oracle.com-20110325143513-whg1q0ayfifzu1cx
+magnus.blaudd@oracle.com-20110325140346-siiav8wc20p4dwck
+luis.soares@oracle.com-20110325121556-i43pocn444hkvbmw
+luis.soares@oracle.com-20110324144141-0kg7uncmhqui28pz
+olav.sandstaa@oracle.com-20110324131636-gzrofr5dly62c3p5
+ole.john.aske@oracle.com-20110324131037-93b6ec028ra3lo7m
+alexander.barkov@oracle.com-20110324103716-9hk8jn4zbt95icqe
+georgi.kodinov@oracle.com-20110324103512-eddjrenp5tt5aqsz
+marc.alff@oracle.com-20110324081600-hyb2z92bybx6ymnt
+    Merge WL#2515 PERFORMANCE SCHEMA STAGES / WL#4813 PERFORMANCE SCHEMA STATEMENTS
+tor.didriksen@oracle.com-20110322114440-1i917d6g1zh0fjly
+luis.soares@oracle.com-20110323225119-p2al9186e1xc1wzv
+alexander.barkov@oracle.com-20110323121417-ug1i6tlqd2yyatpu
+vinay.fisrekar@sun.com-20110323113704-pucr0378nz9m07tu
+bjorn.munch@oracle.com-20110323103244-kc9otxeyrgzwb7vm
+bjorn.munch@oracle.com-20110323101113-w9tbx08fw6vlidi4
+ole.john.aske@oracle.com-20110323095224-z84ht93cb8eb84f4
+magne.mahre@oracle.com-20110322153114-y6p1m9y730lssgf7
+magne.mahre@oracle.com-20110322125752-1vcsv5j1ejhqruwv
+alexander.nozdrin@oracle.com-20110322120652-ogo46ny9jznrxfgs
+georgi.kodinov@oracle.com-20110322120516-2s26bld7x81nsvu3
+M georgi.kodinov@oracle.com-20110322111423-kija3s3z6pzen21e
+alfranio.correia@oracle.com-20110322105644-k7j6khi9up8lmedy
+vinay.fisrekar@sun.com-20110322043853-0aohyeegnment1i0
+mayank.prasad@oracle.com-20110321162430-vbuui57giapmch6n
+georgi.kodinov@oracle.com-20110321133630-75h6l0wlpqx4lovj
+georgi.kodinov@oracle.com-20110318145827-q1t1vd16ptv09hzw
+alfranio.correia@oracle.com-20110318131147-hdx787j5j8o7i7rv
+tor.didriksen@oracle.com-20110318123703-4su2v8ecl3ngub5k
+M tor.didriksen@oracle.com-20110318122556-bok541eogtbkbvme
+vinay.fisrekar@sun.com-20110318112023-cuzz9r80xtaguc5n
+alexander.nozdrin@oracle.com-20110318110113-j5ln8oj7htz8pdzy
+mattias.jonsson@oracle.com-20110318103117-l29xpq4g76zgx1oc
+georgi.kodinov@oracle.com-20110318102140-9vijjzdhfpa1tgpv
+georgi.kodinov@oracle.com-20110317141254-fos8m2vx2da8h8h9
+georgi.kodinov@oracle.com-20110317140630-5ozy6zmr6zzc2yea
+georgi.kodinov@oracle.com-20110317133820-viu3z9vfwewdjuzg
+M georgi.kodinov@oracle.com-20110317133611-l1fqee2lrxitg1iv
+alfranio.correia@oracle.com-20110317133403-lapwp13hyxd9yfjk
+alfranio.correia@oracle.com-20110317133123-txh7mjqa6bhimp4p
+georgi.kodinov@oracle.com-20110317124519-0ncmac4ujnafpxq9
+M georgi.kodinov@oracle.com-20110317120814-0dzvzucfud3duai9
+nirbhay.choubey@sun.com-20110317123453-bcne69fkc21m5f42
+tor.didriksen@oracle.com-20110317114804-kmx03y74jr26gp9i
+jon.hauglid@oracle.com-20110317112331-1tel4ja0sfwcrfnt
+nirbhay.choubey@sun.com-20110317110351-alfex7t2zly8a85c
+sven.sandberg@oracle.com-20110317103242-ytoulomyzji7t49x
+georgi.kodinov@oracle.com-20110317094750-6rktdb8lv5mf9nso
+georgi.kodinov@oracle.com-20110317094328-uaytvqn1ps5fp7of
+jorgen.loland@oracle.com-20110317074026-twl99kobi04cmg28
+M jorgen.loland@oracle.com-20110302115103-qmopwwj51p9jh80l
+    [opt] Merge optimiser tree
+kent.boortz@sun.com-20110316221528-qwhwyfili4kjeo7m
+vasil.dimov@oracle.com-20110316144407-4qh6teqdwy2b4ke3
+M vasil.dimov@oracle.com-20110315161731-5s8b7rqhxfqwbwxl
+    [inno] Merge innodb tree
+serge.kozlov@oracle.com-20110315215819-yz622trfrtij75jz
+dmitry.shulga@oracle.com-20110315180859-o66s2wrjrnobszn8
+sven.sandberg@oracle.com-20110315151634-e8t1rdsb8fri7atu
+dmitry.shulga@oracle.com-20110315130322-2a0zhequpu9q8dyt
+jon.hauglid@oracle.com-20110315105406-i7xey1x3kz0qmh5z
+bjorn.munch@oracle.com-20110315100000-6u2z45m5bvo7rcwz
+chuck.bell@oracle.com-20110314184319-z1h6n8s2rwcunm1l
+davi.arnaut@oracle.com-20110314181141-l1l1jywtbzc82v5f
+frazer@mysql.com-20110314175526-ewdhnalncc0anvwo
+frazer@mysql.com-20110314170916-ypgin17otj3ucx95
+andrei.elkin@oracle.com-20110314135544-xez4ef4e0rynbmy9
+magne.mahre@oracle.com-20110314132147-zla8g1zzqqzgkt30
+alexander.nozdrin@oracle.com-20110314131913-70kpenr3vn90p43q
+mayank.prasad@oracle.com-20110314104057-1ycw76pkmpqch6ed
+andrei.elkin@oracle.com-20110313195640-p5b2b8v4b0jq4bb2
+mayank.prasad@oracle.com-20110311185312-5cagraeoyr2duhgm
+joerg.bruehe@oracle.com-20110311150223-bvtfxmoiiutheh2p
+alexander.barkov@oracle.com-20110311141644-85rz3i8s4wmyi1x2
+bjorn.munch@oracle.com-20110311122001-848ir9njh66pkshu
+bjorn.munch@oracle.com-20110311115635-d9d06mk7vq7be44v
+mayank.prasad@oracle.com-20110311115156-y2zn87g3a3d1xjn5
+marc.alff@oracle.com-20110311104837-v3p141n0y4y01qqt
+marc.alff@oracle.com-20110310123005-fqck2pcdiy3w6b4r
+marc.alff@oracle.com-20110310100809-lqm9tmw5751grjmw
+guilhem.bichot@oracle.com-20110310084921-oazjeqhxpi53f9o1
+alexander.nozdrin@oracle.com-20110310083354-30fa3ouzbaxhjdue
+guilhem.bichot@oracle.com-20110310082314-dxsg7e9n7rpv3bn7
+anitha.gopi@oracle.com-20110310043119-h49zi5dun0moc9ot
+anitha.gopi@oracle.com-20110310042936-9qighxo1wlmpyrom
+anitha.gopi@oracle.com-20110310041954-d1o3pihtd8je4cle
+guilhem.bichot@oracle.com-20110309205455-02gijiignyljh3ty
+mattias.jonsson@oracle.com-20110309175532-oeydb0yexvyh5w8w
+georgi.kodinov@oracle.com-20110309143316-svc0cw34x7u6js7y
+M georgi.kodinov@oracle.com-20110309143037-g8nhq6nnbtzxisbv
+mattias.jonsson@oracle.com-20110309140346-1i57fnzlgipuhfa6
+andrei.elkin@oracle.com-20110308192855-glfphtgci36fg413
+build@mysql.com-20110308183752-qxpxdxuxl7twia08
+marc.alff@oracle.com-20110308172434-b7ebu3tse8aa8xwg
+davi.arnaut@oracle.com-20110308132330-kank5cz77ax4o6hf
+andrei.elkin@oracle.com-20110308112911-0ntb3qdauwb4fab9
+jon.hauglid@oracle.com-20110308092139-y11zrt2dqau21azn
+jon.hauglid@oracle.com-20110307135644-e7davhuob367ctfx
+jon.hauglid@oracle.com-20110307092336-5rmej6c13i5ie06z
+build@mysql.com-20110306164502-2zyfeq9myutg81al
+alexander.barkov@oracle.com-20110304155518-pqqvdidh4s5p51r8
+nirbhay.choubey@sun.com-20110304153800-tonx490pbziukmnj
+jorgen.loland@oracle.com-20110304152033-2rc87tepo4zvg09g
+alexander.nozdrin@oracle.com-20110304151205-f3fwmvxpfl1nh16x
+alexander.barkov@oracle.com-20110304145932-qur2ywa20ntsqpdr
+mattias.jonsson@oracle.com-20110303222619-r63murfw4yqlesaw
+alexander.barkov@oracle.com-20110303083236-2s4n0wnrb67b3iz8
+anitha.gopi@sun.com-20110303071659-6l24ru1tu4kumsgx
+M anitha.gopi@sun.com-20110303071241-b5ivjsgulqlp34lu
+alexander.barkov@oracle.com-20110303070314-pdk5p09tkh087zqp
+davi.arnaut@oracle.com-20110302230853-q3yv4ex31oig2fir
+vinay.fisrekar@sun.com-20110301160604-k0g88bw0bi4zenav
+alexander.barkov@oracle.com-20110301144701-adg6uv298bu3xy51
+magne.mahre@oracle.com-20110301133958-qmraohi0htobce0s
+alexander.barkov@oracle.com-20110301122038-lqlsqfmtgjhujq4v
+magne.mahre@oracle.com-20110301120537-qk30awgzy8ahrw5v
+dmitry.lenev@oracle.com-20110301115928-4p8g0u7r02yid5b9
+serge.kozlov@oracle.com-20110228185004-wyfcwdwjo611n3we
+tor.didriksen@oracle.com-20110224071803-asncm330rif3v000
+vasil.dimov@oracle.com-20110223173507-x7gqnnenha8a8sje
+vasil.dimov@oracle.com-20110223173418-dr5kwe5j5fwxhnoj
+M vasil.dimov@oracle.com-20110223145729-bp4s0ga2to79pk4z
+    [inno] Merge innodb tree
+jon.hauglid@oracle.com-20110223135230-0mn9junwun2jy1wi
+alexander.barkov@oracle.com-20110223113208-zbsl4q3de95hvghj
+alexander.barkov@oracle.com-20110223045307-u316hqua4z5j86xe
+andrei.elkin@oracle.com-20110222155247-k07c3725arfph223
+M andrei.elkin@oracle.com-20110222155018-u3o0q2tyj8ybmp4t
+ole.john.aske@oracle.com-20110222154404-8sjsvr3on6mslnru
+ole.john.aske@oracle.com-20110222142433-qxyq15e56quh2w6d
+nirbhay.choubey@sun.com-20110222140532-kxu0k1prajzkk7er
+alexander.barkov@oracle.com-20110222132505-vb6dturtjbv5qvjw
+mattias.jonsson@oracle.com-20110222105121-m3lqmq3vfisxc3ic
+alexander.nozdrin@oracle.com-20110222091349-ukkomv6mv6ylv5ak
+M daogang.qu@greatopensource.com-20110222081952-f21s118dgqzufuvw
+    WL#5493  Binlog crash-safe when master crashed
+jorgen.loland@oracle.com-20110222080158-yssmiplzhyanbdiy
+azundris@sun.com-20110222053744-xav70yu3pzt5dzsd
+azundris@sun.com-20110222025840-79440ng3jqmis8em
+jorgen.loland@oracle.com-20110221155558-04hwdy2dlrz2kflo
+jorgen.loland@oracle.com-20110221153141-r9olymn3prit6y2k
+magnus.blaudd@oracle.com-20110221114857-h6gmnfh8sqygvsvc
+magnus.blaudd@oracle.com-20110221114255-5uhevexde17c9bxq
+mattias.jonsson@oracle.com-20110221113809-7r44cvlemdni08fo
+M mattias.jonsson@oracle.com-20110221113414-1xckp9u5d1487j13
+    [part] WL#5217: Add explicit partition selection
+jon.hauglid@oracle.com-20110221113423-r1rn25gqvmj0wj5j
+jorgen.loland@oracle.com-20110221103631-6j4lbrh4ef520lm8
+vasil.dimov@oracle.com-20110221102528-6zdps77rryzg4wmt
+    [inno]
+tor.didriksen@oracle.com-20110218113905-q0in762tona442om
+sergey.vojtovich@oracle.com-20110221082302-wfel5gbwf9szr1gf
+nirbhay.choubey@sun.com-20110221072819-hcjugk2kh0qyo5je
+nirbhay.choubey@sun.com-20110221071546-gflrnx3o6lvek0m4
+anders.song@greatopensource.com-20110221025730-pmbz97nac4mhfqfc
+alexander.barkov@oracle.com-20110218142203-2ontf1exz4eoontl
+jon.hauglid@oracle.com-20110218140512-5fg5fvi4txfkhrub
+alexander.barkov@oracle.com-20110218132536-kj36j6k86g9ozkbq
+vasil.dimov@oracle.com-20110218130221-3aferh20je08zovo
+vasil.dimov@oracle.com-20110218130057-0mn2c6h8wedo2kfz
+M marko.makela@oracle.com-20110217203022-uwn13k1ez7xmaovw
+    [inno] Merge innodb tree
+martin.hansson@oracle.com-20110218105918-woxgf319ak45v9p4
+alexander.barkov@oracle.com-20110218095651-apiqbwkd47xosxh1
+alexander.barkov@oracle.com-20110218074302-uqjpa0ufbsw1386y
+marc.alff@oracle.com-20110217180006-mvlzpjxndzi5r4gm
+tor.didriksen@oracle.com-20110217161626-2g3opq3vv0qrd1al
+jon.hauglid@oracle.com-20110217143947-klfkmdysi42vdkb9
+jorgen.loland@oracle.com-20110217132501-osqf3fztc67ydnov
+jorgen.loland@oracle.com-20110217122259-stpr3r1hkueucif5
+M jorgen.loland@oracle.com-20110216093118-wf0ayhpq8fxud5w8
+    [opt] Merge optimiser tree
+vasil.dimov@oracle.com-20110217121027-s1h83lwzkvwaue8x
+vasil.dimov@oracle.com-20110217120522-lc2ghhsyi12eibkg
+M vasil.dimov@oracle.com-20110217120356-qzaegtfvs2tu125q
+    [inno] Merge innodb tree
+magne.mahre@oracle.com-20110217115808-0ec6buukxed4x1fl
+ole.john.aske@oracle.com-20110217113807-9qm11wd7g2gvv1a4
+tor.didriksen@oracle.com-20110217073605-gdb0nmlxrl92jg8m
+jonathan.perkin@oracle.com-20110216224813-nfe4nm9kudpnp3km
+bjorn.munch@oracle.com-20110216204812-1p84bafaykocppj5
+jon.hauglid@oracle.com-20110216172851-5kf5if73rn1qklau
+sven.sandberg@oracle.com-20110216171330-1i3sv9ehno6r9jx8
+jon.hauglid@oracle.com-20110216161928-otlv12zt5guopxqv
+marc.alff@oracle.com-20110216143829-mcii00g564wu3y0b
+tor.didriksen@oracle.com-20110216134926-x0arzdm3jg20w7ie
+tor.didriksen@oracle.com-20110216125845-o7y3y7buvva22hef
+bjorn.munch@oracle.com-20110216112527-dw5on8wni31p5x8w
+dmitry.lenev@oracle.com-20110215135136-inwybp4y3ng11ons
+M dmitry.lenev@oracle.com-20110215133327-vlv27ctgu2sejd9r
+magne.mahre@oracle.com-20110215123839-f1nn7tlm9v2q1o32
+luis.soares@oracle.com-20110215121230-4w8l14fl30hma5so
+magne.mahre@oracle.com-20110215114733-al6941u3zk3j46v6
+alexander.barkov@oracle.com-20110215113056-5qzxii3z08ibsvy7
+luis.soares@oracle.com-20110214163236-pjqf0yrqmtl16a1l
+luis.soares@oracle.com-20110214160738-qtsnftbts0joc707
+joerg@mysql.com-20110214145710-pyut3xbumbwzuayf
+joerg@mysql.com-20110214145033-0c5xrhayjt13i2qb
+jon.hauglid@oracle.com-20110214141528-5mcjqq7rb9xoy7vv
+luis.soares@oracle.com-20110214124146-5nmnng4vso3qpdx4
+vasil.dimov@oracle.com-20110213183312-va50lezxmseif0du
+luis.soares@oracle.com-20110211121111-ixbz7jj4teaw6vtx
+luis.soares@oracle.com-20110211121000-7appo3zlntf0km37
+alexander.barkov@oracle.com-20110210134116-fbpj8z01gm8nonyd
+mattias.jonsson@oracle.com-20110210105239-7d185yns47br33yn
+jonathan.perkin@oracle.com-20110210102623-e2e7jqkev5skfjeh
+jorgen.loland@oracle.com-20110210093020-3dty0rm3o59w0mwp
+M jorgen.loland@oracle.com-20110209153019-qvjejsvmsxl1lhep
+    [opt] Merge optimiser tree
+georgi.kodinov@oracle.com-20110210092614-zrt9pix3u3neykzx
+georgi.kodinov@oracle.com-20110210090639-t9eegwfzzp4tg3mh
+M georgi.kodinov@oracle.com-20110210090349-xdp2c8x27snpm655
+tor.didriksen@oracle.com-20110210090017-q830uurrqn6npihc
+alexander.barkov@oracle.com-20110210084705-14u68nklbiuw4kb9
+mats.kindahl@oracle.com-20110209223420-8hf0rygwb8hu3t90
+jonathan.perkin@oracle.com-20110209194258-xrw3qhph9vhf4640
+marc.alff@oracle.com-20110209163641-nxavjyohm3d3bvbs
+M marc.alff@oracle.com-20110209163345-4g0x5azw5ky0bvzp
+bjorn.munch@oracle.com-20110209153549-24vmzf3zsalvenej
+marc.alff@oracle.com-20110209152444-ch36nqjq8eo03w7l
+M marc.alff@oracle.com-20110209152204-5v71yjz021ynf81f
+joerg@mysql.com-20110209135143-hidhqdza13yd8aa0
+joerg@mysql.com-20110209134708-rq7qhv8ibsaxe2gh
+dmitry.shulga@oracle.com-20110209112112-62efv51tm3ugeowk
+john.embretsen@oracle.com-20110209101905-mmuq9b2ifgjxthj2
+alfranio.correia@oracle.com-20110209092832-5cs1rbisq14r685c
+georgi.kodinov@oracle.com-20110209073117-vtp229shgu2phapt
+dmitry.shulga@oracle.com-20110209065659-g5oom6ou4a4d8j77
+georgi.kodinov@oracle.com-20110208175008-62ki0jsru3v8ecns
+M georgi.kodinov@oracle.com-20110208174820-2dh97bgaqfi26jt7
+vasil.dimov@oracle.com-20110208173442-ocy58fdcuew3xvex
+vasil.dimov@oracle.com-20110208173331-fu0j2s14jbg915zu
+M vasil.dimov@oracle.com-20110208055648-ami9d5owe5vrb4ta
+    [inno] Merge innodb tree
+georgi.kodinov@oracle.com-20110208155412-tfy4l5hqxi0g7o41
+georgi.kodinov@oracle.com-20110208154951-gzqgr74u4bndswi8
+anitha.gopi@sun.com-20110208135625-jcp43i0mhqum4osw
+anitha.gopi@sun.com-20110208135427-2xtdgkfqlyrsadbc
+john.embretsen@oracle.com-20110208095604-yv40ya1dutsvp39a
+anitha.gopi@sun.com-20110208075503-8mcqs508rebp5xs3
+anitha.gopi@sun.com-20110208065044-6ekwngb3ljkgj859
+anitha.gopi@sun.com-20110208063401-413gcfjerkeob4fr
+anitha.gopi@sun.com-20110208062115-jzyogs2rlle5qv5c
+anitha.gopi@sun.com-20110208061339-dn746roarm85eots
+anitha.gopi@sun.com-20110208032846-n0byvl61uhu5u1bu
+bjorn.munch@oracle.com-20110207235423-p72c50ae0vgdjbdl
+bjorn.munch@oracle.com-20110207235315-oejyajxuc8utuwfu
+tor.didriksen@oracle.com-20110207130347-lmjksir7xpbf3sth
+jon.hauglid@oracle.com-20110207114918-m0a336hi7wav0wmt
+tor.didriksen@oracle.com-20110207101821-2q7lj2rnb1w9fmc0
+ole.john.aske@oracle.com-20110207094653-lcejq75drwade4dd
+vinay.fisrekar@sun.com-20110207070653-d7wa8hr1qx9ytyw0
+dmitry.shulga@oracle.com-20110205050629-ympv0fhtb0vw64ff
+anitha.gopi@sun.com-20110205021754-ebrnbqg9khw2zg04
+serge.kozlov@oracle.com-20110204194042-uyruc8dx9maxhrun
+marc.alff@oracle.com-20110204153051-qnd9c3mdfv2q62a4
+luis.soares@oracle.com-20110204150014-a8qb9s0cd9xtpiud
+tor.didriksen@oracle.com-20110202083013-5ml5a09v0t5c25ik
+marc.alff@oracle.com-20110204122131-upb2nct1oiulovtb
+M marc.alff@oracle.com-20110204115517-g5s19vcuomiop1as
+dmitry.shulga@oracle.com-20110204051109-7enmofxh2vnpdmox
+tor.didriksen@oracle.com-20110203135102-4rjgomp399lulbk2
+magne.mahre@oracle.com-20110203101306-q8auashb3d7icxho
+georgi.kodinov@oracle.com-20110202183139-ykxq0tjd2vo3km91
+dmitry.lenev@oracle.com-20110202142654-f1baq7gbosisll0z
+tor.didriksen@oracle.com-20110202134110-1uncowbmni6m62kg
+jorgen.loland@oracle.com-20110202132358-khrjqzdcs3jrda3i
+M jorgen.loland@oracle.com-20110131113308-t3oulfqczbcb6d80
+    [opt] Merge optimiser tree
+marc.alff@oracle.com-20110202115259-p5azio9gpjr5oig6
+jon.hauglid@oracle.com-20110202103221-y9rsy95eujvyjx4u
+tor.didriksen@oracle.com-20110202092141-9pvozmc78k2cgbgj
+ole.john.aske@oracle.com-20110202090455-99sq3a34nhkkq66n
+ole.john.aske@oracle.com-20110202081516-fv7dqwj11afpumsi
+magnus.blaudd@oracle.com-20110201143429-zy98jul6okjlpudf
+ole.john.aske@oracle.com-20110201142457-3hdefsxj12q0acvl
+ole.john.aske@oracle.com-20110201124739-xmivchewz2vqc04b
+tor.didriksen@oracle.com-20110201075246-uf0bppayywpvtgr7
+georgi.kodinov@oracle.com-20110131155558-max2fc00g1mobu8k
+alfranio.correia@oracle.com-20110131143645-adjsz57nh921np4f
+alfranio.correia@oracle.com-20110131134438-ravmm40h965x7d5f
+jon.hauglid@oracle.com-20110131101319-93a4ubzhesdrfc9h
+sandeep.doddaballapur@sun.com-20110131094207-3aor2w2ia2lq4s9u
+sandeep.doddaballapur@sun.com-20110131091409-m0e3g3oxm7xtq70c
+anitha.gopi@sun.com-20110131042308-0l2ggxhv1pgqpmet
+vasil.dimov@oracle.com-20110130165639-1pr3opz839b98q5j
+vasil.dimov@oracle.com-20110130165522-m0o6al0pn5ig9kv3
+M jimmy.yang@oracle.com-20110128094204-5ga2wky4kh77wta2
+    [inno] Merge innodb tree
+bjorn.munch@oracle.com-20110130115129-js8oloj0kke23y2u
+bjorn.munch@oracle.com-20110130115042-u671iduxcr5uw04c
+john.embretsen@oracle.com-20110129121556-1162ss59b7ivqn2z
+marc.alff@oracle.com-20110128185545-knrd930f29jy22b2
+marc.alff@oracle.com-20110128184059-k2jlz36la1hkis5a
+marc.alff@oracle.com-20110128175245-fxqguwen7b57p8ps
+M marc.alff@oracle.com-20110128134057-i3px1zc1e6t8dgat
+mattias.jonsson@oracle.com-20110128135805-3pgrced799kccf9f
+olav.sandstaa@oracle.com-20110128125704-qoynw29whkg93549
+marc.alff@oracle.com-20110128124911-1ddvdz4m8lotyzgw
+marc.alff@oracle.com-20110128124603-za7fxwxnm1kq3keo
+olav.sandstaa@oracle.com-20110128102156-bbdh0eufqr9y48u7
+john.embretsen@oracle.com-20110128100618-yo9uw2cvw9ojbear
+tor.didriksen@oracle.com-20110127153118-qo3gyazm32xcwsw8
+tor.didriksen@oracle.com-20110127134628-9cakw9celrequj4i
+horst.hunger@sun.com-20110127083749-vuerotv3sh8a009y
+horst.hunger@sun.com-20110127080848-i3582ftf440r0gc8
+anitha.gopi@sun.com-20110127005739-af6513ysokcngcwv
+mattias.jonsson@oracle.com-20110126211256-7netk3waleausbsw
+mattias.jonsson@oracle.com-20110126201331-ab82uv7s5qmdufs5
+marc.alff@oracle.com-20110126155000-gz8rxd60cnsnfh1x
+marc.alff@oracle.com-20110126145607-0olu09psmormmrub
+M marc.alff@oracle.com-20110126144143-g30do28imhrmworn
+jon.hauglid@oracle.com-20110126135704-m2mgl5x1zjz7ojif
+alfranio.correia@oracle.com-20110126124817-snogk2k02t2oshzo
+marc.alff@oracle.com-20110126093410-4lld9881l4ca3mar
+anders.song@greatopensource.com-20110126073718-vg8fn0n5o9cnqysf
+marc.alff@oracle.com-20110125153507-0cwjfq4p3so6ze0m
+bjorn.munch@oracle.com-20110125143535-lnouw5iqymn2g1uo
+bjorn.munch@oracle.com-20110125141111-fl3ili63hgjz7l68
+georgi.kodinov@oracle.com-20110124154716-9ca9rjaw3smuu1kh
+georgi.kodinov@oracle.com-20110124150524-iicwnfk7dd87w85q
+horst.hunger@sun.com-20110124115130-m2o021fzf9agcguq
+jorgen.loland@oracle.com-20110124090203-1grig6b522tmw4cf
+anitha.gopi@sun.com-20110124055958-my4wersfuke8kbi5
+anders.song@greatopensource.com-20110124035822-to3cj6hrdb5sa9zm
+anders.song@greatopensource.com-20110122061651-kyr9hjpqa32omlak
+daogang.qu@greatopensource.com-20110121113047-wh7mf5d6t41qzj1e
+marc.alff@oracle.com-20110121111103-gu0nysksnm7zloem
+olav.sandstaa@oracle.com-20110120145703-1r29my2q0oux817s
+martin.hansson@oracle.com-20110120123036-v0ke0x005v11g45p
+jorgen.loland@oracle.com-20110120090926-xms6k8scdrtl8yai
+M jorgen.loland@oracle.com-20110118114209-sqxafi6wft9m1z5j
+    [opt] Merge optimiser tree
+martin.hansson@oracle.com-20110119143913-7ctrb0tgk43csqwa
+bar@mysql.com-20110119133554-nsj8rbbrbhyoc71k
+bjorn.munch@oracle.com-20110119124232-d2o25k68680hjucy
+bjorn.munch@oracle.com-20110119121742-s4rh30gg4y1s67fo
+anders.song@greatopensource.com-20110118180004-qiu8ubqy5j88wk70
+anders.song@greatopensource.com-20110118175419-0b0m3j5iv5gsfqpn
+anitha.gopi@sun.com-20110118175248-rz1c2wcc5scmu0a6
+john.embretsen@oracle.com-20110118130935-dfwm3owvzej26cif
+luis.soares@oracle.com-20110118123551-wv9zw6gtdxqyv51w
+alexander.barkov@oracle.com-20110118071649-6ayyh3xrhkjeswle
+alexander.barkov@oracle.com-20110118065345-xj7b0r11c2yj0v3m
+vinay.fisrekar@sun.com-20110118040242-ldhz3912pctd6ums
+luis.soares@oracle.com-20110117185804-9z9v2q49jwjzr273
+luis.soares@oracle.com-20110117185639-7g42rzm6eyzf3x10
+tor.didriksen@oracle.com-20110117143652-5uun5ae5edb1vimh
+alexander.barkov@oracle.com-20110117123558-9z1ce4fbkrt9a7bi
+hezx@greatopensource.com-20110117100013-h33ksz5wowjihijn
+hezx@greatopensource.com-20110117095259-jbpwy1vhb0ggkq9k
+john.embretsen@oracle.com-20110117071427-u0y6dmgbuhc00uo8
+nirbhay.choubey@sun.com-20110116040229-246c5ia8cos0iwii
+nirbhay.choubey@sun.com-20110116032530-awxs3t5328nmu4vg
+anders.song@greatopensource.com-20110115055624-wugtr5ao77jn70ji
+holyfoot@mysql.com-20110114222238-ora0koaemxb178ue
+holyfoot@mysql.com-20110114210828-bhocu66j23zha7x8
+tor.didriksen@oracle.com-20110114153619-qwbd2gu5pn0s6e3k
+nirbhay.choubey@sun.com-20110114144916-evvenid3zst4gv18
+guilhem.bichot@oracle.com-20110114134241-2tzzagfui2tr943x
+georgi.kodinov@oracle.com-20110114130600-98wfu8ne28icb2u2
+luis.soares@oracle.com-20110114111525-a4iysmoo4uk76ji6
+sven.sandberg@oracle.com-20110114104020-j0l7jpwzegs3d401
+georgi.kodinov@oracle.com-20110114095520-s0hhhhzamixxsgt6
+tor.didriksen@oracle.com-20110114092911-2vu7p7obkao0cfiy
+ole.john.aske@oracle.com-20110114082008-77kfco4xs4geosam
+serge.kozlov@oracle.com-20110113213621-4qccnwyy72pxtnhh
+luis.soares@oracle.com-20110113114439-flu4wfak5gtrk7xq
+davi.arnaut@oracle.com-20110113113120-ntwouogfwaalgxq7
+ole.john.aske@oracle.com-20110113104828-ui7ne2z3us92r5jc
+nirbhay.choubey@sun.com-20110113103059-9eyidap12mdg9bmw
+ole.john.aske@oracle.com-20110113092345-ck2wv0z48r6d1ylz
+georgi.kodinov@oracle.com-20110113090847-gtvlitfthaasqezp
+ole.john.aske@oracle.com-20110113083359-1z8q0hil9y22izvl
+martin.hansson@oracle.com-20110113081952-n7mg2swpu1xb5fjp
+olav.sandstaa@oracle.com-20110113073303-xtc6rhbo1g9iaiqm
+bjorn.munch@oracle.com-20110112231827-w6nuz7qcr3f2zylq
+bjorn.munch@oracle.com-20110112225756-g2nv4mukrmvnl3uz
+epotemkin@mysql.com-20110112172453-d202wpy4h3s11dys
+dmitry.lenev@oracle.com-20110112142213-73jjqzwhatildnov
+ole.john.aske@oracle.com-20110112122116-rz733y2yo6ce1mmq
+martin.hansson@oracle.com-20110112095210-xz9u5ivl9saryjz0
+dmitry.shulga@oracle.com-20110111153355-uvff16i445mk2spu
+davi.arnaut@oracle.com-20110111135623-r7lqmol54vjn68b8
+jan.wedvik@sun.com-20110111114502-dxuh0qvribnaty25
+magne.mahre@oracle.com-20110111090921-q2f1mbiakea5lm8u
+anitha.gopi@sun.com-20110111080922-lmetle6m7fmkpcoh
+zhenxing.he@sun.com-20110111051323-w2xnzvcjn46x6h6u
+mattias.jonsson@oracle.com-20110110163747-ssccpoh0wesjl68q
+jon.hauglid@oracle.com-20110110162745-631sf4i0orwehwfr
+matthias.leich@oracle.com-20110110145743-yeax7y275a9ej35o
+magne.mahre@oracle.com-20110110142031-lbqoee8xm9ghh2iu
+jon.hauglid@oracle.com-20110110132613-67jwde8yl5a751t2
+tor.didriksen@oracle.com-20110110132311-mnj4kdllluk3wu80
+magne.mahre@oracle.com-20110110124553-cehvirmcokxx3hsb
+magne.mahre@oracle.com-20110110121816-ilut6pt0ku25i29p
+tor.didriksen@oracle.com-20110106143838-tcimyx8pvf4hxhxs
+jorgen.loland@oracle.com-20110110090420-iep4ek5s7klq6rwk
+vasil.dimov@oracle.com-20110108150732-8qygun7nuaqf9d3u
+vasil.dimov@oracle.com-20110108150646-44c9j7ck64ocey31
+M vasil.dimov@oracle.com-20110108145546-c0eozjzf7k844jl3
+    [inno] Merge innodb tree
+davi.arnaut@oracle.com-20110107195411-btoz25nczquv47wj
+matthias.leich@oracle.com-20110107161048-6x3vunwcyt3jl4pe
+matthias.leich@oracle.com-20110107132442-7cyrhzi5nz6rh5pd
+matthias.leich@oracle.com-20110107125958-n9oif0ezbse5gf86
+saikumar.v@sun.com-20110106112820-1r82tn32vob3b0xg
+saikumar.v@sun.com-20110106112359-no4q0r1ralx4flra
+jon.hauglid@oracle.com-20110105144328-c9ee981z819p2zmw
+georgi.kodinov@oracle.com-20110105130642-p42be2bnf8h0zgag
+nirbhay.choubey@sun.com-20110105084346-vz9id5wreu06qxow
+magne.mahre@oracle.com-20110105083542-rbjnrybfukzgud7s
+nirbhay.choubey@sun.com-20110105075745-fbhxou7ccwulby75
+marc.alff@oracle.com-20110105071657-b4htma14d2m4due3
+magne.mahre@oracle.com-20110104152359-l51xr7j27ca4mc1s
+jon.hauglid@oracle.com-20110104143005-920jhiyi67x17kez
+tor.didriksen@oracle.com-20110104095526-qavvbr4xltko068m
+M tor.didriksen@oracle.com-20110103150536-eoxwsfs4aoyucmd2
+    [opt] Merge optimiser tree
+marc.alff@oracle.com-20110104080654-yab7b8mxeng998ia
+mikael@dator8-20110103154543-ltnrlm80y2s0s3dr
+tor.didriksen@oracle.com-20110103131201-27m9k3rthp6s0so5
+guilhem.bichot@oracle.com-20101231130432-75izpjdrb7hrvzg7
+dmitry.shulga@oracle.com-20101230083038-yoctppwyungiq3gf
+alexander.nozdrin@oracle.com-20101229113850-5rhksndrwz5dwcd7
+alexander.nozdrin@oracle.com-20101229113149-c4hnmghox8obr75c
+build@mysql.com-20101223151154-gjbgty64zn7ei1uc
+alexander.nozdrin@oracle.com-20101222212842-y0t3ibtd32wd9qaw
+M alexander.nozdrin@oracle.com-20101222132359-h8v0kfg3e34nj1m5
+    Big merge from mysql-trunk-stage (mysql-trunk-bugfixing)
+georgi.kodinov@oracle.com-20101217125013-y8pb3az32rtbplc9
+georgi.kodinov@oracle.com-20101217112859-u6aqs80pn9frbt2i
+georgi.kodinov@oracle.com-20101217112525-t71wcarh16fii9bz
+luis.soares@oracle.com-20101217020132-e4f35jq8ok63dhwp
+luis.soares@oracle.com-20101216193657-apbj86di6krj2nqs
+luis.soares@oracle.com-20101216193500-f3fujxjnwa4obgq9
+alexander.nozdrin@oracle.com-20101216192842-ocvakk6gc4ff3od4
+alexander.nozdrin@oracle.com-20101216185046-y2lat40bakpadlwo
+M jorgen.loland@oracle.com-20101216141118-9jliz90jh3xb5635
+    Large merge from mysql-trunk-bugfixing
+alexander.nozdrin@oracle.com-20101216181820-7afubgk2fmuv9qsb
+alexander.nozdrin@oracle.com-20101216173826-ze3y5h450sksotrh
+alexander.nozdrin@oracle.com-20101205122447-6x94l4fmslpbttxj
+M jonathan.perkin@oracle.com-20101203144536-5tah7a7kcebvr4mm
+    Large merge from mysql-trunk-bugfixing
+alexander.nozdrin@oracle.com-20101202135250-i76eq04vzw7obqky
+M marc.alff@oracle.com-20101130141635-0428m6p4e5jinjqn
+    Merge WL#4816, performance schema
+alexander.nozdrin@oracle.com-20101129111021-874if2qsp0i8d5ze
+M luis.soares@oracle.com-20101124111752-9b8260bd1qak87hr
+    [rpl] Merge WL#2540, Replication event checksums (NOTE: already backported to mariadb 5.3/5.5)
+alexander.nozdrin@oracle.com-20101123211421-owla1k03goqah2z2
+M alfranio.correia@oracle.com-20101121143257-se3vpqus73l4mum0
+    Merge WL#2775: System tables for master.info, relay_log.info
+alexander.nozdrin@oracle.com-20101115092603-zmftww1yhiz4v0ds
+alexander.nozdrin@oracle.com-20101114180655-vbr040c48ru8v3ul
+alexander.nozdrin@oracle.com-20101113155825-czmva9kg4n31anmu
+M alexander.nozdrin@oracle.com-20101113152540-gxro4g0v29l27f5x
+    Large merge of mysql-next-mr
+alexander.nozdrin@oracle.com-20101113152450-2zzcm50e7i4j35v7
+M alexander.nozdrin@oracle.com-20101111085434-mg4002ra6bd01k0g
+    Large merge of mysql-trunk-stage
+alexander.nozdrin@oracle.com-20101002180948-852x1cuv7c6i85ea
+alexander.nozdrin@oracle.com-20101002180857-an32jpuwzemsp4f2
+M alexander.nozdrin@oracle.com-20100930142350-4avd45mlcqpcc5nk
+    Large merge from mysql-trunk-stage
+alik@sun.com-20100928153607-tdsxkdm5cmuym5sq
+alik@sun.com-20100928153508-0saa6v93dinqx1u7
+M alik@sun.com-20100927113721-8fyvn4130rvltfyo
+    Large merge from mysql-trunk-merge
+kostja@sun.com-20100924132225-4q1jcqf55ktbsduz
+dlenev@mysql.com-20100913103627-p2oqplu42x1gv2bd
+dlenev@mysql.com-20100913102657-ye9uwx05td7h2q3o
+dlenev@mysql.com-20100913100411-2qdg15bp0qu98ce5
+dlenev@mysql.com-20100913095811-ken3pb2y9n82suwv
+alik@sun.com-20100901130501-4g2k86dub29auj8y
+alik@sun.com-20100901130012-9bmmvzcnnw6n5rw6
+M alik@sun.com-20100831075309-whqj2kt82vlo8f4w
+    Large merge from mysql-trunk-stage
+alik@sun.com-20100830082732-n2eyijnv86exc5ci
+M alik@sun.com-20100828164005-cp0069879o0cucz5
+    Large merge from mysql-trunk-bugfixing
+alik@sun.com-20100818071819-2lu46b0mm3cs34rf
+alik@sun.com-20100818071732-g682fg1v0nnrrutx
+M alik@sun.com-20100816072236-aug7hx71w0ev1fw0
+    Large merge from mysql-trunk-merge
+alik@sun.com-20100816062701-qo9dpnk5tkt1pksb
+alik@sun.com-20100816062603-xc16eftmv7rmktyq
+M alik@sun.com-20100812152753-gkaztwb27klpoxmo
+    Large merge from mysql-trunk-stage
+build@mysql.com-20100806164310-m5c3xuop9p4jk50k
+alik@ibmvm-20100804091919-4jgi1ot86wove1m8
+alik@ibmvm-20100804081533-c1d3rbipo9e8rt1s
+alik@ibmvm-20100804080001-bny5271e65xo34ig
+alik@ibmvm-20100803064628-g4fsm01dusjv131q
+alik@ibmvm-20100803064352-b1vsdc6cm5ibko03
+M jimmy.yang@oracle.com-20100803062157-s3he1ia42crj9jrk
+    Merge innodb tree
+alik@ibmvm-20100802150331-wekk4m9iwnm4whf9
+alik@sun.com-20100731131134-0c1vhj0z2gg366du
+alik@sun.com-20100731075219-y21q5pwe5ys7e5tm
+alik@sun.com-20100731075120-qz9z8c25zum2wgmm
+M alik@sun.com-20100731074550-wc16wkez5zyy0erh
+    Large merge from mysql-trunk-bugfixing
+alik@sun.com-20100729151830-xfh4vl610tyze1d5
+alik@sun.com-20100729151645-cl6q6u6w7tizp13z
+alik@sun.com-20100729141538-h1ttwryfgzsv4sqt
+M mattias.jonsson@sun.com-20100623104839-3wu23tf3hgc70a02
+    Merge WL#4445: EXCHANGE PARTITION WITH TABLE
+bar@mysql.com-20100728072749-mdnb2vlv5tdcwqz2
+M bar@mysql.com-20100708105738-rhyb4fnhgwwc7cn4
+    Merge WL#3865 Vietnamese collation
+marc.alff@oracle.com-20100726181349-mclfxd2hvivtjl2q
+marc.alff@oracle.com-20100726181238-dukf1yvhut50tm18
+M marc.alff@oracle.com-20100723172000-qasiojybvsm943nw
+    Merge WL#5291 MySQL Install / Upgrade script format
+marc.alff@oracle.com-20100726172027-mc9h1qcxafbsx9ii
+alik@sun.com-20100724102417-k1ew5di3url4q4rr
+M marc.alff@oracle.com-20100723170841-ctizrx3hs9ibqs0g
+    Merge WL#4895: PERFORMANCE_SCHEMA Instrumenting Table IO
+alik@sun.com-20100723125004-ebkwb9bu61uka1ud
+M alik@ibmvm-20100708074312-wiz7rk70yw15pra1
+    Merge from mysql-next-mr-stage
+alik@sun.com-20100723121929-90e9zemk3jkr2ocy
+M alik@sun.com-20100723121820-jryu2fuw3pc53q9w
+    Merge from 5.5
+alik@sun.com-20100723121827-3bsh51m5sj6g4oma
+M jonathan.perkin@oracle.com-20100720093750-rt0yym16se4xi5lq
+    Large merge of mysql-next-mr-bugfixing
+alik@sun.com-20100629112754-comsdmpy1gycfjcc
+M alik@sun.com-20100626075633-f8lmpyuplgxpxin7
+    Large merge of mysql-next-mr-gtest
+alik@sun.com-20100626073921-t0e6q2c9nkhuemnj
+M aelkin@mysql.com-20100623095624-r7ourvz8xbss2pwe
+    [rpl] Large merge of mysql-next-mr-rpl-merge
+alik@sun.com-20100626073344-lybcustxmvevruyu
+alik@sun.com-20100622130623-r7yhm89fz9n5t9nb
+alik@sun.com-20100622130528-187gd949sa9b6pa6
+M alik@sun.com-20100622130353-gqfhotpak73rbhux
+    Merge mysql-next-mr-bugfixing
+bar@mysql.com-20100617072236-vx5eqygof70izuho
+M bar@mysql.com-20100607102750-k96s8j60r405409d
+    Merge WL#4013, WL#5303, WL#3664, WL#3716
+alik@sun.com-20100617062125-82dxlsq97sqxofv2
+alik@sun.com-20100617061958-dkri5xesugzfntf6
+M alik@sun.com-20100615150216-cubqoyn1fj9b6a2p
+    Merge mysql-next-mr-stage
+mats.kindahl@oracle.com-20100616133930-9m8edn4ti0fv1k6z
+alik@sun.com-20100615080558-cw01bzdqr1bdmmec
+alik@sun.com-20100615080431-gu5icn0anrt47dsx
+M alik@ibmvm-20100610134637-lg6che7mrme0db8g
+    Merge mysql-next-mr-bugfixing
+alik@sun.com-20100531075105-3d1v24etiu1x3c7h
+M luis.soares@sun.com-20100528072632-yzbp4ymd70ksysar
+    Merge WL#4783 Extend mysqlbinlog to support remote backup of binary logs
+alik@sun.com-20100524190136-egaq7e8zgkwb9aqi
+alik@sun.com-20100520124101-vzu92yjc6t6khe15
+alik@sun.com-20100520123900-5kadc9fvcxz30s75
+M alik@sun.com-20100520100140-5bzrtadw4w419i3m
+    Merge of mysql-next-mr
+alik@sun.com-20100512111424-3r8186eayf73xtdu
+alik@sun.com-20100512104329-z94314xv02dv7i4j
+alik@sun.com-20100512070920-xgpmqeytp0gc183c
+alik@sun.com-20100507112300-lzkv5a565ajgifrj
+alik@sun.com-20100507094107-8luju788dmunvgvl
+alik@sun.com-20100507093958-2y0wy6svnc3zfgqb
+M alik@sun.com-20100507091823-nzao4h3qosau4tin
+    Merge of mysql-next-mr
+alik@sun.com-20100428105712-fot32t0o59eazw3m
+alik@sun.com-20100427100145-p5062w10o85j6pcb
+alik@sun.com-20100427095914-pzlxbqjjtnngxmf0
+M alik@sun.com-20100427094036-38frbg3famdlvjup
+    Merge of mysql-6.0-codebase
+alik@sun.com-20100422150750-vp0n37kp9ywq5ghf
+alik@sun.com-20100412133535-ln5iyhaauyigkpgi
+alik@sun.com-20100412131807-3pbpvqkkyw178lfy
+alik@sun.com-20100412125941-2wo9l9m49cj9x31c
+alik@sun.com-20100410082716-9qjpjknjg9lzl2ts
+mats@sun.com-20100407120219-5yw2h62xt5ju5pyy
+mats@sun.com-20100406214618-9oqj80h82ek9uo1v
+mats@sun.com-20100406141125-0kwa1wryw0wlk7wq
+mats@sun.com-20100406132538-1hui2ve28yu4tfwy
+mats@sun.com-20100406121431-9cg2s3tye1caugk8
+mats@sun.com-20100406105641-jivpemhelte2zxml
+mats@sun.com-20100405141352-z3rejenxrcxfm54a
+mats@sun.com-20100401193409-usxqswjym01ikn5m
+alik@sun.com-20100326081116-m3v4l34yhr43mtsv
+alik@sun.com-20100325072612-4sds00ix8ajo1e84
+alik@sun.com-20100324081159-5b8juv8ldiqwce8v
+alik@sun.com-20100324081105-y72rautcea375zxm
+M ignacio.galarza@sun.com-20100323194349-btfidpafhth4j5hq
+    Merge mysql-next-mr-bugfixing
+alik@sun.com-20100315170643-90ic1tif4gs4cycr
+alik@sun.com-20100315102020-49nul3x0tlm7uapj
+alik@sun.com-20100312181159-8sf4506qi1r5u9pl

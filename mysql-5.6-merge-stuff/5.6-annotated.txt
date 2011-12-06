@@ -1,0 +1,2855 @@
+Number of pushes: 1427
+Number of changesets in 5.5: 70120
+Number of changesets in 5.6: 76576
+    12           andrei.elkin@oracle.com-20111122094519-a137q41qekykl590
+             bug#12982188 post-push fixing a test result file.
+    38           jimmy.yang@oracle.com-20111122083633-kpl8cqvzr75psxif
+             Fix an issue that FTS parallel sort merge's event signal got lost situation.|A..
+    15           tor.didriksen@oracle.com-20111122073720-b7dvunqiiqbsska7
+             Remove -fno-exceptions from CXX flags
+    13           tor.didriksen@oracle.com-20111122072602-w73nydxrscqxb24i
+             WL#6012 - Use the same compiler for InnoDB as the server (C++)|Post-push fix, ..
+    32           sunny.bains@oracle.com-20111122072755-y9hkl01oyvr0lik7
+             Make the test deterministic by ordering the output on trx_query.
+    40           ashish.y.agarwal@oracle.com-20111122054559-kd2w4gxbt2uux1bb
+             BUG#11760213 - 52599: ALTER TABLE REMOVE PARTITIONING ON| NON-PARTITIONED TABL..
+    71           jimmy.yang@oracle.com-20111122044855-nto5ioeyce5el4wy
+             Modify innodb-fts-stopword.test and innodb_fts_transaction.test to|add wait_un..
+ 28026  117      sunny.bains@oracle.com-20111122025100-zaispl5kphamji3u
+             Merge WL#6012 - Use the same compiler for InnoDB as the server (C++)
+    29           sunny.bains@oracle.com-20111121231510-w1431agvwpfsotuk
+             Remove extra ',' in univ.i|Set crc32 in buf0buf.c to ULINT32_UNDEFINED to sile..
+  1143    2      andrei.elkin@oracle.com-20111121195117-rjojf4p587hex2k0
+             merge from the main repo.
+    85           vasil.dimov@oracle.com-20111121175151-2zonmaedcayq4y9a
+             Prefix InnoDB printout messages with a single space|to be inline with other ou..
+  1264           jimmy.yang@oracle.com-20111121170908-obf4tqxenvo2y76m
+             Fix Bug #13411182 - ASSERTION PREBUILT->TABLE->N_REF_COUNT == 2 ON ADD FULLTEXT
+   180           manish.4.kumar@oracle.com-20111121132504-13xvk17604cpp451
+             BUG#11747887:34386: MYSQLBINLOG --HEXDUMP PRINTS LAST ROW OF HEXDUMP| INCORREC..
+  1106    1      sneha.modi@oracle.com-20111121113749-4do2e7ap079prnuv
+             Bug#11748731:|Merging from mysql-5.5 -> mysql-trunk
+    22    1*     bjorn.munch@oracle.com-20111121113127-lyy53kfo3q06rxl3
+             upmerge: don't run federated_plugin.test for embedded
+   187    2      evgeny.potemkin@oracle.com-20111121101910-0ag41xtwhya9ja11
+             Auto-merged.
+   132    1      georgi.kodinov@oracle.com-20111121100234-6t5h0qq78uodfdtp
+             merge
+   705           jorgen.loland@oracle.com-20111121085157-ukkb680qor2yoxzt
+             BUG#13400713: Follow-up patch. Giving internal tmp tables|a name was a bad ide..
+   154           vasil.dimov@oracle.com-20111121083629-glpf9bpv6d4kly45
+             Fix Bug#13397030 DO NOT CALC UNNECESSARY CHECKSUMS WHEN VALIDATING A PAGE|When..
+   174           marko.makela@oracle.com-20111121081955-7swepqssvrj8lfca
+             Add some assertions and comments for WL#6046.
+   222    1*     sneha.modi@oracle.com-20111121053150-8j5utwnf4rqq0516
+             Bug#11748572:|Merging from mysql-5.5 -> mysql-trunk
+    14           sunny.bains@oracle.com-20111121044631-xx7qstku1jlf26de
+             trx can be NULL, check for that in the debug assertion.
+    30    1*     jimmy.yang@oracle.com-20111121023519-i8yuqv2wtlfx7g8b
+             Merge from mysql-5.5 to mysql-trunk
+  3158    1      kevin.lewis@oracle.com-20111121011944-7chd02qkdbjk4u50
+             Merge WL#6046 - Special handling of read-only transactions
+ 12670           kevin.lewis@oracle.com-20111120210025-ad3uy1k73lcexpru
+             WL#5756 - Complete patch for mysql-trunk to support innodb-page-size ...
+   118    3*     inaam.rana@oracle.com-20111119171845-icczpm6knqvojd7s
+             merge bug#13390506 from 5.5
+ 12017  123      georgi.kodinov@oracle.com-20111119082638-kxtn03n6k38o17wb
+             merge
+  1030           jorgen.loland@oracle.com-20111118145140-5j3k8vq95ro0wtf0
+             BUG#13400713: Followup patch:| - consistently use tmp as abreviation for tempo..
+   795           vinay.fisrekar@oracle.com-20111118141655-hgyejhgivl7zh857
+             Bug#13400194 - fix windows test failure issues 
+  2090           jorgen.loland@oracle.com-20111118121745-zuc75utmhw21o02k
+             BUG#13400713 - ADD OPTIMIZER TRACING OF TEMPORARY TABLES|Add optimizer tracing..
+   209           ashish.y.agarwal@oracle.com-20111118060629-ra0sqv4ontf60s5a
+             bug#11760213 - 52599: ALTER TABLE REMOVE PARTITIONING ON| NON-PARTITIONED TABL..
+    49           tor.didriksen@oracle.com-20111117145128-f4ejcsgamk0zedgk
+             WL#5825 Using C++ Standard Library with MySQL code|post-push cleanup:|the old ..
+   253           jimmy.yang@oracle.com-20111117142659-0amc9ywmmchte9rg
+             Fix some unused-but-set-variable warnings in FTS code.
+    75           oystein.grovlen@oracle.com-20111117140741-ks1dkds70ds1hba3
+             Bug#12876523: VALGRIND FAILURE IN COMPRESSION TESTS|The valgrind issue happens..
+    55    1      rafal.somla@oracle.com-20111117114029-tulcxfkdsbkg24ur
+             Merge of bug#13101974
+  1511           jimmy.yang@oracle.com-20111117110253-p9gmdh807d39cr7j
+             Fix bug #13400194 INNODB FTS SUPPORT: INNODB_FTS_LARGE_RECORDS DO NOT|COMPLETE..
+   240           jorgen.loland@oracle.com-20111117100913-qrgj9kfg9kqr18nn
+             BUG#11761078: 53534: INCORRECT 'SELECT SQL_BIG_RESULT...' | WITH GROUP BY ON D..
+ 57815  185      jimmy.yang@oracle.com-20111116164812-pgthrbjxot0xoxii
+             Merge WL#5538 InnoDB Full-Text Search Support
+    31           mattias.jonsson@oracle.com-20111116152404-ax6eqg8f6qzn4050
+             BUG#11766440 - 59546: ASSERTION M_SP == __NULL|FAILS IN ITEM_FUNC_SP::INIT_RES..
+    14    1*     luis.soares@oracle.com-20111116011940-t1xpclly833ogjss
+             BUG#11760927|Manual merge from mysql-5.5.
+   542    1*     dmitry.lenev@oracle.com-20111115185144-93lfcfljxc8yam50
+             Merged fix for bug #12695572 "IMPROVE MDL PERFORMANCE IN PRE-VISTA|BY CACHING ..
+    22    1*     luis.soares@oracle.com-20111115144004-hxtm9s24rikyymoa
+             BUG#11760927|Automerged mysql-5.5 into latest mysql-trunk.
+   296    2*     luis.soares@oracle.com-20111115130411-xjulydx3e3bxassk
+             BUG#11760927| |Manual merge from mysql-5.5 into latest mysql-trunk.| |Conflict..
+    89    1*     nirbhay.choubey@oracle.com-20111115123423-e6ig9pw10wqznp8j
+             Merge of fix for bug#11827359 from mysql-5.5.
+    25           marc.alff@oracle.com-20111115105552-xv1gikw22ucuu9cp
+             Bug#13389196 BUILD FAILS IF P_S IS DISABLED WITH: -DWITH_PERFSCHEMA_STORAGE_EN..
+    42    1*     tor.didriksen@oracle.com-20111115092413-jkh20enbaj0y6ldr
+             merge 5.5 => trunk
+   383           andrei.elkin@oracle.com-20111114154442-t4ols92xsjjf6xyi
+             Fixing timeouts on rpl_parallel{_benchmark}. The latter test does not really c..
+   161           inaam.rana@oracle.com-20111114143539-ni2fy6gegz7te3pf
+             Bug#13371000 - ADAPTIVE LRU FOR COMPRESSED PAGES BROKEN BY|RECENT LRU CHANGES..
+    32           vasil.dimov@oracle.com-20111114142913-oxg0nhx1mzv8nes7
+             In row_mysql_store_col_in_innobase_format(): explicitly note that buf|should b..
+    27           marko.makela@oracle.com-20111114110534-thrwpxv5hdro99yv
+             Bug#12682554 FAILED ASSERT AT HANDLER0ALTER.CC IN MANY TESTS|ha_innobase::add_..
+    45    1*     chuck.bell@oracle.com-20111111195936-jfg6a561uhb8e0n8
+             BUG#12929028 merge from mysql-5.5
+    47    1      luis.soares@oracle.com-20111111174428-d4mm7hc12tbtuegc
+             WL#4143|Automerged follow-up patch (fixing typo) into latest mysql-trunk |from..
+    84           norvald.ryeng@oracle.com-20111111152618-a96amhqxgvtu3do3
+             Bug#11766440 59546: Assertion m_sp == __null fails in|Item_func_sp::init_resul..
+ 24045   29      jorgen.loland@oracle.com-20111111123601-hizjetrcz3k1kko7
+             [opt] Merge optimiser tree
+   104           tor.didriksen@oracle.com-20111111122523-px6yqbs79rk16qi7
+             WL#5825 Using C++ Standard Library with MySQL code|Post-push cleanups.
+    41    1      sergey.glukhov@oracle.com-20111111101535-grnhespmqcvx8vtm
+             automerge
+  6579    7      luis.soares@oracle.com-20111111100639-qeo5nndt2p3ayzii
+             Merge WL#4143
+    12    1*     sneha.modi@oracle.com-20111111092518-7ocp4flb7oa1sdd4
+             BUG#11748731 - 37248: SOME 'BIG' TESTS FAILING ON 6.0 :|Merging from mysql-5.5..
+    13           jon.hauglid@oracle.com-20111111084343-tu9bc91f99g8bptn
+             BUG#11761014 - 53466: END_CONNECTION() SHOULD REFERENCE| GLOBAL_SYSTEM_VARIABL..
+   100           jorgen.loland@oracle.com-20111111081138-oj1j5nqmz1l58duu
+             Bug#12578908: SELECT SQL_BUFFER_RESULT OUTPUTS TOO MANY ROWS | WHEN GROUP IS C..
+    20           sunny.bains@oracle.com-20111111061411-0yuhqm400lawsl6g
+             Fix bug#13363044 FAILING ASSERTION: ERR == DB_SUCCESS IN FILE ROW0VERS.C LINE ..
+   346           olav.sandstaa@oracle.com-20111110181544-w5buosc931ron14g
+             Follow-up patch for Bug#54398 Explain output for estimated number of|rows vari..
+    74    2*     marko.makela@oracle.com-20111110145837-zsc0uw41ewffar2e
+             Merge mysql-5.5 to mysql-trunk.
+   286    1*     sneha.modi@oracle.com-20111110115923-du28omtojnhtcxoi
+             Bug#11748731 - 37248: SOME 'BIG' TESTS FAILING ON 6.0:| | Merging from mysql-5..
+    12           kevin.lewis@oracle.com-20111110115542-xfu8onihkd3cmk65
+             Bug#13357607 - New test suite/innodb/innodb-restart.test fails in embedded mod..
+   399    2*     marko.makela@oracle.com-20111110112809-3z1fdldi28pt0xht
+             Merge mysql-5.5 to mysql-trunk.
+     0    1*     sergey.vojtovich@oracle.com-20111110095651-nb70cea4lgvf8w3a
+             (no message)
+   291    2      sergey.vojtovich@oracle.com-20111110095520-6o071713in04e7yu
+             (no message)
+   948           raghav.kapoor@oracle.com-20111110065327-87nlc9vqomi3vj2b
+             BUG#11761014 - 53466: END_CONNECTION() SHOULD REFERENCE GLOBAL_SYSTEM_VARIABLE..
+    53    1*     sneha.modi@oracle.com-20111110063703-l6rs6iucwg1rh3ql
+              Bug#11754170:45729: TEST CASE FOR BUG#28211 IS DISABLED IN QUERY_CACHE.TEST| ..
+    12           anitha.gopi@oracle.com-20111110060006-u4gb9m0tilid09we
+             Bug#11750645 : Failure was only on Open Solaris which is now obsolete
+   178           kevin.lewis@oracle.com-20111109141159-txh1y36qi2llw8j1
+             Bug #13357607 INNODB: WRONG ERROR ON STARTUP AFTER CREATING A COMPRESSED TABLE..
+     0    1*     bjorn.munch@oracle.com-20111109131706-07s6913pvrz2h7qd
+             null upmerge
+   270    9      bjorn.munch@oracle.com-20111109131602-jd4beqtt7qopk4su
+             merge trunk-mtr => trunk
+    54           raghav.kapoor@oracle.com-20111109105544-1sx3f851qqy1b88o
+             BUG#13247871 - ER_EVENT_CANNOT_ALTER_IN_THE_PAST HAS WRONG MESSAGE |BACKGROUND..
+   120           guilhem.bichot@oracle.com-20111108195219-itwi5gmnf23gksyw
+             Fix for Bug#13357462 - "OPTIMIZER TRACE BROKE THE INFORMATION SCHEMA, CAUSES M..
+   467           manish.4.kumar@oracle.com-20111108145444-801t7fzwfk8i0yxj
+             BUG 11764459 - 57291: BINLOG.BINLOG_TRUNCATE_INNODB IS DISABLED|Problem: As a ..
+    13           tor.didriksen@oracle.com-20111108144833-dv90zslpuikm1hto
+             Bug#11748783 37359: FILESORT CAN BE MORE EFFICIENT|Post-push fix: function fin..
+   132           tor.didriksen@oracle.com-20111108143341-qqg6kjouyzvo70yo
+             WL#5825 Using C++ Standard Library with MySQL code|Post-push fix: scripts/mysq..
+    75    2*     marko.makela@oracle.com-20111108123519-qn155hpzytdq0fdt
+             Merge mysql-5.5 to mysql-trunk.
+    13           jon.hauglid@oracle.com-20111108095912-9zq0umymaoj37fy7
+             Fix gcc 4.6.1 compilation error:|error: variable ‘info’ set but not used
+   166           tor.didriksen@oracle.com-20111108075149-4n8a6zjvib7mkwwf
+             Bug#11748783 37359: FILESORT CAN BE MORE EFFICIENT|Post-push fix: sort_buffer_..
+    15    1*     marko.makela@oracle.com-20111108070203-3sc14hk9oizioqhi
+             Merge mysql-5.5 to mysql-trunk.
+     9           mayank.prasad@oracle.com-20111108064003-mdyr6c1binmjo1ke
+             bug#12561297 : Disabling mysql_embedded test case|Innodb behavior to expect /u..
+   146           marc.alff@oracle.com-20111108042805-88m1nku46uxos9cb
+             Fixed several issues affecting the embedded build.|1) in psi.h, do not compile..
+  1077           tor.didriksen@oracle.com-20111107153236-d5kak4rgkn8086kr
+             Bug#11748783 37359: FILESORT CAN BE MORE EFFICIENT|filesort() initializes spac..
+    27           tor.didriksen@oracle.com-20111107121724-5xuh6t38fh9z854a
+             WL#5825 Using C++ Standard Library with MySQL code|Post-push fix: different li..
+    12           marko.makela@oracle.com-20111107120441-qc4yeadq7u1izh76
+             Remove a debug assertion that fails in innodb.innodb_mysql in a join.
+    40    2*     marko.makela@oracle.com-20111107120116-jxm6wrtzzdpw463s
+             Merge mysql-5.5 to mysql-trunk.
+   603    1*     marko.makela@oracle.com-20111107080013-tw27s0x7ilctnq44
+             Merge mysql-5.5 to mysql-trunk.
+    40           jorgen.loland@oracle.com-20111104152250-nva153mcrf4bry4r
+             BUG#12997905 Followup patch|Hopefully PB stops barking about two VALGRIND erro..
+   220           jorgen.loland@oracle.com-20111104152013-3uk7jcxelo99wna7
+             Bug#12997905: VALGRIND: SYSCALL PARAM PWRITE64(BUF) | POINTS TO UNINITIALISED ..
+    10           jon.hauglid@oracle.com-20111104141517-xuwyx0qdiviyzy0i
+             Fix trunk tree_name.
+  7253   18      tor.didriksen@oracle.com-20111104131150-szkv1lfeqpehlv9m
+             local merge
+    16    1*     chuck.bell@oracle.com-20111104130448-myk7i3ey2v7sagka
+             Merge with mysql-5.5 tree after push for WL#5710 PB fix.
+ 14938   15      bjorn.munch@oracle.com-20111104125152-3xw7t9enz2c80u7j
+             merge trunk-mtr => trunk: simplify some tests with ONCE modifier to --disable_..
+    23           mayank.prasad@oracle.com-20111104091836-5ainpkzhwsldrwyk
+             Bug#12561297 : Enabled mysql_embedded.test test case|Detail:|- Added code to l..
+    40           sunny.bains@oracle.com-20111104060542-3pfj26f65791250h
+             Bug 12980094 - ASSERTION IN INNODB DETECTED IN RQG_PARTITION_DDL|This bug is a..
+    10           hery.ramilison@oracle.com-20111103194003-y9lhxm3ebqjz00tv
+             Fixing milestone number according to #42576
+    13           andrei.elkin@oracle.com-20111103183301-v4x9fex19xajhnt1
+             Bug#13334470 - SLAVE_START_WORKERS() USES BOGUS VALUE INSTEAD OF --SLAVE_PARAL..
+    44           tor.didriksen@oracle.com-20111103161053-8oazihif64by5c7s
+             Bug#12711108 61708: INCORRECT HANDLING OF C-COMPILER THAT DOES NOT SUPPORT INL..
+     0    1*     jimmy.yang@oracle.com-20111103111052-0l5g761cc13ok5d7
+             Merge from mysql-5.5 to mysql-trunk
+    49           norvald.ryeng@oracle.com-20111103101506-5zf6p7hh08xiun4u
+             Bug#11764313 57135: CRASH IN ITEM_FUNC_CASE::FIND_ITEM WITH CASE WHEN|ELSE CLA..
+    12           anitha.gopi@oracle.com-20111103082046-pdtvlxuq1azdl9qo
+             Bug#11755645: LOCK_MULTI_BUG38499 does not fail anymore. Remove the test from ..
+    12           anitha.gopi@oracle.com-20111103080539-wv8a3zsd636jqq9q
+             Bug#11750645: Remove test from experimental group. Problem was only on Open So..
+  1845    1*     sneha.modi@oracle.com-20111103070149-udwdl2fj2nsor1xw
+             Merging from mysql-5.5 -> mysql-trunk
+   198           marc.alff@oracle.com-20111102232901-3a9u8li1tkh7945f
+             Fixed build break, when compiling without the performance schema.
+    42           marc.alff@oracle.com-20111102181126-le8znmlgxaf5cvmy
+             Bug#12981100 PERFORMANCE_SCHEMA NET IO IDLE AND RECV EVENTS NEST WITHIN THE WR..
+   314           marc.alff@oracle.com-20111102160718-dyw1ax34poptk3lg
+             bug#12981100, post fix cleanup
+   184    1*     sneha.modi@oracle.com-20111102132815-h8m2qak47b2sw2e3
+             [5.5] Merge of 5.5
+    28           marc.alff@oracle.com-20111102115503-nimsuiwynn63mjp0
+             Fixed code review comments.|Table io and table lock events should set the nest..
+ 10502    2      marc.alff@oracle.com-20111102113835-ou5phkqa0umu93hi
+             Local merge from mysql-trunk
+  1845    1*     sneha.modi@oracle.com-20111102112707-oehjs7zlux3sb9e9
+             [5.5] Merge of 5.5
+    53           norvald.ryeng@oracle.com-20111101135456-21jt52vmlator1o9
+             Bug #13098726
+    95           tor.didriksen@oracle.com-20111101114827-6myauimw4v1ib9gx
+             minor mtr stuff
+   102           jon.hauglid@oracle.com-20111101084732-3gtindt59qsrzzs9
+             Bug#13326965
+     0    2*     tor.didriksen@oracle.com-20111101065343-ha3d79h1ayk9j7x9
+             [5.5] Null merge from 5.1/5.5
+    13           andrei.elkin@oracle.com-20111031135232-q13pfsaieo8ujekj
+             Minor test adjustment
+   791           alexander.nozdrin@oracle.com-20111031115220-01la8vj7ssmcm0mc
+             Bug#61392
+     0    2*     tor.didriksen@oracle.com-20111031091354-8p6s03s1zxerrp8p
+             [5.5] Null merge Bug#12406055 from 5.1/5.5
+  5380   15      jorgen.loland@oracle.com-20111031081122-dnufl9r4li0i3ni6
+             [opt] Larger merge from optimiser tree
+   134    2*     andrei.elkin@oracle.com-20111028212219-cdcuh37i70k9o4ms
+             [5.5] Merge Bug#56299 (?) from 5.5
+   451    2      andrei.elkin@oracle.com-20111028130851-mz4p2mg28y14wb7k
+             merge from trunk to local tree.
+    43           sergey.glukhov@oracle.com-20111028094528-enre87osw9u4qjy7
+             [opt] Bug#32254 post-merge fix (optimiser)
+    48           tor.didriksen@oracle.com-20111028092548-a3gjubgmwuhdunfj
+             Bug#11747423 post-merge fix
+   114           tor.didriksen@oracle.com-20111028091835-xqavfrxkc50gbsxq
+             "Default value for sort_buffer_size changed from 2M to 256K"
+    10           marc.alff@oracle.com-20111028072500-z7bh2329w2p4uo6q
+             Merge cleanup, fixed tree name
+    16           sunny.bains@oracle.com-20111028051142-c0uze42upc7pginc
+             Add missing mutex exit in debug code.|Approved by Inaam over IM.
+  2688   12      chris.powers@oracle.com-20111027211819-7ly7r7vyg1z1o5vv
+             wl5908 "PERFORMANCE_SCHEMA File IO Summary Extensions"
+   722           kevin.lewis@oracle.com-20111027200613-pok7hwkl53at25fd
+             Cosmetic changes approved in http://bur03.no.oracle.com/rb/r/763/
+    84           kevin.lewis@oracle.com-20111027140911-ijph31ta0u4r185p
+             A debug assertion approved by marko in http://bur03.no.oracle.com/rb/r/763/|Al..
+  1217           andrei.elkin@oracle.com-20111027132831-no4rlthinwkacri7
+             Misc. minor cleanup
+    12    2*     marko.makela@oracle.com-20111027123916-ga25h0dk0ed1p1aa
+             [5.5] Merge Bug#62146 from 5.1/5.5
+    25           jon.hauglid@oracle.com-20111027121346-er1ze1yx4yh1ijqo
+             Bug#13251277
+    94    2      alfranio.correia@oracle.com-20111027111932-ty1l1ki0sty46203
+             Bug#60902: "MYSQLDUMP DOES NOT DUMP THE REPLICATION *_INFO TABLES"
+    13    1      inaam.rana@oracle.com-20111027110944-m7gd8vzmvzqsqv0a
+             Bug#13006056 "ASSERT AT BUF0BUF.IC IN THE TEST INNODB_BUG59733"
+   105           jon.hauglid@oracle.com-20111027092631-tjkatbopoop2kbwq
+             Bug#13113222 "RQG_SIGNAL_RESIGNAL FAILED WITH ASSERTION."
+    41           jimmy.yang@oracle.com-20111027090740-52lfkdvut9vvhk7v
+             Bug #12622592
+   519           sergey.glukhov@oracle.com-20111027084356-tb9bd9eq3cnhmf36
+             Bug#24986: "CALLS TO HANDLER::RND_INIT AND HANDLER::INDEX_INIT IGNORE RETURN VALUE"
+    85           sergey.glukhov@oracle.com-20111027084040-yux97hgvenekmn0y
+             Bug#32254: INDEX MERGE USED UNNECESSARILY
+   275           jimmy.yang@oracle.com-20111027082056-7v209pmbne4870kw
+             Bug#47764: PARTITIONED INNODB TABLES CAN'T BE MOVED DIRECTLY ...
+    37    2*     jimmy.yang@oracle.com-20111027081022-sq2y3zd08dyddr6r
+             [5.5] Merge from 5.5
+    62           norvald.ryeng@oracle.com-20111027080846-02l0162cx3o5oqpy
+             [opt] Bug #57197: EVEN MORE USER VARIABLE CRASHING FUN
+  1860   10      marc.alff@oracle.com-20111027073010-pc1s57kg6e0y8aqc
+             "WL#5863 PERFORMANCE SCHEMA, NESTED-SET data model"
+    49           norvald.ryeng@oracle.com-20111027070349-206n2kiwhm89am8y
+             Bug #57692: CRASH IN ITEM_FUNC_IN::VAL_INT() WITH ZEROFILL
+     0    3*     alexander.nozdrin@oracle.com-20111027061758-b0vwkz82s3324ozh
+             [5.5] Null merge from 5.5
+    32    2*     nirbhay.choubey@oracle.com-20111024082032-ijkkjp9yptebfzu1
+             [5.5] Merge from 5.5
+    19    1*     dmitry.lenev@oracle.com-20111024074946-jbrfepqmj0n2y051
+             bug #13116518 "OPEN_TABLES() SHOULD NOT ALLOCATE ..."
+    79    2*     ashish.y.agarwal@oracle.com-20111022132718-861ixy6v7xv9osh0
+             [5.5] Merge Bug#51252 from 5.5 (archive table crashes)
+  2007           kevin.lewis@oracle.com-20111021154657-ie0hoohrk0t8ynwk
+             WL5873 - TABLE FLAGS REFACTORING
+   340           vasil.dimov@oracle.com-20111021145952-wivq0g2ncso9me7c
+             "Revert vasil.dimov@oracle.com-20111021105028-0qlfem4n84d6uf2l"
+   100    2*     nirbhay.choubey@oracle.com-20111021130010-72435t3h6fuw5rzu
+             [5.5] Merge of fix for bug#13106585 from mysql-5.5
+    12           olav.sandstaa@oracle.com-20111021111305-6xnkdhfwrot0n760
+             Bug#13242509
+   340           vasil.dimov@oracle.com-20111021105028-0qlfem4n84d6uf2l
+             Bug#12661768 "UPDATE IGNORE CRASHES SERVER IF TABLE IS INNODB AND ..."
+   114    3*     sergey.vojtovich@oracle.com-20111021054201-46yom9gu0c0tjbwh
+             [5.5] Merge from 5.5
+    34    2*     marko.makela@oracle.com-20111021040407-wyhi6v4upyd40dd4
+             [5.5] Merge from 5.5
+    50           jimmy.yang@oracle.com-20111021011511-x48wlrwkvpchu39k
+             [inno] Bug #12941439
+   254           jimmy.yang@oracle.com-20111020015527-pxho17co62bn5qk7
+             [inno] Bug #12320827
+  7537    2*     bjorn.munch@oracle.com-20111019214922-p7gneow1ripm23jo
+             "Removing copyright headers from test files"
+    38           marc.alff@oracle.com-20111019175604-395zhv07k6w528p9
+             after-merge fixes (?)
+    66    5*     joerg.bruehe@oracle.com-20111019114246-ucuklsu5yzscldv5
+             [5.5] Merge from 5.5
+    97    1*     sayantan.dutta@oracle.com-20111019072957-ak3rtp0v2cl27ki7
+             [5.5] Merge from 5.5
+  1121   11      jorgen.loland@oracle.com-20111019061335-hiepzj875om00lq6
+             [opt] Larger merge of optimiser team tree.
+    60    2*     nirbhay.choubey@oracle.com-20111018172525-i7a397hj51l4ejne
+             [5.5] Merge bug#13102538 from 5.5
+   355           jorgen.loland@oracle.com-20111018142748-3t37nml30j9qyqjs
+             [opt] "WL#5953: Optimize away useless subquery clauses"
+   169           tor.didriksen@oracle.com-20111018134529-7x17flu4hhp1jwna
+             Bug#12582849
+   114    2*     chuck.bell@oracle.com-20111018123326-y821iw90dd5tuxny
+             [5.5] Merge from 5.5
+  4516           sneha.modi@oracle.com-20111018111744-ajqt09iej9sae0jp
+             mtr fixes
+  1773    1      jorgen.loland@oracle.com-20111018102309-gkgn1tkkpohhv9he
+             [opt] WL#5953 - Optimize away useless subquery clauses
+    84           raghav.kapoor@oracle.com-20111018085754-wfj586uneevcx5dt
+             Bug#49556
+   107           kevin.lewis@oracle.com-20111018035801-kdqxekzav18zgx7e
+             "Cleanup some comments"
+    78           alfranio.correia@oracle.com-20111018004955-po25s5v8ghsgz74z
+             After-merge fixes for Bug#60902
+   164           jorgen.loland@oracle.com-20111017135227-qi8m0ohel02oan12
+             [opt] Bug#13068506: "QUERY WITH GROUP BY ON NON-AGGR COLUMN ..."
+    12           marko.makela@oracle.com-20111017115406-3zapwn2sky8s053q
+             [inno] after-merge fix
+  4790   15      jon.hauglid@oracle.com-20111014153824-uszcs6t4uypwuwt1
+             "WL#2111 Stored Procedures: Implement GET DIAGNOSTICS"
+    30           bjorn.munch@oracle.com-20111014151318-at90f2t2hnhkichc
+             Bug #13016347 "FAILURE AT CHECK-WARNINGS FOR WINDOWS ON DAILY-TRUNK"
+  7063   29      jon.hauglid@oracle.com-20111014150441-wlwmzc4dbc69msva
+             WL#5986 Stored programs: Make condition handlers closer to the standard
+    14           jon.hauglid@oracle.com-20111014144515-h4d4zfhrgpi7iime
+             Minor compilation fix
+    24    1*     alfranio.correia@oracle.com-20111014133757-10hubcmin83aqj49
+             [5.5] Merge from 5.5
+   132           luis.soares@oracle.com-20111014012512-onni4cl2k7j2bupm
+             Revert of BUG#11747887
+ 16933    2*     nirbhay.choubey@oracle.com-20111013195721-v8kmqgm8yb0k1ahj
+             [5.5] Merge from 5.5 (WL#5945 : Improve libedit library)
+  2159    1      alfranio.correia@oracle.com-20111013145348-wnkwkbzoeunetoks
+             Bug#60902: "MYSQLDUMP DOES NOT DUMP THE REPLICATION *_INFO TABLES"
+   785           andrei.elkin@oracle.com-20111013121219-kx3c6y6u60ybgkv8
+             Bug#13033076 - "OCCASIONAL CRASH OF RPL.RPL_PARALLEL_DDL"
+  3604   11      tor.didriksen@oracle.com-20111013075452-8xcn6yynft0rl30g
+             [opt] Larger merge of optimiser team tree
+   785           andrei.elkin@oracle.com-20111012192312-gb17d66un2tiebng
+             Minor mtr stuff
+     0    1*     sergey.glukhov@oracle.com-20111012140459-u2e4icyd0f8qevvc
+             [5.5] Merge from 5.5
+   217    2      sergey.glukhov@oracle.com-20111012140253-a0by3xnjv7x2a90h
+             [5.5] Merge from 5.5
+  1606    2*     marko.makela@oracle.com-20111012134634-lajsw6m1t4ko20d1
+             [5.5] [inno] Merge from 5.5
+   560    2*     vinay.fisrekar@oracle.com-20111012045607-lkrrnd0de8eymqob
+             [5.5] Merge from 5.5 (mtr stuff)
+    30    1*     joerg.bruehe@oracle.com-20111010120609-pmqlkvqo2aifq95y
+             [5.5] Merge from 5.5 (mtr stuff)
+    39           raghav.kapoor@oracle.com-20111010065958-8eeurh9wd7k51qxb
+             Bug#58534: MYSQL_INSTALL_DB PRINTS INCOMPLETE OPTION NAME
+   132           manish.4.kumar@oracle.com-20111010062213-a1g6nm547al43whh
+             Bug#34386
+    22           sergey.vojtovich@oracle.com-20111008171828-vje5pumzvl04rdbb
+             Bug#48633: "ARCHIVE TABLES ARE NOT UPGRADEABLE"
+    94           mattias.jonsson@oracle.com-20111007142021-5ohj9csiz45bqsyc
+             [part] Bug#56590
+    30           andrei.elkin@oracle.com-20111007083604-o8t1el8y33xyj3a0
+             Bug#12960284 - "RPL.RPL_PARALLEL_SWITCH_SEQUENTIAL TEST FAILED I..."
+    77           mattias.jonsson@oracle.com-20111007083001-kavmsd2f1xpubenn
+             Bug#13007154: Crash in keys_to_use_for_scanning with ORDER BY and PARTITIONING
+   629    1      sergey.vojtovich@oracle.com-20111007060314-qpsk38lvezjxqloz
+             Merge Bug#48633: ARCHIVE TABLES ARE NOT UPGRADEABLE
+  1471           marc.alff@oracle.com-20111006171547-vwmt5fdyohq2qrb6
+             After-merge fixes
+    36    1      andrei.elkin@oracle.com-20111006162924-lwpdsyb5d05qv562
+             Merge Bug#12981684 (mtr stuff)
+    19    1      andrei.elkin@oracle.com-20111006153221-1lc359lp81o7djli
+             Merge Bug#13022841 - ASSERT AT RPL_RLI_PDB.CC, LINE 956
+    15           marc.alff@oracle.com-20111006143318-tryynk9o13fssrev
+             Minor build cleanup
+    28    1*     magne.mahre@oracle.com-20111006121521-53z1jwvv0aiirrz3
+             [5.5] Merge from 5.5 (Bug#12912112)
+   206           tor.didriksen@oracle.com-20111006110634-3kdsm4wqsup6186u
+             [opt] code cleanup
+   158    1      mattias.jonsson@oracle.com-20111006095040-wr46uq6btn24q8yx
+             Bug#60681: CHECKSUM TABLE RETURNS 0 FOR PARTITIONED TABLE
+     0    3*     bjorn.munch@oracle.com-20111005214508-lcln926ega3q7wy2
+             [5.5] Null merge from 5.5
+   651   10      bjorn.munch@oracle.com-20111005211503-qp4sr17fdo42sqe1
+             Larger merge of mtr tree
+ 10662   16      joerg.bruehe@oracle.com-20111005142714-bl37gofvu09xyh3o
+             Merge misc. fixes done after 5.6.3 clone-off
+     0    3*     sergey.glukhov@oracle.com-20111005102839-bwz91lls9vp4eqke
+             [5.5] Merge from 5.5
+   129    3      sergey.glukhov@oracle.com-20111005102448-5e0wzfjs6xc02wla
+             [5.5] Merge from 5.5
+    26    2*     marko.makela@oracle.com-20111005091410-89jnv7ssh4aqe6hm
+             [5.5] [inno] Merge from 5.5
+ 10924           sneha.modi@oracle.com-20111005062808-m0aydm09yv1b6zi6
+             Bug#12664445 (mtr stuff)
+     0    4*     marko.makela@oracle.com-20111004182431-r49po11cgy45a7it
+             [5.5] Merge from 5.5
+    64    3      kevin.lewis@oracle.com-20111004154135-2uqwn1l069pqn5df
+             [5.5] Merge from 5.5
+     0    3*     joerg.bruehe@oracle.com-20111004152649-u8up5xf5soy9maqt
+             [5.5] Empty merge from 5.5
+   133    3      joerg.bruehe@oracle.com-20111004152245-qts6elijd97j3idy
+             [5.5] Merge from 5.5 (rpm stuff)
+   248           tor.didriksen@oracle.com-20111004140531-rr3ee5cl2a0psvzn
+             [opt] After-merge fixes
+168766   18      tor.didriksen@oracle.com-20111004140234-vu5mag2dd4g3gx1q
+             [opt] Larger merge from optimiser team tree.
+    42           marko.makela@oracle.com-20111004070634-6kajpldmc1t5414d
+             [inno] Bug#13056253 "PERSISTENT STATS, ASSERT IN ANALYZE, HEAP == NUL..."
+   478           inaam.rana@oracle.com-20111003175354-4ww5itiev1sfq7md
+             [inno] Bug#51325
+    63           norvald.ryeng@oracle.com-20111003122221-3ybc3y7ei2j1bvp0
+             [part] Bug #12330344 "CRASH AND/OR VALGRIND ERRORS IN FREE_IO_CACHE WITH ..."
+    75           andrei.elkin@oracle.com-20111003114938-3rfhrikolwysyfgs
+             Bug#11747416
+    99           rohit.kalhans@oracle.com-20111003111606-nj2zxomb5iedf2sa
+             BUG#11747866:REPLICATE-REWRITE-DB DOESN'T WORK WITH SINGLE CHARACTER DATABASE NAMES
+    54    1*     rohit.kalhans@oracle.com-20111003104554-n3vauov64k2q8jla
+             [5.5] Merge from 5.5
+    26           vasil.dimov@oracle.com-20111003084306-0cvd35dlxmf0f9vw
+             [inno] "Enforce a 512GiB limit on the combined log size."
+    20    1*     jon.hauglid@oracle.com-20111003073648-ei897y4pnvoywolu
+             [5.5] Merge from 5.5 (Bug#62533, Mac compile problem)
+    12           vasil.dimov@oracle.com-20110930155618-tnq4jclfmignjrmq
+             [inno] "Do not skip InnoDB during install step on Windows."
+    13           vasil.dimov@oracle.com-20110929175119-zuwzmeegzjcir0z2
+             [inno] "Use btr_cur_get_index(cur) instead of cur->index"
+    57    1*     bjorn.munch@oracle.com-20110930132712-y25r0c0zvfj6zo7c
+             [5.5] Merge from 5.5 (after-fix for 12956584)
+    99    1*     andrei.elkin@oracle.com-20110930131437-7obd81hl5bu3umkq
+             [5.5] Merge from 5.5
+     0    1*     inaam.rana@oracle.com-20110930124933-553qmyo3z2syyicz
+             [5.5] Null merge from 5.5
+    56    1*     rohit.kalhans@oracle.com-20110930123340-n07t8216cwutfhno
+             [5.5] Merge from 5.5 (mtr stuff)
+    26    1*     rafal.somla@oracle.com-20110930122708-m7wdxap6bo2ofoun
+             Bug#12982926
+   205           guilhem.bichot@oracle.com-20110930122004-3jw70shhcgywb4qz
+             [opt] Bug#13040136
+    13           vasil.dimov@oracle.com-20110928141751-rk5rrlgrx5k129zp
+             "Fix coding style"
+   353    2      marko.makela@oracle.com-20110929133905-00mtryd4tg5ew312
+             [inno] Bug#13034962
+    80           jorgen.loland@oracle.com-20110929132522-9cx405msultddz3t
+             Bug#12838171 after-merge fixes
+   469    1*     marko.makela@oracle.com-20110929125506-b0fvixx3ivcey3tj
+             [5.5] Merge from 5.5
+  1035           jorgen.loland@oracle.com-20110929124732-t0s1x214cu3nkngu
+             [opt] Bug#12838171
+   312           jorgen.loland@oracle.com-20110929122917-fpxr1wiv5nsvg8z1
+             [opt] Bug#12838171
+   173    1*     andrei.elkin@oracle.com-20110929115531-gsv2cmv94nqbkktf
+             [5.5] [rpl] Merge from 5.5 (Bug#32228)
+   798    1*     rohit.kalhans@oracle.com-20110929104253-ho58u4lun13yqpn3
+             [5.5] [rpl] Merge from 5.5 (Bug#50439)
+     0    2*     raghav.kapoor@oracle.com-20110928113846-1utruy6yasgnhzaq
+             [5.5] Null merge from 5.5 (bug#11758062)
+    19    3      bjorn.munch@oracle.com-20110928102100-f7f6bxzfxgsk90bs
+             mtr stuff
+     0    1*     joerg.bruehe@oracle.com-20110928093007-1id6ldtg6h2t92nj
+             [5.5] Null merge from 5.5
+  7186           tor.didriksen@oracle.com-20110928080303-l2h428x2gzs3oiu2
+             [opt] After-merge fixes
+ 36292   19      tor.didriksen@oracle.com-20110928074255-41dvsmguztd9k18z
+             [opt] Larger merge of optimiser tree
+   252    2*     ashish.y.agarwal@oracle.com-20110927121743-xa7wcagrwtwa9ppu
+             [5.5] Merge from 5.5 (Bug#51655)
+     0    1*     jon.hauglid@oracle.com-20110927094616-sqy594hybrkgzvij
+             [5.5] Null merge from 5.5
+    14           vasil.dimov@oracle.com-20110927084207-efdu14cyom26nh5a
+             [inno] Remove assert
+    18           vasil.dimov@oracle.com-20110927080237-0ozopfh85l1dxc7d
+             [inno] Add assert
+   142           luis.soares@oracle.com-20110926153900-gen9h1n794b0tibx
+             BUG#12978113 / BUG#12947248
+   104           jorgen.loland@oracle.com-20110926134806-lqe4oy267ncybepl
+             [opt] BUG#12837714: ADDITIONAL NULL IN 5.6 ON GROUPED SELECT
+    28    1*     tor.didriksen@oracle.com-20110926122706-t7eeiv0cpluieq9y
+             [5.5] [opt] Merge from 5.5
+     0    3*     bjorn.munch@oracle.com-20110926115126-cky3xjo0tdfalpdo
+             [5.5] Null merge from 5.5
+   958   30      bjorn.munch@oracle.com-20110926112001-ljmxkkwjh77tk0rl
+             Larger merge of mtr tree
+    56           daniel.fischer@oracle.com-20110926103449-pnykibhd07ancbyu
+             After-merge fix
+    13    5*     marko.makela@oracle.com-20110926071904-epqjztouj8caekfh
+             [5.5] [inno] Merge from 5.5
+    12           rohit.kalhans@oracle.com-20110923190636-lmditmrow84gdbe6
+             BUG#12765441:Enabled test rpl.rpl_row_ignorable_event.
+    28           inaam.rana@oracle.com-20110923134913-msrvk1v9sp78efju
+             Report accurate log i/o's/second.
+    90           daniel.fischer@oracle.com-20110923122258-6jj42m2xuje8dj11
+             more 5.5.16 fixes
+    12    2*     luis.soares@oracle.com-20110923114235-9v1exxwo01mfdfpa
+             [5.5] Merge from 5.5 (BUG#13001711)
+   146           daniel.fischer@oracle.com-20110923110958-vo0tb9iwaajg3o22
+             After-merge fix for wl5973
+     0    3*     daniel.fischer@oracle.com-20110923105510-9k5x6ewc4npp4iaz
+             [5.5] Merge from 5.5
+  2026   59      daniel.fischer@oracle.com-20110923101937-0fhj1sw9dcl80uyw
+             [5.5] Merge from 5.5 releases (5.5.14->5.5.16) + after-merge fixes
+   263           raghav.kapoor@oracle.com-20110922104210-jvcqaw9abwfe2h61
+             BUG#12735829
+    12           tor.didriksen@oracle.com-20110922082608-wy5bceqjdfo9rsgd
+             [opt] After-merge fix for WL#4897: Add EXPLAIN INSERT/UPDATE/DELETE
+   165           sunny.bains@oracle.com-20110922074419-sfthubbcg24uzp2c
+             Bug# 13011596
+   539    1      magnus.blaudd@oracle.com-20110922072132-9gfburhm8lj3c8i3
+             Bug#13002546
+   111    1      magnus.blaudd@oracle.com-20110922071433-0tb2qi63s7qgsakx
+             Bug#12762395
+    71           sunny.bains@oracle.com-20110922063538-0x0fhe3eslcxlzzw
+             [inno] Bug#13011344
+   220    1      marc.alff@oracle.com-20110921185210-6pm7xhhoia4s27yz
+             BUG#12993572 - P_S STANDBY MODE CAUSES PERFORMANCE DROP
+    20           raghav.kapoor@oracle.com-20110921120009-w362qseif16e8ig3
+             Bug#55925
+    37    1*     tor.didriksen@oracle.com-20110921115514-ez4r49i4iokai658
+             [5.5] Merge from 5.5 (Bug#12985030)
+   300    1*     kevin.lewis@oracle.com-20110921002459-900johq1mxzrcaqp
+             [5.5] [inno] Merge from 5.5 (Bug#12963823)
+    28    1*     jonathan.perkin@oracle.com-20110920154937-t8gdjc90jr0sffl5
+             [5.5] Merge from 5.5
+   116           marc.alff@oracle.com-20110920154223-i0opx5f28lsvbeq1
+             Build/mtr stuff
+   115    1*     tor.didriksen@oracle.com-20110920091702-uveee67772our00y
+             [5.5] Merge from 5.5
+    17    1*     jonathan.perkin@oracle.com-20110919191736-dk9gg37h12d6ucwf
+             [5.5] Merge from 5.5
+    10           tor.didriksen@oracle.com-20110919145043-kphsnixpj0044wd7
+             [opt] After-merge fix for Bug#12981106 ADD OPTIMIZER TRACES FOR FOR FILESORT
+    24           tor.didriksen@oracle.com-20110919140830-jr9fu6zjeerq1mh0
+             [opt] Bug#12856915 VALGRIND FAILURE IN FILESORT/CREATE_SORT_INDEX
+ 12756           tor.didriksen@oracle.com-20110919112921-onspqzhnysvmhiek
+             [opt] WL#5834 / Bug#12981106 ADD OPTIMIZER TRACES FOR FOR FILESORT
+    38           rohit.kalhans@oracle.com-20110919090342-wv5yfbli6cfcigw5
+             [rpl] BUG#12765441:RPL_ROW_IGNORABLE_EVENT FAILS SPORADICALLY
+    41    1*     rafal.somla@oracle.com-20110916124615-n23x6k37n152cseu
+             [rpl] Fix for auth_rpl test.
+   153    2*     sergey.vojtovich@oracle.com-20110916122408-tryy8r9vd2xy0ybb
+             [5.5] Merge from 5.5 (Bug#53646)
+    75           evgeny.potemkin@oracle.com-20110916101249-5e1d35kbhqioc5b0
+             [opt] Bug#12977203: SERVER CRASH ON A DERIVED TABLE ...
+    33           tor.didriksen@oracle.com-20110916071830-v3xrasclrcix6y2o
+             Bug#12879084 VALGRIND FAILURE IN INNODB.INNODB_BUFFER_POOL_LOAD
+   169    1*     rafal.somla@oracle.com-20110915171821-82srzvj9v2b8eb8u
+             [5.5] Merge from 5.5 (Bug#12897501)
+    24           tor.didriksen@oracle.com-20110915105841-ubu879e7ljuw2dvf
+             Bug#12879084 VALGRIND FAILURE IN INNODB.INNODB_BUFFER_POOL_LOAD
+    79    1      evgeny.potemkin@oracle.com-20110915103738-4hhbjq44mq2p0s48
+             Auto-merge.
+    55           marc.alff@oracle.com-20110915094251-rzo7gisw3k9543az
+             Cleanup new tests
+   559           dmitry.lenev@oracle.com-20110914150355-o3nhscy0iggsobdb
+             Fix for bug #11766767 - "59957: VIEW USING MERGE PERMISSIONS|IN MULTI-TABLE UP..
+    14    2*     marko.makela@oracle.com-20110914124734-3rjmy4y2i73c3fs5
+             Merge mysql-5.5 to mysql-trunk.
+   522    8      jorgen.loland@oracle.com-20110914112346-ep1ucgcr44n75cym
+             Automerge opt-team -> trunk
+    84           marc.alff@oracle.com-20110914104254-dc11qvvxklhrucf0
+             Cleanup, removed code added to investigate failures related to locker_lost
+   529           marc.alff@oracle.com-20110913232317-kf9igg81gyjjwhyg
+             Adjusted test output after changes in mysql installation script
+    22           marc.alff@oracle.com-20110913205814-ny8lq5im1v1ri1s1
+             Bug#12970997 - PERFSCHEMA.START_SERVER_* TESTS FAILING ON FREEBSD|Increased WA..
+    23           vasil.dimov@oracle.com-20110913143335-e94ac1y1kugqjiex
+             Prevent InnoDB system stats tables to be created in MyISAM format if|mysqld is..
+    37    2*     vasil.dimov@oracle.com-20110913142713-gico3o5tqmadfopm
+             Merge mysql-5.5 -> mysql-trunk
+    86    1*     jonathan.perkin@oracle.com-20110913142150-mg6bx0v2ub58ta71
+             Merge OL/RH6 support from mysql-5.5
+   820    2      joerg.bruehe@oracle.com-20110913112136-gly2arzeu90oiv6v
+             Merge bug#58241 fix into main "trunk".
+    28    1      marc.alff@oracle.com-20110913101628-n50q41bya1rwe8yh
+             Local merge
+    20    2*     marko.makela@oracle.com-20110913062425-75iht9ywdsn0qlld
+             Merge mysql-5.5 to mysql-trunk.
+    21    2      jonathan.perkin@oracle.com-20110912184649-6vs1bs329kbni5m5
+             Merge
+    84           marc.alff@oracle.com-20110912162355-z1kopgkmm8345jcb
+             Bug#12970997 - PERFSCHEMA.START_SERVER_* TESTS FAILING ON FREEBSD|Added assert..
+    94    1*     jonathan.perkin@oracle.com-20110912123348-z6ta75cajnnf2rkv
+             Merge from mysql-5.5
+    54    2*     marko.makela@oracle.com-20110912073128-tb219x6sf32zepn2
+             Merge mysql-5.5 to mysql-trunk.
+     9           rohit.kalhans@oracle.com-20110909161830-kc535k5tmztaj7nv
+             BUG#12943350 RPL_CHECKSUM_CACHE FAILS IN PB2|Enabling the test as it is a dupl..
+    19    2*     vasil.dimov@oracle.com-20110909071920-d36032kxkwcn719n
+             Merge mysql-5.5 -> mysql-trunk
+    14           bjorn.munch@oracle.com-20110908144520-r3183c9kk49faq83
+             11769332 followup: remove tests from disabled-weekly too
+   234    3*     marko.makela@oracle.com-20110908132905-c5v3nmmeke6lxczt
+             Merge mysql-5.5 to mysql-trunk.
+    12           rohit.kalhans@oracle.com-20110908102253-1a0q864jxpuw6bsp
+             Bug#11755836:Enable test rpl.rpl_spec_variables
+    32    2*     luis.soares@oracle.com-20110908101408-vef8lhs5sntgx83l
+             BUG#12818224|Automerged mysql-5.5 into latest mysql-trunk.
+   147           jimmy.yang@oracle.com-20110908100538-n2eume2vk61up7ju
+             Fix Bug #12960058 - INNODB.INNODB-SYSTEM-TABLE-VIEW FAILS WITH|ASSERTION IN SY..
+     9           rohit.kalhans@oracle.com-20110908100250-efhupg7kb1mtdibr
+             disabled rpl_checksum_cache BUG 11758300
+    38    1      luis.soares@oracle.com-20110908095216-8y3bqnj62jyz3170
+             BUG#11766826|Automerged bzr bundle (approved cset).
+  1157           marko.makela@oracle.com-20110908064651-kjbucmoy91d4u9zu
+             Bug#12956276 POTENTIALLY BOGUS BRANCH PREDICTION HINTS|Remove possibly bogus b..
+    64    2*     vasil.dimov@oracle.com-20110907152557-4fjpv8juoo0208wy
+             Merge mysql-5.5 -> mysql-trunk
+   486           olav.sandstaa@oracle.com-20110907124153-99s4z9ygkjh52l3v
+             Fix for Bug#11766559 "59696: Optimizer fails to move WHERE condition|on JOIN c..
+    30           sunny.bains@oracle.com-20110907062542-rvixplrwioy20sor
+             Rename WITH_COMPILER_HINTS to INNODB_COMPILER_HINTS.|Remove COMPILER_HINTS_ENA..
+    20    2*     nirbhay.choubey@oracle.com-20110906162343-d58ernm0u0uizoi4
+             Local merge from mysql-5.5.
+    12    2*     nirbhay.choubey@oracle.com-20110906155912-6o8ltjrd8o3ugjuo
+             Local merge from mysql-5.5.
+    21    2*     nirbhay.choubey@oracle.com-20110906154217-ldrqedt1i5ztqf2d
+             Local merge of patch for bug#11765888 from mysql-5.5.
+   146           olav.sandstaa@oracle.com-20110906124557-rrub4u038eb7mtsd
+             Bug#12724899 - SELECT STRAIGHT_JOIN QUERY GIVES 2 DATES VERSUS| 2 WARNINGS WIT..
+    84           tor.didriksen@oracle.com-20110906084308-2gfsxghvg1kcu9xa
+             Add some error reporting if download of google test fails.
+    17           marko.makela@oracle.com-20110906072627-odp0wjbl541n63km
+             Enable InnoDB UNIV_SYNC_DEBUG in debug builds.
+   107    4*     marko.makela@oracle.com-20110906072258-kibr2sf791a6t640
+             Merge mysql-5.5 to mysql-trunk.
+   116           sunny.bains@oracle.com-20110906031344-p7z7fw1bhm7qapj7
+             Bug 12866669 - COMPILER HINTS CAUSE PERFORMANCE TO DROP|Make the compiler hint..
+   133           sunny.bains@oracle.com-20110905210427-gj3jdiysqkyz5me3
+             Non-functional change. Change trx_sys->lock to trx_sys->mutex in the comments.
+    40    1*     tor.didriksen@oracle.com-20110905141327-tl6lc4tcfcbheoec
+             merge 5.5 => trunk
+    36    1*     nirbhay.choubey@oracle.com-20110902112509-ip6lkk56x116l5ab
+             Local merge of fix for bug#11878394 from mysql-5.5.
+   484    1*     marko.makela@oracle.com-20110901185944-j8dj2bm329hk2avj
+             Merge mysql-5.5 to mysql-trunk.
+    10           georgi.kodinov@oracle.com-20110901122610-74oe0dcb437733qr
+             Addendum to Bug #11766001: check if the test case can be run : make sure the p..
+   279           olav.sandstaa@oracle.com-20110901083818-s9z8yb467111i0a6
+             Fix for Bug#12822678: 2 MORE ROWS WHEN ICP=ON W/ STRAIGHT_JOIN|The cause for t..
+    28           tor.didriksen@oracle.com-20110901060234-em3t7pl7r6o036o0
+             Bug#12856915 VALGRIND FAILURE IN FILESORT/CREATE_SORT_INDEX|Post-push fix:|Ena..
+    32    1*     tor.didriksen@oracle.com-20110831145356-yr1lzt3s7bxij11b
+             merge 5.5 => trunk
+     0    3*     bjorn.munch@oracle.com-20110830220144-5mw2jufmu4lky319
+             null upmerge
+   849   42      bjorn.munch@oracle.com-20110830212842-2hg20rrc56mm77td
+             merge from trunk-mtr
+    36    2*     joerg.bruehe@oracle.com-20110830111213-xeip0eskwchuspl8
+             Upmerge bug fix (RPM spec file) from 5.5 into main 5.6,|it is already containe..
+  1104   15      jorgen.loland@oracle.com-20110830100445-or5h9ihfitzeojvi
+             Automerge opt-team -> trunk
+     0    3*     tor.didriksen@oracle.com-20110830092302-468ccbw2md0gfjzy
+             empty merge
+    25    3      tor.didriksen@oracle.com-20110830092102-5b2rql1x8palzu9y
+             local merge
+    91    3*     norvald.ryeng@oracle.com-20110830090105-vbxyc2hpympa93w9
+             Merge 5.5 => trunk
+   126           dmitry.shulga@oracle.com-20110830042818-mkq418g0b5p52k0o
+             Fixed bug#11748057 - ALTER TABLE statement doesn't identify correct|column nam..
+    45           vasil.dimov@oracle.com-20110829125811-vfnxa7ee1o1esd2b
+             Fix compilation warnings when compiling with UNIV_COMPILE_TEST_FUNCS.
+   144    4      tor.didriksen@oracle.com-20110829103057-o5qyh4r1erfxf489
+             local merge
+    58    3*     jimmy.yang@oracle.com-20110829101232-8sjhhq2qmhlg4gb4
+             Merge from mysql-5.5 to mysql-trunk
+    70    5      tor.didriksen@oracle.com-20110829091715-8qjwc02s743yhycp
+             local merge
+    23    1*     jimmy.yang@oracle.com-20110829085834-jcqyw8wetzaetpei
+             Merge from mysql-5.5 to mysql-trunk
+  1520    2*     marko.makela@oracle.com-20110829084530-06tqwgvcnotrlcug
+             Merge mysql-5.5 to mysql-trunk.
+     0    5*     rohit.kalhans@oracle.com-20110829075918-r1c6hhla2912itsf
+             Null Merge from mysql-5.5.
+   213           sunny.bains@oracle.com-20110829071448-8m4e0jgy84gl94u0
+             Rearrange code so that it compiles with MEB.| 1. Move the checksum config vari..
+    44           sunny.bains@oracle.com-20110829070818-cp7mje75ugpd0w0l
+             Bug# 12906961 MTR CHECK FAILS AFTER PARTITION_INNODB TEST DUE TO INNODB_THREAD..
+    15           dmitry.shulga@oracle.com-20110829065325-tyh37tdbsxbljh33
+             Fixed bug#11749050 (formerly known as 38028): Assert hit in function|open_tabl..
+   401           matthias.leich@oracle.com-20110827125019-hob6yy1i93myoow9
+             Bug#12921422 - SOCKET_SUMMARY_BY_INSTANCE_FUNC_WIN FAILS IN PB|This fix alread..
+    19    2*     marko.makela@oracle.com-20110826192704-9z3o5qn54p8vi8sk
+             Merge mysql-5.5 to mysql-trunk.
+   264           tor.didriksen@oracle.com-20110826132633-5ebj11gzcub858ys
+             Bug#12763207 - ASSERT IN SUBSELECT::SINGLE_VALUE_TRANSFORMER|Followup patch.|T..
+    93           tor.didriksen@oracle.com-20110826111640-y7j63x34ug6pwalu
+             BUG#11755836, tests have now been re-enabled, so make them run without determi..
+  1694           tor.didriksen@oracle.com-20110825105434-ll28zinu0nhazt3z
+             Bug#12694872 - VALGRIND: 18,816 BYTES IN 196 BLOCKS ARE DEFINITELY LOST IN UNI..
+    24           rohit.kalhans@oracle.com-20110826101824-85oc00co0chw2wx4
+             BUG#11755836: Rpl_spec_variables fails sporadically in PB2 hpux.|Background:|T..
+    64    1      evgeny.potemkin@oracle.com-20110826085810-4s72u70f3yiyiq76
+             Auto-merge.
+  1681           tor.didriksen@oracle.com-20110826070635-uxy3o2hp4ey4yldg
+              Bug#12744991 - DECIMAL_ROUND(X,D) GIVES WRONG RESULTS WHEN D == N*(-9)
+   532    2      marc.alff@oracle.com-20110825150950-61yn26fu3miaqky7
+             Local merge
+     0    1*     joerg.bruehe@oracle.com-20110825150121-9evbc1optre1r6zq
+             Upmerge an empty merge changeset from 5.5 - no change.
+    26    2*     joerg.bruehe@oracle.com-20110825145023-qglv5xq0jomnfuhi
+             Upmerge a bug fix (#55713) from 5.5.|"extra/innochecksum.c" has changed signif..
+    10           hery.ramilison@oracle.com-20110825103332-98up67p7s29trvno
+             Version raised when cloning for the 5.6.3-m5 build.
+    81    1      evgeny.potemkin@oracle.com-20110824150200-f7sochssy6p1822v
+             Auto-merge.
+    32           vasil.dimov@oracle.com-20110824142607-yjlaj0ft2grwuen5
+             Revert vasil.dimov@oracle.com-20110824135645-5141n3eugnl8wthp since it|may cau..
+   580           matthias.leich@oracle.com-20110824140920-3wtr9jabdxpxu3nc
+             Attempt to fix the following issues visible in a failing PB run:|1. Some SELEC..
+    32           vasil.dimov@oracle.com-20110824135645-5141n3eugnl8wthp
+             Deploy a crash that will only trigger when running in MTR or PB2 in order|to t..
+    30           vasil.dimov@oracle.com-20110823070219-xamws69eh150hz55
+             Fix unnecessary loop in non-debug builds|Spotted by: Sunny
+    24           vasil.dimov@oracle.com-20110822142717-7ukrvhhvpybf75qr
+             Fix deprecation messages for innodb_additional_mem_pool_size|and innodb_use_sy..
+    58           georgi.kodinov@oracle.com-20110823132016-ti1omu4u9wvo32y4
+             Addendum fix for bug #11747191: 31224: SUPPORT FOR SSL CERTIFICATE REVOCATION ..
+   334           matthias.leich@oracle.com-20110823101213-qp9gpxupphpl36h5
+             socket_summary_by_instance failed sporadic in PB|1. Avoid that some calculatio..
+    80    1      evgeny.potemkin@oracle.com-20110823055308-4i452mwuqm4jvuug
+             Auto-merged fix for the bug#12896124.
+    43           andrei.elkin@oracle.com-20110822150409-93bczvehxn4vdupd
+             wl#5599 MTS recovery|updating the result file for rpl_row_mts_rec_crash_safe t..
+    19           jon.hauglid@oracle.com-20110822102831-c04mlz4rauqm5q12
+             Cherrypick from mysql-5.5-security of:|---------------------------------------..
+    13           vasil.dimov@oracle.com-20110822075215-kngylsa9ymthh93z
+             Replay vasil.dimov@oracle.com-20110817185046-qrdhzm2ow34oca2i which I|reverted..
+  2647           vasil.dimov@oracle.com-20110822074651-jrkvgkvhj3h4tnk4
+             Implement WL#5652 InnoDB: Use HW CRC32|+ Introduce a new option innodb_checksu..
+   201           andrei.elkin@oracle.com-20110822061459-29of91bcw1f0cohh
+             wl#5569 MTS|post-push changes to fix three tests result mismatch, building on ..
+ 23008  206      marc.alff@oracle.com-20110820012311-gdkpge07sjx55cue
+             WL#4896 PERFORMANCE_SCHEMA NET IO|Merge mysql-trunk-wl4896 --> mysql-trunk
+    15           andrei.elkin@oracle.com-20110819234434-7mpo371opm3yimpc
+             fixing wrong automatic merge that introduced invocation of get_info() with inc..
+ 50491    4      andrei.elkin@oracle.com-20110819181646-pn5yc000rb6lw9ud
+             [rpl] Main push of WL#5569, multi-threaded slave
+    34    3      joerg.bruehe@oracle.com-20110819174938-8tb8syp0deockjg6
+             Merge from main.
+    13           marc.alff@oracle.com-20110819154804-ft067h1vdb1j87sm
+             Fixed windows build break (tentative)
+    12           jimmy.yang@oracle.com-20110819134127-zbia4sg9yjzafv0g
+             Fix a merge issue when merge #11830883 from mysql-5.5 to mysql-trunk.|An added..
+   207           georgi.kodinov@oracle.com-20110722143209-3ha25bxe8aux0npr
+             Bug #11753167: 44559: SSL KEYS WITH PASSPHRASES|Implemented a default password..
+  1537           georgi.kodinov@oracle.com-20110819132424-7uqihs7v0dhp8o4r
+             Bug #11747191: 31224: SUPPORT FOR SSL CERTIFICATE REVOCATION LISTS | |Added su..
+   265           jorgen.loland@oracle.com-20110819114138-1g846busigkz1ucs
+             WL#5285 addendum:|Recorded result files after merging WL#5285 from opt-team to..
+138031   20      jorgen.loland@oracle.com-20110819113915-bc5nxep1d3o8ujx5
+             Merge WL#5285 opt-team -> trunk
+  1939    9      jorgen.loland@oracle.com-20110819102723-gsd687nbuxwdb4pz
+             Merge opt-team -> trunk
+  1737           jimmy.yang@oracle.com-20110819092711-5kglkd11ucyapmup
+             Implement WL #5557, two bytes collation number in InnoDB.|rb://744 approved by..
+  1388           sunny.bains@oracle.com-20110819061333-xuto1yfxep6pkrjx
+             WL#5758: Improve Thread Scheduling| |Use atomics where available to enforce co..
+   345           tatjana.nuernberg@oracle.com-20110819004528-odtu7ql1ytx8bvw0
+             WL#5706|split rewrite tests as suggested by Horst
+  2003    4      tatjana.nuernberg@oracle.com-20110818180545-9wywh2i132fbfe8t
+             manual merge
+    18           evgeny.potemkin@oracle.com-20110818112559-d145lrsw1ozqf39r
+             A local variable used only in assertion caused an 'unused variable' warning on..
+    17           marko.makela@oracle.com-20110818102653-h4pw4crgc3s6920r
+             Fix a regression from WL#5580:|InnoDB would complain about LSN mismatch on com..
+    54           georgi.kodinov@oracle.com-20110818093924-m3ajqn3ct2yn5eog
+             Addendum to the suite for bug #11766001 : 59026: ALLOW MULTIPLE --PLUGIN-LOAD ..
+    13           vasil.dimov@oracle.com-20110818091300-4jwwt52902l08pz9
+             Revert vasil.dimov@oracle.com-20110817185046-qrdhzm2ow34oca2i it is|suspected ..
+   324           georgi.kodinov@oracle.com-20110818083108-qa3h3ufqu4zne80a
+             Bug #11766001: 59026: ALLOW MULTIPLE --PLUGIN-LOAD OPTIONS|Implemented support..
+    42           georgi.kodinov@oracle.com-20110818081424-g7xt0n7y4t1ci6lb
+             Addendum to the fix for bug #11746029: 22615: MYSQL SERVER INCORRECTLY CATOGOR..
+    13           vasil.dimov@oracle.com-20110817185046-qrdhzm2ow34oca2i
+             Blind attempt to fix BUG 12881278 - MAIN.MYISAM TEST FAILS ON LINUX|The printe..
+   547           georgi.kodinov@oracle.com-20110817143345-vp9q2v5b3pphbhr9
+             Bug #11746029: 22615: MYSQL SERVER INCORRECTLY CATOGORIZES THE LOST+FOUND DIRE..
+    28    1*     jimmy.yang@oracle.com-20110817095451-v5xt2ometpuixqcc
+             Merge from mysql-5.5 to mysql-trunk
+    13           vasil.dimov@oracle.com-20110817093853-2r159tzwojhpxqn6
+             Fix typo in comment
+   419           alexander.nozdrin@oracle.com-20110817081113-qdqsdatma81m9zhl
+             A patch for Bug#12771903: User with create temporary tables priv only has full..
+    13           jorgen.loland@oracle.com-20110817073204-fkmc83qbw2fved7g
+             BUG#12722133: followup-patch|Fix compile warning in PB: "prev_rec_ptr may be u..
+   250           jorgen.loland@oracle.com-20110817065351-yyqo5acbnvo71zz3
+             BUG#12837084 - SEGFAULT IN ADD_FOUND_MATCH_TRIG_COND|Some call to backout_nj_s..
+    14           anitha.gopi@oracle.com-20110817054539-hyiftoirgqoec4gn
+             Bug#12682554 - Moved affected tests to experimental group
+  1959    2*     jimmy.yang@oracle.com-20110817044200-43prm29coscztp3q
+             Merge from mysql-5.5 to mysql-trunk
+ 10472   52      evgeny.potemkin@oracle.com-20110816193303-ntku52h0fqq5b8dd
+             [opt] Merge of WL#5274 Postpone materialization of views/subqueries in FROM clause.
+   105           rohit.kalhans@oracle.com-20110816163011-7pwx4b36m1pqs2qj
+             BUG#12761358: SLAVE_LAST_HEARTBEAT RETURNS EPOCH DATE EVEN WHEN SLAVE NOT ENAB..
+   259    1*     sneha.modi@oracle.com-20110816104010-eqdjwm61xtmtnd43
+             Merging from MySQL-5.5 --> MySQL-trunk.
+     0    3*     joerg.bruehe@oracle.com-20110815190048-m6lm7hubgiquas9t
+             Null upmerge, no change.
+     0    3      joerg.bruehe@oracle.com-20110815184440-kowuea1f6bzyb447
+             Null merge for pushing, to avoid any missing changesets.
+   808    2*     marko.makela@oracle.com-20110815093439-fdpckudrxinwphcw
+             Merge mysql-5.5 to mysql-trunk.
+  1557   11      jorgen.loland@oracle.com-20110815085805-7ii8z619yj8aycfl
+             [opt]
+    15    1*     georgi.kodinov@oracle.com-20110812135706-86fanoytrgphesqr
+             merged to mysql-trunk
+     0    2*     georgi.kodinov@oracle.com-20110812113336-t5qqwrjse9pxnn4w
+             null merge of the version bump to trunk
+    18    1*     bjorn.munch@oracle.com-20110812105326-86d64g63klch1pgh
+             upmerge small fix to test mysql_plugin
+    12           sunny.bains@oracle.com-20110811202310-a8mqdztmicstxux9
+             Remove bogus comment.
+    67           sunny.bains@oracle.com-20110811195901-nn54pgx0k06gorl0
+             Bug 12831587 DOUBLE COPY IN NON-ICP CODE PATH IN ROW_SEARCH_FOR_MYSQL()|Due to..
+   400    1*     dmitry.lenev@oracle.com-20110811185346-qm54f8g1sqtf75ce
+             Merged fix for #12828477 "MDL SUBSYSTEM CREATES BIG|OVERHEAD FOR CERTAIN QUERI..
+  1805   17      tatjana.nuernberg@oracle.com-20110811164800-jkahqxeac2hh1dug
+             merge
+     0    3*     tatjana.nuernberg@oracle.com-20110811113603-swwpazx3li839zai
+             auto-merge
+   554    9      tatjana.nuernberg@oracle.com-20110811113334-5em9v2yvdfjxe8na
+             auto-merge
+  3462           marc.alff@oracle.com-20110811102112-jlw16fa2ydwtskcd
+             bzr cleanup
+    69           jorgen.loland@oracle.com-20110811055213-sfx9eki6lnahbojw
+             BUG#12798270 - ASSERTION `!TAB->SORTED' FAILED IN JOIN_READ_KEY2|An ASSERT tha..
+103935   32      marc.alff@oracle.com-20110811000406-fh3p9nsdssvka4cw
+             WL#5378 PERFORMANCE SCHEMA SUMMARY BY USER / HOST
+  3926    1      inaam.rana@oracle.com-20110810180743-cn5yqda3r0favfij
+             [inno] WL#5580: Changes to LRU flushing (InnoDB)
+   203           olav.sandstaa@oracle.com-20110810144526-nxu8kfqeptn0tr96
+             Bug#12795555: Missing rows with ANY subquery.|Item_maxmin_subselect::was_value..
+    25           sven.sandberg@oracle.com-20110810114049-4mibcp7fgmtpy6qy
+             BUG#11766392: 59495: RPL.RPL_READ_OLD_RELAY_LOG_INFO FAILS INTERMITTENTLY IN P..
+   732    2*     vinay.fisrekar@oracle.com-20110810105357-2hou3pdoiyv3feb0
+             Committing again (after branch diversion error) the Change On behalf Of Sneha ..
+   142    2*     marko.makela@oracle.com-20110810100749-lmuyubl762kkduc4
+             Merge mysql-5.5 to mysql-trunk.
+   898           marc.alff@oracle.com-20110809163916-78zil67xxph6luqw
+             Bug#12346211 - PERF IMPACT OF PERFORMANCE-SCHEMA WITH DISABLED INSTRUMENTS/CON..
+   260    3*     marko.makela@oracle.com-20110808094209-n82941oqh202e6b9
+             Merge mysql-5.5 to mysql-trunk.
+  3934   10      jorgen.loland@oracle.com-20110805102613-a0ycrg4g5b1pv6gi
+             [opt] Merge from optimiser tree
+   362           olav.sandstaa@oracle.com-20110805083706-3fmdqoi7gcuq5i7y
+             Fix for Bug#12619744 MAIN.INNODB_MRR_NONE/INNODB_MRR_ICP FAILS OCCASIONALLY ON..
+    41           marc.alff@oracle.com-20110804163117-iz3yr3molm8sne5s
+             Fixed build break when compiling without the performance schema.|Stages defini..
+    53           vasil.dimov@oracle.com-20110804143312-ey0t07v5aa26x1qj
+             Implement part of WL#5533 Deprecate features in Fuchsia|Print a deprecation wa..
+    16           anitha.gopi@oracle.com-20110804073012-qxybfd8op3mp6wpt
+             Bug#12619719, Bug#12619744, Bug#12320827, Bug#11765460: Moved tests to experim..
+   166           vasil.dimov@oracle.com-20110803163956-294y8ai4uvfa82jw
+             Implement part of WL#5533 Deprecate features in Fuchsia|Print a deprecation wa..
+   170    1      marc.alff@oracle.com-20110803151523-8exwv941n23t8nl6
+             local merge
+     0    1*     gleb.shchepa@oracle.com-20110803140233-pjnd6qwk4oucr8iu
+             null-merge mysql-5.5 --> mysql-trunk (backport of bug #11754979)
+    51           vasil.dimov@oracle.com-20110803112904-wurw682u5pfmdiaj
+             Revert vasil.dimov@oracle.com-20110729091333-q2d81wxwcqua29h9 which|was a work..
+    15           vasil.dimov@oracle.com-20110803112301-y43ownutt52unmfu
+             Fix Bug 12813354 - PLUGIN_VAR_MEMALLOC WITHOUT VALIDATION FUNC CRASHES|IF THE ..
+  1163    1      marc.alff@oracle.com-20110803092328-ni7r4y8f20hk0vo6
+             local merge
+   190           olav.sandstaa@oracle.com-20110803072117-aiqo499ud5crpmtq
+             Fix for Bug#12601961 SEGFAULT IN HANDLER::COMPARE_KEY2.|The crash in InnoDB's ..
+    57           marc.alff@oracle.com-20110803070205-zj4o3i366x9ux1xr
+             Bug#11766111 - 59150: PERFSCHEMA.SETUP_OBJECTS FAILS SPORADICALLY|Post merge c..
+    22           alexander.nozdrin@oracle.com-20110802174700-kdv0nvkfullxi0rf
+             Fix ancient typo.
+   804           alexander.nozdrin@oracle.com-20110802083430-ay7ruyo0oen576w8
+             sp_pcontext/sp_head polishing:| - Renamed 'sp_cond_type' to 'sp_condition_valu..
+  1015           alexander.nozdrin@oracle.com-20110802083354-rcg623lzctdkpn63
+             sp_head / sp_pcontext polishing:| - Remove sp_cond_type_t;| - Remove sp_cond_t..
+   259    3*     sergey.glukhov@oracle.com-20110802081426-13bgb8qavuiedn9y
+             5.5 -> trunk merge
+  2822           alexander.nozdrin@oracle.com-20110801194746-ym94qyce5jf22une
+             A follow-up patch for Bug#11763162|(55843: HANDLED CONDITION APPEARS AS NOT HA..
+    42           vasil.dimov@oracle.com-20110729103942-iiu0jnb23gdh0gl8
+             Yet another attempt to fix Bug 12783900 - INNODB_BUFFER_POOL_FILENAME|IS SOMET..
+    51           vasil.dimov@oracle.com-20110729091333-q2d81wxwcqua29h9
+             Do not allow innodb_buffer_pool_filename to be set to NULL.|Without this valid..
+    29           vasil.dimov@oracle.com-20110729082038-pv9an3xs6lgrf49p
+             Implement part of WL#5533 Deprecate features in Fuchsia| |Print a deprecation ..
+    20           guilhem.bichot@oracle.com-20110729073916-9inmumwyxds64awa
+             optimizer trace added a new I_S table, so information_schema-big needs an update
+    12           luis.soares@oracle.com-20110729000201-irdbx7r9y7xk1st7
+             BUG#12794048|Removed the test case from the experimental list.
+   194    1      luis.soares@oracle.com-20110729000109-1zayji7x0nukhb0k
+             BUG#12794048|Merged bzr bundle in commit email with latest mysql-trunk.
+    13           vasil.dimov@oracle.com-20110728132531-h1jhg1xk01xd1oiq
+             Fix compile error due to rename of MYSQL_ERROR to Sql_condition.|This rename w..
+    60           vasil.dimov@oracle.com-20110728130652-735stdow5xo5t2ds
+             Implement part of WL#5533 Deprecate features in Fuchsia| |Print a deprecation ..
+  5477           alexander.nozdrin@oracle.com-20110728105444-801ibrlphvn6irge
+             Refactoring (on behalf of Jon Olav):|rename of MYSQL_ERROR to Sql_condition.
+   135           alexander.nozdrin@oracle.com-20110728104514-23gatj6mst8ls2sb
+             Refactoring of Warning_info (on behalf of Jon Olav):|Removed append_sp_warning..
+   667           alexander.nozdrin@oracle.com-20110728103601-imij982ug4466y7r
+             Refactoring of Warning_info (on behalf of Jon Olav):| - Made everything except..
+   601           alexander.nozdrin@oracle.com-20110728091237-5xjjfd96t7p5ozzp
+             Warning_info polishing: hiding Warning_info behind Diagnostics_area.|Part III:..
+   186           alexander.nozdrin@oracle.com-20110728090409-30ccgbh0jkaom1f3
+             Warning_info polishing: hiding Warning_info behind Diagnostics_area.|Part II: ..
+   434           alexander.nozdrin@oracle.com-20110728090043-mnp555puzb8sywhu
+             Polishing sql_error.h/sql_error.cc:| - Remove unused THD argument from Diagnos..
+   151           alexander.nozdrin@oracle.com-20110728085505-pg5ns617f3n7hcam
+             Moving check_duplicate_warning() to Warning_info::has_sql_condition().
+   867           alexander.nozdrin@oracle.com-20110728085225-yku0gploji2hfdxq
+             Warning_info polishing: hiding Warning_info behind Diagnostics_area.|Part I: r..
+   239           alexander.nozdrin@oracle.com-20110728084852-lpachhu5da8a4oub
+             Polishing Warning_info:| - renamed Warning_info::statement_warn_count() to| Wa..
+  2185           alexander.nozdrin@oracle.com-20110728083136-q6yj42p1e6mp28qi
+             A patch for Bug#11763162 (55843 - Handled condition|appears as not handled).| ..
+   229           alexander.nozdrin@oracle.com-20110728081240-t6eaw8odqz5s7l00
+             Pre-requisite patch for Bug#11763162 (55843 - Handled condition|appears as not..
+     0    3*     sven.sandberg@oracle.com-20110727104024-8yc74bgzzcaow686
+             Null merge.
+    12           sven.sandberg@oracle.com-20110727103742-la18f5mj3uh0pj01
+             Updated default.experimental; now rpl tests are up to date as of 2011-07-25.
+    47    3      sergey.glukhov@oracle.com-20110727090344-ybkc44jo0ipy2og2
+             [5.5] Merge from 5.5
+    54           vasil.dimov@oracle.com-20110727085819-xddaau3v9qp1bwtt
+             Remove redundant test with the default filename.|The problem is that the value..
+    85           sergey.glukhov@oracle.com-20110727080639-xihx7e2edla3rsw0
+             Bug#11766684 59851: UNINITIALISED VALUE IN ITEM_FUNC_LIKE::SELECT_OPTIMIZE WIT..
+   207           sergey.glukhov@oracle.com-20110727073835-oaoljv3dnecnabzp
+             Bug#12634989 VALGRIND WARNING ABOUT UNINITIALIZED VALUES CREATED IN ITEM_FUNC_..
+    19           sunny.bains@oracle.com-20110726235759-3zs7bf3w2a1mya00
+             Move the ut_ad() after the definition/declaration of max_trx_id.|Offending cod..
+    65           sunny.bains@oracle.com-20110726110842-lbn31ziqnn1auo2j
+             Non-functional change, fix comments.
+   777           georgi.kodinov@oracle.com-20110725151306-vs9d09yet2rqrz32
+             Bug #12774208: DEFAULT_TEMP_STORAGE_ENGINE SHOULD BE NAMED |DEFAULT_TMP_STORAG..
+    13           sunny.bains@oracle.com-20110726040546-jeqj7d7a66ni5apa
+             Add innodb_rollback_segments to the all_vars.result file. This variable doesn'..
+  1670           sunny.bains@oracle.com-20110726032133-gqs9kyxcn8oizh7x
+             Bug 11765827 - 58830: INNODB: PERFORMANCE DROP IN SYSBENCH RANGE TESTS AT HIGH..
+    28           sunny.bains@oracle.com-20110726025449-nxizah1wg8voxm7x
+             WL#5535 renamed innodb_rollback_segments to innodb_undo_logs. Create an alias..
+    41           vasil.dimov@oracle.com-20110725172537-0pacd1ic7h4meg75
+             Fix Bug#12783900 INNODB_BUFFER_POOL_FILENAME IS SOMETIMES NOT POPULATED|BY THE..
+    80           marc.alff@oracle.com-20110725140536-e8q1sqrgb8xmdv38
+             Improved test robustness
+    47           magne.mahre@oracle.com-20110725105406-kwpzpksmrsjgeloe
+             Bug#12546960 - 60993: NAME QUOTED WITH QUOTE INSTEAD OF BACKTICK | GIVES NO SY..
+    21           sunny.bains@oracle.com-20110725095447-rtc0brkrfwpm10pg
+             Remove unused variable that was introduced by WL#5535.
+    17           georgi.kodinov@oracle.com-20110725092608-j0je5k4atgkm65bh
+             Bug #12767683 : SERVER START FAILS IN THE PKGVER TEST ON WINDOWS|Added an --de..
+    55           anitha.gopi@oracle.com-20110725043818-a3e6yncfqdvcctzk
+             Fixed syntax
+     0    1*     alfranio.correia@oracle.com-20110724112953-brck6k4wdh3yqo03
+             null-merge mysql-5.5 --> mysql-trunk
+   419    1*     dmitry.lenev@oracle.com-20110722155242-q9dnvtbwcxvhb2fh
+             Merged fix for bug #11754210 - "45777: CHECK TABLE|DOESN'T SHOW ALL PROBLEMS F..
+    29           tor.didriksen@oracle.com-20110722093204-36ib5dfa2f42whda
+             Bug#12532830 post-push fix: windows case sensitivity ....
+    23    1*     sunanda.menon@oracle.com-20110722083751-pduej713fy833v3e
+             Bug #12561297: Added the MySQL embedded binary
+   217    3*     alexander.nozdrin@oracle.com-20110722081035-500crkbtxal55veg
+             Manual merge from mysql-5.5.
+    26           marc.alff@oracle.com-20110722075614-imd49kh6njipp16n
+             Fixed test output
+    62           tor.didriksen@oracle.com-20110722072140-f60nlg5pjlvn0v9a
+             WL#5257 post-push fix, make sqlgunitlib self-contained.|opt_trace.cc contains ..
+    32           marc.alff@oracle.com-20110721224931-kgydfeuj1ow4y2qy
+             Fixed build break in unit tests.
+  2783    1      marc.alff@oracle.com-20110721213755-ejizh2301dkh24xt
+             Local merge
+    81    1*     jon.hauglid@oracle.com-20110721162239-2n0pfav87yw0sftc
+             Merge from mysql-5.5 to mysql-trunk.|No conflicts.
+   181           tor.didriksen@oracle.com-20110721151109-6h7ltgjhf1pggujj
+             Bug#12532830 - SIGFPE OR ASSERTION (PRECISION <= ((9 * 9) - 8*2)) && (DEC <= 30)
+    35           bjorn.munch@oracle.com-20110721121409-yjtw61l1glhcz8v1
+             Followup to mysqltest/mtr option --opt-trace-protocol|Fixed some corner cases:..
+ 17263    1      marc.alff@oracle.com-20110720190303-2oqqa14hed0un8of
+             Local merge
+    26           anitha.gopi@oracle.com-20110720172638-ngiri867ynfea54o
+             Fixed bug number since Bug#11755949 was closed as duplicate of Bug#11753919
+    24    1*     anitha.gopi@oracle.com-20110720172259-8db1mia7gt0f832s
+             Merge up from mysql-5.5
+102851    9      tor.didriksen@oracle.com-20110720144052-jyvvxmhxh4ejkkmm
+             [opt] Merge from optimiser tree
+     0    2      tor.didriksen@oracle.com-20110720133615-vkidky80spsi9b5w
+             empty merge opt-team => trunk
+   174    2*     alfranio.correia@oracle.com-20110720102414-qso8zt2pyf2w3m7b
+             merge mysql-5.5 --> mysql-trunk
+   118    1      alfranio.correia@oracle.com-20110720085556-yk80x9a09ls08ppz
+             merge mysql-trunk (local) --> mysql-trunk
+    43    1*     tor.didriksen@oracle.com-20110720071942-srtr38inaf4vwpj1
+             merge 5.5 => trunk
+    26           sunny.bains@oracle.com-20110720044344-hgikxd2ezdtih9pi
+             Change type of srv_undo_tablespaces to ulong from ulint. This is because on|Wi..
+   706    2*     inaam.rana@oracle.com-20110719150748-cso15bzk6ccyoao1
+             Merge from 5.5 the fix for Bug 12356373
+    13           jon.hauglid@oracle.com-20110719121921-ubcngmepbmle52su
+             Fix broken sys_vars.all_vars test.|In WL#5535 innodb_rollback_segments was ren..
+    15    1*     sunanda.menon@oracle.com-20110719085022-g2395npqenw5quls
+             #41836: Eventum Request to enable the mysql_embedded binary
+   380           sunny.bains@oracle.com-20110719080419-z8qmdegoxmkmb40w
+             Add test and result files for tests that were missed in the commit of|WL#5535 ..
+  2568           sunny.bains@oracle.com-20110719002520-c2vlkxclmlhm7cv1
+             [inno] WL#5535 - Separate tablespace(s) for the InnoDB undo log
+     0    1      sven.sandberg@oracle.com-20110718162654-zcofejcx5q038tg5
+             Null merge.
+    10           sven.sandberg@oracle.com-20110718162052-2591f98my646w3l1
+             Updated default.experimental with status of rpl tests as of 2011-07-18.
+    21    2      sven.sandberg@oracle.com-20110718161902-b1iul68q90v5y51z
+             Updated default.experimental with status of rpl tests as of 2011-07-18.
+     0    3*     bjorn.munch@oracle.com-20110718102544-asroox28nc8pkyg4
+             null upmerge
+    39   20      bjorn.munch@oracle.com-20110718102440-rmwfm92tu8lm0ra9
+             merge from trunk-mtr
+   162           anitha.gopi@oracle.com-20110718100514-wcxjeg9se89hr8h8
+             default.weekly is made the master suite. Includes all of daily, non debug runs..
+    65    1*     tor.didriksen@oracle.com-20110718093813-cjk38vxw3z3ul1ov
+             merge 5.5 => trunk
+   261    1*     tor.didriksen@oracle.com-20110718080621-yjgx9tkc4ns14h2j
+             Merge 5.5 => trunk.|Add unit tests for my_decimal_mod().
+  6183   17      marc.alff@oracle.com-20110715193732-88rpldf5qwiyp6ad
+             Merge mysql-trunk-stage --> mysql-trunk
+     0    2*     alexander.nozdrin@oracle.com-20110715123222-xrh462gs2b833xvz
+             Null-merge from mysql-5.5.
+    54    2*     luis.soares@oracle.com-20110715114835-z8vfhuf0ovz85ad3
+             Automerge from mysql-5.5 into mysql-trunk.
+    70           gleb.shchepa@oracle.com-20110714155310-eh6erwhj05ri7bmu
+             BUG #11754979 - 46675: ON DUPLICATE KEY UPDATE AND UPDATECOUNT() POSSIBLY WRON..
+   355    2*     luis.soares@oracle.com-20110714124600-6zpex8bxxyc01h8a
+             BUG#11753004|Manual merge from mysql-5.5 into mysql-trunk.|conflicts|=========..
+     0    2*     luis.soares@oracle.com-20110714124435-s4s19hmvcefzgznw
+             empty merge from mysql-5.5 into mysql-trunk.|conflicts|=========|VERSION - I w..
+     9           anitha.gopi@oracle.com-20110714093727-qgue93mai2lyvhdb
+             Merge up from mysql-5.5
+   156           jon.hauglid@oracle.com-20110714080512-n15qyzdvuyv83kbl
+             Bug#12663165 SP DEAD CODE REMOVAL DOESN'T UNDERSTAND CONTINUE HANDLERS|When st..
+   141           jon.hauglid@oracle.com-20110714073201-4zwlw43gkl95vzbf
+             Bug#11756966 - 48958: STORED PROCEDURES CAN BE LEVERAGED TO BYPASS| DATABASE S..
+   117           jon.hauglid@oracle.com-20110713102951-muxnsrfzfnomuj7v
+             Bug #11757397 49437: CANNOT DO SHOW FIELDS FOR BIG VIEW|The problem was that v..
+    30           sunny.bains@oracle.com-20110713050821-fn52u9b5vm9ubqdf
+             Remove the superfluous const in the declaration. Reported by Calvin on IM.|Cha..
+    22           marc.alff@oracle.com-20110712121020-iae2zswhopdyvyv5
+             Fixed build warnings
+     0    3*     luis.soares@oracle.com-20110712111632-m2datre9v16kklc1
+             BUG#12695969|Automerged empty cset from mysql-5.5.
+   136           sergey.vojtovich@oracle.com-20110712065018-ld7no7u929wj575l
+             More counters for recently added events.
+    23    3*     luis.soares@oracle.com-20110711162146-hy4n1ddtrryatht1
+             BUG#12695969|Automerged from mysql-5.5 into mysql-trunk.
+    66    2*     kevin.lewis@oracle.com-20110708134010-d0wxkydl6kdvb9vu
+             Merge from mysql-5.5
+    46           nirbhay.choubey@oracle.com-20110708130703-fkd3ad0soq7ntbnd
+             Bug#12546842 - 61038: LOGROTATE SCRIPT IN SUPPORT-FILES| NEEDS AN UPDATE.|Upda..
+   377           davi.arnaut@oracle.com-20110707142636-ox242vm05c6x2t26
+             Bug#12727287: Maintainer mode compilation fails with gcc 4.6 (#trunk)|GCC 4.6 ..
+    24           georgi.kodinov@oracle.com-20110708123052-re4u3rbhiee5dqmo
+             Addendum to bug #11757216: fix a test that expects SET DEFAULT_STORAGE_ENGINE ..
+    53           marc.alff@oracle.com-20110707193507-a39d408dsp2mt4yb
+             Post merge cleanup, unit tests
+  1276    1      marc.alff@oracle.com-20110707175735-9l1llt05dbimwn81
+             Local merge
+    47    2*     joerg.bruehe@oracle.com-20110707152936-nlh5anspd3xiunqs
+             Upmerge the 45415 fix from 5.5 to 5.6
+  1065           olav.sandstaa@oracle.com-20110707132243-0ovk76qrpvv35vyz
+             Fix for bug#11766256, and particularly its|relatives/duplicates bug#11751026 a..
+    25           tor.didriksen@oracle.com-20110707130134-gvpcqbsc97np1d7g
+             Bug#12608543 Add unit test.
+ 17235    6      tor.didriksen@oracle.com-20110707124434-wtqfc5ni6ccbyei3
+             [opt] Merge from optimiser tree
+   230    8      tor.didriksen@oracle.com-20110707115159-hbhmite0xwrv3512
+             [opt] Merge from optimiser tree
+   289    1*     davi.arnaut@oracle.com-20110707112433-q1is22yisfj11zjn
+             Merge of mysql-5.5 into mysql-trunk.
+  1948   87      georgi.kodinov@oracle.com-20110707105754-eydsj2m4bwzksnup
+             merge
+    71           jon.hauglid@oracle.com-20110707102551-thqx0z3los6lhpoz
+             Bug#11938817 ALTER BEHAVIOR DIFFERENT THEN DOCUMENTED|The problem was that "AL..
+    71           anitha.gopi@oracle.com-20110706074410-cqo7mukiryqjky8m
+             Bug#12664445 - Include an order by in the query to fix the PB2 failure. This i..
+    81    1*     georgi.kodinov@oracle.com-20110705160634-09icq72tko1fbczf
+             merged mysql-5.5->mysql-trunk
+    12           magne.mahre@oracle.com-20110705103217-0xlmmod240nxp2vr
+             Build failed after upgrade of GCC to 4.6.1|After upgrading to gcc 4.6.1, the b..
+  4102    1      marc.alff@oracle.com-20110705081552-qqh1kx9cnoa5u82l
+             local merge
+   303           luis.soares@oracle.com-20110704155500-us8lej0j6vbym2tq
+             BUG#12717803: SYS_VARS.ALL_VARS SHOULDNT NOT LIST REPLICATION| VARIABLES|WL 54..
+    15    1*     tor.didriksen@oracle.com-20110704122846-xgvwokeomyx7rv6a
+             Merge 5.5 => trunk
+    89    1*     tor.didriksen@oracle.com-20110704122237-cytufzt4owk3vj8s
+             Merge 5.5 => trunk
+    72    2*     jon.hauglid@oracle.com-20110704075326-w2b7x64tk14vazam
+             Merge from mysql-5.5 to mysql-trunk.
+     0    5*     kent.boortz@oracle.com-20110704002546-ry9eqe2fvfkbexqn
+             Updated/added copyright headers
+ 13692    4      kent.boortz@oracle.com-20110703235647-rl1pp68gsfi1ozfl
+             Updated/added copyright headers
+    12    2*     georgi.kodinov@oracle.com-20110701143236-ltnx69rgztlxw31o
+             merge mysql-5.5->mysql-trunk
+   978           georgi.kodinov@oracle.com-20110621100548-bil778ihsa1e2avq
+             BUG# 11757216: 49232: --STORAGE-ENGINE SHOULD BE DECOUPLED FROM |DEFAULT TEMPT..
+   106           tor.didriksen@oracle.com-20110701081729-90dsn3afimq1l48d
+             Bug#12603141: JOIN::flatten_subqueries asrt/simplify_joins sig11/...|Bug#12603..
+    13           tor.didriksen@oracle.com-20110701070841-lxizi6wvmmze2dxp
+             Fix broken debug build:|/export/home/pb2/build/sb_0-3560531-1309494801.95/mysq..
+    29           sunny.bains@oracle.com-20110701041220-nnj3pcqiffz04iej
+             Move the debug assertion to the caller of lock_deadlock_trx_rollback(). In|non..
+    64           tor.didriksen@oracle.com-20110630125720-57l28er1fsh0fj5j
+             Bug#12620084 ASSERTION WHEN CHECKING FIELD_TYPES[FIELD_POS] AND IT'S MYSQL_TYP..
+   119    2*     marko.makela@oracle.com-20110630102826-2cp6f3llqclldng2
+             Merge mysql-5.5 to mysql-trunk.
+  1070           sunny.bains@oracle.com-20110630055250-e8slwpjt5n2caprd
+             WL#5915 - Make deadlock detection non-recursive.|The explicit stack is allocat..
+   619    6      luis.soares@oracle.com-20110629214432-6yvfz2r6l4r92h0w
+             BUG#11747577|Automerge with latest mysql-trunk.
+   114    1*     marc.alff@oracle.com-20110629202537-ptqcvt2311tgjfcz
+             Merge mysql-5.5 --> mysql-trunk
+    32           jon.hauglid@oracle.com-20110629144658-99a50k4om2mn77wp
+             Bug#12694147 COMPILING WITH -DWITHOUT_PARTITION_STORAGE_ENGINE=1| AND WITHOUT ..
+    22    2*     marko.makela@oracle.com-20110629141051-8mbddpjn3sjbhk12
+             Merge mysql-5.5 to mysql-trunk.
+    10    3*     vasil.dimov@oracle.com-20110629113327-unira05u7y3kqh62
+             Merge mysql-5.5 -> mysql-trunk
+    13    2*     marc.alff@oracle.com-20110629085839-2vbrn9bl7y8ym8q4
+             Merge mysql-5.5 --> mysql-trunk
+   268    2*     marko.makela@oracle.com-20110629073100-a3sbmjywa44u9fgo
+             Merge mysql-5.5 to mysql-trunk.
+   265    1*     marko.makela@oracle.com-20110628123614-di9ixvbj3jrnzycj
+             Merge mysql-5.5 to mysql-trunk.
+   183    2*     marko.makela@oracle.com-20110628093032-gq5gwkdq2py6aaos
+             Merge mysql-5.5 to mysql-trunk.
+ 55953   26      tor.didriksen@oracle.com-20110628072409-w7tbqtb1r81g92gq
+             [opt] Merge from optimiser tree
+  1879           tor.didriksen@oracle.com-20110624092907-sy16mrj8w9vz6266
+             Bug#12590211 - ADD BOUNDS CHECK ON REF_POINTER_ARRAY AND FRIENDS|Cleanup the I..
+   179    2*     dmitry.shulga@oracle.com-20110623173408-mmu678f32403knsn
+             Auto-merge of patch for bug#11756013 from mysql-5.5 tree.
+    31           vasil.dimov@oracle.com-20110623132926-cyok7kpe8p12nbs8
+             Do not check that the number of pages for the test table|is small in innodb_bu..
+   275    2*     marko.makela@oracle.com-20110623130309-e7m10c0boa62nsum
+             Merge mysql-5.5 to mysql-trunk.
+    28    2*     marko.makela@oracle.com-20110623095141-379yy9lk2mt6x30y
+             Merge mysql-5.5 to mysql-trunk.
+  1765           vasil.dimov@oracle.com-20110623064848-cdjl7c0kg3z4b8vo
+             Implement WL#5712 InnoDB: preload buffer pool
+     0    1      guilhem.bichot@oracle.com-20110622104022-zs7cgfx290ezdr1t
+             null merge
+   175           guilhem.bichot@oracle.com-20110617132925-7wttzk62q7eqiygr
+             This patch is for trunk.|WL#5914 remove option "--all" and BDB errors from the..
+    37           mayank.prasad@oracle.com-20110622114629-ff9dqhwcif0rxw0x
+             Bug#11764633 : 57491: THD->MAIN_DA.IS_OK() ASSERT IN EMBEDDED|Description:|Tes..
+   115    1*     marko.makela@oracle.com-20110622084010-fdpilo8m8mys0wtz
+             Merge mysql-5.5 to mysql-trunk.
+    13    2*     marko.makela@oracle.com-20110622083241-qanvfneai10tjvkf
+             Merge mysql-5.5 to mysql-trunk.
+    46           matthias.leich@oracle.com-20110621133803-dbrics1pynl8e47g
+             Fix for Bug 12431362 - THE TESTS PERFSCHEMA.ALL_TESTS DOES NOT CLEAN UP PROPER..
+   102           jon.hauglid@oracle.com-20110621075731-cu9xolvtrastrrdx
+             Bug#12661349 Assert in protocol::end_statement|The triggered assert checks tha..
+    95           dmitry.lenev@oracle.com-20110620120706-etqnkczu8doethhl
+             A follow-up for patch that fixed bug #12652385 - "61493:|REORDERING COLUMNS TO..
+    24           inaam.rana@oracle.com-20110620044501-cxep1iq8rdhllrqw
+             Merge from 5.5
+  1409           inaam.rana@oracle.com-20110617203242-8ya3td65kg7qjc32
+             merge from mysql-5.5|Bug 12635227 - 61188: DROP TABLE EXTREMELY SLOW|---------..
+    37           alexander.nozdrin@oracle.com-20110617141935-ppvppxel9nb30yg1
+             Warning_info polishing: remove Warning_info::append_warnings().
+    60           alexander.nozdrin@oracle.com-20110617134844-j50v0h6h7bym7w96
+             Polishing Warning_info:| - added "const" modifiers to a few places.| - made Wa..
+    13    2*     jon.hauglid@oracle.com-20110617075559-c5bt1ybrftcdtmys
+             Merge from mysql-5.5 to mysql-trunk
+   121    2*     dmitry.lenev@oracle.com-20110616234558-v90j59rogqny7jdx
+             Merged fix for bug #12652385 - "61493: REORDERING|COLUMNS TO POSITION FIRST CA..
+   115    1*     matthias.leich@oracle.com-20110616204554-oywm3mp20ct1e058
+             Upmerge mysql-5.5 -> mysql-trunk
+   185    1*     dmitry.lenev@oracle.com-20110616160632-4ox3ayc63a9bub7f
+             Merged fix for bug #12641342 - "61401: UPDATE PERFORMANCE|DEGRADES GRADUALLY I..
+    54    1*     mayank.prasad@oracle.com-20110616135645-uoj8xj01zgrpqpb6
+             merge from 5.5 for test case issue for bug#12561297
+    13    2*     vasil.dimov@oracle.com-20110616131548-alqyoust272pk230
+             Merge mysql-5.5 -> mysql-trunk
+   881    3*     marko.makela@oracle.com-20110616123320-vhjkv8xrx6hsa1wc
+             Merge mysql-5.5 to mysql-trunk.
+  1269    3*     marko.makela@oracle.com-20110616092609-4zizcp5lrgp4gw3p
+             Merge mysql-5.5 to mysql-trunk.
+   259    1*     jorgen.loland@oracle.com-20110616063016-j92jd8cgxk1zx1cg
+             Merge BUG#11882110 5.5 -> trunk
+    13    1*     vinay.fisrekar@oracle.com-20110616043547-80a54m61ijarlw36
+             merge mysql-5.5 -> trunk , skip test with valgrind due to restart in test
+   474           davi.arnaut@oracle.com-20110615223143-234u0qk3c7gzo29l
+             Take two of a prerequisite patch for making const MYSQL_ERROR|objects useable:..
+    21           davi.arnaut@oracle.com-20110615190026-yqxr2jafi702ttsb
+             Revert changes that were improperly pushed.
+   491           davi.arnaut@oracle.com-20110615170124-5qjvs03rvsh3xehg
+             Revert making const MYSQL_ERROR objects useable.
+   474           davi.arnaut@oracle.com-20110615131306-bt1ij3d74zu4azzh
+             A prerequisite patch for making const MYSQL_ERROR objects useable:|Introduce a..
+    13    1*     dmitry.shulga@oracle.com-20110615101948-9p22b09g8ytr2ctb
+             Auto-merge of patch for bug#12403662 from mysql-5.5 tree.
+  1636           vasil.dimov@oracle.com-20110615080211-bml42gc1b1gndci6
+             Install InnoDB persistent stats tables during db install time|(from the script..
+   175    2*     marko.makela@oracle.com-20110615073302-q9kt3q24z0ebkp0u
+             Merge mysql-5.5 to mysql-trunk.
+     9    1*     anitha.gopi@oracle.com-20110615030610-1xlf39g3a35ve1mf
+             Merge from mysql-5.5
+    18    1      mattias.jonsson@oracle.com-20110614123644-h4pobxtwk3xm5khy
+             merge
+     0    2*     marko.makela@oracle.com-20110614054938-s4ym2mxxmxtvyazd
+             Null merge mysql-5.5 to mysql-trunk.
+    36    1*     mayank.prasad@oracle.com-20110613184641-urwe16r0ikrb86l8
+             merge from 5.5 for bug#12561297
+   128           cpowers@tma-1-20110613170425-o8ev227orn2d0uij
+             Bug#11766504 "59631: BIGINT UNSIGNED BYTE RELATED COLUMNS IN PERFORMANCE_SCHEM..
+   731           cpowers@tma-1-20110613162834-9fe473ts6agcp03n
+             Bug#11766504 "BIGINT UNSIGNED BYTE RELATED COLUMNS IN PERFORMANCE_SCHEMA"|- By..
+  1434    2*     mattias.jonsson@oracle.com-20110613105558-t228qhuhcz3iead4
+             merge
+   109    3*     mattias.jonsson@oracle.com-20110613093342-7jfihnup06d9i3we
+             merge
+    12           anitha.gopi@oracle.com-20110613041723-1iodtowx0t1j78aq
+             Move rpl.rpl_change_master_debug to experimental group. This fails on redhat d..
+     0    5      karen.langford@oracle.com-20110610182025-0l4od4ntf1v55e5o
+             Committed merge
+   764           alexander.nozdrin@oracle.com-20110610165701-h1rkmrf9jkykeq11
+             Rename THD::get_warning_info() to THD::get_stmt_wi() to| - be consistent in na..
+   155    1*     mayank.prasad@oracle.com-20110610152904-3spvt0c1s11tgojc
+             merge from mysql-5.5->mysql-trunk for bug#12337762
+    13           alexander.nozdrin@oracle.com-20110610151742-qxscgpt0yvcghmm3
+             Fix comment.
+    29    1*     daniel.fischer@oracle.com-20110610141238-s4kxi8odepqpbrrk
+             merge
+    13           dmitry.shulga@oracle.com-20110610133109-kemr1ntq3ln392x4
+             Follow-up patch for bug#11753738.
+    71    3*     jon.hauglid@oracle.com-20110610100522-u5030fex1hg5kpvz
+             merge from mysql-5.5 to mysql-trunk|Text conflict in VERSION
+   177           tor.didriksen@oracle.com-20110610095257-ulh6hd2evlxkkx6d
+             Bug#11766429 - 59533: RE-EXECUTE OF PREPARED STATEMENT CRASHES IN ITEM_REF::FI..
+   127    2      alexander.nozdrin@oracle.com-20110610084229-vkhv26z6u6sr1qav
+             Auto-merge from mysql-trunk.
+   156    1*     jorgen.loland@oracle.com-20110610083413-h04ebcci99oj9c19
+             Merge BUG#12561818 from 5.5 to trunk
+   204           alexander.nozdrin@oracle.com-20110610074917-y5w3cr4imhwujcko
+             Pre-requisite patch for Bug#11763162 (55843 - Handled condition|appears as not..
+   648    2*     dmitry.shulga@oracle.com-20110610073806-fnfdefu19gab5xwp
+             Manual-merge of patch for bug#11753738 from mysql-5.5.
+    51    1*     tor.didriksen@oracle.com-20110610071351-nykxw30y6ly819hg
+             merge 5.5 => trunk
+    17    2*     marko.makela@oracle.com-20110609191337-tli2imqg5vjori3m
+             Merge mysql-5.5 to mysql-trunk.
+   166    4*     dmitry.shulga@oracle.com-20110609181822-31azhx0e1qg3msyn
+             Auto-merge of patch and follow-up for bug#11764334 from mysql-5.5 tree.
+   585           luis.soares@oracle.com-20110609174421-0viq72mc1g4rf3ql
+             BUG#11747577|Reverted the patch. Pushbuild showed a few errors that need prope..
+   585    3      luis.soares@oracle.com-20110609141422-p7p7ldaekppldc2c
+             BUG#11747577|Automerged against latest mysql-trunk.|[ Addressed review comment..
+    24           alexander.nozdrin@oracle.com-20110609135340-rxpubkgzwm49dt26
+             Polishing THD.
+    78    1*     dmitry.lenev@oracle.com-20110609131529-d4l4dhcnv4d4ufr5
+             Merged fix for bug #11759990 - "52354: 'CREATE TABLE|.. LIKE ... ' STATEMENTS ..
+   215    2*     marko.makela@oracle.com-20110609110038-cvwxeo05q0x4nsdk
+             Merge mysql-5.5 to mysql-trunk.
+   238           alexander.nozdrin@oracle.com-20110609090318-06lrupk3f8wnz9ps
+             Pre-requisite patch for Bug#11763162 (55843 - Handled condition|appears as not..
+  2333           alexander.nozdrin@oracle.com-20110609085841-dcsp0ccmbv253c0z
+             Pre-requisite patch for Bug#11763162 (55843 - Handled condition|appears as not..
+   494           olav.sandstaa@oracle.com-20110609062239-4w7ssunpxaapjruj
+             Fix for bug Bug#12355958 "FAILING ASSERTION: TRX->LOCK.N_ACTIVE_THRS == 1".|Th..
+   103           ramil@mysql.com-20110608172416-f1nb2k710vhjusvr
+             BUG#11755628/47429: INTERSECTION FUNCTION CRASHED MYSQLD |BUG#11759650/51979: ..
+   108    1*     dmitry.shulga@oracle.com-20110608134725-09kxjiz0aukwe9vs
+             Auto-merge of patch for bug#11763757.
+    73           olav.sandstaa@oracle.com-20110607162807-dmpg1vuwf6g97141
+             This is a re-factoring patch that is a follow-up to the fix for|Bug#11873324...
+   111    2*     ramil@mysql.com-20110607160042-o69buws4ic1nmfc3
+             Auto-merge from mysql-5.5
+     9    1*     alexander.nozdrin@oracle.com-20110607130728-i5yespk5frhhihyc
+             Auto-merge from mysql-5.5.
+    13           luis.soares@oracle.com-20110607085552-yk3d3wld2l1j1wup
+             BUG#12626874: ASSERTION WHEN MASTER_POS_WAIT() TAKES RPAD ARGUMENT..|The serve..
+    14           guilhem.bichot@oracle.com-20110606191654-iztzn1s89hgc3q49
+             Post-push fix for|WL#5872 "avoid using global heap memory to remember autoincr..
+    70    1      inaam.rana@oracle.com-20110606173709-sbxrpcumoa0optjh
+             Merge from parent
+    31           inaam.rana@oracle.com-20110606170314-ei2yddkd5hcyvmfy
+             Bug 11866652 - ASSERT BUF0BUF.C:1867 ON RW_LOCK_OWN(HASH_GET_LOCK|BUF_POOL_WAT..
+    44    1*     marko.makela@oracle.com-20110606132831-lvvmxzkq1edxt3st
+             Merge mysql-5.5 to mysql-trunk.
+   108           olav.sandstaa@oracle.com-20110606124955-vts4ql8y5c8n3tqu
+             This is preparation patch for Bug#12355958 "FAILING ASSERTION: |TRX->LOCK.N_AC..
+   250           guilhem.bichot@oracle.com-20110502135251-kvgne8am1xfe9r1h
+             WL#5872 "avoid using global heap memory to remember autoincrement values for s..
+   302    5*     georgi.kodinov@oracle.com-20110606102945-eqfo51a64b4qg7i7
+             merge mysql-5.5->mysql-trunk
+    81           sunny.bains@oracle.com-20110606093520-xo3w7x5zsqdxjgh6
+             Bug 12399395 - ASSERTION FAILURE !MUTEX_OWN(MUTEX) IN SYNC0SYNC.IC LINE 207 4 ..
+    21    1*     rafal.somla@oracle.com-20110603131735-0qhh0vnaf7o83yq3
+             Upmerge of 12612143
+     0    1*     vasil.dimov@oracle.com-20110603105014-bibzetex31kt075f
+             Merge mysql-5.5 -> mysql-trunk|(null merge an irrelevant change)
+     0    1*     anitha.gopi@oracle.com-20110603091145-uvoynqmhrcpq0kkv
+             Null Merge - mysql-5.5 -> mysql-trunk
+    21    7      anitha.gopi@oracle.com-20110603090953-b23nemxvhzidh5pf
+             Merge with tree
+   306    5*     sergey.vojtovich@oracle.com-20110603080042-arr35tr9yqnpwwxe
+             Merge.
+    44           sunny.bains@oracle.com-20110603055924-aobm3t5f3kc1gy95
+             Fix a compilation issue for non-atomic builds. Change the non-atomic increment..
+    24           alexander.nozdrin@oracle.com-20110602140133-dyutjimqdjriavvc
+             A follow-up for WL#5787.|Fix wording in error-message and source code comment.
+   444    1*     vinay.fisrekar@oracle.com-20110602094818-yib1tmrbpvzs7v0s
+             merge from mysql-5.5 -> mysql-trunk| Correcting "innodb_prefix_index_liftedlim..
+    13           sunny.bains@oracle.com-20110602071145-kvk8h2g7u6sdpc12
+             Non-functional change. Fix ccomment.
+   400           sunny.bains@oracle.com-20110602070542-3cvs2im99yx2g7u8
+             Bug 11765863: SHUTDOWN HANG WAITING FOR PURGE THREAD TO BE SUSPENDED|This is r..
+    13    1*     bjorn.munch@oracle.com-20110601132230-jlhznq8h0do1x7ja
+             12607800 followup
+    13           tor.didriksen@oracle.com-20110601124346-ay5pikeas9qu2rl0
+             Bug#11762221 post-push fix: build broken unless HAVE_OPENSSL
+   146    1*     jon.hauglid@oracle.com-20110601122451-ivwiuys5oku9tb41
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in mysql-test/r/innodb_mysql..
+    59    1*     bjorn.munch@oracle.com-20110601101632-3qjbjz1uz4mfm578
+             upmerge 12607800
+  2877    1*     vinay.fisrekar@oracle.com-20110601100048-a6cp7k1u3881czlt
+             merge from 5.5 -> trunk |Adding testcases for WL#5743 InnoDB: Lift the limit o..
+    88           vasil.dimov@oracle.com-20110601094210-30n6zs3vibtva04v
+             Notify the caller of dict_stats_fetch_from_ps() if no stats were present|at al..
+    24           vasil.dimov@oracle.com-20110601094103-eq32iq3w8j23zw15
+             Improve wording in the comment to dict_stats_fetch_index_stats_step().
+  1226    1*     jon.hauglid@oracle.com-20110601091128-fciowxq3khf3vkxp
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in mysql-test/r/innodb_mysql..
+  4927           davi.arnaut@oracle.com-20110531135209-8kxz4np8c4gav6s2
+             Bug#11762221 - 54790: Use of non-blocking mode for sockets limits performance..
+  1698    1*     jimmy.yang@oracle.com-20110531093059-3x1f93rnspltp3h6
+             Merge from mysql-5.5 to mysql-trunk
+    39    1*     marko.makela@oracle.com-20110531081827-mkqxrlx0ilddhc7m
+             Merge mysql-5.5 to mysql-trunk.
+    36    1*     davi.arnaut@oracle.com-20110530151912-vjbq0n6ojdc752ru
+             Merge of mysql-5.5 into mysql-trunk.
+    25    1*     bjorn.munch@oracle.com-20110530140014-2ecq78s68fo68q84
+             upmerge 12604711
+   564           vasil.dimov@oracle.com-20110530135601-376gh2x4hj7f3d3u
+             Bug 12604399 - MOVE INNODB STATS TABLES TO MYSQL DATABASE|The two InnoDB stats..
+   265    4*     davi.arnaut@oracle.com-20110530114203-3kz6yirg2tlv09uk
+             Merge of mysql-5.5 into mysql-trunk.
+    22           alexander.nozdrin@oracle.com-20110530072659-hg5jaxisod09ltjh
+             Polishing:| - choosing more appropriate (narrow) header file;| - fixing a typo.
+    13           tor.didriksen@oracle.com-20110530070039-nkc735j0loztdnf7
+             Bug#11765003 - 57912 Use memset() rather than the deprecated bfill() and bzero..
+  2264    6      alfranio.correia@oracle.com-20110530062547-3sj55p3r5nlbqvk5
+             [rpl] WL#4832 Write more binlog events through cache rather than direct
+    45    1*     bjorn.munch@oracle.com-20110527124538-zhvt2lb7nylg2vb0
+             upmerge 12598603
+   285    2*     dmitry.shulga@oracle.com-20110527115052-f7p1tv8qyrgo11m8
+             Auto-merge of patch for bug#12546938 from mysql-5.5->mysql-trunk.
+  7231           tor.didriksen@oracle.com-20110526152009-mdn9u03pruj0mf2z
+             Bug#11765003 - 57912 Use memset() rather than the deprecated bfill() and bzero()
+    32    1*     tatjana.nuernberg@oracle.com-20110527102409-9dsjc3mr69nx97r8
+             -Werror fixes for 11745920 via 5.5
+     0    1*     anitha.gopi@oracle.com-20110527090647-lmo54kehnnil78qs
+             Null merge from mysql-5.5
+   262           tor.didriksen@oracle.com-20110525141953-n0xe4jtdhsvr9lo2
+             Bug#11765562 58545 EXPORT_SET() CAN BE USED TO MAKE ENTIRE SERVER COMPLETELY U..
+    24    4      anitha.gopi@oracle.com-20110527045335-moc6fhbj6tfici2w
+             Automerge : Update local tree
+    38           sunny.bains@oracle.com-20110527033633-pw0cghxlx54103v9
+             Bug 12399395 - ASSERTION FAILURE !MUTEX_OWN(MUTEX) IN SYNC0SYNC.IC LINE 207 4 ..
+   183    3*     dmitry.lenev@oracle.com-20110526162352-fn2bpbczt5163pwp
+             Merged fix for bug #11762012 - "54553: INNODB ASSERTS IN|HA_INNOBASE::UPDATE_R..
+   417    2*     tatjana.nuernberg@oracle.com-20110526123657-rxq2y72hy2ilqy7q
+             auto-merge Bug#11745920 from 5.5
+    85    2*     sven.sandberg@oracle.com-20110526111845-umuh5xh2iwtir7uc
+             Merged BUG#12574820 from 5.5 to trunk|One conflict resolved manually:|Text con..
+   176           jorgen.loland@oracle.com-20110526110957-hri6lm8atmw2oh46
+             Bug#11765699 (58690) !TABLE | (!TABLE->READ_SET | | BITMAP_IS_SET(TABLE->READ_..
+    48    2*     sergey.glukhov@oracle.com-20110526101307-qu3hi0klo14vtnzk
+             5.5 -> trunk merge
+   273    9      tor.didriksen@oracle.com-20110526083940-71hlwwh0jkd2itbg
+             [opt] Merge from optimiser tree
+     0    1*     bjorn.munch@oracle.com-20110526082005-nxi1glsqe8s4b12g
+             null upmerge
+   180   13      bjorn.munch@oracle.com-20110526081910-84samgo4hpwfg11g
+             merge from trunk-mtr
+    12    1*     tor.didriksen@oracle.com-20110526081409-npgrjt1gpv2fza7o
+             merge 5.5 => trunk
+    35           vasil.dimov@oracle.com-20110525134330-dbozc3xo1yzczyi4
+             Non-functional: remove excess ";"
+    14           marko.makela@oracle.com-20110526062948-hd04ybuz4qr6ijby
+             InnoDB: Fix a compiler warning.|open_or_create_data_files(): Truncate the numb..
+    13    1*     dmitry.shulga@oracle.com-20110525164828-h71zhjn7nj07jn7g
+             Merge mysql-5.5->mysql-trunk for follow-up for bug#11749345.
+    10    1*     anitha.gopi@oracle.com-20110525141040-75k9hoorn1p18xfx
+             Automerge from 5.5
+    12           anitha.gopi@oracle.com-20110525113616-3cph7q6rg994get3
+             Removed main.outfile_loaddata since the bug is fixed
+    21    1*     anitha.gopi@oracle.com-20110525110125-x97pcil75467b4np
+             Automerge from 5.5
+    45    1*     mikael@dator9-20110525101808-zhqd5az1tffaa3hu
+             merge
+    13           anitha.gopi@oracle.com-20110525053040-c36iudjb9t326fmc
+             Changed to Oracle bug number
+    12           anitha.gopi@oracle.com-20110525042344-8kcrftq29ddoo2vd
+             Restoring a line that was accidentally removed by revision 3100
+   134    2*     marko.makela@oracle.com-20110524202208-u00luqvqwfqcod2g
+             Merge mysql-5.5 to mysql-trunk.
+   522    5      anitha.gopi@oracle.com-20110524162824-fgm0rz95kjfv8429
+             Autocommit : Updating local tree
+    12    2*     anitha.gopi@oracle.com-20110524101851-yazabkeu8bzkdxe2
+             Automerge from mysql-5.5
+     0    2*     anitha.gopi@oracle.com-20110524064200-6zlfgpeqpr4bd24t
+             Null merge from mysql-5.5
+    26    2*     anitha.gopi@oracle.com-20110524045726-b53sw9ntkv9yei2b
+             Upmerge from 5.5
+    24    2*     anitha.gopi@oracle.com-20110524043512-yyrc1sahl2yne7nj
+             Bug#12584161 - Upmerge from 5.5
+    54    2*     luis.soares@oracle.com-20110523233447-pnf6pmdtslsgfnjy
+             BUG#12558519|Automerged mysql-5.5 into mysql-trunk.
+   142    1*     anitha.gopi@oracle.com-20110523115813-ggo3wmzmu8pk3jzo
+             Automerge from 5.5
+     0    3*     vasil.dimov@oracle.com-20110522201906-af9nnm7885va1zrg
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  2520   25      vasil.dimov@oracle.com-20110522201742-a6mffrl4hzv03mg7
+             [inno] Merge innodb tree
+     0    3*     guilhem.bichot@oracle.com-20110521093119-gcah2075gh411s0t
+             auto empty merge
+  1045    3      guilhem.bichot@oracle.com-20110521093035-zrjde8fxtt1ndlbm
+             merge from latest trunk
+   444    2*     dmitry.shulga@oracle.com-20110520190931-imdp7k2jt9wi83or
+             Manual merge of patch for Bug#11749345 (formerly known as bug#38813)|from 5.5-..
+     0    3*     mayank.prasad@oracle.com-20110520092354-7sr3ixi04rnoqxwl
+             resolved pending merge conflicts from 5.5
+    90    2*     luis.soares@oracle.com-20110519154905-vhfhan4ab055qjsc
+             BUG#11746302|Automerge from mysql-5.5 into latest mysql-trunk.
+  1758   74      mikael@dator9-20110519140036-u4vrj8u5rirzot5j
+             merge
+   244           jon.hauglid@oracle.com-20110519124326-25jaq6p8zk89ys1p
+             Bug#11762345 54927: DROPPING AND ADDING AN INDEX IN ONE| COMMAND CAN FAIL IN I..
+   322           jorgen.loland@oracle.com-20110519120355-qn7eprkad9jqwu5j
+             [opt] BUG#11765831: 'RANGE ACCESS' MAY INCORRECTLY FILTER ...
+   142    1*     mayank.prasad@oracle.com-20110518143645-bdxv4udzrmqsjmhq
+             merge from 5.5 for bug#11764633
+  1756   13      tor.didriksen@oracle.com-20110518104346-m0a38mt7li4iucc3
+             [opt] Merge optimiser tree
+   907           tor.didriksen@oracle.com-20110518082946-h2oxanu2lqthr64c
+             Bug#12552221 - MEMORY LEAK IN UPDATE_REF_AND_KEYS|Allocate array in memroot ra..
+    72    2*     sergey.glukhov@oracle.com-20110518070752-dudqede7tc6c8oj3
+             5.5 -> trunk merge
+    75    1      luis.soares@oracle.com-20110517225916-koq8sear3ug2gvbg
+             BUG#12370830|Automerge cset with latest mysql-trunk.
+  3837           marc.alff@oracle.com-20110517091547-3bok4hfsp2o01o2b
+             Simplified test cases.|*_lc[0,1,2] tests are not needed any more,|since perfor..
+   186    3*     marc.alff@oracle.com-20110516210738-yfwy1n02swyw55vh
+             Merge mysql-5.5 --> mysql-trunk
+     0    1      andrei.elkin@oracle.com-20110516184622-7vr7do47i8tmg97g
+             merge from trunk
+   265    2*     kent.boortz@oracle.com-20110516183847-hgf3tsp83w8gtlom
+             Merge
+    26           alfranio.correia@oracle.com-20110516172611-537aai57t7f6z6wk
+             BUG#12557307 - RPL.RPL_ROTATE_LOGS FAILS IN VALGRIND |The test case removes th..
+   280           davi.arnaut@oracle.com-20110516143054-9719kgj4l17ahg73
+             Fix warnings emitted by Clang.
+    83           davi.arnaut@oracle.com-20110516113207-iljwd0w7vy9vcb0q
+             Bug 11886774 - 59611 REMOVE THE PRAGMA INTERFACE/IMPLEMENTATION DECLARATIONS|R..
+   227    1      luis.soares@oracle.com-20110516111048-b8zr9gms8l2s9lxz
+             BUG#12416611|Automerge bzr bundle from bug report into latest mysql-trunk.
+    82           sergey.glukhov@oracle.com-20110516110128-pt8eq343xtfdhiez
+             Bug#12402590 ASSERT AT PROTOCOL::END_STATEMENT ON MYSQL-TRUNK RUNNING RQG_OPT_..
+    12           andrei.elkin@oracle.com-20110516093551-93n3pu5b4moj8wsy
+             Bug 12535301 - SYS_VARS.RPL_INIT_SLAVE_FUNC MISMATCHES IN DAILY-5.5|reverting ..
+    21    2*     alexander.nozdrin@oracle.com-20110516085210-lae2hjr4w7ng0230
+             Auto-merge from 5.5.
+   550    2*     vinay.fisrekar@oracle.com-20110514163213-ru8dt0skhxgf1ywe
+             Merge from mysql-5.5 -> mysql-trunk
+   406    1      marc.alff@oracle.com-20110513161527-l9p5sjpmocoamgkn
+             Local merge
+    30    1      alfranio.correia@oracle.com-20110513134151-w88c6oo5lsd4ukgc
+             merge mysql-trunk (local) --> mysql-trunk
+    18    5*     bjorn.munch@oracle.com-20110513115802-6z0pqy6wm04e73jb
+             upmerge w/12549572
+   588           tor.didriksen@oracle.com-20110513093613-uvazltd2qb22rrrv
+             Bug #11788245 - 60110 DO MORE THD AND GLOBAL INITIALIZATION FOR UNIT TESTING|M..
+    10           bjorn.munch@oracle.com-20110513092201-7ddtbc95ctu22ori
+             fix Tree name after accidental push
+ 13366    1      alfranio.correia@oracle.com-20110512172919-c1b5kmum4h52g0ni
+             BUG#11763471 BUG#56184 Rolled back transaction without non-transactional table..
+    77    1*     jon.hauglid@oracle.com-20110512150229-auvc2rj7wfe9k8sk
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in sql/log.cc
+   487    9      bjorn.munch@oracle.com-20110512144027-8k1qhsy1s6q5h804
+             merge broken merge fix from trunk
+   134           tatjana.nuernberg@oracle.com-20110512141829-d356g1nkucpvaa6e
+             fix broken merge
+     0    6*     tatjana.nuernberg@oracle.com-20110512125011-8tt9kods36wupmsx
+             auto-merge
+   134           tatjana.nuernberg@oracle.com-20110512124739-0hw4yg3k5wwqjdb3
+             auto-merge
+   161    4      tatjana.nuernberg@oracle.com-20110512095000-at7jmzk9lv3wsgcr
+             auto-merge
+    40           jon.hauglid@oracle.com-20110512074956-l74pfdv493fw8d3s
+             Bug#12538873 BINLOG.BINLOG_STM_BINLOG FAILS IN VALGRIND| DUE TO INSERT DELAYED..
+    76    3      tatjana.nuernberg@oracle.com-20110512042833-mdigivgh3oflv18p
+             manual merge
+    60    2*     luis.soares@oracle.com-20110511141951-0kq0kjnsevroknos
+             BUG#12416700|Manual merge from mysql-5.5 into latest mysql-trunk.|Conflicts|==..
+   122    1      luis.soares@oracle.com-20110511140725-07ev25rycih828e5
+             BUG#12416768|Automerge bzr bundle from bug report into latest mysql-trunk.
+    61    2*     magnus.blaudd@oracle.com-20110511131934-004lcqa8mnkzhlj3
+             Merge
+    11    1*     alexander.nozdrin@oracle.com-20110511124711-l89r036xarfrzwsr
+             Auto-merge from mysql-5.5.
+     0    2*     georgi.kodinov@oracle.com-20110511123526-w3livfe5jw0rkatb
+             merge mysql-5.5->mysql-trunk
+   252    2      georgi.kodinov@oracle.com-20110511123423-hx63q57kye3xjbsd
+             merge from upstream
+    12           dmitry.lenev@oracle.com-20110511113127-kfqwyqbo50ilzrto
+             Small clean-up in LEX structure.|Removed unused LEX::backup_dir member.
+     0    5*     georgi.kodinov@oracle.com-20110510134134-dccrlz780k8960u2
+             merge mysql-5.5->mysql-trunk
+    50    9      georgi.kodinov@oracle.com-20110510133737-4d1jn7bg183hjzdj
+             weave-merge of mysql-5.5->mysql-trunk
+    52           jon.hauglid@oracle.com-20110510105534-bn0il5kmt6av3jcj
+             Bug#11747690 (former 33650)|MYSQL_ALTER_TABLE() UNNECESSARILY DOES FULL TABLE ..
+    32           horst.hunger@sun.com-20110510090631-mwq95b8vhg2q3c08
+             Fix for Bug 12405804: The variable transaction_prealloc_size gots values up to..
+    13    1*     serge.kozlov@oracle.com-20110509194430-liiegqtwc4lrs0md
+             automerge 5.5->trunk
+    13           andrei.elkin@oracle.com-20110509174444-joicmpyxcszx3ir4
+             bug#12535301 - SYS_VARS.RPL_INIT_SLAVE_FUNC MISMATCHES IN DAILY-5.5|setting sy..
+   107    1*     alexander.nozdrin@oracle.com-20110509084822-rllafhgeclo0yt46
+             Manual merge from mysql-5.5.
+   232    1      luis.soares@oracle.com-20110506222403-l71h2y48ln7ngbtc
+             BUG#12358775|Automerging bzr bundle into latest mysql-trunk.
+   221    1*     alexander.nozdrin@oracle.com-20110506134657-8zhfg4wtf62pdwf5
+             Auto-merge from mysql-5.5.
+   161    2*     alexander.nozdrin@oracle.com-20110506133253-bw06jl9xxkydr7yb
+             Manual merge from mysql-5.5.
+   666           jorgen.loland@oracle.com-20110506132631-5wickj6dvrh1dpj6
+             BUG#11765831: 'RANGE ACCESS' MAY INCORRECTLY FILTER | AWAY QUALIFYING ROWS|Pre..
+     0    2*     alexander.nozdrin@oracle.com-20110506132138-46459va9vcbd4nz0
+             Empty merge from mysql-5.5.
+    12   17*     alexander.nozdrin@oracle.com-20110506125636-fch21zuu1xdbbq0t
+             Manual merge from mysql-5.5.|Conflicts:| - mysql-test/r/cast.result
+     0    1*     alexander.nozdrin@oracle.com-20110506124937-zdewge4n9ldagig4
+             Null-merge from mysql-5.5.
+    26    3*     alexander.nozdrin@oracle.com-20110506124737-3n99oz0gyh29nj8q
+             Manual merge from mysql-5.5.|Conflicts:| - mysql-test/r/mysqldump.result
+    73           luis.soares@oracle.com-20110506103810-z3k5pza2n49cpl2w
+             BUG#12407446|Post-push fix. Fixing result file for:|- funcs_1.is_columns_mysql..
+    42           magnus.blaudd@oracle.com-20110506092343-w44iqn04a542c1ms
+             Merge from 5.5 to trunk
+    13           magnus.blaudd@oracle.com-20110506085453-ohx3f9rv7yp8xa4p
+             Merge in patch for bug 12380149
+   102           nirbhay.choubey@oracle.com-20110506082600-3ug6glzno5gv4pr3
+             Bug#11760134 - 52515: mysql sessions are not| terminated properly.|The mysql c..
+    69    3*     luis.soares@oracle.com-20110505235911-kwcglio0a1vwaxws
+             BUG#12354268|Manual merge from mysql-5.5 into mysql-trunk.|Conflicts|=========..
+   385    2*     luis.soares@oracle.com-20110505235244-f1u7rfy8rjh95r0z
+             BUG#11762616: BUG#55229: 'POSTION' |Manual merge from mysql-5.5 into mysql-tru..
+     0    4*     luis.soares@oracle.com-20110505231747-qmqga2viax5s24og
+             BUG#12425925|Automerge (empty): mysql-5.5 --> mysql-trunk.
+   173    3      luis.soares@oracle.com-20110505230723-19jdnu7hfrbz1fxf
+             BUG#12407446|Automerging full cset into latest mysql-trunk.
+    34           serge.kozlov@oracle.com-20110505140728-cc3uvvmmc0quoay9
+             BUG#11761610|1. Replace binlog file suffix to 000003|2. The patch that makes t..
+   128           azundris@sun.com-20110505105234-zwr6oenmsq5nd3zm
+             Bug#11762799: buffer overflow in debug binary of dbug_buff in Field_new_decima..
+   152    3      azundris@sun.com-20110505065553-hc0w7p6jfaczp5er
+             auto-merge
+  4980   16      alexander.nozdrin@oracle.com-20110504183304-d3cemadwrnzsbgdf
+             Auto-merge patches for Bug#27480 from mysql-trunk-bug27480.
+   455    2*     alexander.nozdrin@oracle.com-20110504134913-7ex6j8jorj3phhj6
+             Manual merge from mysql-5.5.
+    13           alexander.nozdrin@oracle.com-20110503180621-dwgae5s7fl7ahm1e
+             WL#5787 follow-up: fix compilation warning.
+    41           alexander.nozdrin@oracle.com-20110503180537-xps69vmeno0vj1os
+             MTR tests for QA sign off of wl#5787: adding forgotten file.
+     0    2*     kent.boortz@oracle.com-20110503142336-330esry0pasef5dv
+             Merge
+  1167           alexander.nozdrin@oracle.com-20110503130400-xy365zff0vd1fsu9
+             MTR tests for QA sign off of wl#5787.
+  1982           alexander.nozdrin@oracle.com-20110503130300-c59865kipmt0xzj7
+             Patch for WL#5787 (IPv6-capable INET_ATON and INET_NTOA functions).|The patch ..
+    13           tor.didriksen@oracle.com-20110503064606-jc6s4pp4a020dciy
+             BUG#11766327 post-push fix: build break with optimized/-DMYSQL_MAINTAINER_MODE=1
+    30    6      vasil.dimov@oracle.com-20110502162052-1596ds1clw32j6du
+             [inno] merge innodb tree
+    20    1*     sven.sandberg@oracle.com-20110502144345-ulgpfczfr3u032fl
+             marked tests experimental
+    53           jorgen.loland@oracle.com-20110502115141-oe6j6jhj6pemxx6p
+             BUG#11766327: Range analysis should not be done many times| for the same index..
+   801           jorgen.loland@oracle.com-20110502111636-38kjeb31mgn7kj12
+             BUG#11766327: Range analysis should not be done many times | for the same inde..
+     0    3*     vasil.dimov@oracle.com-20110502095307-2ju0wd8vpgrhlkjc
+             Merge mysql-5.5 -> mysql-trunk (empty)
+     0    1*     bjorn.munch@oracle.com-20110502094438-3kb0dqeu1aay3ux6
+             null upmerge
+    58    3      bjorn.munch@oracle.com-20110502094329-ao58f58wivjsewnq
+             merge from trunk-mtr
+    10           marc.alff@oracle.com-20110430163516-akk1js76ogd4idi2
+             Fixed tree name
+    93    2*     nirbhay.choubey@oracle.com-20110430053644-jska5zi39lf1dv1f
+             Merge of fix for bug#11757855 from mysql-5.5 -> mysql-trunk.
+    10           marc.alff@oracle.com-20110430001444-jyyjv5ijzc7mz8he
+             Re branched tree for WL#5378
+    55    3*     davi.arnaut@oracle.com-20110429215346-a45s45pi0p2lf945
+             Merge of mysql-5.5 into mysql-trunk.
+  1908    2      rafal.somla@oracle.com-20110429150913-4gt812yd8fg90frm
+             null merge of bug#11766631 and bug#11879051 from mysql-5.5
+     0    3*     bjorn.munch@oracle.com-20110429130139-gcfvze0x39hyx16u
+             null upmerge
+   131   20      bjorn.munch@oracle.com-20110429130031-9f93f6ekxu32ui39
+             merge from trunk-mtr
+   169    8      vasil.dimov@oracle.com-20110429111848-zuhj6vyjkoajb8bc
+             [inno] Merge innodb tree
+     0    1*     mattias.jonsson@oracle.com-20110429084639-1kfdsn1x96ibob10
+             merge
+    81    6      mattias.jonsson@oracle.com-20110429084552-nasiqe9subq2awlg
+             merge
+    13    1*     georgi.kodinov@oracle.com-20110429083743-8lmpnvuq628q3yjc
+             merge mysql-5.5->mysql-trunk
+   106           marc.alff@oracle.com-20110428220107-qky2956tychat5kz
+             Bug#12409247 - STAGE TIMER DEFAULT SHOULD BE NANOSECONDS|Changed the STAGE tim..
+   431           davi.arnaut@oracle.com-20110428165010-i250drgt65lgb7wx
+             Bug#11765860: main.kill fails under valgrind with 'invalid file descriptor' wa..
+     0    1*     georgi.kodinov@oracle.com-20110428101818-az8w55v7ki6z3j7s
+             merge mysql-5.5->mysql-trunk
+    37    2*     georgi.kodinov@oracle.com-20110428101657-il29s1p75rorgxea
+             Merged mysql-5.5->mysql-trunk
+  1369   12      tor.didriksen@oracle.com-20110428082818-crm9rh7lwwrs9j2b
+             [opt] Merge optimiser tree
+    13           marc.alff@oracle.com-20110428050754-mfv50i3aak8b3ika
+             Fixed broken define
+  1749   10      vasil.dimov@oracle.com-20110428044206-8zxddgtmtlwcts9i
+             [inno] Merge innodb tree
+    53           marc.alff@oracle.com-20110428031143-3zrbmfn71buqawzu
+             Fixed build break for|cmake -DWITH_PERFSCHEMA_STORAGE_ENGINE=0 .
+    56           serge.kozlov@oracle.com-20110427210554-dvn3gov77d5kjkv7
+             BUG#11761610. Add waiting of binlog files from mysqlbinlog that running in bac..
+    12    1*     sven.sandberg@oracle.com-20110427125939-c46jcvdtabt1ytpb
+             Merged patch that marks test experimental from 5.5 to trunk
+    30    2*     nirbhay.choubey@oracle.com-20110427120034-7ub5ddh617pj13ht
+             Merge of fix for bug#12329909 from mysql-5.5 -> mysql-trunk.
+    32    1*     magnus.blaudd@oracle.com-20110427090459-oph0wpcvwpb94nrv
+             merge 5.5 -> trunk
+    94    2*     sergey.glukhov@oracle.com-20110427075504-b4jn9d63oqjtsbsh
+             5.5 -> trunk merge
+  3026    1      marc.alff@oracle.com-20110426203524-imfwuci0h9slqx4y
+             Local merge
+     0    4*     guilhem.bichot@oracle.com-20110426113014-pffnx6cimh08ww9v
+             (empty) merge from latest 5.5
+  1084    5      guilhem.bichot@oracle.com-20110426111918-4nv2mnji9ogxp7df
+             merge from latest trunk
+   104    2*     mattias.jonsson@oracle.com-20110426100110-zw32wzppuebk2ld3
+             merge
+    17           build@mysql.com-20110426002147-3le97cvzpvkpxgev
+             fix 35418/11748190
+    55    2*     serge.kozlov@oracle.com-20110425201422-vuakcsq22m6c7uby
+             autocommit 5.5->trunk
+     0    3*     mattias.jonsson@oracle.com-20110423211337-1kij2wls83qzw0xu
+             merge
+  1022    6      mattias.jonsson@oracle.com-20110423205425-w4blc7wciram03m3
+             merge
+   139           dmitry.lenev@oracle.com-20110422125910-i2165o2ktxegw3an
+             Fix for bug#11759114 - '51401: GRANT TREATS NONEXISTENT |FUNCTIONS/PRIVILEGES ..
+   126    2*     sergey.glukhov@oracle.com-20110422080502-nrb1q534ymnjyqbx
+             5.5 -> trunk merge
+    56    2*     sergey.vojtovich@oracle.com-20110422070259-co6cbnqx0mti9a3l
+             Merge.
+     0    1*     vasil.dimov@oracle.com-20110421075949-vga61crkz2sztp05
+             Merge mysql-5.5 -> mysql-trunk
+    52    7      vasil.dimov@oracle.com-20110421075904-ivig364q3xxgih00
+             [inno] Merge innodb tree
+     0    1*     vasil.dimov@oracle.com-20110421053623-3f5o395q7ji65qke
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  7575   62      vasil.dimov@oracle.com-20110421053517-paozohzqkmgg9gb1
+             [inno] Merge innodb tree
+    72           marc.alff@oracle.com-20110420175653-3m3cyf28bx1av8ws
+             test cleanup.
+     0    2*     jon.hauglid@oracle.com-20110420104022-ltewvyapt0n52itj
+             Null merge from mysql-5.5 to mysql-trunk
+    75    2*     sergey.glukhov@oracle.com-20110420075657-sz0kich51soqk105
+             5.5 -> trunk merge
+    96    1      marc.alff@oracle.com-20110419164749-zrvb8fl5v6vd2y81
+             Local merge
+  4871           marc.alff@oracle.com-20110418234145-zvklhp3jqo3js56d
+             Bug#12370950 TABLE_IO_WAITS_SUMMARY_BY_INDEX_USAGE AGGREGATES NON-INSERT DML W..
+    71    2*     serge.kozlov@oracle.com-20110418202304-defobc052e4khvvf
+             autocommit 5.5 -> trunk
+    12           sven.sandberg@oracle.com-20110418142038-tov8n4l0du2azs3q
+             marked rpl_checksum experimental because of BUG#12370830.
+     0    2*     sven.sandberg@oracle.com-20110418125043-m3mtjug305b4csb0
+             null merge
+   132    2*     martin.hansson@oracle.com-20110418084741-a2e8di1vxhlrlauk
+             Merge of test case for bug#11758558 - 50774
+     0    3*     bjorn.munch@oracle.com-20110416161309-0b9jwvy94a5x53fd
+             null upmerge
+   123   10      bjorn.munch@oracle.com-20110416154516-1k7ceuwc00e95qls
+             merge from trunk-mtr
+   650    1*     alexander.nozdrin@oracle.com-20110415121435-c24cmv7xz31ahtex
+             Merge from mysql-5.5.
+   147           alexander.nozdrin@oracle.com-20110415094259-22923jpricrots8n
+             Preliminatry patch for WL#5787 (IPv6-capable INET_ATON and|INET_NTOA functions..
+   202           alexander.nozdrin@oracle.com-20110415093946-2ltfssbkvqcg6eu5
+             Preliminary patch for WL#5787: add missing files.
+   276           alexander.nozdrin@oracle.com-20110415093358-838p6rdv9fpoh9dp
+             Preliminary patch for WL#5787 (IPv6-capable|INET_ATON and INET_NTOA functions)..
+   192           alexander.nozdrin@oracle.com-20110415090421-io2etb9tn2knwl73
+             Preliminatry patch for WL#5787 (IPv6-capable INET_ATON and|INET_NTOA functions..
+    52    2*     sergey.glukhov@oracle.com-20110415090216-rj95aq0qmvhk8cky
+             5.5 -> trunk merge
+   293    2*     tor.didriksen@oracle.com-20110415081149-deq6rp83twv8u6q0
+             Merge fix for Bug#11765713 from 5.5
+    17           olav.sandstaa@oracle.com-20110414122514-j8i2y8ra7n4cvwqw
+             Fix for Bug#12359943 COMPILATION FAILURE WHEN USING SUN STUDIO 12 COMPILER TO ..
+    15           olav.sandstaa@oracle.com-20110414120453-7gkjhhpuc9il3g9y
+             Remove two compile warnings from the Sun Studio compiler in the ICP |implement..
+    26    2*     serge.kozlov@oracle.com-20110414115758-k43k8odgjsa2s1sw
+             autocommit 5.5 -> trunk
+     0    1*     sergey.glukhov@oracle.com-20110414093734-m1difp5m53lwjyp9
+             automerge
+    89    3      sergey.glukhov@oracle.com-20110414093602-4q1spxwynjmk3ih9
+             automerge
+   175    1*     jon.hauglid@oracle.com-20110414084714-3nkimc3wcv5zkj7c
+             Merge from mysql-5.5 to mysql-trunk|No conflicts
+    27    1*     magne.mahre@oracle.com-20110414080949-ryodxcli6iptdzvu
+             Merge from 5.5. No conflicts
+    28           anitha.gopi@oracle.com-20110414053357-f2h4i4w9zusvzoam
+             Add big-test option to weekend run of all suites
+   758    2*     serge.kozlov@oracle.com-20110413210310-c50aqnm6x0o1rc6j
+             autocommit 5.5 -> trunk
+   197    1*     davi.arnaut@oracle.com-20110413191645-42lqxp32gvvjry5c
+             Merge of mysql-5.5 into mysql-trunk.
+     0    3      build@mysql.com-20110413184308-2hl5tmxuwvrn14dx
+             Merge 5.6.2 release branch
+    18    1      build@mysql.com-20110413181709-fs2zy0745jiu37tz
+             Merge main trunk and the 34341 fix
+   184    1*     davi.arnaut@oracle.com-20110413113144-h4a3ywdxnvamghe3
+             Merge of mysql-5.5 into mysql-trunk.
+    12    1*     anitha.gopi@oracle.com-20110413112112-swxytwupnmurey97
+             Merge from 5.5
+   101    3*     dmitry.lenev@oracle.com-20110413071313-y1ul3rr7f9ay2npo
+             Merged fix for Bug#11938039 RE-EXECUTION OF FRM-ONLY ALTER|TABLE WITH RENAME C..
+   117           dmitry.shulga@oracle.com-20110412124826-yvcnuhl4hf4aec4o
+             Follow-up for patch removing '--max-long-data-size' variable use|(which itself..
+    29           jon.hauglid@oracle.com-20110412114017-8xpm0j95y0b9eo05
+             Small clean-up patch.|Removed three function declarations from sql_base.h for..
+    26    1*     jon.hauglid@oracle.com-20110412105959-2h5bs6nps46pakeq
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in mysql-test/r/xa.result|Te..
+     0    1*     sergey.glukhov@oracle.com-20110412103658-swej8opqeuc64gy3
+             5.5 -> trunk merge
+   236    4      sergey.glukhov@oracle.com-20110412103538-mmmwwlsviw613ltp
+             automerge
+     0    1*     sven.sandberg@oracle.com-20110412094853-mlhrikk0h1wksz51
+             null merge
+     0    2*     sven.sandberg@oracle.com-20110411141348-wusk6o4412eriktb
+             null merge
+    20           sven.sandberg@oracle.com-20110411135453-t3h2taqwervabg6o
+             marked failing tests experimental
+    51    1*     davi.arnaut@oracle.com-20110411115224-kwazs67xi8a6j2wp
+             Merge of mysql-5.5 into mysql-trunk.
+    89           dmitry.shulga@oracle.com-20110411102836-xg3lxye6eeucozsw
+             follow-up for patch for|Bug#11764168: 56976: SEVERE DENIAL OF SERVICE IN PREPA..
+     0    6*     alexander.nozdrin@oracle.com-20110411100925-mt3bq771x7fwy3rq
+             Null-merge from mysql-5.5.
+   373    1*     alexander.barkov@oracle.com-20110408134138-71l52ua9ntizewih
+             Merging from 5.5
+   138    1*     alexander.nozdrin@oracle.com-20110408103240-e74cs8d61tmqcez3
+             Merge from mysql-5.5.
+    71    2*     gleb.shchepa@oracle.com-20110408081519-0jnpi1ch4gbqtbtw
+             auto-merge 5.5-->trunk (bug 11829681)
+   101    3*     nirbhay.choubey@oracle.com-20110408070757-0vxiwor3u4frkroo
+             Merging patch for bug#11765157 from mysql-5.5.
+   114           jorgen.loland@oracle.com-20110407142447-uqf1btsg4ezb9gwu
+             BUG#11882131 Post-commit cleanup: Replace | delete select->quick; select->quic..
+     0    3*     bjorn.munch@oracle.com-20110407123151-1zo05n4brg2qseg5
+             null upmerge
+   557   27      bjorn.munch@oracle.com-20110407120644-4srd0odrxusyt3n0
+             merge from trunk-mtr
+   426    9      jorgen.loland@oracle.com-20110407104524-w0brup3u7x6rzdoy
+             [opt] Merge optimiser tree
+     9    1*     georgi.kodinov@oracle.com-20110407095759-s7e43hf9fhvrj48j
+             merge mysql-5.5->mysql-trunk
+   532    5*     georgi.kodinov@oracle.com-20110407095509-5idqpfy9xz0w80la
+             merge mysql-5.5->mysql-trunk
+   122    2*     georgi.kodinov@oracle.com-20110406152105-nk0yajrv8uo08vxf
+             merge 5.5->trunk
+    20           alfranio.correia@oracle.com-20110406133337-kfz587gzza336qx3
+             BUG#12324076 - RQG_RPL_SEMISYNC TEST FAILURE, SLAVE CRASHES WITH SEGMENTATION ..
+    30           georgi.kodinov@oracle.com-20110405131738-i1cl5q3znfn0jj9e
+             Bug #11922942 : MAIN.VARIABLES-BIG FAILS DUE TO CHANGE IN SHOW PROCESS |OUTPUT..
+    45           anitha.gopi@oracle.com-20110406043138-rsjw44x5ldjxx5c9
+             Added non debug runs of all the tests in the daily and weekly batches
+    34           alfranio.correia@oracle.com-20110405164624-yd48tlizqffruh4f
+             Post-fix BUG#11766392 - BUG#59495|Transformed warning message when a repositor..
+    48           alfranio.correia@oracle.com-20110405155115-ae0y3voh0nmw8obd
+             Post-fix for BUG#11765887 - BUG#58897|After switching to a new repository, the..
+    13    1*     georgi.kodinov@oracle.com-20110405123940-y55f71ahi5rbnwuf
+             merge mysql-5.5->mysql-trunk
+    35           alfranio.correia@oracle.com-20110404205928-74vdhj8hw75d90x5
+             BUG#11766392 - BUG#59495 Post-fix:| . Suppressing warning message that was mak..
+   940    1      marc.alff@oracle.com-20110404150903-d2w5ezkfexjy7no0
+             Local merge
+    12           tor.didriksen@oracle.com-20110404134951-vatvwi09qhqxf8gt
+             BUG#11766392 - 59495, post-push fix: R_OK was missing on windows
+  1903    1      alfranio.correia@oracle.com-20110404100613-nk1mbe89kyiy45og
+             merge mysql-trunk (local) --> mysql-trunk|Conflicts:| . sql/share/errmsg-utf8...
+   182           alfranio.correia@oracle.com-20110404094222-t3kfwx19mv93iekd
+             BUG#11766392 - 59495: RPL.RPL_READ_OLD_RELAY_LOG_INFO FAILS INTERMITTENTLY IN ..
+   852           tor.didriksen@oracle.com-20110404084725-k8mehtjjg83uyueg
+             Bug#11929733 - 59607: REMOVE THE FNO-IMPLICIT-TEMPLATES COMPILATION FLAG|Expli..
+     0    3*     vasil.dimov@oracle.com-20110404061715-3v7e8evt7o12ssu0
+             Merge mysql-5.5 -> mysql-trunk (empty)
+   390    5      vasil.dimov@oracle.com-20110404061446-1kqrdxlquhzbw6j3
+             [inno] Merge innodb tree
+    54    2*     gleb.shchepa@oracle.com-20110402194250-42ut015lx64u726y
+             auto-merge 5.5-->trunk (bug 11766094)
+   511           jorgen.loland@oracle.com-20110401140452-dc3lfm7m6ii3auna
+             [opt] BUG#11882131: OPTIMIZER CHOOSES FILESORT WHEN REVERSE ...
+     0    2*     mattias.jonsson@oracle.com-20110331143551-q8lg4fcceeof0yrl
+             merge
+     0    2*     magne.mahre@oracle.com-20110330141702-ct75u2mrtimpskvj
+             Null merge
+    37           dmitry.lenev@oracle.com-20110330114332-6dcte6tltmq1n0l6
+             Small clean-up.|Removed members of TABLE_LIST structure which are no longer|an..
+    82    4      sergey.glukhov@oracle.com-20110330074419-gv9l0kxhy8mrqqmu
+             automerge
+  5362   18      vasil.dimov@oracle.com-20110330073434-tl0hw788nw404c4q
+             [inno] Merge innodb tree
+   694    9      andrei.elkin@oracle.com-20110329145716-hpp1cnld04yxc9ne
+             merge from the main repo to local mysql-trunk prior to push
+  1916    1*     magne.mahre@oracle.com-20110329125634-hzbz8ycxn7srnrvp
+             Merge 5.5->trunk
+    44           gkodinov@mysql.com-20110329125202-rsdqmfyh22e230pj
+             fixed a solaris build failure
+     0    2*     jon.hauglid@oracle.com-20110329084229-lmkvlgdbzdjm3qu2
+             Null merge from mysql-5.5 to mysql-trunk
+    20           gkodinov@mysql.com-20110329083458-1w0rb7bxa2c3umj0
+             Moved the inclusion of time.h at the top of the #include list.
+   588           georgi.kodinov@oracle.com-20110329080107-akvgisr5zn63uh7n
+             Bug #11764778: server feature request - expose ssl certificate details| in sho..
+  4574   13      jorgen.loland@oracle.com-20110329072017-9ffigj7078n61hhb
+             [opt] Merge optimiser tree
+    48    2*     mayank.prasad@oracle.com-20110328154305-0ffwvfo371b32lxa
+             merge from 5.5 for bug#11751148
+     0    1*     sergey.glukhov@oracle.com-20110328134233-nxb1ncydopmcf3nt
+             5.5 -> trunk merge
+    76    4      sergey.glukhov@oracle.com-20110328134127-zexglkmzr5gq8rxz
+             automerge
+    46    1*     georgi.kodinov@oracle.com-20110328133430-7t99cee7uiphbi41
+             merge mysql-5.5->mysql-trunk
+  1040    1      mattias.jonsson@oracle.com-20110328114815-7dp3vsh250pgcwab
+             merge
+   250    4*     georgi.kodinov@oracle.com-20110328111042-n0s6yb0m3hzczdls
+             merge mysql-5.5->mysql-trunk.|Fixed failing cast.test due to a new warning add..
+     0    3*     sergey.glukhov@oracle.com-20110328091402-p8i196oqscgxlru9
+             5.5 -> trunk merge
+   115    4      sergey.glukhov@oracle.com-20110328090959-tcdj6z9qogkhqvsx
+             automerge
+     0    2*     magne.mahre@oracle.com-20110328085135-plnpc76dn3080moy
+             Null merge
+    61    5*     sergey.glukhov@oracle.com-20110328081039-xo46p80jxgfkn2f9
+             5.5->trunk merge
+    74    2*     sven.sandberg@oracle.com-20110325152025-bk4g5142itsk0436
+             Merged BUG#11766427, BUG#59539 from 5.5 to trunk.|No conflicts.
+   139           jon.hauglid@oracle.com-20110325151341-zo0aj156m01whtrx
+             Bug #11766752 (former 59936)|Multiple XA assertions - transactional statement ..
+   314    6      georgi.kodinov@oracle.com-20110325143808-lw2g411ffimrgmtt
+             merge
+   691    4      magnus.blaudd@oracle.com-20110325140346-siiav8wc20p4dwck
+             Merge
+   186    3*     luis.soares@oracle.com-20110325121556-i43pocn444hkvbmw
+             BUG#11766865: Manual merge from mysql-5.5 into latest mysql-trunk.| |Conflicts..
+     0    2*     luis.soares@oracle.com-20110324144141-0kg7uncmhqui28pz
+             BUG#11765446 (BUG#58416)|Automerge (empty merge) from mysql-5.5 into mysql-tru..
+   612           olav.sandstaa@oracle.com-20110324131636-gzrofr5dly62c3p5
+             Fix for Bug#11873324 "WRONG RESULT WITH ICP AND STRAIGHT_JOIN"|This bug causes..
+  5579           ole.john.aske@oracle.com-20110324131037-93b6ec028ra3lo7m
+             Recommit: Updated resultfiles for 'suite=parts' after push of fix for Bug#1176..
+    56           alexander.barkov@oracle.com-20110324103716-9hk8jn4zbt95icqe
+             BUG#11898467 - SERVER CRASHES ON SELECT HEX(WEIGHT_STRING(STR AS [CHAR|BINARY]..
+    13    1*     georgi.kodinov@oracle.com-20110324103512-eddjrenp5tt5aqsz
+             Null merge of bug #11766306 : have_innodb is deprecated in 5.6|Removed one dea..
+ 21225   20      marc.alff@oracle.com-20110324081600-hyb2z92bybx6ymnt
+             Merge WL#2515 PERFORMANCE SCHEMA STAGES / WL#4813 PERFORMANCE SCHEMA STATEMENTS
+  1406           tor.didriksen@oracle.com-20110322114440-1i917d6g1zh0fjly
+             Bug 11886774 - 59611 REMOVE THE PRAGMA INTERFACE/IMPLEMENTATION DECLARATIONS|R..
+    95    1      luis.soares@oracle.com-20110323225119-p2al9186e1xc1wzv
+             Automerged bzr bundle attached in the bug report!
+   589           alexander.barkov@oracle.com-20110323121417-ug1i6tlqd2yyatpu
+             Adding functionality to dump Unicode canonical equivalence,|as a preparation t..
+    54           vinay.fisrekar@sun.com-20110323113704-pucr0378nz9m07tu
+             BUG#11867052 - ADD FUNCS_1 TO THE DEFAULT SUITE LIST IN MYSQL-TEST-RUN.PL |Cha..
+     0    3*     bjorn.munch@oracle.com-20110323103244-kc9otxeyrgzwb7vm
+             null upmerge
+   129   11      bjorn.munch@oracle.com-20110323101113-w9tbx08fw6vlidi4
+             merge from trunk-mtr
+   472           ole.john.aske@oracle.com-20110323095224-z84ht93cb8eb84f4
+             Updated fix (W/ Jorgens review comments) for bug#11764737:| 'Optimizer is over..
+     0    3*     magne.mahre@oracle.com-20110322153114-y6p1m9y730lssgf7
+             Null merge
+     0    3*     magne.mahre@oracle.com-20110322125752-1vcsv5j1ejhqruwv
+             Null merge
+   221    1*     alexander.nozdrin@oracle.com-20110322120652-ogo46ny9jznrxfgs
+             Merge from mysql-5.5.
+    19    4      georgi.kodinov@oracle.com-20110322120516-2s26bld7x81nsvu3
+             merge
+   110           alfranio.correia@oracle.com-20110322105644-k7j6khi9up8lmedy
+             Update the default.daily collection in order to run rpl test cases with:| . re..
+    22    1*     vinay.fisrekar@sun.com-20110322043853-0aohyeegnment1i0
+             Merge 5.5 -> trunk|Bug#11766500 - 59624: FUNCS_1 SUITE TESTS FAILING WITH RESU..
+    59    4*     mayank.prasad@oracle.com-20110321162430-vbuui57giapmch6n
+             merge from 5.5 to trunk for bug#11751148
+     0    3*     georgi.kodinov@oracle.com-20110321133630-75h6l0wlpqx4lovj
+             null-merge mysql-5.5->mysql-trunk
+   963    1*     georgi.kodinov@oracle.com-20110318145827-q1t1vd16ptv09hzw
+             merge
+    26           alfranio.correia@oracle.com-20110318131147-hdx787j5j8o7i7rv
+             Post-merge fix for BUG#11877568.
+   592    2      tor.didriksen@oracle.com-20110318123703-4su2v8ecl3ngub5k
+             local merge
+   586    2*     vinay.fisrekar@sun.com-20110318112023-cuzz9r80xtaguc5n
+             up-merge 5.5 --> mysql-trunk|+|Bug#11766500 - 59624: FUNCS_1 SUITE TESTS FAILI..
+     0    4*     alexander.nozdrin@oracle.com-20110318110113-j5ln8oj7htz8pdzy
+             Empty merge from mysql-5.5.
+    29    2*     mattias.jonsson@oracle.com-20110318103117-l29xpq4g76zgx1oc
+             merge
+    32    1*     georgi.kodinov@oracle.com-20110318102140-9vijjzdhfpa1tgpv
+             merge
+     0    4*     georgi.kodinov@oracle.com-20110317141254-fos8m2vx2da8h8h9
+             merge
+   119    1*     georgi.kodinov@oracle.com-20110317140630-5ozy6zmr6zzc2yea
+             merge
+    12    1      georgi.kodinov@oracle.com-20110317133820-viu3z9vfwewdjuzg
+             merge
+     0    1*     alfranio.correia@oracle.com-20110317133403-lapwp13hyxd9yfjk
+             null-merge msyql-5.5 --> mysql-trunk
+   232    3      alfranio.correia@oracle.com-20110317133123-txh7mjqa6bhimp4p
+             merge mysql-trunk (local) --> mysql-trunk
+   703   41      georgi.kodinov@oracle.com-20110317124519-0ncmac4ujnafpxq9
+             merge
+    37    1*     nirbhay.choubey@sun.com-20110317123453-bcne69fkc21m5f42
+             Merge from mysql-5.5 -> mysql-trunk.
+   187           tor.didriksen@oracle.com-20110317114804-kmx03y74jr26gp9i
+             Bug #11766678 - 59843:USING UNINITIALISED VALUE IN USES_INDEX_FIELDS_ONLY
+   117           jon.hauglid@oracle.com-20110317112331-1tel4ja0sfwcrfnt
+             Bug #11829666 (former 60180)|Unused mutex THR_LOCK_isam|The problem was that t..
+    25    2*     nirbhay.choubey@sun.com-20110317110351-alfex7t2zly8a85c
+             Merge from mysql-5.5 -> mysql-trunk.
+    82    1*     sven.sandberg@oracle.com-20110317103242-ytoulomyzji7t49x
+             Merged BUG#11877618 from 5.5 to trunk. No conflicts.
+    45    5*     georgi.kodinov@oracle.com-20110317094750-6rktdb8lv5mf9nso
+             merge mysql-5.5->mysql-trunk
+   849   31      georgi.kodinov@oracle.com-20110317094328-uaytvqn1ps5fp7of
+             merge mysql-trunk-secrurity-fixed (5.5.10) into mysql-trunk
+  1385   11      jorgen.loland@oracle.com-20110317074026-twl99kobi04cmg28
+             [opt] Merge optimiser tree
+  2221    1*     kent.boortz@sun.com-20110316221528-qwhwyfili4kjeo7m
+             Removed the "Third-Party Component Notices" part from README
+  4663   43      vasil.dimov@oracle.com-20110316144407-4qh6teqdwy2b4ke3
+             [inno] Merge innodb tree
+    13    1*     serge.kozlov@oracle.com-20110315215819-yz622trfrtij75jz
+             merge 5.5->trunk
+    31           dmitry.shulga@oracle.com-20110315180859-o66s2wrjrnobszn8
+             Fixed a bug in manual merge|(dmitry.shulga@oracle.com-20110315130322-2a0zhequp..
+    81    1*     sven.sandberg@oracle.com-20110315151634-e8t1rdsb8fri7atu
+             Merged BUG#11872422 from 5.5 to trunk.
+   375    2*     dmitry.shulga@oracle.com-20110315130322-2a0zhequpu9q8dyt
+             Auto-merge from mysql-5.5 for Bug#11764168 (56976: Severe denial|of service in..
+   176    1*     jon.hauglid@oracle.com-20110315105406-i7xey1x3kz0qmh5z
+             Merge from mysql-5.5 to mysql-trunk|conflicts:| Text conflict in mysql-test/ex..
+    22    1*     bjorn.munch@oracle.com-20110315100000-6u2z45m5bvo7rcwz
+             Add warning suppression to test rpl.rpl_slave_load_remove_tmpfile
+    61    2*     chuck.bell@oracle.com-20110314184319-z1h6n8s2rwcunm1l
+             Local merge for BUG#59752
+    60    2*     davi.arnaut@oracle.com-20110314181141-l1l1jywtbzc82v5f
+             Merge of mysql-5.5 into mysql-trunk.
+    96           frazer@mysql.com-20110314175526-ewdhnalncc0anvwo
+             Bug#11799583 - SUPPORT NO DB FILTERING FOR INJECTED TABLE MAP EVENTS|Actually ..
+    93           frazer@mysql.com-20110314170916-ypgin17otj3ucx95
+             Bug#11799671 NOT POSSIBLE TO SKIP INCIDENT ERRORS|do_apply_event() for the Inc..
+    13           andrei.elkin@oracle.com-20110314135544-xez4ef4e0rynbmy9
+             Bug#11765758 bug#58754 RPL_CORRUPTION FAILED on mysql-trunk|This is an intermi..
+    20    1*     magne.mahre@oracle.com-20110314132147-zla8g1zzqqzgkt30
+             Merge from mysql-5.5 (no conflicts)
+    66    1*     alexander.nozdrin@oracle.com-20110314131913-70kpenr3vn90p43q
+             Auto-merge from mysql-5.5.
+    31           mayank.prasad@oracle.com-20110314104057-1ycw76pkmpqch6ed
+             bug #11763174: post-fix for previous push.
+   129           andrei.elkin@oracle.com-20110313195640-p5b2b8v4b0jq4bb2
+             Bug#11765758 bug#58754 RPL_CORRUPTION FAILED on mysql-trunk|Simplifying the te..
+   178           mayank.prasad@oracle.com-20110311185312-5cagraeoyr2duhgm
+             Bug #11763174: INFORMATION_SCHEMA.PARAMETERS.NUMERIC_PRECISION SHOULD BE BIGIN..
+    55    1*     joerg.bruehe@oracle.com-20110311150223-bvtfxmoiiutheh2p
+             Auto-upmerge a test case fix ("file_contents") from 5.5 to trunk (5.6).
+   453           alexander.barkov@oracle.com-20110311141644-85rz3i8s4wmyi1x2
+             Preparation for WL#896 and WL#5821|- Adding various command line options: --le..
+     0    3*     bjorn.munch@oracle.com-20110311122001-848ir9njh66pkshu
+             null upmerge
+  2890   45      bjorn.munch@oracle.com-20110311115635-d9d06mk7vq7be44v
+             merge from trunk-mtr
+    61    2*     mayank.prasad@oracle.com-20110311115156-y2zn87g3a3d1xjn5
+             merge from mysql-5.5 for bug#11760210
+    79    1*     marc.alff@oracle.com-20110311104837-v3p141n0y4y01qqt
+             Merge mysql-5.5 --> mysql-trunk
+   338    1*     marc.alff@oracle.com-20110310123005-fqck2pcdiy3w6b4r
+             Merge mysql-5.5 --> mysql-trunk
+   447    4*     marc.alff@oracle.com-20110310100809-lqm9tmw5751grjmw
+             Merge mysql-5.5 --> mysql-trunk
+    94           guilhem.bichot@oracle.com-20110310084921-oazjeqhxpi53f9o1
+             post-fix for Bug#11822249 "CHARSET_INFO POINTERS ARE NOT CONST-CLEAN":|Windows..
+   141    1*     alexander.nozdrin@oracle.com-20110310083354-30fa3ouzbaxhjdue
+             Auto-merge from mysql-5.5.
+    26           guilhem.bichot@oracle.com-20110310082314-dxsg7e9n7rpv3bn7
+             post-fix for Bug#11822249 "CHARSET_INFO POINTERS ARE NOT CONST-CLEAN":|one vir..
+     0    1*     anitha.gopi@oracle.com-20110310043119-h49zi5dun0moc9ot
+             Null merge from 5.5
+    21    1*     anitha.gopi@oracle.com-20110310042936-9qighxo1wlmpyrom
+             Null merged default.weekly changes from 5.5 and made trunk specific changes to..
+     9    1*     anitha.gopi@oracle.com-20110310041954-d1o3pihtd8je4cle
+             Automerge from 5.5
+ 10929           guilhem.bichot@oracle.com-20110309205455-02gijiignyljh3ty
+             Fix for Bug#11822249 "CHARSET_INFO POINTERS ARE NOT CONST-CLEAN".|During devel..
+   113    3*     mattias.jonsson@oracle.com-20110309175532-oeydb0yexvyh5w8w
+             merge
+   680   19      georgi.kodinov@oracle.com-20110309143316-svc0cw34x7u6js7y
+             merge 
+    60    1      mattias.jonsson@oracle.com-20110309140346-1i57fnzlgipuhfa6
+             merge of bug#11766232 (bug#60039).
+    43           andrei.elkin@oracle.com-20110308192855-glfphtgci36fg413
+             Bug#11765758 bug#58754 RPL_CORRUPTION FAILED on mysql-trunk|There are two outs..
+   172           build@mysql.com-20110308183752-qxpxdxuxl7twia08
+             fixing Bug #34984 [patch] mysqld_multi to support reload option
+   101    1*     marc.alff@oracle.com-20110308172434-b7ebu3tse8aa8xwg
+             Merge mysql-5.5 --> mysql-trunk
+    26           davi.arnaut@oracle.com-20110308132330-kank5cz77ax4o6hf
+             Remove have_case_insensitive_fs require files.|Use have_case_insensitive_file_..
+    24           andrei.elkin@oracle.com-20110308112911-0ntb3qdauwb4fab9
+             Merging Bug #58753 fixes to mysql-trunk removed a suppression in rpl_checksum...
+   672    1*     jon.hauglid@oracle.com-20110308092139-y11zrt2dqau21azn
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in client/mysqlcheck.c|Text ..
+    75    1*     jon.hauglid@oracle.com-20110307135644-e7davhuob367ctfx
+             Merge from mysql-5.5 to mysql-trunk|No conflicts
+   249    1*     jon.hauglid@oracle.com-20110307092336-5rmej6c13i5ie06z
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in sql/sql_base.h|Text confl..
+    10           build@mysql.com-20110306164502-2zyfeq9myutg81al
+             Bumping version for 5.6.2
+   243    1*     alexander.barkov@oracle.com-20110304155518-pqqvdidh4s5p51r8
+             Merging from mysql-5.5
+    22    1*     nirbhay.choubey@sun.com-20110304153800-tonx490pbziukmnj
+             Merge of fix for bug#11766219 from mysql-5.5 -> mysql-trunk.
+   119    1*     jorgen.loland@oracle.com-20110304152033-2rc87tepo4zvg09g
+             Merge BUG#11766317 from 5.5 to trunk
+    24    1*     alexander.nozdrin@oracle.com-20110304151205-f3fwmvxpfl1nh16x
+             Auto-merge from mysql-5.5.
+   258    4*     alexander.barkov@oracle.com-20110304145932-qur2ywa20ntsqpdr
+             Merging from mysql-5.5
+    78    1      mattias.jonsson@oracle.com-20110303222619-r63murfw4yqlesaw
+             merge
+     0    2*     alexander.barkov@oracle.com-20110303083236-2s4n0wnrb67b3iz8
+             merge from mysql-5.5
+    23    5      anitha.gopi@sun.com-20110303071659-6l24ru1tu4kumsgx
+             Updating local tree
+    18           alexander.barkov@oracle.com-20110303070314-pdk5p09tkh087zqp
+             After-fix for WL#5331 Support Unicode for Windows command line client
+    18    1*     davi.arnaut@oracle.com-20110302230853-q3yv4ex31oig2fir
+             Merge of mysql-5.5 into mysql-trunk.
+    22    2*     vinay.fisrekar@sun.com-20110301160604-k0g88bw0bi4zenav
+             merge mysql-5.5 -> mysql-trunk
+    57   24*     alexander.barkov@oracle.com-20110301144701-adg6uv298bu3xy51
+             Merging from mysql-5.5
+    43    1*     magne.mahre@oracle.com-20110301133958-qmraohi0htobce0s
+             Merge from mysql-5.5. No conflicts
+   160    1*     alexander.barkov@oracle.com-20110301122038-lqlsqfmtgjhujq4v
+             Merging from mysql-5.5
+   402    1*     magne.mahre@oracle.com-20110301120537-qk30awgzy8ahrw5v
+             Merge from mysql-5.5. No conflicts
+    38    1*     dmitry.lenev@oracle.com-20110301115928-4p8g0u7r02yid5b9
+             Merged fix for bug #11765505 "58480: LARGE_TESTS.LOCK_TABLES_BIG|IS FAILING" i..
+    34    1*     serge.kozlov@oracle.com-20110228185004-wyfcwdwjo611n3we
+             Bug#548020. merge 5.5->trunk
+   110    1*     tor.didriksen@oracle.com-20110224071803-asncm330rif3v000
+             merge 5.5 => trunk
+     0    1*     vasil.dimov@oracle.com-20110223173507-x7gqnnenha8a8sje
+             Merge mysql-5.5 -> mysql-trunk
+  2388   17      vasil.dimov@oracle.com-20110223173418-dr5kwe5j5fwxhnoj
+             [inno] Merge innodb tree
+     0    1*     jon.hauglid@oracle.com-20110223135230-0mn9junwun2jy1wi
+             Null-merge from mysql-5.5 to mysql-trunk.
+    17           alexander.barkov@oracle.com-20110223113208-zbsl4q3de95hvghj
+             An after-fix for WL#5331 to address binlog_stm_ctype_cp932 test failure.
+  1038           alexander.barkov@oracle.com-20110223045307-u316hqua4z5j86xe
+             WL#5331 Support Unicode for Windows command line client|Based on the original ..
+    47    2      andrei.elkin@oracle.com-20110222155247-k07c3725arfph223
+             merging from the main repo prior to push own bug fixes
+   104           ole.john.aske@oracle.com-20110222154404-8sjsvr3on6mslnru
+             Addendum to fix for bug#11766256: Added missing include files for MTR test.
+  3201           ole.john.aske@oracle.com-20110222142433-qxyq15e56quh2w6d
+             Fix for Bug#11766256: GREEDY OPTIMIZER PRODUCE STUPID QUERY EXECUTION PLANS|Th..
+   360    2*     nirbhay.choubey@sun.com-20110222140532-kxu0k1prajzkk7er
+             Merging from mysql-5.5.
+   277           alexander.barkov@oracle.com-20110222132505-vb6dturtjbv5qvjw
+             WL#5624 Collation customization improvements |Extension for the original patch..
+   113    1      mattias.jonsson@oracle.com-20110222105121-m3lqmq3vfisxc3ic
+             merge
+  1835    7      alexander.nozdrin@oracle.com-20110222091349-ukkomv6mv6ylv5ak
+             WL#5493  Binlog crash-safe when master crashed
+    79           jorgen.loland@oracle.com-20110222080158-yssmiplzhyanbdiy
+             BUG#11762751: UPDATE STATEMENT THROWS AN ERROR, BUT STILL | UPDATES THE TABLE ..
+   220           azundris@sun.com-20110222053744-xav70yu3pzt5dzsd
+             post merge cross platform fixes
+  1149   10      azundris@sun.com-20110222025840-79440ng3jqmis8em
+             manual merge
+    22    1*     jorgen.loland@oracle.com-20110221155558-04hwdy2dlrz2kflo
+             BUG#11762751 and BUG#11764529 should have been pushed to 5.5.|Null-merging alr..
+   383           jorgen.loland@oracle.com-20110221153141-r9olymn3prit6y2k
+             BUG#11762751: UPDATE STATEMENT THROWS AN ERROR, BUT STILL | UPDATES THE TABLE ..
+     0    1*     magnus.blaudd@oracle.com-20110221114857-h6gmnfh8sqygvsvc
+             Merge empty merge changeset into trunk
+    34    3      magnus.blaudd@oracle.com-20110221114255-5uhevexde17c9bxq
+             Merge
+ 14114   18      mattias.jonsson@oracle.com-20110221113809-7r44cvlemdni08fo
+             [part] WL#5217: Add explicit partition selection
+    39    1*     jon.hauglid@oracle.com-20110221113423-r1rn25gqvmj0wj5j
+             Merge from mysql-5.5 to mysql-trunk|No conflicts
+   445           jorgen.loland@oracle.com-20110221103631-6j4lbrh4ef520lm8
+             Bug#11766642: crash in Item_field::register_field_in_read_map | with view|(For..
+   106    1      vasil.dimov@oracle.com-20110221102528-6zdps77rryzg4wmt
+             [inno]
+   226           tor.didriksen@oracle.com-20110218113905-q0in762tona442om
+             Bug #11788245 - 60110 DO MORE THD AND GLOBAL INITIALIZATION FOR UNIT TESTING
+    94    2*     sergey.vojtovich@oracle.com-20110221082302-wfel5gbwf9szr1gf
+             Merge.
+    25           nirbhay.choubey@sun.com-20110221072819-hcjugk2kh0qyo5je
+             Post fix for mysqldump test.
+   121    2*     nirbhay.choubey@sun.com-20110221071546-gflrnx3o6lvek0m4
+             Merge of fix for bug#11766310 from mysql-5.5 -> mysql-trunk.
+   545           anders.song@greatopensource.com-20110221025730-pmbz97nac4mhfqfc
+             WL#5576 Prohibit CREATE TABLE ... SELECT to modify other tables|BUG#11749792 a..
+    31    2*     alexander.barkov@oracle.com-20110218142203-2ontf1exz4eoontl
+             Merging from 5.5
+    82           jon.hauglid@oracle.com-20110218140512-5fg5fvi4txfkhrub
+             Followup to Bug #11752069 (former bug 43152)|Assertion `bitmap_is_set_all(&tab..
+     0    2*     alexander.barkov@oracle.com-20110218132536-kj36j6k86g9ozkbq
+             Merging from mysql-trunk
+     0    3*     vasil.dimov@oracle.com-20110218130221-3aferh20je08zovo
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  6610    8      vasil.dimov@oracle.com-20110218130057-0mn2c6h8wedo2kfz
+             [inno] Merge innodb tree
+   205    2*     martin.hansson@oracle.com-20110218105918-woxgf319ak45v9p4
+             Merge of fix for Bug#11766675.
+   214    1*     alexander.barkov@oracle.com-20110218095651-apiqbwkd47xosxh1
+             Merging from mysql-5.5.
+    67    1*     alexander.barkov@oracle.com-20110218074302-uqjpa0ufbsw1386y
+             Merging from 5.5.
+   286           marc.alff@oracle.com-20110217180006-mvlzpjxndzi5r4gm
+             Cleanup for the performance schema test scripts:|- formatting of *.opt files|-..
+    21           tor.didriksen@oracle.com-20110217161626-2g3opq3vv0qrd1al
+             Post-push fix for Followup to Bug #11752069
+   523           jon.hauglid@oracle.com-20110217143947-klfkmdysi42vdkb9
+             Followup to Bug #11752069 (former bug 43152)|Assertion `bitmap_is_set_all(&tab..
+   401           jorgen.loland@oracle.com-20110217132501-osqf3fztc67ydnov
+             Enabled new optimizer features by mistake. Reverting.
+  1513   10      jorgen.loland@oracle.com-20110217122259-stpr3r1hkueucif5
+             [opt] Merge optimiser tree
+     0    3*     vasil.dimov@oracle.com-20110217121027-s1h83lwzkvwaue8x
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  3488   43      vasil.dimov@oracle.com-20110217120522-lc2ghhsyi12eibkg
+             [inno] Merge innodb tree
+   135    2*     magne.mahre@oracle.com-20110217115808-0ec6buukxed4x1fl
+             Merge from 5.5
+  1168           ole.john.aske@oracle.com-20110217113807-9qm11wd7g2gvv1a4
+             Baseline fix for Bug#11766256: GREEDY OPTIMIZER PRODUCE STUPID QUERY EXECUTION..
+    12    1*     tor.didriksen@oracle.com-20110217073605-gdb0nmlxrl92jg8m
+             merge 5.5 => trunk
+    47    3*     jonathan.perkin@oracle.com-20110216224813-nfe4nm9kudpnp3km
+             Merge to mysql-trunk
+    26    2*     bjorn.munch@oracle.com-20110216204812-1p84bafaykocppj5
+             Simple fix of suppress pattern in test insert_select
+    13    2*     jon.hauglid@oracle.com-20110216172851-5kf5if73rn1qklau
+             Merge from mysql-5.5 to mysql-trunk|No conflicts
+   190    1*     sven.sandberg@oracle.com-20110216171330-1i3sv9ehno6r9jx8
+             Merged WL#5670 from 5.5 to trunk.
+  1114    2*     jon.hauglid@oracle.com-20110216161928-otlv12zt5guopxqv
+             Merge from mysql-5.5 to mysql-trunk|No conflicts
+    15           marc.alff@oracle.com-20110216143829-mcii00g564wu3y0b
+             Fixed the table aggregation tests to be more robust,|to avoid spurious failures.
+    20    1*     tor.didriksen@oracle.com-20110216134926-x0arzdm3jg20w7ie
+             merge 5.5 => trunk
+    25    1*     tor.didriksen@oracle.com-20110216125845-o7y3y7buvva22hef
+             merge 5.5 => trunk
+    17    1*     bjorn.munch@oracle.com-20110216112527-dw5on8wni31p5x8w
+             Removed unused code accidentally pushed with Bug @58122
+   115    4      dmitry.lenev@oracle.com-20110215135136-inwybp4y3ng11ons
+             Merged recent changed from mysql-trunk with fix for|bug @59888.
+   112           magne.mahre@oracle.com-20110215123839-f1nn7tlm9v2q1o32
+             WL#5185 Remove SQL_MAX_JOIN_SIZE system variable|THe SQL_MAX_JOIN_SIZE system ..
+     0    2*     luis.soares@oracle.com-20110215121230-4w8l14fl30hma5so
+             Empty (and auto) merge form mysql-5.5.
+   193           magne.mahre@oracle.com-20110215114733-al6941u3zk3j46v6
+             WL#5185 Remove deprecated FLUSH <MASTER|SLAVE> syntax|"FLUSH MASTER" has been ..
+   433           alexander.barkov@oracle.com-20110215113056-5qzxii3z08ibsvy7
+             A pre-requisite patch for|WL#5331 Support Unicode for Windows command line cli..
+    66           luis.soares@oracle.com-20110214163236-pjqf0yrqmtl16a1l
+             BUG#11765599: 58584: MOVE TIMESTAMPS IN SLAVE_[SQL|IO]_ERROR TO | SEPARATE COL..
+   655    1      luis.soares@oracle.com-20110214160738-qtsnftbts0joc707
+             BUG#11765599: 58584: MOVE TIMESTAMPS IN SLAVE_[SQL|IO]_ERROR TO | SEPARATE COL..
+     0    1*     joerg@mysql.com-20110214145710-pyut3xbumbwzuayf
+             Commit an empty upmerge.
+   377    2      joerg@mysql.com-20110214145033-0c5xrhayjt13i2qb
+             Merge bug fix 42969 into main.
+   106    1*     jon.hauglid@oracle.com-20110214141528-5mcjqq7rb9xoy7vv
+             Merge from mysql-5.5 to mysql-trunk.|No conflicts.
+    23           luis.soares@oracle.com-20110214124146-5nmnng4vso3qpdx4
+             Fixes for:| - typo in collections/disabled-daily.list;| - missing bug referenc..
+     0    2*     vasil.dimov@oracle.com-20110213183312-va50lezxmseif0du
+             Null merge mysql-5.5 -> mysql-trunk|This version bump is irrelevant for trunk ..
+    12    1      luis.soares@oracle.com-20110211121111-ixbz7jj4teaw6vtx
+             Merging on behalf of Alfranio post-push fix for |test case rpl_row_event_max_s..
+    39           luis.soares@oracle.com-20110211121000-7appo3zlntf0km37
+             Disabling tests in the daily run as told by Anitha:| - rpl.rpl_semi_sync_event..
+    20    1*     alexander.barkov@oracle.com-20110210134116-fbpj8z01gm8nonyd
+             Merging from 5.1.
+    18    1*     mattias.jonsson@oracle.com-20110210105239-7d185yns47br33yn
+             merge
+    13           jonathan.perkin@oracle.com-20110210102623-e2e7jqkev5skfjeh
+             These fake targets are no longer created.
+   482    8      jorgen.loland@oracle.com-20110210093020-3dty0rm3o59w0mwp
+             [opt] Merge optimiser tree
+    13    1*     georgi.kodinov@oracle.com-20110210092614-zrt9pix3u3neykzx
+             merge 59017 to mysql-trunk
+   125    3      georgi.kodinov@oracle.com-20110210090639-t9eegwfzzp4tg3mh
+             merge
+    13           tor.didriksen@oracle.com-20110210090017-q830uurrqn6npihc
+             cmake build is broken, test-bt-xxx are gone
+   439    1*     alexander.barkov@oracle.com-20110210084705-14u68nklbiuw4kb9
+             Merging from 5.5
+     0    3*     mats.kindahl@oracle.com-20110209223420-8hf0rygwb8hu3t90
+             Merging in backported patch for BUG#58455.
+    46    1*     jonathan.perkin@oracle.com-20110209194258-xrw3qhph9vhf4640
+             Merge up to mysql-trunk
+    62    1      marc.alff@oracle.com-20110209163641-nxavjyohm3d3bvbs
+             Local merge
+    13    1*     bjorn.munch@oracle.com-20110209153549-24vmzf3zsalvenej
+             Silly mistake in 59148, forgot .exe on Windows
+   645    1      marc.alff@oracle.com-20110209152444-ch36nqjq8eo03w7l
+             local merge
+     0    3*     joerg@mysql.com-20110209135143-hidhqdza13yd8aa0
+             Empty upmerge.
+   139    3      joerg@mysql.com-20110209134708-rq7qhv8ibsaxe2gh
+             Merge bugfix 56581 into main.
+    17    2*     dmitry.shulga@oracle.com-20110209112112-62efv51tm3ugeowk
+             Automerge from mysql-5.5 for follow-up bug#57450.
+     0    3*     john.embretsen@oracle.com-20110209101905-mmuq9b2ifgjxthj2
+             Null merge from mysql-5.5
+    12           alfranio.correia@oracle.com-20110209092832-5cs1rbisq14r685c
+             Enabling test case rpl_row_event_max_size after fixing BUG#55675.
+    13           georgi.kodinov@oracle.com-20110209073117-vtp229shgu2phapt
+             WL#2940: fixed a valgrind warning due to a typo in a debug assertion
+    39    2*     dmitry.shulga@oracle.com-20110209065659-g5oom6ou4a4d8j77
+             Automerge from mysql-5.5
+   449    3      georgi.kodinov@oracle.com-20110208175008-62ki0jsru3v8ecns
+             merge from trunk to trunk-stage
+     0    3*     vasil.dimov@oracle.com-20110208173442-ocy58fdcuew3xvex
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  2316   42      vasil.dimov@oracle.com-20110208173331-fu0j2s14jbg915zu
+             [inno] Merge innodb tree
+    96    9*     georgi.kodinov@oracle.com-20110208155412-tfy4l5hqxi0g7o41
+             weave merge from mysql-5.5 to mysql-trunk
+  1027   80      georgi.kodinov@oracle.com-20110208154951-gzqgr74u4bndswi8
+             auto-merged mysql-trunk-security-fixed to mysql-trunk.
+    20           anitha.gopi@sun.com-20110208135625-jcp43i0mhqum4osw
+             Bug#59979 - Added debug-server option
+    55    1*     anitha.gopi@sun.com-20110208135427-2xtdgkfqlyrsadbc
+             Bug#59979: Upmerge revision 3316 from mysql-5.5
+    13    2*     john.embretsen@oracle.com-20110208095604-yv40ya1dutsvp39a
+             Merge fix for bug 59837 from mysql-5.5 to mysql-trunk.
+     0    1*     anitha.gopi@sun.com-20110208075503-8mcqs508rebp5xs3
+             Null merge from 5.5
+     0    2*     anitha.gopi@sun.com-20110208065044-6ekwngb3ljkgj859
+             Null merge from 5.5
+   136           anitha.gopi@sun.com-20110208063401-413gcfjerkeob4fr
+             Clean up the collections. With bugteam trees gone there is no need for collect..
+     0    1*     anitha.gopi@sun.com-20110208062115-jzyogs2rlle5qv5c
+             Null merge from mysql-5.5
+     7    2*     anitha.gopi@sun.com-20110208061339-dn746roarm85eots
+             Upmerge revision 3311 from mysql-5.5
+    12    1*     anitha.gopi@sun.com-20110208032846-n0byvl61uhu5u1bu
+             Bug#52208 : Removed main.gis from experimental. Upmerged from 5.5
+     0    4*     bjorn.munch@oracle.com-20110207235423-p72c50ae0vgdjbdl
+             null upmerge
+    83    9      bjorn.munch@oracle.com-20110207235315-oejyajxuc8utuwfu
+             merge 47141,59979
+    27           tor.didriksen@oracle.com-20110207130347-lmjksir7xpbf3sth
+             Bug #59632, post-push fix for unit test.|thd->thread_stack must point to the s..
+    18           jon.hauglid@oracle.com-20110207114918-m0a336hi7wav0wmt
+             Bug #59861 why does log_slow_statement call thd_proc_info twice?|This patch re..
+    86    1      tor.didriksen@oracle.com-20110207101821-2q7lj2rnb1w9fmc0
+             Merge Bug #59632 from 5.5, add unit test
+   439    2*     ole.john.aske@oracle.com-20110207094653-lcejq75drwade4dd
+             Merge of fix for bug#59308 from mysql-5.5 -> mysql-trunk
+    14    2*     vinay.fisrekar@sun.com-20110207070653-d7wa8hr1qx9ytyw0
+              bzr merger from mysql-5.5 to mysql-trunk| Bug#59955 - engines/funcs/ps_string..
+   177    2*     dmitry.shulga@oracle.com-20110205050629-ympv0fhtb0vw64ff
+             Auto-merge from mysql-5.5 for bug#57450.
+    16           anitha.gopi@sun.com-20110205021754-ebrnbqg9khw2zg04
+             Added some more combinations
+   113    1*     serge.kozlov@oracle.com-20110204194042-uyruc8dx9maxhrun
+             merge mysql-5.5 to mysql-trunk
+    18    1*     marc.alff@oracle.com-20110204153051-qnd9c3mdfv2q62a4
+             Merge mysql-5.5 --> mysql-trunk
+    53    3*     luis.soares@oracle.com-20110204150014-a8qb9s0cd9xtpiud
+             BUG#59147: automerge mysql-5.5 into mysql-trunk.
+   362           tor.didriksen@oracle.com-20110202083013-5ml5a09v0t5c25ik
+             Bug #59867 Cleanup cmake files for mysqld and embedded|Create one common list ..
+   483    1      marc.alff@oracle.com-20110204122131-upb2nct1oiulovtb
+             Local merge
+   169    2*     dmitry.shulga@oracle.com-20110204051109-7enmofxh2vnpdmox
+             Megre changes from mysql-5.5 for bug#58026.
+   155           tor.didriksen@oracle.com-20110203135102-4rjgomp399lulbk2
+             Bug #59111 gis crashes when server is compiled without performance schema|The ..
+   107           magne.mahre@oracle.com-20110203101306-q8auashb3d7icxho
+             Bug#58915 Valgrind warning in MYSQLparse()|Under execution of a CHANGE MASTER ..
+   225    6*     georgi.kodinov@oracle.com-20110202183139-ykxq0tjd2vo3km91
+             merge
+    81    3*     dmitry.lenev@oracle.com-20110202142654-f1baq7gbosisll0z
+             Merged fix for bug #58650 "Failing assertion:|primary_key_no == -1 | primary_k..
+   297    1*     tor.didriksen@oracle.com-20110202134110-1uncowbmni6m62kg
+             Merge Bug #36022 from 5.5
+  2039   14      jorgen.loland@oracle.com-20110202132358-khrjqzdcs3jrda3i
+             [opt] Merge optimiser tree
+   222           marc.alff@oracle.com-20110202115259-p5azio9gpjr5oig6
+             Tree cleanup (removal of test script debug_env)
+    88           jon.hauglid@oracle.com-20110202103221-y9rsy95eujvyjx4u
+             Bug #58709 assert in mysql_execute_command|The triggered assert checks that ei..
+     0    1*     tor.didriksen@oracle.com-20110202092141-9pvozmc78k2cgbgj
+             Empty merge of Backport of fix for Bug#52123
+   212           ole.john.aske@oracle.com-20110202090455-99sq3a34nhkkq66n
+             Fix for bug#56690 'Wrong results with subquery with | GROUP BY inside < ANY cl..
+    81           ole.john.aske@oracle.com-20110202081516-fv7dqwj11afpumsi
+             Fixed failing testcase after commit of fix for bug#58490.|Added '--sorted_resu..
+    44    1      magnus.blaudd@oracle.com-20110201143429-zy98jul6okjlpudf
+             Merge of fix for bug#58082
+   345    1*     ole.john.aske@oracle.com-20110201142457-3hdefsxj12q0acvl
+             merge from mysql-5.5
+   873    2*     ole.john.aske@oracle.com-20110201124739-xmivchewz2vqc04b
+             Merge of fix for bug#57030
+   376           tor.didriksen@oracle.com-20110201075246-uf0bppayywpvtgr7
+             Bug #59794 Enable unit testing of classes which depend on a working THD enviro..
+   192    1*     georgi.kodinov@oracle.com-20110131155558-max2fc00g1mobu8k
+             merge to trunk
+     0    2*     alfranio.correia@oracle.com-20110131143645-adjsz57nh921np4f
+             null-merge
+   428    5*     alfranio.correia@oracle.com-20110131134438-ravmm40h965x7d5f
+             mysql-5.5 --> mysql-trunk|Conflicts:| . mysql-test/suite/rpl/t/disabled.def| ...
+    12           jon.hauglid@oracle.com-20110131101319-93a4ubzhesdrfc9h
+             Added mysys/queues to .bzrignore.|Queue-test re-enabled in WL#1393.
+    80    2*     sandeep.doddaballapur@sun.com-20110131094207-3aor2w2ia2lq4s9u
+             Upmerge for change in mysql-5.5 - #45731
+    38    3*     sandeep.doddaballapur@sun.com-20110131091409-m0e3g3oxm7xtq70c
+             upmerge for changes to mysql-5.1 - #33971
+    12    1      anitha.gopi@sun.com-20110131042308-0l2ggxhv1pgqpmet
+             Bug#47791 : Moved main.subquery_sj_none to experimental group
+     0    3*     vasil.dimov@oracle.com-20110130165639-1pr3opz839b98q5j
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  8490   81      vasil.dimov@oracle.com-20110130165522-m0o6al0pn5ig9kv3
+             [inno] Merge innodb tree
+     0    1*     bjorn.munch@oracle.com-20110130115129-js8oloj0kke23y2u
+             null upmerge
+   217    9      bjorn.munch@oracle.com-20110130115042-u671iduxcr5uw04c
+             merge 59148,59489
+   232    2*     john.embretsen@oracle.com-20110129121556-1162ss59b7ivqn2z
+             Merge fix for bug 56817 from mysql-5.5 to mysql-trunk. Removed double entries ..
+    16           marc.alff@oracle.com-20110128185545-knrd930f29jy22b2
+             Adding instrumentation
+    37           marc.alff@oracle.com-20110128184059-k2jlz36la1hkis5a
+             Bug#59799 handler statistics for the performance schema engine|Before this fix..
+   429    1      marc.alff@oracle.com-20110128175245-fxqguwen7b57p8ps
+             Local merge
+   259    7      mattias.jonsson@oracle.com-20110128135805-3pgrced799kccf9f
+             merge
+   295           olav.sandstaa@oracle.com-20110128125704-qoynw29whkg93549
+             Fix for Bug#59186 Wrong results of join when ICP is enabled|When index conditi..
+    13           marc.alff@oracle.com-20110128124911-1ddvdz4m8lotyzgw
+             Fixed compiler warning
+   103           marc.alff@oracle.com-20110128124603-za7fxwxnm1kq3keo
+             Bug#59740 Performance schema test failures on freebsd|Changed the tests status..
+   267           olav.sandstaa@oracle.com-20110128102156-bbdh0eufqr9y48u7
+             Fix for Bug#58838 Wrong results with HAVING + LIMIT without GROUP BY | when IC..
+     0    4*     john.embretsen@oracle.com-20110128100618-yo9uw2cvw9ojbear
+             Empty merge from mysql-5.5
+   983           tor.didriksen@oracle.com-20110127153118-qo3gyazm32xcwsw8
+             Bug #59309 Cleanup MDL - THD interface |Define an abstract interface MDL_conte..
+    19    1*     tor.didriksen@oracle.com-20110127134628-9cakw9celrequj4i
+             merge 5.5 => trunk
+     0    3*     horst.hunger@sun.com-20110127083749-vuerotv3sh8a009y
+             null merge
+     0           horst.hunger@sun.com-20110127080848-i3582ftf440r0gc8
+             Null merge from 5.1 rev 3569 to trunk.
+    34           anitha.gopi@sun.com-20110127005739-af6513ysokcngcwv
+             Made the file more readable and fixed some errorrs
+   223    1      mattias.jonsson@oracle.com-20110126211256-7netk3waleausbsw
+             merge of bug#56438 into mysql-trunk
+    76    8*     mattias.jonsson@oracle.com-20110126201331-ab82uv7s5qmdufs5
+             merge
+    11           marc.alff@oracle.com-20110126155000-gz8rxd60cnsnfh1x
+             Used the correct test name in default.experimental for debug_env
+   263    1      marc.alff@oracle.com-20110126145607-0olu09psmormmrub
+             Local merge
+   582    1*     jon.hauglid@oracle.com-20110126135704-m2mgl5x1zjz7ojif
+             Merge from mysql-5.5 to mysql-trunk|Text conflict in sql/ha_partition.cc|Text ..
+    10    2*     alfranio.correia@oracle.com-20110126124817-snogk2k02t2oshzo
+             merge mysql-5.5 --> mysql-trunk
+  1866           marc.alff@oracle.com-20110126093410-4lld9881l4ca3mar
+             Fixed a compiler warning in storage/perfschema/table_setup_instruments.cc|Impr..
+     0    3*     anders.song@greatopensource.com-20110126073718-vg8fn0n5o9cnqysf
+             Auto Merge.
+    39           marc.alff@oracle.com-20110125153507-0cwjfq4p3so6ze0m
+             Fixed compiler warnings
+     0    3*     bjorn.munch@oracle.com-20110125143535-lnouw5iqymn2g1uo
+             null upmerge
+    94   12      bjorn.munch@oracle.com-20110125141111-fl3ili63hgjz7l68
+             merge 59063
+    24    1*     georgi.kodinov@oracle.com-20110124154716-9ca9rjaw3smuu1kh
+             merge
+    13    1*     georgi.kodinov@oracle.com-20110124150524-iicwnfk7dd87w85q
+             merge
+    12           horst.hunger@sun.com-20110124115130-m2o021fzf9agcguq
+             Due to merge to trunk.
+    75           jorgen.loland@oracle.com-20110124090203-1grig6b522tmw4cf
+             BUG#47853: Implicitly grouped queries do not need to use | temporary tables|A ..
+    21           anitha.gopi@sun.com-20110124055958-my4wersfuke8kbi5
+             Add more tests to daily run
+    20    2*     anders.song@greatopensource.com-20110124035822-to3cj6hrdb5sa9zm
+             Manual Merge
+     6           anders.song@greatopensource.com-20110122061651-kyr9hjpqa32omlak
+             Bug#59279 UUID differs in retries of circular replication tests| |rpl.rpl_circ..
+    94           daogang.qu@greatopensource.com-20110121113047-wh7mf5d6t41qzj1e
+             Bug #58784 rpl_row_ignorable_event fails on PB2|In RBR, The rows are inserted ..
+ 49597    7      marc.alff@oracle.com-20110121111103-gu0nysksnm7zloem
+             Merge mysql-trunk-wl5379 --> mysql-trunk|WL#5371 PERFORMANCE_SCHEMA Instrument..
+   104           olav.sandstaa@oracle.com-20110120145703-1r29my2q0oux817s
+             Follow-up patch for test case for Bug #58816. |The test case turns off index c..
+     0    3*     martin.hansson@oracle.com-20110120123036-v0ke0x005v11g45p
+             Merge.
+  2686   13      jorgen.loland@oracle.com-20110120090926-xms6k8scdrtl8yai
+             [opt] Merge optimiser tree
+    57    2*     martin.hansson@oracle.com-20110119143913-7ctrb0tgk43csqwa
+             Merge of fix for Bug#59173.
+   512    2*     bar@mysql.com-20110119133554-nsj8rbbrbhyoc71k
+             Merging Copyright update from 5.5
+     0    3*     bjorn.munch@oracle.com-20110119124232-d2o25k68680hjucy
+             null upmerge
+   581   23      bjorn.munch@oracle.com-20110119121742-s4rh30gg4y1s67fo
+             merge from trunk-mtr
+     0    2*     anders.song@greatopensource.com-20110118180004-qiu8ubqy5j88wk70
+             Automerge
+   329    2*     anders.song@greatopensource.com-20110118175419-0b0m3j5iv5gsfqpn
+             Manual Merge
+    12    1*     anitha.gopi@sun.com-20110118175248-rz1c2wcc5scmu0a6
+             Bug#47449: Merge revision 3263 from mysql-5.5
+    26    1*     john.embretsen@oracle.com-20110118130935-dfwm3owvzej26cif
+             Merge of post push fix for bug#45730 from mysql-5.5 to mysql-trunk.
+    22    1      luis.soares@oracle.com-20110118123551-wv9zw6gtdxqyv51w
+             Automerge from bug branch into latest mysql-trunk.
+    67           alexander.barkov@oracle.com-20110118071649-6ayyh3xrhkjeswle
+             Bug#59145 valgrind warnings for uninitialized values in my_strtoll10_mb2| @ my..
+    83    2*     alexander.barkov@oracle.com-20110118065345-xj7b0r11c2yj0v3m
+             Merging from 5.5.
+    59    2*     vinay.fisrekar@sun.com-20110118040242-ldhz3912pctd6ums
+              Merge from mysql-5.5 for | sys_vars.innodb_max_dirty_pages_pct_func fails spo..
+    48    1      luis.soares@oracle.com-20110117185804-9z9v2q49jwjzr273
+             BUG#59499: mtr check fails for some replication tests due to ipv6|Automerge in..
+    16    1*     luis.soares@oracle.com-20110117185639-7g42rzm6eyzf3x10
+             Automerge from mysql-5.5 into mysql-trunk.
+    59    1*     tor.didriksen@oracle.com-20110117143652-5uun5ae5edb1vimh
+             Merge from 5.5: fix for Bug #58991
+    94    2*     alexander.barkov@oracle.com-20110117123558-9z1ce4fbkrt9a7bi
+             Merging from 5.5
+    41    3*     hezx@greatopensource.com-20110117100013-h33ksz5wowjihijn
+             Auto merge
+   215    1*     hezx@greatopensource.com-20110117095259-jbpwy1vhb0ggkq9k
+             Auto merge
+   109    1*     john.embretsen@oracle.com-20110117071427-u0y6dmgbuhc00uo8
+             Merge of fix for bug 45730 from 5.5 to trunk.
+   395    1*     nirbhay.choubey@sun.com-20110116040229-246c5ia8cos0iwii
+             Merge of fix for bug#58139 from mysql-5.5 -> mysql-trunk.
+    49    2*     nirbhay.choubey@sun.com-20110116032530-awxs3t5328nmu4vg
+             Merge of fix for bug#58221 from mysql-5.5 -> mysql-trunk.
+     0    3*     anders.song@greatopensource.com-20110115055624-wugtr5ao77jn70ji
+             Auto merge
+    39    1*     holyfoot@mysql.com-20110114222238-ora0koaemxb178ue
+             merging.
+    71    2*     holyfoot@mysql.com-20110114210828-bhocu66j23zha7x8
+             Bug #52208 gis fails on some platforms (Solaris, HP-UX, Linux)| merging of 5.1..
+    50    1*     tor.didriksen@oracle.com-20110114153619-qwbd2gu5pn0s6e3k
+             Merge Bug #59498 from 5.5
+   162    2*     nirbhay.choubey@sun.com-20110114144916-evvenid3zst4gv18
+             Merging fix for Bug#13618 from mysql-5.5.
+   231    1*     guilhem.bichot@oracle.com-20110114134241-2tzzagfui2tr943x
+             merge from 5.5
+    12    1*     georgi.kodinov@oracle.com-20110114130600-98wfu8ne28icb2u2
+             merge.
+   821    4*     luis.soares@oracle.com-20110114111525-a4iysmoo4uk76ji6
+             Automerge from mysql-5.5 into mysql-trunk.
+     0    2*     sven.sandberg@oracle.com-20110114104020-j0l7jpwzegs3d401
+             Merged BUG#59063 from 5.5 to trunk.|Since this was first fixed in trunk and th..
+     0    1*     georgi.kodinov@oracle.com-20110114095520-s0hhhhzamixxsgt6
+             merge
+   259    1*     tor.didriksen@oracle.com-20110114092911-2vu7p7obkao0cfiy
+             Merge Bug #59241 from 5.5
+   422           ole.john.aske@oracle.com-20110114082008-77kfco4xs4geosam
+             Fix for bug#58628: Incorrect result for 'WHERE NULL NOT IN (<subquery>)| |crea..
+   426    1*     serge.kozlov@oracle.com-20110113213621-4qccnwyy72pxtnhh
+             Merge from mysql-5.5 into mysql-trunk
+    48    3*     luis.soares@oracle.com-20110113114439-flu4wfak5gtrk7xq
+             Automerge from mysql-5.5 into latest mysql-trunk.
+   341    1*     davi.arnaut@oracle.com-20110113113120-ntwouogfwaalgxq7
+             Merge of mysql-5.5 into mysql-trunk.
+   425    1*     ole.john.aske@oracle.com-20110113104828-ui7ne2z3us92r5jc
+             Merge from 5.5 -> trunk
+    38    2*     nirbhay.choubey@sun.com-20110113103059-9eyidap12mdg9bmw
+             Merging from mysql-5.5.
+    22    1*     ole.john.aske@oracle.com-20110113092345-ck2wv0z48r6d1ylz
+             Merged fix for bug#58134 from mysql-5.5 -> mysql->trunk
+     0    4*     georgi.kodinov@oracle.com-20110113090847-gtvlitfthaasqezp
+             merge
+   196    1      ole.john.aske@oracle.com-20110113083359-1z8q0hil9y22izvl
+             Merged fix for bug#57034 from mysql-5.5 -> mysql-trunk
+   340    2*     martin.hansson@oracle.com-20110113081952-n7mg2swpu1xb5fjp
+             Merge of fix for Bug#58165.
+   277           olav.sandstaa@oracle.com-20110113073303-xtc6rhbo1g9iaiqm
+             Fix for Bug#58816 Extra temporary duplicate rows in result set when | switchin..
+     0    3*     bjorn.munch@oracle.com-20110112231827-w6nuz7qcr3f2zylq
+             null upmerge
+   739   26      bjorn.munch@oracle.com-20110112225756-g2nv4mukrmvnl3uz
+             merge from trunk-mtr
+   129    4*     epotemkin@mysql.com-20110112172453-d202wpy4h3s11dys
+             Auto-merged.
+   359    2*     dmitry.lenev@oracle.com-20110112142213-73jjqzwhatildnov
+             Merged fix for bug #58499 "DEFINER-security view selecting from|INVOKER-securi..
+   261    1*     ole.john.aske@oracle.com-20110112122116-rz733y2yo6ce1mmq
+             Merge of fix for bug#58818 from '5.5' -> 'trunk'
+    75    2*     martin.hansson@oracle.com-20110112095210-xz9u5ivl9saryjz0
+             Merge of fix for Bug#58207.
+    23    2*     dmitry.shulga@oracle.com-20110111153355-uvff16i445mk2spu
+             Merge of mysql-5.5 into mysql-trunk.
+    19    2*     davi.arnaut@oracle.com-20110111135623-r7lqmol54vjn68b8
+             Merge of mysql-5.5 into mysql-trunk.
+    40    2*     jan.wedvik@sun.com-20110111114502-dxuh0qvribnaty25
+             Merge of fix for bug#58553, "Queries with pushed conditions causes 'explain |e..
+     0    1*     magne.mahre@oracle.com-20110111090921-q2f1mbiakea5lm8u
+             Null merge|(patch already in trunk)
+    12    1*     anitha.gopi@sun.com-20110111080922-lmetle6m7fmkpcoh
+             Upmerge revision 3232 from mysql-5.5
+    59           zhenxing.he@sun.com-20110111051323-w2xnzvcjn46x6h6u
+             BUG#59123 rpl_stm_binlog_max_cache_size fails sporadically with found warnings..
+ 16364    9*     mattias.jonsson@oracle.com-20110110163747-ssccpoh0wesjl68q
+             merge
+   238           jon.hauglid@oracle.com-20110110162745-631sf4i0orwehwfr
+             Bug #53322 deadlock with FLUSH TABLES WITH READ LOCK and DROP FUNCTION|This de..
+    12    1*     matthias.leich@oracle.com-20110110145743-yeax7y275a9ej35o
+             Upmerge of some post bug 58414 fix
+     0    1*     magne.mahre@oracle.com-20110110142031-lbqoee8xm9ghh2iu
+             Null merge
+   103    1*     jon.hauglid@oracle.com-20110110132613-67jwde8yl5a751t2
+             Merge from mysql-5.5 to mysql-trunk.|No conflicts.
+    23           tor.didriksen@oracle.com-20110110132311-mnj4kdllluk3wu80
+             Bug#59331 filesort with priority queue: handling of out-of-memory|Post-push fi..
+    75    1*     magne.mahre@oracle.com-20110110124553-cehvirmcokxx3hsb
+             Merge - no conflict
+     0    1*     magne.mahre@oracle.com-20110110121816-ilut6pt0ku25i29p
+             Null merge
+    90           tor.didriksen@oracle.com-20110106143838-tcimyx8pvf4hxhxs
+             Bug#59331 filesort with priority queue: handling of out-of-memory|Verifies tha..
+   314           jorgen.loland@oracle.com-20110110090420-iep4ek5s7klq6rwk
+             BUG#58837: ICP crash or valgrind error due to uninitialized | value in innobas..
+     0    3*     vasil.dimov@oracle.com-20110108150732-8qygun7nuaqf9d3u
+             Merge mysql-5.5 -> mysql-trunk (empty)
+  1694   52      vasil.dimov@oracle.com-20110108150646-44c9j7ck64ocey31
+             [inno] Merge innodb tree
+   272    4*     davi.arnaut@oracle.com-20110107195411-btoz25nczquv47wj
+             Merge of mysql-5.5 into mysql-trunk.
+   147    1*     matthias.leich@oracle.com-20110107161048-6x3vunwcyt3jl4pe
+             Upmerge of fix for Bug 58414
+   154    1*     matthias.leich@oracle.com-20110107132442-7cyrhzi5nz6rh5pd
+             Upmerge of fix for bug 47745
+   111    1*     matthias.leich@oracle.com-20110107125958-n9oif0ezbse5gf86
+             Upmerge of fix for bug 58600 
+    14           saikumar.v@sun.com-20110106112820-1r82tn32vob3b0xg
+             Adding more mtr commands to runs engine suites.
+     0    2*     saikumar.v@sun.com-20110106112359-no4q0r1ralx4flra
+             Null merge from MySQL 5.5 to TRUNK
+    85           jon.hauglid@oracle.com-20110105144328-c9ee981z819p2zmw
+             Bug #58996 SHOW CREATE TRIGGER fails when subject table is shadowed by| a temp..
+     0    2*     georgi.kodinov@oracle.com-20110105130642-p42be2bnf8h0zgag
+              Bug #59178 : null merge of the test disablement to trunk.
+ 29316           nirbhay.choubey@sun.com-20110105084346-vz9id5wreu06qxow
+             Modifications in mysql-trunk engines test suite.
+    18           magne.mahre@oracle.com-20110105083542-rbjnrybfukzgud7s
+             Post-push fix|the 'install' make target failed on unix like platforms,|after a..
+  4722    4*     nirbhay.choubey@sun.com-20110105075745-fbhxou7ccwulby75
+             |Merging from mysql-5.5.
+   210    2*     marc.alff@oracle.com-20110105071657-b4htma14d2m4due3
+             Merge mysql-5.5 --> mysql-trunk
+  2725           magne.mahre@oracle.com-20110104152359-l51xr7j27ca4mc1s
+             Remove configuration preprocessor symbols 'THREAD'|and 'THREAD_SAFE_CLIENT'.|A..
+    52    2*     jon.hauglid@oracle.com-20110104143005-920jhiyi67x17kez
+             Merge from mysql-5.5 to mysql-trunk.|No conflicts.
+  1009   12      tor.didriksen@oracle.com-20110104095526-qavvbr4xltko068m
+             [opt] Merge optimiser tree
+    15           marc.alff@oracle.com-20110104080654-yab7b8mxeng998ia
+             |Removed experimental flag, now that bugs impactings the tests have been fixed.
+   134    2*     mikael@dator8-20110103154543-ltnrlm80y2s0s3dr
+             merge
+     0    1*     tor.didriksen@oracle.com-20110103131201-27m9k3rthp6s0so5
+             NULL merge from 5.5
+    35    2*     guilhem.bichot@oracle.com-20101231130432-75izpjdrb7hrvzg7
+             merge from 5.5
+    12    1*     dmitry.shulga@oracle.com-20101230083038-yoctppwyungiq3gf
+             Auto-merge from mysql-5.5
+     0    5*     alexander.nozdrin@oracle.com-20101229113850-5rhksndrwz5dwcd7
+             Empty merge from mysql-5.5.
+  9358   12      alexander.nozdrin@oracle.com-20101229113149-c4hnmghox8obr75c
+             Auto-merge from mysql-trunk-bugfixing.
+    10           build@mysql.com-20101223151154-gjbgty64zn7ei1uc
+             Raise version number to 5.6.2-m5.
+406075  200      alexander.nozdrin@oracle.com-20101222212842-y0t3ibtd32wd9qaw
+             Big merge from mysql-trunk-stage (mysql-trunk-bugfixing)
+    10    3*     georgi.kodinov@oracle.com-20101217125013-y8pb3az32rtbplc9
+             merge
+    44   12*     georgi.kodinov@oracle.com-20101217112859-u6aqs80pn9frbt2i
+             merge
+  5194    8      georgi.kodinov@oracle.com-20101217112525-t71wcarh16fii9bz
+             merge
+   155    2*     luis.soares@oracle.com-20101217020132-e4f35jq8ok63dhwp
+             BUG#46166|Manual merge from mysql-5.5-bugteam.
+     0    3*     luis.soares@oracle.com-20101216193657-apbj86di6krj2nqs
+             empty merge from mysql-5.5-bugteam.
+  1626    6      luis.soares@oracle.com-20101216193500-f3fujxjnwa4obgq9
+             BUG#46166|Merging to latest mysql-trunk-bugfixing.
+    68    1*     alexander.nozdrin@oracle.com-20101216192842-ocvakk6gc4ff3od4
+             Merge from mysql-5.5-bugteam.
+ 12430  159      alexander.nozdrin@oracle.com-20101216185046-y2lat40bakpadlwo
+             Large merge from mysql-trunk-bugfixing
+   235   10*     alexander.nozdrin@oracle.com-20101216181820-7afubgk2fmuv9qsb
+             Manual merge from mysql-5.5.
+  2030  110      alexander.nozdrin@oracle.com-20101216173826-ze3y5h450sksotrh
+             Manual merge from mysql-trunk-security-fixed.
+107090  843      alexander.nozdrin@oracle.com-20101205122447-6x94l4fmslpbttxj
+             Large merge from mysql-trunk-bugfixing
+ 15497   27      alexander.nozdrin@oracle.com-20101202135250-i76eq04vzw7obqky
+             Merge WL#4816, performance schema
+  6295   91      alexander.nozdrin@oracle.com-20101129111021-874if2qsp0i8d5ze
+             [rpl] Merge WL#2540, Replication event checksums (NOTE: already backported to mariadb 5.3/5.5)
+  9067   24      alexander.nozdrin@oracle.com-20101123211421-owla1k03goqah2z2
+             Merge WL#2775: System tables for master.info, relay_log.info
+    18           alexander.nozdrin@oracle.com-20101115092603-zmftww1yhiz4v0ds
+             Merge followup: fix default.experimental file.
+    13           alexander.nozdrin@oracle.com-20101114180655-vbr040c48ru8v3ul
+             Fix version tag (to 5.6.1-m5).
+374836 1137      alexander.nozdrin@oracle.com-20101113155825-czmva9kg4n31anmu
+             Large merge of mysql-next-mr
+109458  957      alexander.nozdrin@oracle.com-20101113152450-2zzcm50e7i4j35v7
+             Large merge of mysql-trunk-stage
+     0    1*     alexander.nozdrin@oracle.com-20101002180948-852x1cuv7c6i85ea
+             Empty merge from mysql-5.5.
+  3796   79      alexander.nozdrin@oracle.com-20101002180857-an32jpuwzemsp4f2
+             Large merge from mysql-trunk-stage
+     0    1*     alik@sun.com-20100928153607-tdsxkdm5cmuym5sq
+             Empty merge from mysql-5.5.
+  5630  103      alik@sun.com-20100928153508-0saa6v93dinqx1u7
+             Large merge from mysql-trunk-merge
+    66    3*     kostja@sun.com-20100924132225-4q1jcqf55ktbsduz
+             Merge 5.5 -> trunk
+     0    1*     dlenev@mysql.com-20100913103627-p2oqplu42x1gv2bd
+             Merged recent changes from mysql-5.5 tree into|mysql-trunk tree.
+   314    5*     dlenev@mysql.com-20100913102657-ye9uwx05td7h2q3o
+             Merged changes from mysql-5.5.6-m3-release tree|into mysql-trunk tree.
+     0    1*     dlenev@mysql.com-20100913100411-2qdg15bp0qu98ce5
+             Null-merge fix for bug#55980 from mysql-5.5.6-m3-release|tree into mysql-trunk..
+    98    4*     dlenev@mysql.com-20100913095811-ken3pb2y9n82suwv
+             Merge changes from mysql-5.5.6-m3-release tree|into mysql-trunk.
+  1549   10*     alik@sun.com-20100901130501-4g2k86dub29auj8y
+             Manual merge from mysql-5.5.|Conflicts:| - sql/mysqld.h| - storage/innobase/bu..
+  1228   62      alik@sun.com-20100901130012-9bmmvzcnnw6n5rw6
+             Large merge from mysql-trunk-stage
+ 49292  155      alik@sun.com-20100830082732-n2eyijnv86exc5ci
+             Large merge from mysql-trunk-bugfixing
+     0    1*     alik@sun.com-20100818071819-2lu46b0mm3cs34rf
+             Empty merge from mysql-5.5.
+  1737   51      alik@sun.com-20100818071732-g682fg1v0nnrrutx
+             Large merge from mysql-trunk-merge
+     0    1*     alik@sun.com-20100816062701-qo9dpnk5tkt1pksb
+             Empty merge from mysql-5.5.
+  9551  151      alik@sun.com-20100816062603-xc16eftmv7rmktyq
+             Large merge from mysql-trunk-stage
+    13           build@mysql.com-20100806164310-m5c3xuop9p4jk50k
+             Bump the version number after cloning 5.6.0-m4.
+    13           alik@ibmvm-20100804091919-4jgi1ot86wove1m8
+             Fix version number.
+     0    1*     alik@ibmvm-20100804081533-c1d3rbipo9e8rt1s
+             Auto-merge froNull-merge from mysql-5.5.
+    23           alik@ibmvm-20100804080001-bny5271e65xo34ig
+             Fix version number and default.conf (after next-mr -> trunk).
+     7           alik@ibmvm-20100803064628-g4fsm01dusjv131q
+             Fix innodb-file-format-check value.
+   115    5      alik@ibmvm-20100803064352-b1vsdc6cm5ibko03
+             Merge innodb tree
+    14           alik@ibmvm-20100802150331-wekk4m9iwnm4whf9
+             Make perfschema.start_server_on and perfschema.server_init|experimental due to..
+    96    1*     alik@sun.com-20100731131134-0c1vhj0z2gg366du
+             Auto-merge from mysql-trunk-stage.
+     0    1*     alik@sun.com-20100731075219-y21q5pwe5ys7e5tm
+             Empty merge from mysql-trunk-stage.
+ 47538  269      alik@sun.com-20100731075120-qz9z8c25zum2wgmm
+             Large merge from mysql-trunk-bugfixing
+    11           alik@sun.com-20100729151830-xfh4vl610tyze1d5
+             Update .bzrignore.
+    12           alik@sun.com-20100729151645-cl6q6u6w7tizp13z
+             WL#4445 follow-up: fix build failure.
+ 12993   23      alik@sun.com-20100729141538-h1ttwryfgzsv4sqt
+             Merge WL#4445: EXCHANGE PARTITION WITH TABLE
+  6030    1      bar@mysql.com-20100728072749-mdnb2vlv5tdcwqz2
+             Merge WL#3865 Vietnamese collation
+    10           marc.alff@oracle.com-20100726181349-mclfxd2hvivtjl2q
+             Fix branch name
+  2166   19      marc.alff@oracle.com-20100726181238-dukf1yvhut50tm18
+             Merge WL#5291 MySQL Install / Upgrade script format
+   332           marc.alff@oracle.com-20100726172027-mc9h1qcxafbsx9ii
+             Fixed build break when compiling without the performance schema
+ 10009   26      alik@sun.com-20100724102417-k1ew5di3url4q4rr
+             Merge WL#4895: PERFORMANCE_SCHEMA Instrumenting Table IO
+ 27886    4      alik@sun.com-20100723125004-ebkwb9bu61uka1ud
+             Merge from mysql-next-mr-stage
+     0    1*     alik@sun.com-20100723121929-90e9zemk3jkr2ocy
+             Merge from 5.5
+ 56581  429      alik@sun.com-20100723121827-3bsh51m5sj6g4oma
+             Large merge of mysql-next-mr-bugfixing
+  3443   65      alik@sun.com-20100629112754-comsdmpy1gycfjcc
+             Large merge of mysql-next-mr-gtest
+ 21548   62      alik@sun.com-20100626073921-t0e6q2c9nkhuemnj
+             [rpl] Large merge of mysql-next-mr-rpl-merge
+    13    2*     alik@sun.com-20100626073344-lybcustxmvevruyu
+             Auto-merge from mysql-trunk.
+     0    1*     alik@sun.com-20100622130623-r7yhm89fz9n5t9nb
+             Auto-merge (empty) from mysql-trunk.
+ 17996  235      alik@sun.com-20100622130528-187gd949sa9b6pa6
+             Merge mysql-next-mr-bugfixing
+ 18224    8      bar@mysql.com-20100617072236-vx5eqygof70izuho
+             Merge WL#4013, WL#5303, WL#3664, WL#3716
+     0    1*     alik@sun.com-20100617062125-82dxlsq97sqxofv2
+             Auto-merge (empty) from mysql-trunk-stage.
+ 25925  213      alik@sun.com-20100617061958-dkri5xesugzfntf6
+             Merge mysql-next-mr-stage
+    13    1*     mats.kindahl@oracle.com-20100616133930-9m8edn4ti0fv1k6z
+             Merging in patch into mysql-next-mr-stage
+     0    1*     alik@sun.com-20100615080558-cw01bzdqr1bdmmec
+             Auto-merge (empty) from mysql-trunk.
+491763  530      alik@sun.com-20100615080431-gu5icn0anrt47dsx
+             Merge mysql-next-mr-bugfixing
+  1522    6      alik@sun.com-20100531075105-3d1v24etiu1x3c7h
+             Merge WL#4783 Extend mysqlbinlog to support remote backup of binary logs
+  1643   24*     alik@sun.com-20100524190136-egaq7e8zgkwb9aqi
+             Auto-merge from mysql-trunk-merge.
+     0    1*     alik@sun.com-20100520124101-vzu92yjc6t6khe15
+             Auto-merge (empty) from mysql-trunk-merge.
+  8616   46      alik@sun.com-20100520123900-5kadc9fvcxz30s75
+             Merge of mysql-next-mr
+    21    1*     alik@sun.com-20100512111424-3r8186eayf73xtdu
+             Auto-merge from mysql-trunk-merge.
+    10    1*     alik@sun.com-20100512104329-z94314xv02dv7i4j
+             Auto-merge from mysql-trunk-merge.
+  3533 3060*     alik@sun.com-20100512070920-xgpmqeytp0gc183c
+             Manual merge from mysql-trunk-merge.|Conflicts:| - configure.in
+    29    1*     alik@sun.com-20100507112300-lzkv5a565ajgifrj
+             Auto-merge from mysql-trunk-merge.
+     0    1*     alik@sun.com-20100507094107-8luju788dmunvgvl
+             Empty merge from mysql-trunk-merge.
+ 21424   49      alik@sun.com-20100507093958-2y0wy6svnc3zfgqb
+             Merge of mysql-next-mr
+   370    1*     alik@sun.com-20100428105712-fot32t0o59eazw3m
+             Auto-merge from mysql-trunk-merge.
+     0    1*     alik@sun.com-20100427100145-p5062w10o85j6pcb
+             Auto-merge from mysql-trunk-merge.
+ 65771  138      alik@sun.com-20100427095914-pzlxbqjjtnngxmf0
+             Merge of mysql-6.0-codebase
+  3456  188*     alik@sun.com-20100422150750-vp0n37kp9ywq5ghf
+             Merge from mysql-trunk-merge.~
+    13    1*     alik@sun.com-20100412133535-ln5iyhaauyigkpgi
+             Auto-merge from mysql-trunk.
+   218    1*     alik@sun.com-20100412131807-3pbpvqkkyw178lfy
+             Auto-merge from mysql-trunk.
+  7697    1*     alik@sun.com-20100412125941-2wo9l9m49cj9x31c
+             Merge from mysql-trunk.
+    12    2*     alik@sun.com-20100410082716-9qjpjknjg9lzl2ts
+             Auto-merge from mysql-trunk.
+   392    1*     mats@sun.com-20100407120219-5yw2h62xt5ju5pyy
+             Merging mysql-trunk-wl4877 with mysql-next-mr-wl4877
+    12    1*     mats@sun.com-20100406214618-9oqj80h82ek9uo1v
+             Merging mysql-trunk-wl4877 into mysql-next-mr-wl4877
+    24    1*     mats@sun.com-20100406141125-0kwa1wryw0wlk7wq
+             Merging mysql-trunk-wl4877 into mysql-next-mr-wl4877.
+    34           mats@sun.com-20100406132538-1hui2ve28yu4tfwy
+             WL#5030: Splitting mysql_priv.h|Adding header #include to files missing that f..
+    41    1*     mats@sun.com-20100406121431-9cg2s3tye1caugk8
+             Merging mysql-trunk-wl4877 with mysql-next-mr-wl4877.
+    54    1*     mats@sun.com-20100406105641-jivpemhelte2zxml
+             Merging mysql-trunk-wl4877 into mysql-next-mr-wl4877
+    28    1*     mats@sun.com-20100405141352-z3rejenxrcxfm54a
+             Merging with mysql-next-mr-wl4877
+ 20791    2*     mats@sun.com-20100401193409-usxqswjym01ikn5m
+             Merged with mysql-next-mr
+    13    1*     alik@sun.com-20100326081116-m3v4l34yhr43mtsv
+             Auto-merge from mysql-trunk-merge.
+949485  124*     alik@sun.com-20100325072612-4sds00ix8ajo1e84
+             Manual merge from mysql-trunk-merge.|Conflicts:| - sql/sql_select.cc
+     0    1*     alik@sun.com-20100324081159-5b8juv8ldiqwce8v
+             Auto-merge from mysql-trunk.
+  6385  114      alik@sun.com-20100324081105-y72rautcea375zxm
+             Merge mysql-next-mr-bugfixing
+     9    1*     alik@sun.com-20100315170643-90ic1tif4gs4cycr
+             Auto-merge from mysql-trunk.
+     0    1*     alik@sun.com-20100315102020-49nul3x0tlm7uapj
+             Null-merge from mysql-trunk.
