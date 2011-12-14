@@ -1346,101 +1346,97 @@ sub RunTests{
 
 
 
-			#Run
-			if($l_RUN){
-				if(!$dry_run){
-					my $elapsedTime = 0;
-					my $dbh;
+			
+			if(!$dry_run){
+				my $elapsedTime = 0;
+				my $dbh;
 
-					if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
-						#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
-					} else {
-						$dbh = DBI->connect("DBI:mysql:".$DBMS_hash->{'DBNAME'}.";host=".$DBMS_hash->{'HOST'}.":".$DBMS_hash->{'PORT'}.";mysql_socket=".$DBMS_hash->{'SOCKET'}, $DBMS_hash->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
-						$dbh->{'mysql_auto_reconnect'} = 1;
+				if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+					#$dbh = DBI->connect("DBI:Pg:$l_DBNAME;host=$l_HOST:$l_PORT;", "$l_MYSQL_USER", "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
+				} else {
+					$dbh = DBI->connect("DBI:mysql:".$DBMS_hash->{'DBNAME'}.";host=".$DBMS_hash->{'HOST'}.":".$DBMS_hash->{'PORT'}.";mysql_socket=".$DBMS_hash->{'SOCKET'}, $DBMS_hash->{'DBMS_USER'}, "", {PrintError => 0, RaiseError => 1}) || SafelyDie("Could not connect to database: $DBI::errstr", __LINE__);
+					$dbh->{'mysql_auto_reconnect'} = 1;
 
-						if($l_TIMEOUT > 0){
-							$dbh->do("SET GLOBAL EVENT_SCHEDULER = ON");
-						}
+					if($l_TIMEOUT > 0){
+						$dbh->do("SET GLOBAL EVENT_SCHEDULER = ON");
 					}
+				}
 
-					#Pre-run statements
-					my $preRunSQLFilename = "pre_run_sql_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-					if($l_PRE_RUN_SQL){						
-						ExecuteInShell($DBMS_hash, $l_PRE_RUN_SQL, "", $KEYWORD, $preRunSQLFilename);
-					}
+				#Pre-run statements
+				my $preRunSQLFilename = $l_QUERY. "_no_$j" . "_pre_run_sql.txt";
+				if($l_PRE_RUN_SQL){						
+					ExecuteInShell($DBMS_hash, $l_PRE_RUN_SQL, "", $KEYWORD, $preRunSQLFilename);
+				}
 
-					my $preRunOSFilename = "pre_run_os_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-					if($l_PRE_RUN_OS){
-						system("$l_PRE_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$preRunOSFilename");
-					}
+				my $preRunOSFilename = $l_QUERY. "_no_$j" . "_pre_run_os.txt";
+				if($l_PRE_RUN_OS){
+					system("$l_PRE_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$preRunOSFilename");
+				}
 
 
-					############ EXPLAIN #############
-					my $explainFilename 	= "";
-					my $executionPlan	= "no_explain";
-					if($l_EXPLAIN && $l_EXPLAIN_QUERY){
-						$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
-						ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
+				############ EXPLAIN #############
+				my $explainFilename 	= "";
+				my $executionPlan	= "no_explain";
+				if($l_EXPLAIN && $l_EXPLAIN_QUERY){
+					$explainFilename = "$l_EXPLAIN_QUERY" . "_$j" . "_results.txt";
+					ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_EXPLAIN_QUERY", $KEYWORD, $explainFilename);
 
-						if($j == 1){
-							AppendFileToAnother("$l_QUERIES_HOME/$l_EXPLAIN_QUERY", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "\n\n\n===== $l_EXPLAIN_QUERY =====\nSTARTUP_PARAMS: ".$DBMS_hash->{'STARTUP_PARAMS'}."\n\n" );
-							AppendFileToAnother("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "--- Results ---");
-						}
+					if($l_ANALYZE_EXPLAIN){
+						#Analyze the explain results and skip test if that's not the fastest execution plan
+						if($DBMS_hash->{'DBMS'} ne "PostgreSQL"){
+							# TODO: Make this algorithm for PostgreSQL if needed
+							$executionPlan = AnalyzeExplain("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", \%GlobalExplainResults);
+							if($executionPlan eq "" && !$QUERIES_AT_ONCE){
+								#skip this run
+								$skipCurrentRun = 1;
+								$skippedTestsCount ++;
+								
+								#adjust $j since there is no actual test performed
+								$j--;
 
-						if($l_ANALYZE_EXPLAIN){
-							#Analyze the explain results and skip test if that's not the fastest execution plan
-							if($DBMS_hash->{'DBMS'} ne "PostgreSQL"){
-								# TODO: Make this algorithm for PostgreSQL if needed
-								$executionPlan = AnalyzeExplain("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", \%GlobalExplainResults);
-								if($executionPlan eq "" && !$QUERIES_AT_ONCE){
-									#skip this run
-									$skipCurrentRun = 1;
-									$skippedTestsCount ++;
-									
-									#adjust $j since there is no actual test performed
-									$j--;
-
-									if($skippedTestsCount >= $l_MAX_SKIPPED_TESTS){
-										$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
-										$noMoreTests = 1;
-									}
+								if($skippedTestsCount >= $l_MAX_SKIPPED_TESTS){
+									$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
+									$noMoreTests = 1;
 								}
 							}
 						}
+					}
+				}
+				#####################################
+
+
+				if(!$skipCurrentRun){
+
+					############ WARMUP #############
+					if($l_WARMUP && !$warmed_up){
+						for (my $w = 0; $w < $l_WARMUPS_COUNT; $w ++){
+							PrintMsg("\n-------- WARMUP run #".($w+1)." for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
+							LogStartRunResult($dbh_res, $test_id, $w, 1, "", "");
+
+							if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
+								$elapsedTime = ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_warmup_output.txt");
+							} else {
+								$elapsedTime = ExecuteWithTimeout($DBMS_hash->{'DBMS'}, $dbh, \@run_stmts, $l_TIMEOUT);
+							}
+							print "Warmup! Time: $elapsedTime";
+
+							my $warmup_comments = "";
+							if($elapsedTime == -1){
+								$warmup_comments = "Timeout exceeded";
+							}
+							LogEndRunResult($dbh_res, $test_id, $w, 1, $elapsedTime, "", $warmup_comments);
+						}
+						$warmed_up = 1;
 					}
 					#####################################
 
-
-					if(!$skipCurrentRun){
-
-						############ WARMUP #############
-						if($l_WARMUP && !$warmed_up){
-							for (my $w = 0; $w < $l_WARMUPS_COUNT; $w ++){
-								PrintMsg("\n-------- WARMUP run #".($w+1)." for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
-								LogStartRunResult($dbh_res, $test_id, $w, 1, "", "");
-
-								if($DBMS_hash->{'DBMS'} eq "PostgreSQL"){
-									$elapsedTime = ExecuteInShell($DBMS_hash, "", "$l_QUERIES_HOME/$l_QUERY", $KEYWORD, $l_QUERY."_warmup_output.txt");
-								} else {
-									$elapsedTime = ExecuteWithTimeout($DBMS_hash->{'DBMS'}, $dbh, \@run_stmts, $l_TIMEOUT);
-								}
-								print "Warmup! Time: $elapsedTime";
-
-								my $warmup_comments = "";
-								if($elapsedTime == -1){
-									$warmup_comments = "Timeout exceeded";
-								}
-								LogEndRunResult($dbh_res, $test_id, $w, 1, $elapsedTime, "", $warmup_comments);
-							}
-							$warmed_up = 1;
-						}
-						#####################################
-
-		
-						LogStartRunResult($dbh_res, $test_id, $j, 0, $explainFilename, $preRunSQLFilename);
+	
+					LogStartRunResult($dbh_res, $test_id, $j, 0, $explainFilename, $preRunSQLFilename);
 
 
-	########				############ ACTUAL RUN #############
+########				############ ACTUAL RUN #############
+
+					if($l_RUN){
 						PrintMsg("\n-------- Test run #$j for $l_QUERY -------\n@run_stmts\n--------------------------------\n");
 						
 						my $pid = fork();
@@ -1462,76 +1458,82 @@ sub RunTests{
 							
 							kill("KILL", $pid);
 						}
-	########				#####################################
+
 
 
 						print "Time elapsed: $elapsedTime";
 
+						if($l_EXPLAIN && $l_EXPLAIN_QUERY){
+							AppendFileToAnother("$l_QUERIES_HOME/$l_EXPLAIN_QUERY", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "\n\n\n===== $l_EXPLAIN_QUERY Run No: $j =====\nSTARTUP_PARAMS: ".$DBMS_hash->{'STARTUP_PARAMS'}."\n\n" );
+							AppendFileToAnother("$RESULTS_OUTPUT_DIR/$KEYWORD/$explainFilename", "$RESULTS_OUTPUT_DIR/$KEYWORD/all_explains.txt", "--- Explain result ---", "--- Time elapsed ---\n$elapsedTime");
+						}
+
 
 						#Push the elapsed time into the hash with different execution plans					
 						push(@{ $GlobalExplainResults{$executionPlan} }, $elapsedTime);
+					}
+########				#####################################
+
+
+					#Post-run statements
+					my $postRunSQLFilename = $l_QUERY . "_no_$j" . "_post_run_sql.txt";
+					if($l_POST_RUN_SQL){
+						ExecuteInShell($DBMS_hash, $l_POST_RUN_SQL, "", $KEYWORD, $postRunSQLFilename);
+					}
+
+
+					my $postRunOSFilename =  $l_QUERY . "_no_$j" . "_post_run_os.txt";
+					if($l_POST_RUN_OS){
+						system("$l_POST_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$postRunOSFilename");
+					}
+
+
+					my $run_comments = "";
+					if($elapsedTime == -1){
+						$run_comments = "Timeout exceeded";
+					}
+
+					LogEndRunResult($dbh_res, $test_id, $j, 0, $elapsedTime, $postRunSQLFilename, $run_comments);
 
 
 
-						#Post-run statements
-						my $postRunSQLFilename = "post_run_sql_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-						if($l_POST_RUN_SQL){
-							ExecuteInShell($DBMS_hash, $l_POST_RUN_SQL, "", $KEYWORD, $postRunSQLFilename);
-						}
+					if($l_ANALYZE_EXPLAIN){
+						#Check the results. If time limit is reached or target queries run is reached, stop the test for that query
+						if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
+							($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
+							#There is no time for new test. Get the best cluster and show a warning
+							$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
 
-
-						my $postRunOSFilename = "post_run_os_q_" . $l_QUERY. "_no_$j" . "_results.txt";
-						if($l_POST_RUN_OS){
-							system("$l_POST_RUN_OS > $RESULTS_OUTPUT_DIR/$KEYWORD/$postRunOSFilename");
-						}
-
-
-						my $run_comments = "";
-						if($elapsedTime == -1){
-							$run_comments = "Timeout exceeded";
-						}
-
-						LogEndRunResult($dbh_res, $test_id, $j, 0, $elapsedTime, $postRunSQLFilename, $run_comments);
-
-
-
-						if($l_ANALYZE_EXPLAIN){
-							#Check the results. If time limit is reached or target queries run is reached, stop the test for that query
-							if(	($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS) ||
-								($l_MAX_QUERY_TIME != 0 && $l_MAX_QUERY_TIME < $l_TIMEOUT + (time - $queryStartTime))){
-								#There is no time for new test. Get the best cluster and show a warning
-								$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 1);
-
-								if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
-									PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: ".$resultHash->{'min'}."\n\n");
-								}else{
-									PrintMsg("\n\n No time for next run. Getting the best result available: ".$resultHash->{'min'}."\n\n");
-									$test_comments .= "No time for next run. Getting the best result available.\n";
-								}
-								$noMoreTests = 1;
+							if ($l_NUM_TESTS != 0 && $j >= $l_NUM_TESTS){
+								PrintMsg("\n\n Test limit of $l_NUM_TESTS reached. Getting the best result available: ".$resultHash->{'min'}."\n\n");
 							}else{
-								if($l_NUM_TESTS == 0){
-									#There is enough time to perform another test
-									$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 0);
-									if($resultHash->{'min'}){
-										$noMoreTests = 1;
-									}
+								PrintMsg("\n\n No time for next run. Getting the best result available: ".$resultHash->{'min'}."\n\n");
+								$test_comments .= "No time for next run. Getting the best result available.\n";
+							}
+							$noMoreTests = 1;
+						}else{
+							if($l_NUM_TESTS == 0){
+								#There is enough time to perform another test
+								$resultHash->{'min'} = GetBestExplainCluster(\%GlobalExplainResults, $l_CLUSTER_SIZE, 0);
+								if($resultHash->{'min'}){
+									$noMoreTests = 1;
 								}
 							}
-						}elsif($l_MIN_MAX_OUT_OF_N){
-							if($j >= $l_NUM_TESTS){
-								$resultHash = GetMinMax(\%GlobalExplainResults);
-								$noMoreTests = 1;
-							}
-						}elsif($l_SIMPLE_AVERAGE){
-							if($j >= $l_NUM_TESTS){
-								$resultHash->{'avg'} = GetSimpleAverage(\%GlobalExplainResults);
-								$noMoreTests = 1;
-							}
 						}
-					}#if(!$skipCurrentRun)
-				}
+					}elsif($l_MIN_MAX_OUT_OF_N){
+						if($j >= $l_NUM_TESTS){
+							$resultHash = GetMinMax(\%GlobalExplainResults);
+							$noMoreTests = 1;
+						}
+					}elsif($l_SIMPLE_AVERAGE){
+						if($j >= $l_NUM_TESTS){
+							$resultHash->{'avg'} = GetSimpleAverage(\%GlobalExplainResults);
+							$noMoreTests = 1;
+						}
+					}
+				}#if(!$skipCurrentRun)
 			}
+			
 
 			
 			#stop mysql

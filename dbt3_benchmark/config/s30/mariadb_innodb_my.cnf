@@ -8,8 +8,7 @@
 tmpdir = mysql
 net_read_timeout = 300
 net_write_timeout = 600
-
-key_buffer_size = 3G
+log-error = mysql/mysqld.err
 
 skip-external-locking
 key_buffer = 16M
@@ -55,7 +54,7 @@ optimizer_switch='optimize_join_buffer_size=on'
 optimizer_switch='table_elimination=on'
 
 
-join_buffer_space_limit = 3072M
+join_buffer_space_limit = 3G
 join_buffer_size = 1536M
 join_cache_level = 6
 mrr_buffer_size = 96M
@@ -82,21 +81,19 @@ server-id	= 1
 
 default-storage-engine=InnoDB
 
-# Uncomment the following if you are using InnoDB tables
-
+# InnoDB settings
 innodb_file_per_table=1
 innodb_file_format=barracuda
 innodb_data_file_path = ibdata1:128M:autoextend
 innodb_log_group_home_dir = mysql/
 # You can set .._buffer_pool_size up to 50 - 80 %
 # of RAM but beware of setting memory usage too high
-innodb_buffer_pool_size = 3G
+innodb_buffer_pool_size = 10G
 innodb_additional_mem_pool_size = 64M
 # Set .._log_file_size to 25 % of buffer pool size
 innodb_log_file_size = 256M
 innodb_log_buffer_size = 8M
 innodb_flush_log_at_trx_commit = 2
-innodb_file_per_table
 innodb_log_files_in_group = 2
 innodb_lock_wait_timeout = 80
 
@@ -107,11 +104,9 @@ innodb_thread_concurrency = 0
 innodb_adaptive_flushing = 1
 innodb_max_dirty_pages_pct = 85
 
-
 # The safe_mysqld script
 [safe_mysqld]
-log-error = mysql/mysqld.err
-nice      = 0
+#nice      = 0
 
 [mysqldump]
 quick
@@ -122,18 +117,3 @@ max_allowed_packet = 16M
 # Remove the next comment character if you are not familiar with SQL
 #safe-updates
 prompt=[\R:\m] \u@\d>
-
-[isamchk]
-key_buffer = 20M
-sort_buffer_size = 20M
-read_buffer = 2M
-write_buffer = 2M
-
-[myisamchk]
-key_buffer = 20M
-sort_buffer_size = 20M
-read_buffer = 2M
-write_buffer = 2M
-
-[mysqlhotcopy]
-interactive-timeout
