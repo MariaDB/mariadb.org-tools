@@ -5,7 +5,18 @@
 # 
 #         USAGE:  ./mkrepo-yum.sh <archive directory>
 # 
-#   DESCRIPTION:  A script to generate the yum repositories for our RPM packages
+#   DESCRIPTION:  A script to generate the yum repositories for our RPM
+#                 packages.
+#
+#                 The script copies files from the archive directory into
+#                 separate directories for each distribution/cpu combination
+#                 (just like they are stored in the archive directory). For
+#                 best results, it should be run within an empty directory.
+#
+#                 After running the script, the directories are uploaded to the
+#                 YUM server, replacing the previous version in that series
+#                 (i.e. the 5.5.23 files are replaced by the 5.5.24 files and
+#                 the 5.3.6 files are replaced by the 5.3.7 files, and so on).
 # 
 #===============================================================================
 
@@ -32,7 +43,7 @@ done
 # Sign the packages
 rpm --addsign $(find . -name '*.rpm')
 
-# regenerate the md5sums.txt file
+# regenerate the md5sums.txt file (signing the packages changes their checksum)
 for dir in $(ls -d *);do
   cd ${dir};
   pwd;
@@ -42,6 +53,8 @@ for dir in $(ls -d *);do
   cd ../;
 done
 
+# Here is where we actually create the YUM repositories for each distribution
+# and sign the repomd.xml file
 for dir in $(ls);do
   createrepo --database --pretty ${dir}
   gpg --detach-sign --armor -u 0xcbcb082a1bb943db ${dir}/repodata/repomd.xml 
