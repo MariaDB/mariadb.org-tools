@@ -33,7 +33,7 @@ fi
 
 
 # Copy over the packages
-for REPONAME in centos5 centos6 rhel5 fedora16; do
+for REPONAME in centos5 centos6 rhel5 fedora16 fedora17; do
   for ARCH in amd64 x86; do
     mkdir -v "${REPONAME}-${ARCH}"
     cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
@@ -58,5 +58,12 @@ done
 for dir in $(ls);do
   createrepo --database --pretty ${dir}
   gpg --detach-sign --armor -u 0xcbcb082a1bb943db ${dir}/repodata/repomd.xml 
+done
+
+# Add in a README for the srpms directory
+for dir in $(ls);do
+  echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
+http://kb.askmonty.org/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
+" >> ${dir}/srpms/README
 done
 
