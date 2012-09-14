@@ -37,6 +37,12 @@ for REPONAME in centos5 centos6 rhel5 fedora16 fedora17; do
   for ARCH in amd64 x86; do
     mkdir -v "${REPONAME}-${ARCH}"
     cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
+    # Copy in the Galera wsrep provider
+    if [ "${ARCH}" = "amd64" ]; then
+      cp -avi ~/galera/*.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+    else
+      cp -avi  ~/galera/*.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+    fi
   done
 done
 
