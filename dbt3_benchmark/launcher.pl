@@ -1274,7 +1274,7 @@ sub RunTests{
 		my @run_stmts;
 		if($l_RUN){
 			$/ = ';';
-			open (FH, "< $l_QUERIES_HOME/$l_QUERY") or SafelyDie("Error while opening file: $!", __LINE__);
+			open (FH, "< $l_QUERIES_HOME/$l_QUERY") or SafelyDie("Error while opening file $l_QUERIES_HOME/$l_QUERY: $!", __LINE__);
 			while (<FH>) {
 				my $tmp = $_;
 				$tmp =~ s/^\s+//;
