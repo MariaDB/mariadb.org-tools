@@ -33,6 +33,7 @@ fi
 
 
 # Copy over the packages
+#for REPONAME in centos5 rhel5; do
 for REPONAME in centos5 centos6 rhel5 fedora16 fedora17; do
   for ARCH in amd64 x86; do
     mkdir -v "${REPONAME}-${ARCH}"
@@ -68,6 +69,7 @@ done
 
 # Add in a README for the srpms directory
 for dir in $(ls);do
+  mkdir -vp ${dir}/srpms
   echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
 http://kb.askmonty.org/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
 " >> ${dir}/srpms/README

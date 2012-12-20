@@ -42,5 +42,6 @@ END
 for i in "lenny debian5" "squeeze debian6" "wheezy wheezy"; do
     set $i
     reprepro --basedir=. include $1 $ARCHDIR/kvm-deb-$2-amd64/debs/binary/mariadb-*_amd64.changes
-    for i in `find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'` ; do reprepro --basedir=. includedeb $1 $i ; done
+    for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
+    for file in $(find "/home/dbart/galera/" -name '*.deb'); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
 done
