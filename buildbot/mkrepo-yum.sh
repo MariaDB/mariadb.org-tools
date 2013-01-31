@@ -34,7 +34,7 @@ fi
 
 # Copy over the packages
 #for REPONAME in centos5 rhel5; do
-for REPONAME in centos5 centos6 rhel5 fedora16 fedora17; do
+for REPONAME in centos5 centos6 rhel5 fedora16 fedora17 fedora18; do
   for ARCH in amd64 x86; do
     mkdir -vp "${REPONAME}-${ARCH}"
     cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
