@@ -16,19 +16,11 @@ mkdir conf
 cat >conf/distributions <<END
 Origin: MariaDB
 Label: MariaDB
-Codename: lenny
-Architectures: amd64 i386 source
-Components: main
-Description: MariaDB Repository
-SignWith: dbart@askmonty.org
-
-Origin: MariaDB
-Label: MariaDB
 Codename: squeeze
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: dbart@askmonty.org
+SignWith: package-signing-key@mariadb.org
 
 Origin: MariaDB
 Label: MariaDB
@@ -36,11 +28,12 @@ Codename: wheezy
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
-SignWith: dbart@askmonty.org
+SignWith: package-signing-key@mariadb.org
 END
 
-for i in "lenny debian5" "squeeze debian6" "wheezy wheezy"; do
+for i in "squeeze debian6" "wheezy wheezy"; do
     set $i
+    echo $1
     reprepro --basedir=. include $1 $ARCHDIR/kvm-deb-$2-amd64/debs/binary/mariadb-*_amd64.changes
     for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
     for file in $(find "/home/dbart/galera/" -name '*.deb'); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
