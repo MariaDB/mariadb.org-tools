@@ -26,6 +26,8 @@ eval $(gpg-agent --daemon)
 
 ARCHDIR="$1"
 
+dists="centos5 centos6 rhel5 fedora17 fedora18"
+
 if [ ! -d "$ARCHDIR" ] ; then
     echo 1>&2 "Usage: $0 <archive directory>"
     exit 1
@@ -34,7 +36,7 @@ fi
 
 # Copy over the packages
 #for REPONAME in centos5 rhel5; do
-for REPONAME in centos5 centos6 rhel5 fedora16 fedora17 fedora18; do
+for REPONAME in ${dists}; do
   for ARCH in amd64 x86; do
     mkdir -vp "${REPONAME}-${ARCH}"
     cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
@@ -51,27 +53,34 @@ done
 rpm --addsign $(find . -name '*.rpm')
 
 # regenerate the md5sums.txt file (signing the packages changes their checksum)
-for dir in $(ls -d *);do
-  cd ${dir};
-  pwd;
-  rm -v md5sums.txt;
-  md5sum $(find . -name '*.rpm') >> md5sums.txt;
-  md5sum -c md5sums.txt;
-  cd ../;
+for REPONAME in ${dists}; do
+  for ARCH in amd64 x86; do
+    cd ${REPONAME}-${ARCH};
+    pwd;
+    rm -v md5sums.txt;
+    md5sum $(find . -name '*.rpm') >> md5sums.txt;
+    md5sum -c md5sums.txt;
+    cd ../;
+  done
 done
 
 # Here is where we actually create the YUM repositories for each distribution
 # and sign the repomd.xml file
-for dir in $(ls);do
-  createrepo --database --pretty ${dir}
-  gpg --detach-sign --armor -u 0xcbcb082a1bb943db ${dir}/repodata/repomd.xml 
+for REPONAME in ${dists}; do
+  for ARCH in amd64 x86; do
+    echo ${REPONAME}-${ARCH}
+    createrepo --database --pretty ${REPONAME}-${ARCH}
+    gpg --detach-sign --armor -u 0xcbcb082a1bb943db ${REPONAME}-${ARCH}/repodata/repomd.xml 
+  done
 done
 
 # Add in a README for the srpms directory
-for dir in $(ls);do
-  mkdir -vp ${dir}/srpms
-  echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
+for REPONAME in ${dists}; do
+  for ARCH in amd64 x86; do
+    mkdir -vp ${REPONAME}-${ARCH}/srpms
+    echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
 http://kb.askmonty.org/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
-" >> ${dir}/srpms/README
+" >> ${REPONAME}-${ARCH}/srpms/README
+  done
 done
 
