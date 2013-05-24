@@ -53,9 +53,17 @@ Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
 SignWith: package-signing-key@mariadb.org
+
+Origin: MariaDB
+Label: MariaDB
+Codename: raring
+Architectures: amd64 i386 source
+Components: main
+Description: MariaDB Repository
+SignWith: package-signing-key@mariadb.org
 END
 
-for x in hardy lucid oneiric precise quantal ; do
+for x in hardy lucid oneiric precise quantal raring; do
   echo $x
   reprepro --basedir=. include $x $ARCHDIR/kvm-deb-$x-amd64/debs/binary/mariadb-*_amd64.changes
   for i in $(find "$ARCHDIR/kvm-deb-$x-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $x $i ; done
