@@ -16,23 +16,7 @@ mkdir conf
 cat >conf/distributions <<END
 Origin: MariaDB
 Label: MariaDB
-Codename: hardy
-Architectures: amd64 i386 source
-Components: main
-Description: MariaDB Repository
-SignWith: package-signing-key@mariadb.org
-
-Origin: MariaDB
-Label: MariaDB
 Codename: lucid
-Architectures: amd64 i386 source
-Components: main
-Description: MariaDB Repository
-SignWith: package-signing-key@mariadb.org
-
-Origin: MariaDB
-Label: MariaDB
-Codename: oneiric
 Architectures: amd64 i386 source
 Components: main
 Description: MariaDB Repository
@@ -63,7 +47,7 @@ Description: MariaDB Repository
 SignWith: package-signing-key@mariadb.org
 END
 
-for x in hardy lucid oneiric precise quantal raring; do
+for x in lucid precise quantal raring; do
   echo $x
   reprepro --basedir=. include $x $ARCHDIR/kvm-deb-$x-amd64/debs/binary/mariadb-*_amd64.changes
   for i in $(find "$ARCHDIR/kvm-deb-$x-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $x $i ; done
