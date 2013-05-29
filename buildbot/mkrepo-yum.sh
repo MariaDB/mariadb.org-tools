@@ -26,7 +26,7 @@ eval $(gpg-agent --daemon)
 
 ARCHDIR="$1"
 
-dists="centos5 centos6 rhel5 fedora17 fedora18"
+dists="centos5 rhel5 centos6 fedora17 fedora18"
 
 if [ ! -d "$ARCHDIR" ] ; then
     echo 1>&2 "Usage: $0 <archive directory>"
@@ -42,9 +42,17 @@ for REPONAME in ${dists}; do
     cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
     # Copy in the Galera wsrep provider
     if [ "${ARCH}" = "amd64" ]; then
-      cp -avi ~/galera/*.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
+        cp -avi ~/galera/*rhel5.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      else
+        cp -avi ~/galera/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      fi
     else
-      cp -avi  ~/galera/*.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+      if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
+        cp -avi  ~/galera/*rhel5.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+      else
+        cp -avi  ~/galera/*rhel6.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+      fi
     fi
   done
 done
