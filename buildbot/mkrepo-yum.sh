@@ -26,7 +26,9 @@ eval $(gpg-agent --daemon)
 
 ARCHDIR="$1"
 
-dists="centos5 rhel5 centos6 fedora17 fedora18"
+dists="centos5 rhel5 centos6 rhel6 fedora17 fedora18"
+#dists="centos5 rhel5 centos6 fedora17 fedora18"
+#dists="centos5 centos6 fedora17 fedora18"
 
 if [ ! -d "$ARCHDIR" ] ; then
     echo 1>&2 "Usage: $0 <archive directory>"
@@ -39,19 +41,36 @@ fi
 for REPONAME in ${dists}; do
   for ARCH in amd64 x86; do
     mkdir -vp "${REPONAME}-${ARCH}"
-    cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
+    #cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
+
+
+    if [ "${REPONAME}" = "rhel6" ]; then
+      rsync -avP ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
+    ## tmp fix for broken rhel5-x86 builds
+    #elif [ "${REPONAME}" = "rhel5" ]; then
+    #  if [ "${ARCH}" = "x86" ]; then
+    #    cp -avi ${ARCHDIR}/kvm-rpm-centos5-${ARCH}/* ./${REPONAME}-${ARCH}/
+    #  else
+    #    cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
+    #  fi
+    ## end of tmp fix for broken rhel5-x86 builds
+    else
+      rsync -avP ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+    fi
+
+
     # Copy in the Galera wsrep provider
     if [ "${ARCH}" = "amd64" ]; then
       if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-        cp -avi ~/galera/*rhel5.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+        rsync -avP ~/galera/*rhel5.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       else
-        cp -avi ~/galera/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+        rsync -avP ~/galera/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
     else
       if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-        cp -avi  ~/galera/*rhel5.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+        rsync -avP  ~/galera/*rhel5.i386.rpm ./${REPONAME}-${ARCH}/rpms/
       else
-        cp -avi  ~/galera/*rhel6.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+        rsync -avP  ~/galera/*rhel6.i386.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
     fi
   done
