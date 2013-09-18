@@ -51,6 +51,7 @@ for x in lucid precise quantal raring; do
   echo $x
   reprepro --basedir=. include $x $ARCHDIR/kvm-deb-$x-amd64/debs/binary/mariadb-*_amd64.changes
   for i in $(find "$ARCHDIR/kvm-deb-$x-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $x $i ; done
-  for file in $(find "/home/dbart/galera/" -name '*.deb'); do reprepro -S optional -P misc --basedir=. includedeb $x ${file} ; done
+  #for file in $(find "/home/dbart/galera/" -name '*.deb' -not -name '*wheezy*'); do reprepro -S optional -P misc --basedir=. includedeb $x ${file} ; done
+  for file in $(find "/home/dbart/galera/" -name "*${x}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $x ${file} ; done
 done
 
