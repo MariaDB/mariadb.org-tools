@@ -1,0 +1,35 @@
+run_gdb
+^^^^^^^
+A wrapper that can run any executable under gdb.  useful for debugging mysqld
+bootstrap (before mtr learned to do that) and to debug
+mysql,mysqldump,mysqlbinlog,etc that are run from inside *.test files.
+
+Use as
+
+  run_gdb <path-to-executable>
+
+it'll rename executable to <old-name>.exe and put a symlink to itself
+under the old executable name. When run as this executable it'll
+start gdb in xterm.
+
+thou_shalt_not_kill.pm
+^^^^^^^^^^^^^^^^^^^^^^
+
+A perl module that prevents killing of subprocesses. Useful to prevent
+mysql-test-run from kill -9 your gdb session and from killing mysqld too
+early, before it has finished the logging or whatever.
+
+Use as
+
+  perl -Mthou_shalt_not_kill ./mtr sometest
+
+When mtr will try to kill something, you will see what it's trying to
+kill and you'll be able to approve or cancel the killing action.
+
+y.output-to-html
+^^^^^^^^^^^^^^^^
+
+Converts bison output file (from bison --verbose) to a huge html file,
+that takes quite a while to load, but then one can navigate the grammar
+with a comfort of a browser.
+
