@@ -63,12 +63,20 @@ for REPONAME in ${dists}; do
     if [ "${ARCH}" = "amd64" ]; then
       if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
         rsync -avP ~/galera/*rhel5.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora17" ] ; then
+        rsync -avP ~/galera/*fc17.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora18" ] ; then
+        rsync -avP ~/galera/*fc18.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       else
         rsync -avP ~/galera/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
     else
       if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
         rsync -avP  ~/galera/*rhel5.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora17" ] ; then
+        rsync -avP ~/galera/*fc17.i686.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora18" ] ; then
+        rsync -avP ~/galera/*fc18.i686.rpm ./${REPONAME}-${ARCH}/rpms/
       else
         rsync -avP  ~/galera/*rhel6.i386.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
