@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ -z "$2" ]; then
+  if [ -f "$1" -a -x "$1" ]; then
+    echo "Installing as $1"
+    rm -f $1.exe
+    mv $1 $1.exe
+    ln -s $0 $1
+    echo "Done"
+  else
+    echo "Cannot install"
+  fi
+  exit
+fi
+
+if expr "$*" : ".*--help" >/dev/null; then
+  exec -a ${0} ${0}.exe "$@"
+fi
+
+if expr "$0" : "/mysqld$" >/dev/null; then
+  dash_dash_gdb="--gdb"
+fi
+
+file=$$.args
+input=$$.input
+echo file ${0}.exe > $file
+echo set args "$@" "$dash_dash_gdb < $input" >> $file
+cat >> $file <<__EOF__
+__EOF__
+touch $input
+test -t 0 || cat >$input
+xterm -e "libtool --mode=execute gdb -x $file"
+rm $file $input
+
