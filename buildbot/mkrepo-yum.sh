@@ -26,7 +26,7 @@ eval $(gpg-agent --daemon)
 
 ARCHDIR="$1"
 
-dists="centos5 rhel5 centos6 rhel6 fedora17 fedora18"
+dists="centos5 rhel5 centos6 rhel6 fedora18 fedora19"
 #dists="centos5 rhel5 centos6 fedora17 fedora18"
 #dists="centos5 centos6 fedora17 fedora18"
 
@@ -67,6 +67,8 @@ for REPONAME in ${dists}; do
         rsync -avP ~/galera/*fc17.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       elif [ "${REPONAME}" = "fedora18" ] ; then
         rsync -avP ~/galera/*fc18.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora19" ] ; then
+        rsync -avP ~/galera/*fc19.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       else
         rsync -avP ~/galera/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
@@ -77,6 +79,8 @@ for REPONAME in ${dists}; do
         rsync -avP ~/galera/*fc17.i686.rpm ./${REPONAME}-${ARCH}/rpms/
       elif [ "${REPONAME}" = "fedora18" ] ; then
         rsync -avP ~/galera/*fc18.i686.rpm ./${REPONAME}-${ARCH}/rpms/
+      elif [ "${REPONAME}" = "fedora19" ] ; then
+        rsync -avP ~/galera/*fc19.i386.rpm ./${REPONAME}-${ARCH}/rpms/
       else
         rsync -avP  ~/galera/*rhel6.i386.rpm ./${REPONAME}-${ARCH}/rpms/
       fi
