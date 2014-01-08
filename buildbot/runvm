@@ -523,7 +523,12 @@ system 'mkdir', '-p', $pidfile
     and die "Failed to create pidfile directory '$pidfile': $!\n";
 $pidfile.= "kvm_$opt_port.pid";
 
-@cpu_fix= ('-cpu', "$opt_cpu,-kvmclock");
+# Fix for Ubuntu 13.04 "raring" amd64 VMs
+if ($opt_port == 2279) {
+  @cpu_fix= ('-cpu', "$opt_cpu");
+} else {
+  @cpu_fix= ('-cpu', "$opt_cpu,-kvmclock");
+}
 
 my $retries= 0;
 for (;;) {
