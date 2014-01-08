@@ -62,7 +62,7 @@ my $opt_win;
 # to get ssh to check a different key for each image. But that would still
 # cause an error if re-generating an image (with new ssh host key), and it
 # doesn't really give any additional security.
-my @ssh_cmd_prefix= ($ssh_exec,
+my @ssh_cmd_prefix= ($ssh_exec, '-t',
                      '-o', 'UserKnownHostsFile=/dev/null',
                      '-o', 'StrictHostKeyChecking=no',
                      '-o', 'LogLevel=ERROR');
