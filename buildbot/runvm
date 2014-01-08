@@ -281,8 +281,8 @@ sub start_kvm {
             $opt_work_image : $image);
   my @kvm_cmdline=
       ($kvm_exec, '-m', $opt_memory, '-hda', $img,
-       '-boot', 'c', '-smp', $opt_smp, @cpu_fix, '-nographic', '-net',
-       'nic,model='. $opt_netdev,
+       '-boot', 'c', '-smp', $opt_smp, @cpu_fix,
+       '-nographic', '-net', 'nic,model='. $opt_netdev,
        '-net', "user,hostfwd=tcp:127.0.0.1:${opt_port}-:22",
        '-pidfile', $pidfile,
        ($opt_win ? ('-localtime') : ()),
@@ -455,7 +455,7 @@ sub wait_for_up {
     } elsif (!$pid) {
       # Child.
       exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
-           @user_cmd_opt, 'localhost', '/bin/true');
+           @user_cmd_opt, 'localhost', 'true');
     } else {
       # Parent.
       my $res= waitpid $pid, 0;
