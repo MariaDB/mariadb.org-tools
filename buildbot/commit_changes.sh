@@ -36,6 +36,8 @@ if [ $(stat --format=%Y ${prod_dir}/${file}) -le $(( $(date +%s) - ${age} )) ]; 
   if [ -n "$(diff ${repo_dir}/${file} ${prod_dir}/${file})" ]; then 
     # if we are here, we need to commit changes, first copy the file over
     cp -a ${prod_dir}/${file} ${repo_dir}/${file}
+    # then update the permissions
+    chmod 644 ${repo_dir}/${file}
     # one last check to make sure there are differences
     if [ -n "$(bzr diff ${file})" ]; then
       # there are changes, commit them and push to launchpad
