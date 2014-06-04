@@ -1,0 +1,118 @@
+#!/bin/sh
+#
+# Copyright (c) 2014 SkySQL Ab
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2 of
+# the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+#
+#
+# Configuration
+# -------------
+# hooks.postcommitrecipients (mandatory, error if not set)
+#   Comma-separated list of email addresses.
+# hooks.postcommitbranches (if not configured, no email is sent)
+#   Space-separated list of branches. * wildcard is allowed
+# hooks.postcommitsender (if not configured, user.email will be used if exists, 
+#   otherwise a generated address)
+#   E-mail address from which the message will be sent.
+# hooks.postcommitmailer (default /usr/sbin/sendmail)
+#   Tool to send the e-mail
+#
+
+create_email()
+{
+	# Subject will have format <abbreviated revid>: <First line of commit comment>
+	subj=$(git show --pretty="%h: %B" | head -1)
+
+	cat <<-EOF
+	To: $recipients
+	Subject: $subj
+	MIME-Version: 1.0
+	Content-Type: text/plain; charset=utf-8
+	Content-Transfer-Encoding: 8bit
+
+	EOF
+	git log -1 --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
+	echo "-----------------------"
+	echo
+	git diff --stat -p HEAD^ HEAD
+
+}
+
+send_mail()
+{
+	if [ -n "$sender" ]; then
+		${mailer:-/usr/sbin/sendmail} -t -f "$sender"
+	else
+		${mailer:-/usr/sbin/sendmail} -t
+	fi
+}
+
+#######################
+# Main
+#######################
+
+if [ -n "$SKIP_COMMIT_EMAIL" ] ; then
+	echo "post-commit hook: SKIP_COMMIT_EMAIL set, not sending the commit notification" 1>&2
+	exit 0
+fi
+
+recipients=$(git config hooks.postcommitrecipients)
+
+branches=$(git config hooks.postcommitbranches)
+if [ -z "$branches" ] ; then
+	echo "post-commit hook: no branches configured, not sending the commit notification" 1>&2	
+	exit 0
+fi
+
+
+if [ -z "$recipients" ]; then
+	echo "post-commit hook: ERROR: recipient list is empty, not sending the commit notification" 1>&2
+	exit 1
+fi
+
+branch=$(git branch 2>/dev/null | grep '^*' | sed -e 's/* //')
+
+
+# We do not want globbing here, because the list of branches might contain
+# a wildcard, and we need it to remain the wildcard, not to be expanded
+SHELLOPTS_SAVE=$SHELLOPTS
+set -f
+
+# Checking if the current branch matches any value from the configured list
+unset _branch_found
+for b in $branches
+do
+	case $branch in
+		$b) _branch_found=1 ; break ;;
+		*) ;;
+	esac
+done
+
+# Restore previous options
+SHELLOPTS=$SHELLOPTS_SAVE
+
+if [ -z "$_branch_found" ] ; then
+	echo "post-commit hook: branch $branch is not in the configured branch list, not sending the commit notification" 1>&2	
+	exit 0
+fi
+
+sender=$(git config hooks.postcommitsender)
+sender=${sender:-$(git config user.email)}
+mailer=$(git config hooks.postcommitmailer)
+branch_nick=$(basename `readlink -f \`dirname \\\`git rev-parse --git-dir\\\`\``)
+
+create_email | send_mail
+
+

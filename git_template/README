@@ -1,0 +1,75 @@
+Commit notification e-mail
+--------------------------
+
+To configure commit notification e-mails, do the following:
+
+- install git;
+- clone this tree;
+- (optionally) copy or symlink git_template folder to some <git templates path>;
+- configure git templates location globally:
+  = for git versions >= 1.7.1, run 
+    git config --global init.templatedir <git templates path>
+  = for older git versions, set the environmemnt variable 
+    GIT_TEMPLATE_DIR=<git templates path> 
+    and make sure it is always set whenever you work with git;
+- make sure that <git templates path>/hooks/post-commit is executable;
+- (optionally) edit <git templates path>/config file:
+  = check that hooks/postcommitrecipients has the desired value;
+  = check that hooks/postcommitbranches has the desired value;
+  = set hooks/postcommitsender to the e-mail that you want notifications 
+    to be sent from;
+  = configure postcommitmailer if necessary;
+
+From now on, for all new clones of branches listed in hooks/postcommitbranches, 
+commit notifications should be sent. 
+
+If you had already cloned some trees before enabling commit notifications, 
+you will need to amend those trees:
+
+- add the hook script to the tree by either running:
+  = cd <cloned folder>
+    git init
+  = or 
+    cp <git templates path>/hooks/post-commit <cloned folder>/.git/hooks/
+
+- copy hooks/postcommit* options from 
+  <git templates path>/config to <cloned folder>/.git/config
+
+
+To disable commit notification(s), set SKIP_COMMIT_EMAIL environment variable 
+to a non-empty value.
+
+
+Notes:
+
+- hooks/postcommitrecipients is a *comma-separated* list of e-mails. Normally, 
+  it is expected to contain the commit mailing list, but you can add some other
+  address(es) or change it if you wish;
+- hooks/postcommitbranches is a *space-separated* list of branches affected 
+  by the post-commit hook. Asterisk wildcard is allowed. 
+  Please note that these are *real* git branches, as opposed to branch nicknames. 
+
+Examples:
+
+Assuming you did the following
+  git clone https://github.com/MariaDB/server 10.1-mdev1234
+  ...
+  git branch
+  # * 10.1
+  git commit -a
+
+ Example 1:
+  postcommitbranches = 10.0 10.1 10.2
+  # The commit e-mail will be sent because the current branch is 10.1, 
+  # it's on the list
+
+  Example 2:
+  postcommitbranches = 10.0-* 10.1-* 10.2-*
+  # The commit e-mail won't be sent because the current branch is 10.1, 
+  # it does not match the pattern 10.1-*
+
+  Example 3:
+  postcommitbranches = 10*
+  # The commit e-mail will be sent
+
+

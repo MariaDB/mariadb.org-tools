@@ -1,0 +1,15 @@
+[hooks]
+
+# Mandatory: address to send notifications to
+postcommitrecipients = commits@mariadb.org
+
+# Mandatory: space-separated list of branches to send notifications for
+# wildcards are supported
+postcommitbranches = *
+
+# Optional: address from which notifications will be sent 
+# postcommitsender = <e-mail address>
+
+# Optional: tool to send emails (default /usr/sbin/sendmail)
+# postcommitmailer = <path>
+
