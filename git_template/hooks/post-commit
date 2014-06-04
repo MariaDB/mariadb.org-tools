@@ -33,7 +33,7 @@
 create_email()
 {
 	# Subject will have format <abbreviated revid>: <First line of commit comment>
-	subj=$(git show --pretty="%h: %B" | head -1)
+	subj=$(git log --pretty="%h: %B" | head -1)
 
 	cat <<-EOF
 	To: $recipients
@@ -43,10 +43,7 @@ create_email()
 	Content-Transfer-Encoding: 8bit
 
 	EOF
-	git log -1 --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
-	echo "-----------------------"
-	echo
-	git diff --stat -p HEAD^ HEAD
+	git show --patch-with-stat --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
 
 }
 

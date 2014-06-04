@@ -1,24 +1,37 @@
 Commit notification e-mail
 --------------------------
 
-To configure commit notification e-mails, do the following:
+To configure commit notification e-mails for the first time, do the following:
 
-- install git;
-- clone this tree;
-- (optionally) copy or symlink git_template folder to some <git templates path>;
+- the following should be done regardless commit notification:
+  = install git;
+  = run git config --global user.name "<Your Name>"
+  = run git config --global user.email "<your email>"
+- clone/pull this tree (further it's location is <this tree>);
+- create a folder <git templates>;
+- symlink <this tree>/git_template/hooks to <git templates path>/hooks;
 - configure git templates location globally:
   = for git versions >= 1.7.1, run 
     git config --global init.templatedir <git templates path>
   = for older git versions, set the environmemnt variable 
     GIT_TEMPLATE_DIR=<git templates path> 
     and make sure it is always set whenever you work with git;
-- make sure that <git templates path>/hooks/post-commit is executable;
-- (optionally) edit <git templates path>/config file:
-  = check that hooks/postcommitrecipients has the desired value;
-  = check that hooks/postcommitbranches has the desired value;
-  = set hooks/postcommitsender to the e-mail that you want notifications 
-    to be sent from;
-  = configure postcommitmailer if necessary;
+- run git config --global hooks.postcommitrecipients "<comma-separated list of addresses to send emails to>;
+- run git config --global hooks.postcommitbranches "<space-separated list of branches> (* wildcard is allowed)
+- optionally:
+  = run git config --global hooks.postcommitsender <e-mail to send notifications from> 
+  = run git config --global hooks.postcommitmailer <path to mailer> 
+    if anything other than /usr/sbin/sendmail is to be used
+- make sure <this tree>/git_template/hooks/post-commit-email is executable;
+
+Example (most common set of commands):
+
+bzr branch lp:mariadb-tools 
+mkdir $HOME/.git_template/
+ln -s `pwd`/mariadb-tools/git_template/hooks $HOME/.git_template/hooks
+git config --global init.templatedir $HOME/.git_template
+git config --global hooks.postcommitrecipients "commits@mariadb.org"
+git config --global hooks.postcommitbranches "*"
 
 From now on, for all new clones of branches listed in hooks/postcommitbranches, 
 commit notifications should be sent. 
@@ -26,18 +39,13 @@ commit notifications should be sent.
 If you had already cloned some trees before enabling commit notifications, 
 you will need to amend those trees:
 
-- add the hook script to the tree by either running:
-  = cd <cloned folder>
-    git init
-  = or 
-    cp <git templates path>/hooks/post-commit <cloned folder>/.git/hooks/
-
-- copy hooks/postcommit* options from 
-  <git templates path>/config to <cloned folder>/.git/config
+cd <cloned folder>
+rm -rf .git/hooks
+ln -s <this tree>/git_template/hooks .git/hooks
 
 
 To disable commit notification(s), set SKIP_COMMIT_EMAIL environment variable 
-to a non-empty value.
+to a non-empty value or set hooks.postcommitbranches to an empty value.
 
 
 Notes:
