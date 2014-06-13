@@ -1,0 +1,55 @@
+the first patch is taken verbatim from
+
+https://github.com/buildbot/buildbot/commit/2e25ec71c0791178de84222228b147ab309b77d6
+
+--- /usr/share/pyshared/buildbot/status/web/change_hook.py	2014-06-13 13:21:41.396869446 +0300
++++ /usr/share/pyshared/buildbot/status/web/change_hook.py	2014-06-13 13:28:42.544181108 +0300
+@@ -19,7 +19,7 @@
+ # but "the rest" is pretty minimal
+ 
+ import re
+-from twisted.web import resource
++from twisted.web import resource, server
+ from twisted.python.reflect import namedModule
+ from twisted.python import log
+ from twisted.internet import defer
+@@ -62,16 +62,22 @@
+             changes, src = self.getChanges( request )
+         except ValueError, err:
+             request.setResponseCode(400, err.args[0])
+-            return defer.succeed(err.args[0])
++            return err.args[0]
+ 
+         log.msg("Payload: " + str(request.args))
+         
+         if not changes:
+             log.msg("No changes found")
+-            return defer.succeed("no changes found")
++            return "no changes found"
+         d = self.submitChanges( changes, request, src )
+-        d.addCallback(lambda _ : "OK")
+-        return d
++        def ok(_):
++            request.setResponseCode(202)
++            request.finish()
++        def err(_):
++            requeset.setResponseCode(500)
++            request.finish()
++        d.addCallbacks(ok, err)
++        return server.NOT_DONE_YET
+ 
+     
+     def getChanges(self, request):
+--- /usr/share/pyshared/buildbot/status/web/hooks/github.py	2014-06-13 13:30:44.651942181 +0300
++++ /usr/share/pyshared/buildbot/status/web/hooks/github.py	2014-06-13 13:35:41.763732506 +0300
+@@ -95,8 +95,8 @@
+                 project = project[0]
+             elif project is None:
+                 project = ''
+-            # This field is unused:
+-            #private = payload['repository']['private']
++            if (payload['repository']['private']):
++                repo_url = re.sub('^https://github.com/', 'git@github.com:', repo_url)
+             changes = process_change(payload, user, repo, repo_url, project)
+             log.msg("Received %s changes from github" % len(changes))
+             return (changes, 'git')
