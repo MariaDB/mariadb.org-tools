@@ -84,7 +84,7 @@ branch=$(git branch 2>/dev/null | grep '^*' | sed -e 's/* //')
 
 # We do not want globbing here, because the list of branches might contain
 # a wildcard, and we need it to remain the wildcard, not to be expanded
-SHELLOPTS_SAVE=$SHELLOPTS
+#SHELLOPTS_SAVE=$SHELLOPTS
 set -f
 
 # Checking if the current branch matches any value from the configured list
@@ -98,7 +98,8 @@ do
 done
 
 # Restore previous options
-SHELLOPTS=$SHELLOPTS_SAVE
+# (Commented because SHELLOPTS is read-only in bash)
+#SHELLOPTS=$SHELLOPTS_SAVE
 
 if [ -z "$_branch_found" ] ; then
 	echo "post-commit hook: branch $branch is not in the configured branch list, not sending the commit notification" 1>&2	
