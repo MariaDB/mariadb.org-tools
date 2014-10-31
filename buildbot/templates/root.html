@@ -1,0 +1,342 @@
+{% extends 'layout.html' %}
+{% import 'forms.html' as forms %}
+
+{% block content %}
+
+<h1>Welcome to the Buildbot{%- if project_name -%}
+  &nbsp;for the&nbsp;
+  {%- if project_url -%}
+    <a href="{{ project_url }}">{{ project_name }}</a>
+  {%- else -%}
+    {{ project_name }}
+  {%- endif -%}
+&nbsp;project
+{%- endif -%}
+!</h1>
+
+<ul>
+  <li>the Waterfall Display
+(<a href="waterfall?branch=5.1">5.1</a>,
+<a href="waterfall?branch=5.2">5.2</a>,
+<a href="waterfall?branch=5.3">5.3</a>,
+<a href="waterfall?branch=5.5" style='background-color:cyan'>5.5</a>,
+<a href="waterfall?branch=6.0">6.0</a>,
+<a href="waterfall?branch=5.1-release">5.1-release</a>,
+<a href="waterfall?branch=5.5-release">5.5-release</a>,
+<a href="waterfall?branch=5.1-merge">5.1-merge</a>,
+<a href="waterfall?branch=maria-5.2-merge-5.1">maria-5.2-merge-5.1</a>,
+<a href="waterfall?branch=mariadb-xtradb-merge2">mariadb-xtradb-merge2</a>,
+<a href="waterfall?branch=mysql-5.1-testing">mysql-5.1-testing</a>,
+<a href="waterfall?branch=mysql-6.0-testing2">mysql-6.0-testing2</a>,
+<a href="waterfall?branch=mariadb-5.1-knielsen">mariadb-5.1-knielsen</a>,
+<a href="waterfall?branch=mariadb-5.1-monty">mariadb-5.1-monty</a>,
+<a href="waterfall?branch=mariadb-5.2-monty">mariadb-5.2-monty</a>,
+<a href="waterfall?branch=mariadb-5.1-bothorsen">mariadb-5.1-bothorsen</a>,
+<a href="waterfall?branch=maria-5.1-wl24">maria-5.1-wl24</a>,
+<a href="waterfall?branch=maria-5.1-wl21">maria-5.1-wl21</a>,
+<a href="waterfall?branch=maria-5.1-vcol">maria-5.1-vcol</a>,
+<a href="waterfall?branch=5.1.39-oqgraph">5.1.39-oqgraph</a>,
+<a href="waterfall?branch=mysql-5.1-mwl36">mysql-5.1-mwl36</a>,
+<a href="waterfall?branch=5.2-percona">5.2-percona</a>,
+<a href="waterfall?branch=5.2-serg">5.2-serg</a>,
+<a href="waterfall?branch=5.3">5.3</a>,
+<a href="waterfall?branch=5.3-subqueries">5.3-subqueries</a>,
+<a href="waterfall?branch=5.3-subqueries-mwl90">5.3-subqueries-mwl90</a>,
+<a href="waterfall?branch=5.3-mwl89">5.3-mwl89</a>,
+<a href="waterfall?branch=5.3-mwl148">5.3-mwl148</a>,
+<a href="waterfall?branch=5.3-subquery-bugfixing">5.3-subquery-bugfixing</a>,
+<a href="waterfall?branch=maria-5.2-wl85">maria-5.2-wl85</a>,
+<a href="waterfall?branch=maria-5.3-mwl128">maria-5.3-mwl128</a>,
+<a href="waterfall?branch=maria-5.3-mwl106">maria-5.3-mwl106</a>,
+<a href="waterfall?branch=maria-5.3-icp">maria-5.3-icp</a>,
+<a href="waterfall?branch=maria-5.3-mwl247">maria-5.3-mwl247</a>,
+<a href="waterfall?branch=maria-5.3-mwl248">maria-5.3-mwl248</a>,
+<a href="waterfall?branch=mariadb-5.3-monty">mariadb-5.3-monty</a>,
+<a href="waterfall?branch=maria-5.5-mwl248">maria-5.5-mwl248</a>,
+<a href="waterfall?branch=10.0" style='background-color:cyan;'>10.0</a>,
+<a href="waterfall?branch=10.0-base">10.0-base</a>,
+<a href="waterfall?branch=10.0-monty">10.0-monty</a>,
+<a href="waterfall?branch=10.1" style='background-color:cyan;'>10.1</a>,
+<a href="waterfall?branch=5.5-jani">5.5-jani</a>,
+<a href="waterfall?branch=maria-5.5-galera">maria-5.5-galera</a>,
+<a href="waterfall?branch=maria-5.5-monty">maria-5.5-monty</a>,
+<a href="waterfall?branch=maria-10.0-mwl253">maria-10.0-mwl253</a>,
+<a href="waterfall?branch=maria-10.0-galera">maria-10.0-galera</a>,
+<a href="waterfall?branch=10.0-mdev6657-try2">10.0-mdev6657-try2</a>,
+<a href="waterfall">all</a>) will give you a
+  time-oriented summary of recent buildbot activity.</li>
+
+  <li>the Grid Display
+(<a href="grid?branch=5.1">5.1</a>,
+<a href="grid?branch=5.2">5.2</a>,
+<a href="grid?branch=5.3">5.3</a>,
+<a href="grid?branch=5.5" style='background-color:cyan;'>5.5</a>,
+<a href="grid?branch=6.0">6.0</a>,
+<a href="grid?branch=5.1-release">5.1-release</a>,
+<a href="grid?branch=5.1-merge">5.1-merge</a>,
+<a href="grid?branch=5.5-merge">5.5-merge</a>,
+<a href="grid?branch=maria-5.2-merge-5.1">maria-5.2-merge-5.1</a>,
+<a href="grid?branch=mariadb-xtradb-merge2">mariadb-xtradb-merge2</a>,
+<a href="grid?branch=mysql-5.1-testing">mysql-5.1-testing</a>,
+<a href="grid?branch=mysql-6.0-testing2">mysql-6.0-testing2</a>,
+<a href="grid?branch=mariadb-5.1-knielsen">mariadb-5.1-knielsen</a>,
+<a href="grid?branch=mariadb-5.1-monty">mariadb-5.1-monty</a>,
+<a href="grid?branch=mariadb-5.2-monty">mariadb-5.2-monty</a>,
+<a href="grid?branch=mariadb-5.1-bothorsen">mariadb-5.1-bothorsen</a>,
+<a href="grid?branch=maria-5.1-wl24">maria-5.1-wl24</a>,
+<a href="grid?branch=maria-5.1-wl21">maria-5.1-wl21</a>,
+<a href="grid?branch=maria-5.1-vcol">maria-5.1-vcol</a>,
+<a href="grid?branch=5.1.39-oqgraph">5.1.39-oqgraph</a>,
+<a href="grid?branch=mysql-5.1-mwl36">mysql-5.1-mwl36</a>,
+<a href="grid?branch=5.2-percona">5.2-percona</a>,
+<a href="grid?branch=5.1-serg">5.1-serg</a>,
+<a href="grid?branch=5.2-serg">5.2-serg</a>,
+<a href="grid?branch=5.3">5.3</a>,
+<a href="grid?branch=5.3-subqueries">5.3-subqueries</a>,
+<a href="grid?branch=5.3-subqueries-mwl90">5.3-subqueries-mwl90</a>,
+<a href="grid?branch=5.3-mwl89">5.3-mwl89</a>,
+<a href="grid?branch=5.3-mwl148">5.3-mwl148</a>,
+<a href="grid?branch=5.3-subquery-bugfixing">5.3-subquery-bugfixing</a>,
+<a href="grid?branch=maria-5.2-wl85">maria-5.2-wl85</a>,
+<a href="grid?branch=maria-5.3-mwl128">maria-5.3-mwl128</a>,
+<a href="grid?branch=maria-5.3-mwl106">maria-5.3-mwl106</a>,
+<a href="grid?branch=maria-5.3-icp">maria-5.3-icp</a>,
+<a href="grid?branch=maria-5.3-mwl247">maria-5.3-mwl247</a>,
+<a href="grid?branch=maria-5.3-mwl248">maria-5.3-mwl248</a>,
+<a href="grid?branch=mariadb-5.3-monty">mariadb-5.3-monty</a>,
+<a href="grid?branch=maria-5.5-mwl248">maria-5.5-mwl248</a>,
+<a href="grid?branch=10.0" style='background-color:cyan;'>10.0</a>,
+<a href="grid?branch=10.0-base">10.0-base</a>,
+<a href="grid?branch=10.0-monty">10.0-monty</a>,
+<a href="grid?branch=10.1" style='background-color:cyan;'>10.1</a>,
+<a href="grid?branch=5.5-jani">5.5-jani</a>,
+<a href="grid?branch=maria-5.5-galera">maria-5.5-galera</a>,
+<a href="grid?branch=maria-5.5-monty">maria-5.5-monty</a>,
+<a href="grid?branch=maria-10.0-mwl253">maria-10.0-mwl253</a>,
+<a href="grid?branch=maria-10.0-galera">maria-10.0-galera</a>,
+<a href="grid?branch=10.0-mdev6657-try2">10.0-mdev6657-try2</a>,
+<a href="grid">all</a>)
+will give you a
+  developer-oriented summary of recent buildbot activity.</li>
+
+  <li>the <a href="tgrid">Transposed Grid Display</a> presents
+  the same information as the grid, but lists the revisions down the side.</li>
+
+  <li>The <a href="console">Console</a> presents a user-oriented status page.</li>
+
+  <li>The <a href="builders">Builders</a> and their most recent builds are here.</li>
+
+  <li>The <a href="one_box_per_builder">Latest Build</a> for each builder is
+  here.</li>
+
+  <li><a href="one_line_per_build">Recent Builds</a> are summarized here, one
+  per line.</li>
+
+  <li><a href="buildslaves">Buildslave</a> information</li>
+  <li><a href="changes">ChangeSource</a> information.</li>
+  <li><a href="reports/cross_reference">Cross Reference</a> allows to search
+  for test failures in previous test runs.</li>
+
+  <br />
+  <li><a href="about">About this Buildbot</a></li>
+</ul>
+
+<hr>
+<p>
+<form method=GET action="grid">
+Grid display by category and branch:
+<br> <input type=checkbox name=category value=main checked> Main stable builders
+<br> <input type=checkbox name=category value=package checked> Builders for package testing
+<br> <input type=checkbox name=category value=experimental> Experimental builders with unresolved failures/problems
+<br> <input type=checkbox name=category value=new> New builders not yet working
+<br>
+Branch:
+<select NAME="branch">
+  <option value="5.1" selected>5.1
+  <option value="5.2">5.2
+  <option value="5.3">5.3
+  <option value="5.5">5.5
+  <option value="6.0">6.0
+  <option value="5.1-release">5.1-release
+  <option value="5.5-release">5.5-release
+  <option value="5.1-merge">5.1-merge
+  <option value="maria-5.2-merge-5.1">maria-5.2-merge-5.1
+  <option value="mariadb-xtradb-merge2">mariadb-xtradb-merge2
+  <option value="mysql-5.1-testing">mysql-5.1-testing
+  <option value="mysql-6.0-testing2">mysql-6.0-testing2
+  <option value="mariadb-5.1-knielsen">mariadb-5.1-knielsen
+  <option value="mariadb-5.1-monty">mariadb-5.1-monty
+  <option value="mariadb-5.2-monty">mariadb-5.2-monty
+  <option value="mariadb-5.1-bothorsen">mariadb-5.1-bothorsen
+  <option value="maria-5.1-wl24">maria-5.1-wl24
+  <option value="maria-5.1-wl21">maria-5.1-wl21
+  <option value="maria-5.1-vcol">maria-5.1-vcol
+  <option value="5.1.39-oqgraph">5.1.39-oqgraph
+  <option value="5.2-percona">5.2-percona
+  <option value="5.2-serg">5.2-serg
+  <option value="5.3">5.3
+  <option value="5.3-subqueries">5.3-subqueries
+  <option value="5.3-subqueries-mwl90">5.3-subqueries-mwl90
+  <option value="5.3-mwl89">5.3-mwl89
+  <option value="5.3-mwl148">5.3-mwl148
+  <option value="5.3-subquery-bugfixing">5.3-subquery-bugfixing
+  <option value="maria-5.2-wl85">maria-5.2-wl85
+  <option value="maria-5.3-mwl128">maria-5.3-mwl128
+  <option value="maria-5.3-mwl106">maria-5.3-mwl106
+  <option value="maria-5.3-icp">maria-5.3-icp
+  <option value="maria-5.3-mwl247">maria-5.3-mwl247
+  <option value="maria-5.3-mwl248">maria-5.3-mwl248
+  <option value="mariadb-5.3-monty">mariadb-5.3-monty
+  <option value="maria-5.5-mwl248">maria-5.5-mwl248
+  <option value="10.0">10.0
+  <option value="10.0-base">10.0-base
+  <option value="10.0-monty">10.0-monty
+  <option value="10.1">10.1
+  <option value="5.5-jani">5.5-jani
+  <option value="maria-5.5-galera">maria-5.5-galera
+  <option value="maria-5.5-monty">maria-5.5-monty
+  <option value="maria-10.0-mwl253">maria-10.0-mwl253
+  <option value="maria-10.0-galera">maria-10.0-galera
+  <option value="10.0-mdev6657-try2">10.0-mdev6657-try2
+ </select>
+<input type=hidden name=width value="8">
+<input type=submit value="Show grid">
+</form>
+</p>
+<hr>
+<p>
+<form method=GET action="tgrid">
+Transposed grid display by category and branch:
+<br> <input type=checkbox name=category value=main checked> Main stable builders
+<br> <input type=checkbox name=category value=package checked> Builders for package testing
+<br> <input type=checkbox name=category value=experimental> Experimental builders with unresolved failures/problems
+<br> <input type=checkbox name=category value=new> New builders not yet working
+<br>
+Branch:
+<select NAME="branch">
+  <option value="5.1" selected>5.1
+  <option value="5.2">5.2
+  <option value="5.3">5.3
+  <option value="5.5">5.5
+  <option value="6.0">6.0
+  <option value="5.1-release">5.1-release
+  <option value="5.5-release">5.5-release
+  <option value="5.1-merge">5.1-merge
+  <option value="maria-5.2-merge-5.1">maria-5.2-merge-5.1
+  <option value="mariadb-xtradb-merge2">mariadb-xtradb-merge2
+  <option value="mysql-5.1-testing">mysql-5.1-testing
+  <option value="mysql-6.0-testing2">mysql-6.0-testing2
+  <option value="mariadb-5.1-knielsen">mariadb-5.1-knielsen
+  <option value="mariadb-5.1-monty">mariadb-5.1-monty
+  <option value="mariadb-5.2-monty">mariadb-5.2-monty
+  <option value="mariadb-5.1-bothorsen">mariadb-5.1-bothorsen
+  <option value="maria-5.1-wl24">maria-5.1-wl24
+  <option value="maria-5.1-wl21">maria-5.1-wl21
+  <option value="maria-5.1-vcol">maria-5.1-vcol
+  <option value="5.1.39-oqgraph">5.1.39-oqgraph
+  <option value="5.2-serg">5.2-serg
+  <option value="5.3">5.3
+  <option value="5.3-subqueries">5.3-subqueries
+  <option value="5.3-subqueries-mwl90">5.3-subqueries-mwl90
+  <option value="5.3-mwl89">5.3-mwl89
+  <option value="5.3-mwl148">5.3-mwl148
+  <option value="5.3-subquery-bugfixing">5.3-subquery-bugfixing
+  <option value="maria-5.2-wl85">maria-5.2-wl85
+  <option value="maria-5.3-mwl128">maria-5.3-mwl128
+  <option value="maria-5.3-mwl106">maria-5.3-mwl106
+  <option value="maria-5.3-icp">maria-5.3-icp
+  <option value="maria-5.3-mwl247">maria-5.3-mwl247
+  <option value="maria-5.3-mwl248">maria-5.3-mwl248
+  <option value="mariadb-5.3-monty">mariadb-5.3-monty
+  <option value="maria-5.5-mwl248">maria-5.5-mwl248
+  <option value="10.0">10.0
+  <option value="10.0-base">10.0-base
+  <option value="10.0-monty">10.0-monty
+  <option value="10.1">10.1
+  <option value="5.5-jani">5.5-jani
+  <option value="maria-5.5-galera">maria-5.5-galera
+  <option value="maria-5.5-monty">maria-5.5-monty
+  <option value="maria-10.0-mwl253">maria-10.0-mwl253
+  <option value="maria-10.0-galera">maria-10.0-galera
+  <option value="10.0-mdev6657-try2">10.0-mdev6657-try2
+ </select>
+<input type=hidden name=length value="10">
+<input type=submit value="Show transposed grid">
+</form>
+</p>
+<hr>
+<p>
+<form method=GET action="waterfall">
+Waterfall display by category and branch:
+<br> <input type=checkbox name=category value=main checked> Main stable builders
+<br> <input type=checkbox name=category value=package checked> Builders for package testing
+<br> <input type=checkbox name=category value=experimental> Experimental builders with unresolved failures/problems
+<br> <input type=checkbox name=category value=new> New builders not yet working
+<br>
+Branch:
+<select NAME="branch">
+  <option value="5.1" selected>5.1
+  <option value="5.2">5.2
+  <option value="5.3">5.3
+  <option value="5.5">5.5
+  <option value="6.0">6.0
+  <option value="5.1-release">5.1-release
+  <option value="5.5-release">5.5-release
+  <option value="5.1-merge">5.1-merge
+  <option value="maria-5.2-merge-5.1">maria-5.2-merge-5.1
+  <option value="mariadb-xtradb-merge2">mariadb-xtradb-merge2
+  <option value="mysql-5.1-testing">mysql-5.1-testing
+  <option value="mysql-6.0-testing2">mysql-6.0-testing2
+  <option value="mariadb-5.1-knielsen">mariadb-5.1-knielsen
+  <option value="mariadb-5.1-monty">mariadb-5.1-monty
+  <option value="mariadb-5.2-monty">mariadb-5.2-monty
+  <option value="mariadb-5.1-bothorsen">mariadb-5.1-bothorsen
+  <option value="maria-5.1-wl24">maria-5.1-wl24
+  <option value="maria-5.1-wl21">maria-5.1-wl21
+  <option value="maria-5.1-vcol">maria-5.1-vcol
+  <option value="5.1.39-oqgraph">5.1.39-oqgraph
+  <option value="5.2-serg">5.2-serg
+  <option value="5.3">5.3
+  <option value="5.3-subqueries">5.3-subqueries
+  <option value="5.3-subqueries-mwl90">5.3-subqueries-mwl90
+  <option value="5.3-mwl89">5.3-mwl89
+  <option value="5.3-mwl148">5.3-mwl148
+  <option value="5.3-subquery-bugfixing">5.3-subquery-bugfixing
+  <option value="maria-5.2-wl85">maria-5.2-wl85
+  <option value="maria-5.3-mwl128">maria-5.3-mwl128
+  <option value="maria-5.3-mwl106">maria-5.3-mwl106
+  <option value="maria-5.3-icp">maria-5.3-icp
+  <option value="maria-5.3-mwl247">maria-5.3-mwl247
+  <option value="maria-5.3-mwl248">maria-5.3-mwl248
+  <option value="mariadb-5.3-monty">mariadb-5.3-monty
+  <option value="maria-5.5-mwl248">maria-5.5-mwl248
+  <option value="10.0">10.0
+  <option value="10.0-base">10.0-base
+  <option value="10.0-monty">10.0-monty
+  <option value="10.1">10.1
+  <option value="5.5-jani">5.5-jani
+  <option value="maria-5.5-galera">maria-5.5-galera
+  <option value="maria-5.5-monty">maria-5.5-monty
+  <option value="maria-10.0-mwl253">maria-10.0-mwl253
+  <option value="maria-10.0-galera">maria-10.0-galera
+  <option value="10.0-mdev6657-try2">10.0-mdev6657-try2
+</select>
+<input type=submit value="Show waterfall">
+</form>
+</p>
+<hr>
+
+{%- if authz.advertiseAction('cleanShutdown') -%}
+{%- if shutting_down -%}
+Master is shutting down<br/>
+{{ forms.cancel_clean_shutdown(cancel_shutdown_url, authz) }}
+{%- else -%}
+{{ forms.clean_shutdown(shutdown_url, authz) }}
+{%- endif -%}
+{%- endif -%}
+
+<p><i>This and other pages can be overridden and customized.</i></p>
+
+</div>
+
+{% endblock %}
