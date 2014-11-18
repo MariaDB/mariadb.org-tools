@@ -34,7 +34,7 @@ my @cpu_fix;
 
 my $opt_port= 2222;
 #my $opt_background= undef;
-my $opt_memory= 2047;
+my $opt_memory= 3072;
 my $opt_smp= 2;
 # This workaround (-nx) is needed to boot Ubuntu Jaunty i386 guest on
 # Jaunty i386 host. For now we just include it everywhere by default,
