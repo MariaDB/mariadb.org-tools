@@ -1,0 +1,109 @@
+This is for hacks and one-time scripts that *might* be useful some day
+in the future, so they're worth preserving. But they aren't for the
+faint of hearts and may format your hard drive and kill your dog.
+
+Don't use them.
+At least not until you've read and understood every single line.
+And adjusted all hard-coded paths and implicit assumptions.
+
+####### git_bzr_recover_marks #################################################
+
+I've done it when git-remote-bzr stopped working.
+All of a sudden "git fetch origin" was failing with errors like
+"fatal: mark :399654 not declared". Here and below, remember that "origin"
+is my bzr repo.
+
+The only help I've was able to find was this:
+http://git.661346.n2.nabble.com/git-remote-bzr-fatal-mark-399654-not-declared-td7603246.html
+
+Below is what I've fiured out (take with a grain of salt):
+
+git-remote-bzr uses two files to remember the import status.
+.git/bzr/origin/mark-git and .git/bzr/origin/mark-int
+
+The first one looks like
+:1 7579786b8195dd9052adf3424044be33f2f401b6
+:2 3be46690f46f27f3e671de9a615d24d1554b9991
+:3 de6bbc66ed7c77a52d74190dc53f4cbb077a918b
+...
+
+where the first number is the "mark" id, the second is the git object id.
+The second is json of
+{"tips":
+  {
+    "10.0": "sergii@pisem.net-20150130202439-2n9yc6kjhz2irei9",
+    "5.5": "sergii@pisem.net-20150211194056-7qzjl8uhjz2129k8",
+    "5.5-galera": "nirbhay@mariadb.com-20150128010243-qlitib8bteuocykh",
+    "10.0-galera": "nirbhay@mariadb.com-20150128012206-mab2ig56pkbbotkp"
+    ...
+  },
+  "last-mark": 475242,
+  "marks":
+  {
+    "sp1r-monty@bitch.mysql.fi-20011213201606-10484": 19856,
+    "sp1r-mats@romeo.(none)-20061211120511-57418": 182062,
+    "sp1r-istruewing@stella.local-20071116130759-17595": 215844,
+    ...
+  }
+}
+
+where "marks" maps bzr revids to mark ids, and "tips" is the last merged
+revid for every branch.
+
+The error means that this mark-int contains marks that aren't present in the
+mark-git (there are many marks in mark-git that aren't present in mark-int,
+but they are normally for other git objects, like blobs, not for commits).
+
+The suggested solution is to delete both mark-* files and re-import.
+It worked for me, but some commits got a different sha1 hash, so part of the
+history was duplicated, I didn't like it.
+
+Also that post (see url above) - it's from the author of git-remote-bzr -
+has a script to "fix" errors. What it, in fact, does - it remove these eroneous
+marks from mark-int (json file). After that everything looks kind of ok, but
+the merge doesn't work as random commits have disappeared from the middle of
+the imported history. Like, there's no mark for a commit X but there's a mark
+for X's parent and X's child.
+
+This is where I used git_bzr_recover_marks. It reads a "missing.log" file
+in the format
+:473284 sergii@pisem.net-20141111093935-m1uahxovinyhnmmw
+:474582 psergey@askmonty.org-20141218173847-zawy1wboo2axbhbc
+:474800 git-revid:5d740be0c9a60a6e7ddc9ecb26dcb97ceeb192c9
+...
+
+(that is, "mark revid" pairs) for all marks that are in mark-int and not in
+mark-git. And it tries to guess what git commit matches that bzr revid.
+It uses "bzr log" and "git log", the comment of the commit must be the same
+(only the first line is checked), the timestamp must be the same (only minutes
+and seconds are compared - to avoid timezone effects).
+
+It creates three files:
+
+git.log has "mark hash" format, same as mark-git, and can me merged with
+mark-git directly (after the manual cleanup, see below).
+
+out.log has verbose git/bzr commit pairs for every resolved mark. For manual
+reading and double-checking.
+
+err.log logs what revids weren't uniquely resolved. The reasons could be:
+* 0:found - no matching commit was found in a git tree. Either bzr tree indeed
+  has newer revisions - remove them (use bzr uncommit), the bzr tree must be
+  exactly at the point of the last bzr import. Or - I had it - there are
+  some weird revisions that are in the bzr repository ("bzr log -r" shows them),
+  but "bzr log" and "bzr viz" do not show them, so they are, somehow, not part
+  of the branch history. I've removed these revids from the json file.
+* 2:found (or any number, 26:found was there too). A changeset comment matched
+  many git commits. Not unusual for comments like "merge" or completely empty
+  comments.  Even after timestamp (min:sec) filtering there can be many
+  matches.  Check them manually looking at the full timestamp, author, etc.
+  And remove wrong lines from git.log
+* bad: - somehow "bzr log -n1 -r" didn't return anything for this revid.
+  No idea why, I've had to map these revids manually and add mapping lines to
+  git.log.
+
+So, I've run the script, checked err.log, cleaned up git.log, appended it to
+mark-git and sorted the file, removed "0:found" marks from mark-int, adjusted
+"tips" in the mark-int (they all should have valid revids that have marks).
+
+Crossed the fingers and run "git fetch origin" again. It worked.
