@@ -1,0 +1,18 @@
+Remove the message that floods the twistd.log on every buildbot webpage loads,
+obscuring log entries about what buildbot is really doing (like building
+or receiving changes).
+
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/builder.py /usr/lib/python2.7/dist-packages/buildbot/status/builder.py
+--- ./status/builder.py	2013-08-23 01:43:56.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/builder.py	2015-02-25 09:46:46.047055882 +0200
+@@ -170,8 +170,8 @@ def getBuildByNumber(self, number):
+     def loadBuildFromFile(self, number):
+         filename = self.makeBuildFilename(number)
+         try:
+-            log.msg("Loading builder %s's build %d from on-disk pickle"
+-                % (self.name, number))
++            #log.msg("Loading builder %s's build %d from on-disk pickle"
++            #    % (self.name, number))
+             with open(filename, "rb") as f:
+                 build = load(f)
+             build.setProcessObjects(self, self.master)

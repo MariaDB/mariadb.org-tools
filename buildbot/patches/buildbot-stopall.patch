@@ -1,0 +1,33 @@
+fix the "stop all builds" button to work
+
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/templates/change.html /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/change.html
+--- ./status/web/templates/change.html	2013-07-06 09:24:04.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/change.html	2015-03-01 22:57:08.313729456 +0200
+@@ -12,7 +12,7 @@
+ 
+ {% if authz.advertiseAction('stopChange', request) %}
+   <h3>Cancel Builds For Change:</h3>
+-  {{ forms.stop_change_builds("/builders/_all/stopchangeall", c.number, authz) }}
++  {{ forms.stop_change_builds(path_to_root + "builders/_all/stopchangeall", c.number, authz) }}
+ {% endif %}
+ 
+ </div>
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/templates/forms.html /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/forms.html
+--- ./status/web/templates/forms.html	2013-08-23 01:43:56.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/forms.html	2015-02-24 23:10:25.121994362 +0200
+@@ -18,7 +18,6 @@
+ {% endmacro %}
+ 
+ {% macro stop_change_builds(stopchange_url, changenum, authz) %}
+-  {% if not changenum  %}
+     <form method="post" action="{{ stopchange_url }}" class='command stopchange'>
+       {% if changenum %}
+         <p>To cancel all builds for this change, push the 'Cancel' button</p>
+@@ -37,7 +36,6 @@
+       {% endif %}
+       <input type="submit" value="Cancel" />
+     </form>
+-  {% endif %}
+ {% endmacro %}
+ 
+ {% macro stop_build(stop_url, authz, on_all=False, on_selected=False, builders=[], short=False, label="Build") %}

@@ -1,0 +1,61 @@
+Presentation changes:
+* more compact view
+ - revision on one line
+ - don't show emails
+ - move less-needed info to a title
+* show a branch for every queued build
+
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/builder.py /usr/lib/python2.7/dist-packages/buildbot/status/web/builder.py
+--- ./status/web/builder.py	2013-08-23 01:43:56.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/builder.py	2015-02-25 13:46:47.053938677 +0200
+@@ -283,6 +284,7 @@ def content(self, req, cxt):
+                 'delay': util.formatInterval(util.now() - submitTime),
+                 'id': pb.brid,
+                 'changes' : changes,
++                'branch' : source.branch,
+                 'num_changes' : len(changes),
+                 'properties' : properties,
+                 })
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/files/default.css /usr/lib/python2.7/dist-packages/buildbot/status/web/files/default.css
+--- ./status/web/files/default.css	2013-08-23 01:43:56.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/files/default.css	2015-03-01 22:54:07.558678503 +0200
+@@ -558,6 +558,10 @@
+ }
+ 
+ /* revision & email */
++.revision {
++        display: inline-block;
++}
++
+ .revision .full {
+ 	display: none;
+ }
+@@ -602,3 +606,7 @@
+ form.command_forcebuild .force-any .force-text {
+     display: inline;
+ }
++
++form.command_forcebuild .force-text > .label + input {
++    width: 30%;
++}
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/templates/builder.html /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/builder.html
+--- ./status/web/templates/builder.html	2013-08-23 01:19:54.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/templates/builder.html	2015-03-01 22:56:54.049804334 +0200
+@@ -39,7 +39,7 @@
+   <h2>Pending Build Requests:</h2>
+   <ul>
+   {% for b in pending %}
+-    <li><small>({{ b.when }}, waiting {{ b.delay }})</small> 
++    <li><small title="Pushed at {{ b.when }} in {{ b.branch }}">Waiting {{ b.delay }}</small> 
+     
+     {% if authz.advertiseAction('cancelPendingBuild', request) %}
+       {{ forms.cancel_pending_build(builder_url+"/cancelbuild", authz, short=True, id=b.id) }}
+@@ -47,7 +47,7 @@
+     
+     {% if b.num_changes < 4 %}
+         {% for c in b.changes %}{{ c.revision|shortrev(c.repo) }}
+-        (<a href="{{ c.url }}">{{ c.who|email }}</a>){% if not loop.last %},{% endif %}
++        (<a href="{{ c.url }}">{{ c.who }}</a>){% if not loop.last %},{% endif %}
+         {% endfor %}
+     {% else %}
+         ({{ b.num_changes }} changes)

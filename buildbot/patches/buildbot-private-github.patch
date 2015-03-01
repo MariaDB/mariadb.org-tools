@@ -1,0 +1,15 @@
+add support for private buildbot repositories.
+they must use ssh transport, not https.
+
+diff -ru -F '^[[:space:]]*\(def\|class\)[[:space:]]\+' -x '*.pyc' ./status/web/hooks/github.py /usr/lib/python2.7/dist-packages/buildbot/status/web/hooks/github.py
+--- ./status/web/hooks/github.py	2013-08-23 01:43:56.000000000 +0300
++++ /usr/lib/python2.7/dist-packages/buildbot/status/web/hooks/github.py	2015-02-24 21:20:02.963067891 +0200
+@@ -93,6 +93,8 @@ def getChanges(request, options = None):
+             project = ''
+         # This field is unused:
+         #private = payload['repository']['private']
++        if (payload['repository']['private']):
++            repo_url = re.sub('^https://github.com/', 'git@github.com:', repo_url)
+         changes = process_change(payload, user, repo, repo_url, project)
+         log.msg("Received %s changes from github" % len(changes))
+         return (changes, 'git')
