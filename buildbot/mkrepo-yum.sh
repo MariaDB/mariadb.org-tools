@@ -48,9 +48,6 @@ galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
 dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20"
-#dists="opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20"
-#dists="opensuse13 centos7 rhel7"
-#dists="centos5 rhel5"
 
 if [ "${ENTERPRISE}" = "yes" ]; then
   p8_dists="rhel6 rhel7 rhel71 sles12"
@@ -89,11 +86,6 @@ set -u
 # Copy over the packages
 for REPONAME in ${dists}; do
   for ARCH in ${architectures}; do
-    # the following 3 line if/else block is a dirty fix for a release, comment
-    # out after the release, and the line with the "# End of dirty fix" comment
-    #if [ "${REPONAME}-${ARCH}" = "centos6-x86" ] || [ "${REPONAME}-${ARCH}" = "rhel6-x86" ]; then
-    #  echo "Skipping ${REPONAME}=${ARCH}..."
-    #else
     case "${REPONAME}" in
       'rhel6')
         mkdir -vp "${REPONAME}-${ARCH}"
@@ -124,37 +116,6 @@ for REPONAME in ${dists}; do
         rsync -avP ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         ;;
     esac
-
-      #if [ "${REPONAME}" = "rhel6" ]; then
-      #  mkdir -vp "${REPONAME}-${ARCH}"
-      #  rsync -avP ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
-      ### tmp fix for broken rhel5-x86 builds
-      ##elif [ "${REPONAME}" = "rhel5" ]; then
-      ##  if [ "${ARCH}" = "x86" ]; then
-      ##    cp -avi ${ARCHDIR}/kvm-rpm-centos5-${ARCH}/* ./${REPONAME}-${ARCH}/
-      ##  else
-      ##    cp -avi ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/* ./${REPONAME}-${ARCH}/
-      ##  fi
-      ### end of tmp fix for broken rhel5-x86 builds
-      #elif [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
-      #  if [ "${ARCH}" = "amd64" ]; then
-      #    mkdir -vp "${REPONAME}-${ARCH}"
-      #    rsync -avP ${ARCHDIR}/kvm-rpm-centos7_0-x86_64/ ./${REPONAME}-${ARCH}/
-      #  else
-      #    echo "+ no packages for ${REPONAME}-${ARCH}"
-      #  fi
-      #elif [ "${REPONAME}" = "opensuse13" ]; then
-      #  if [ "${ARCH}" = "amd64" ]; then
-      #    mkdir -vp "${REPONAME}-${ARCH}"
-      #    rsync -avP ${ARCHDIR}/kvm-zyp-opensuse13_1-x86_64/ ./${REPONAME}-${ARCH}/
-      #  else
-      #    mkdir -vp "${REPONAME}-${ARCH}"
-      #    rsync -avP ${ARCHDIR}/kvm-zyp-opensuse13_1-x86/ ./${REPONAME}-${ARCH}/
-      #  fi
-      #else
-      #  mkdir -vp "${REPONAME}-${ARCH}"
-      #  rsync -avP ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
-      #fi
 
       # Add in custom jemalloc packages for distros that need them
       case "${REPONAME}-${ARCH}" in
@@ -210,7 +171,6 @@ for REPONAME in ${dists}; do
           fi
         done
       fi
-    #fi # End of dirty fix
   done
 done
 
@@ -270,43 +230,6 @@ if [ "${ENTERPRISE}" = "yes" ]; then
             ;;
         esac
 
-
-        # Copy in galera packages if requested
-        #if [ ${GALERA} = "yes" ]; then
-        #  for gv in ${galera_versions}; do
-        #    if [ "${P8_ARCH}" = "amd64" ]; then
-        #      if [ "${P8_REPONAME}" = "centos5" ] || [ "${P8_REPONAME}" = "rhel5" ]; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*rhel5.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora17" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc17.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora18" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc18.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora19" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc19.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora20" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc20.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      else
-        #        rsync -avP ${galera_dir}/galera-${gv}/*rhel6.x86_64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      fi
-        #    else
-        #      if [ "${P8_REPONAME}" = "centos5" ] || [ "${P8_REPONAME}" = "rhel5" ]; then
-        #        rsync -avP  ${galera_dir}/galera-${gv}/*rhel5.i386.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora17" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc17.i686.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora18" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc18.i686.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora19" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc19.i386.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "fedora20" ] ; then
-        #        rsync -avP ${galera_dir}/galera-${gv}/*fc20.i686.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      elif [ "${P8_REPONAME}" = "opensuse13" ] || [ "${P8_REPONAME}" = "centos7" ] || [ "${P8_REPONAME}" = "rhel7" ]; then
-        #        echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
-        #      else
-        #        rsync -avP  ${galera_dir}/galera-${gv}/*rhel6.i*86.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
-        #      fi
-        #    fi
-        #  done
-        #fi
     done
   done
 fi
@@ -314,61 +237,9 @@ fi
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
 
-#cur_dir=$(pwd)
-#
-#  for dir in * ; do
-#    ls
-#    cd ${dir}
-#    case ${dir} in 
-#      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
-#        if [ "${ENTERPRISE}" = "yes" ]; then
-#          rpmsign --addsign --key-id=${gpg_key_v2} $(find . -name '*.rpm')
-#          echo "is enterprise"
-#        else
-#          rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        fi
-#        echo "is rhel5/centos5!"
-#        ;;
-#      *)
-#        rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        ;;
-#    esac
-#    echo changing dir
-#    cd ${cur_dir}
-#  done
-#
-
-#  for dir in * ; do
-#    cd ${dir}
-#    case ${dir} in 
-#      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
-#        if [ "${ENTERPRISE}" = "yes" ]; then
-#          rpmsign --macros="/usr/lib/rpm/macros:~/.rpmmacros-ent-v3" --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        else
-#          rpmsign --macros="/usr/lib/rpm/macros:~/.rpmmacros-v3" --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        fi
-#        ;;
-#      *)
-#        if [ "${ENTERPRISE}" = "yes" ]; then
-#          rpmsign --macros="/usr/lib/rpm/macros:~/.rpmmacros-ent" --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        else
-#          rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-#        fi
-#        ;;
-#    esac
-#    cd ${cur_dir}
-#  done
-#
-
-#if [ "${ENTERPRISE}" = "yes" ]; then
-#  rpmsign --addsign --key-id=0xd324876ebe6a595f $(find . -name '*.rpm')
-#else
-#  rpmsign --addsign --key-id=0xcbcb082a1bb943db $(find . -name '*.rpm')
-#fi
-
 for DIR in *; do
   if [ -d "${DIR}" ]; then
-    # regenerate the md5sums.txt file (signing the packages changes their checksum)
+    # regenerate the md5sums.txt file (signing packages changes their checksum)
     cd ${DIR}
     pwd
     rm -v md5sums.txt
@@ -380,7 +251,7 @@ for DIR in *; do
     case ${DIR} in
       'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
         # CentOS & RHEL 5 don't support newer sha256 checksums
-        createrepo --no-database -s sha --database --pretty ${DIR}
+        createrepo -s sha --database --pretty ${DIR}
         ;;
       *)
         createrepo --database --pretty ${DIR}
@@ -389,19 +260,6 @@ for DIR in *; do
     
     gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
 
-    #case ${DIR} in 
-    #  'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
-    #    if [ "${ENTERPRISE}" = "yes" ]; then
-    #      gpg --detach-sign --armor -u ${gpg_key_v2} ${DIR}/repodata/repomd.xml 
-    #    else
-    #      gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
-    #    fi
-    #    ;;
-    #  *)
-    #    gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
-    #    ;;
-    #esac
-
     # Add a README to the srpms directory
     mkdir -vp ${DIR}/srpms
     echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
@@ -409,56 +267,5 @@ https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
 " > ${DIR}/srpms/README
   fi
 done
-
-#for REPONAME in ${dists}; do
-#  for ARCH in ${architectures}; do
-#    case "${REPONAME}-${ARCH}" in
-#      "opensuse13-x86"|"centos7-x86"|"rhel7-x86")
-#        echo "+ no packages for ${REPONAME}-${ARCH}"
-#        ;;
-#      *)
-#        cd ${REPONAME}-${ARCH};
-#        pwd
-#        rm -v md5sums.txt
-#        md5sum $(find . -name '*.rpm') >> md5sums.txt
-#        md5sum -c md5sums.txt
-#        cd ..
-#        ;;
-#    esac
-#  done
-#done
-
-# Here is where we actually create the YUM repositories for each distribution
-# and sign the repomd.xml file
-#for REPONAME in ${dists}; do
-#  for ARCH in ${architectures}; do
-#    if [ "${REPONAME}-${ARCH}" = "opensuse13-x86" ] || [ "${REPONAME}-${ARCH}" = "centos7-x86" ] || [ "${REPONAME}-${ARCH}" = "rhel7-x86" ]; then
-#      echo "+ no packages for ${REPONAME}-${ARCH}"
-#    else
-#      createrepo --database --pretty ${REPONAME}-${ARCH}
-#      # If this is an "Enterprise" MariaDB release, sign with the mariadb.com key,
-#      # otherwise, sign with the mariadb.org key
-#      if [ "${ENTERPRISE}" = "yes" ]; then
-#        gpg --detach-sign --armor -u 0xd324876ebe6a595f ${REPONAME}-${ARCH}/repodata/repomd.xml 
-#      else
-#        gpg --detach-sign --armor -u 0xcbcb082a1bb943db ${REPONAME}-${ARCH}/repodata/repomd.xml 
-#      fi
-#    fi
-#  done
-#done
-
-# Add in a README for the srpms directory
-#for REPONAME in ${dists}; do
-#  for ARCH in ${architectures}; do
-#    if [ "${REPONAME}-${ARCH}" = "opensuse13-x86" ] || [ "${REPONAME}-${ARCH}" = "centos7-x86" ] || [ "${REPONAME}-${ARCH}" = "rhel7-x86" ]; then
-#      echo "+ no packages for ${REPONAME}-${ARCH}"
-#    else
-#      mkdir -vp ${REPONAME}-${ARCH}/srpms
-#      echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
-#https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
-#" >> ${REPONAME}-${ARCH}/srpms/README
-#    fi
-#  done
-#done
 
 # vim: filetype=sh
