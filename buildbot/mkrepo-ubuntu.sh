@@ -38,14 +38,18 @@ GALERA="$1"                       # copy in galera packages? 'yes' or 'no'
 ENTERPRISE="$2"                   # is this an enterprise release? 'yes' or 'no'
 REPONAME="$3"                     # name of the dir, usually 'ubuntu'
 ARCHDIR="$4"                      # path to the packages
+P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.5"                    # Version of galera in repos
-jemalloc_dir="/ds413/vms-customizations"    # Location of custom jemalloc pkgs
-galera_dir="/ds413/galera"                  # Location of custom galera pkgs
-ubuntu_dists="lucid precise trusty"
+galera_versions="25.3.5"                          # Version of galera in repos
+galera_dir="/ds413/galera"                        # Location of galera pkgs
+jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
+at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
+ubuntu_dists="lucid precise trusty utopic"
+#ubuntu_dists="lucid precise trusty"
+architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -73,11 +77,17 @@ set -u
 if [ "${ENTERPRISE}" = "yes" ]; then
   origin="MariaDB Enterprise"
   description="MariaDB Enterprise Repository"
-  sign_with="signing-key@mariadb.com"
+  gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
+  #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
+  p8_architectures="amd64 i386 ppc64el source"
+  suffix="signed-ent"
 else
   origin="MariaDB"
   description="MariaDB Repository"
-  sign_with="package-signing-key@mariadb.org"
+  gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
+  #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
+  p8_architectures="amd64 i386 source"
+  suffix="signed"
 fi
 
 mkdir "$REPONAME"
@@ -87,43 +97,63 @@ cat >conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
 Codename: lucid
-Architectures: amd64 i386 source
+Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
 
 Origin: ${origin}
 Label: MariaDB
 Codename: precise
-Architectures: amd64 i386 source
+Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
-
-Origin: ${origin}
-Label: MariaDB
-Codename: saucy
-Architectures: amd64 i386 source
-Components: main
-Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
 
 Origin: ${origin}
 Label: MariaDB
 Codename: trusty
-Architectures: amd64 i386 source
+Architectures: ${p8_architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
+
+Origin: ${origin}
+Label: MariaDB
+Codename: utopic
+Architectures: ${architectures}
+Components: main
+Description: ${description}
+SignWith: ${gpg_key}
 END
 
 for dist in ${ubuntu_dists}; do
   echo ${dist}
-  reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+  case ${dist} in 
+    'trusty'|'utopic')
+      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      ;;
+    * )
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+  esac
+
   for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
 
+  if [ "${ENTERPRISE}" = "yes" ]; then
+    if [ "${dist}" = "trusty" ]; then
+      if [ ! -d "${P8_ARCHDIR}" ] ; then
+        echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
+        exit 1
+      else
+        for file in $(find "${P8_ARCHDIR}/p8-trusty-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      fi
+    fi
+  fi
+
   # Add in custom jemalloc packages for distros that need them
-  case  ${dist} in
+  case ${dist} in
     "lucid")
       for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
@@ -144,7 +174,7 @@ for dist in ${ubuntu_dists}; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
-      for file in $(find "${galera_dir}/galera-${gv}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
     done
   fi
 done
