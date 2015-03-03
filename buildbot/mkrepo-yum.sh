@@ -47,7 +47,6 @@ galera_versions="25.3.5"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
-architectures="amd64 x86"
 dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20"
 #dists="opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20"
 #dists="opensuse13 centos7 rhel7"
@@ -59,9 +58,11 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   #gpg_key="0xd324876ebe6a595f"               # original enterprise key
   gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   suffix="signed-ent"
+  architectures="amd64"
 else
   gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
   suffix="signed"
+  architectures="amd64 x86"
 fi
 
 #-------------------------------------------------------------------------------

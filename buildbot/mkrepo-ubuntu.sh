@@ -79,7 +79,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   description="MariaDB Enterprise Repository"
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
-  p8_architectures="amd64 i386 ppc64el source"
+  p8_architectures="amd64 ppc64el source"      # add ppc64el, drop i386
   suffix="signed-ent"
 else
   origin="MariaDB"
@@ -138,7 +138,9 @@ for dist in ${ubuntu_dists}; do
       ;;
   esac
 
-  for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+  if [ "${ENTERPRISE}" != "yes" ]; then
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+  fi
 
   if [ "${ENTERPRISE}" = "yes" ]; then
     if [ "${dist}" = "trusty" ]; then
@@ -156,15 +158,21 @@ for dist in ${ubuntu_dists}; do
   case ${dist} in
     "lucid")
       for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      if [ "${ENTERPRISE}" != "yes" ]; then
+        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      fi
       ;;
     "precise")
       for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      if [ "${ENTERPRISE}" != "yes" ]; then
+        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      fi
       ;;
     "quantal")
       for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      if [ "${ENTERPRISE}" != "yes" ]; then
+        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      fi
       ;;
     * )
       echo "no custom jemalloc packages for ${dist}"
@@ -174,7 +182,11 @@ for dist in ${ubuntu_dists}; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
-      for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      if [ "${ENTERPRISE}" = "yes" ]; then
+        for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      else
+        for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      fi
     done
   fi
 done

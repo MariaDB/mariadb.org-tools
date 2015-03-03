@@ -46,7 +46,6 @@ galera_versions="25.3.5"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
-architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -77,12 +76,14 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   suffix="signed-ent"
+  architectures="amd64 source"                  # no x86 for Enterprise
 else
   origin="MariaDB"
   description="MariaDB Repository"
   gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
   suffix="signed"
+  architectures="amd64 i386 source"
 fi
 
 mkdir "$REPONAME"
@@ -126,13 +127,18 @@ for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
       for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb $1 $i ; done
       ;;
   esac
-  for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
+
+  if [ "${ENTERPRISE}" != "yes" ]; then
+    for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
+  fi
 
   # Add in custom jemalloc packages for distros that need them
   case  ${2} in
     "debian6")
       for i in $(find "${jemalloc_dir}/${2}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${1} ${i} ; done
-      for i in $(find "${jemalloc_dir}/${2}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${1} ${i} ; done
+      if [ "${ENTERPRISE}" != "yes" ]; then
+        for i in $(find "${jemalloc_dir}/${2}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${1} ${i} ; done
+      fi
       ;;
     * )
       echo "no custom jemalloc packages for ${1}"
