@@ -42,10 +42,11 @@ ARCHDIR="$4"                      # path to the packages
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.5"                    # Version of galera in repos
-jemalloc_dir="/ds413/vms-customizations"    # Location of custom jemalloc pkgs
-galera_dir="/ds413/galera"                  # Location of custom galera pkgs
-
+galera_versions="25.3.5"                          # Version of galera in repos
+galera_dir="/ds413/galera"                        # Location of galera pkgs
+jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
+at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
+architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -69,15 +70,19 @@ set -u
   #     non-interactive shell will exit.
 
 # If this is an "Enterprise" MariaDB release, sign with the mariadb.com key,
-# otherwise, sign with the mariadb.org key
+# otherwise, sign with the mariadb.org key,
 if [ "${ENTERPRISE}" = "yes" ]; then
   origin="MariaDB Enterprise"
   description="MariaDB Enterprise Repository"
-  sign_with="signing-key@mariadb.com"
+  gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
+  #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
+  suffix="signed-ent"
 else
   origin="MariaDB"
   description="MariaDB Repository"
-  sign_with="package-signing-key@mariadb.org"
+  gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
+  #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
+  suffix="signed"
 fi
 
 mkdir "$REPONAME"
@@ -87,32 +92,40 @@ cat >conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
 Codename: squeeze
-Architectures: amd64 i386 source
+Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
 
 Origin: ${origin}
 Label: MariaDB
 Codename: wheezy
-Architectures: amd64 i386 source
+Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
 
 Origin: ${origin}
 Label: MariaDB
 Codename: sid
-Architectures: amd64 i386 source
+Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${sign_with}
+SignWith: ${gpg_key}
 END
 
+#for i in "squeeze debian6" "wheezy wheezy"; do
 for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
   set $i
   echo $1
-  reprepro --basedir=. include $1 $ARCHDIR/kvm-deb-$2-amd64/debs/binary/mariadb-*_amd64.changes
+  case ${2} in 
+    'sid')
+      reprepro --basedir=. include $1 $ARCHDIR/kvm-deb-$2-amd64/debs/binary/mariadb-*_amd64.changes
+      ;;
+    * )
+      for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb $1 $i ; done
+      ;;
+  esac
   for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
 
   # Add in custom jemalloc packages for distros that need them
@@ -129,7 +142,7 @@ for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
-      for file in $(find "${galera_dir}/galera-${gv}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
+      for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
     done
   fi
 done
