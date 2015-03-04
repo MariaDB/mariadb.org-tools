@@ -1,0 +1,52 @@
+buildbot bug. There are two tables (involved in this bug): users and users_info
+The first looks like
+
+MariaDB [buildbot]> select * from users limit 1;
++-----+------------+-------------+-------------+
+| uid | identifier | bb_username | bb_password |
++-----+------------+-------------+-------------+
+|   1 | foo@bar.com | NULL        | NULL        |
+...
+
+The other looks like
+
++-----+-----------+-------------+
+| uid | attr_type | attr_data   |
++-----+-----------+-------------+
+|   1 | bzr       | foo@bar.com |
+....
+
+The method UsersConnectorComponent.findUserByAttr does the following:
+
+  SELECT uid from users_info where attr='git' and attr_data='foo@bar.com';
+
+That fails, it assumes that the user does not exists and tries to create it:
+
+  INSERT users (identifier) VALUES ('foo@bar.com');
+  INSERT users_info VALUES (LAST_INSERT_ID(), 'git', 'foo@bar.com');
+
+This obviously fails, because the user does exist, but only for bzr attr_type,
+not for git. And there's UNIQUE(identifier) in the first table.
+
+--- /usr/lib/python2.7/dist-packages/buildbot/users.py	2015-03-04 12:13:42.067065164 +0200
++++ /usr/lib/python2.7/dist-packages/buildbot/users.py	2015-03-04 12:13:07.943241931 +0200
+@@ -49,8 +49,17 @@
+             # time from the perspective of other masters.
+             transaction = conn.begin()
+             try:
+-                r = conn.execute(tbl.insert(), dict(identifier=identifier))
+-                uid = r.inserted_primary_key[0]
++                try:
++                    r = conn.execute(tbl.insert(), dict(identifier=identifier))
++                    uid = r.inserted_primary_key[0]
++                except (sa.exc.IntegrityError):
++                    # user already exists
++                    q = tbl.select(whereclause=(tbl.c.identifier == identifier))
++                    row = conn.execute(q).fetchone()
++                    if row:
++                        uid = row.uid
++                    else:
++                        raise
+ 
+                 conn.execute(tbl_info.insert(),
+                         dict(uid=uid, attr_type=attr_type,
