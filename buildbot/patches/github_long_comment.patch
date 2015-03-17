@@ -1,0 +1,161 @@
+commit 358a05518af8cbe30515149cde58052fd84cec29
+Author: Andrew Gallagher <agallagher@fb.com>
+Date:   Thu May 9 01:47:11 2013 -0700
+
+    Increase the DB lengths for changes.comments and buildset_properties.property_value
+    
+    The current 1024 char restrictions on these columns occasionally cause issues on a MySQL backend.
+
+diff --git a/master/buildbot/db/buildsets.py b/master/buildbot/db/buildsets.py
+index b379198..625a6a3 100644
+--- a/master/buildbot/db/buildsets.py
++++ b/master/buildbot/db/buildsets.py
+@@ -59,8 +59,6 @@ class BuildsetsConnectorComponent(base.DBConnectorComponent):
+                 for i in inserts:
+                     self.check_length(bs_props_tbl.c.property_name,
+                                       i['property_name'])
+-                    self.check_length(bs_props_tbl.c.property_value,
+-                                      i['property_value'])
+ 
+                 conn.execute(bs_props_tbl.insert(), inserts)
+ 
+diff --git a/master/buildbot/db/changes.py b/master/buildbot/db/changes.py
+index 4288be5..dc2ad65 100644
+--- a/master/buildbot/db/changes.py
++++ b/master/buildbot/db/changes.py
+@@ -56,7 +56,6 @@ class ChangesConnectorComponent(base.DBConnectorComponent):
+             ch_tbl = self.db.model.changes
+ 
+             self.check_length(ch_tbl.c.author, author)
+-            self.check_length(ch_tbl.c.comments, comments)
+             self.check_length(ch_tbl.c.branch, branch)
+             self.check_length(ch_tbl.c.revision, revision)
+             self.check_length(ch_tbl.c.revlink, revlink)
+diff --git a/master/buildbot/db/migrate/versions/023_increase_comments_property_lengths.py b/master/buildbot/db/migrate/versions/023_increase_comments_property_lengths.py
+new file mode 100644
+index 0000000..9b50246
+--- /dev/null
++++ b/master/buildbot/db/migrate/versions/023_increase_comments_property_lengths.py
+@@ -0,0 +1,34 @@
++# This file is part of Buildbot.  Buildbot is free software: you can
++# redistribute it and/or modify it under the terms of the GNU General Public
++# License as published by the Free Software Foundation, version 2.
++#
++# This program is distributed in the hope that it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++# details.
++#
++# You should have received a copy of the GNU General Public License along with
++# this program; if not, write to the Free Software Foundation, Inc., 51
++# Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++#
++# Copyright Buildbot Team Members
++
++import sqlalchemy as sa
++from migrate import changeset
++
++def upgrade(migrate_engine):
++    metadata = sa.MetaData()
++    metadata.bind = migrate_engine
++
++    # Some property values and change comments can get too big
++    # for the normal 1024 String limit.
++    changeset.alter_column(
++            sa.Column('property_value', sa.Text, nullable=False),
++            table='buildset_properties',
++            metadata=metadata,
++            engine=migrate_engine)
++    changeset.alter_column(
++            sa.Column('comments', sa.Text, nullable=False),
++            table='changes',
++            metadata=metadata,
++            engine=migrate_engine)
+diff --git a/master/buildbot/db/model.py b/master/buildbot/db/model.py
+index 263e9cf..ded4bd3 100644
+--- a/master/buildbot/db/model.py
++++ b/master/buildbot/db/model.py
+@@ -105,7 +105,7 @@ class Model(base.DBConnectorComponent):
+             nullable=False),
+         sa.Column('property_name', sa.String(256), nullable=False),
+         # JSON-encoded tuple of (value, source)
+-        sa.Column('property_value', sa.String(1024), nullable=False),
++        sa.Column('property_value', sa.Text, nullable=False),
+     )
+ 
+     # This table represents Buildsets - sets of BuildRequests that share the
+@@ -173,7 +173,7 @@ class Model(base.DBConnectorComponent):
+         sa.Column('author', sa.String(256), nullable=False),
+ 
+         # commit comment
+-        sa.Column('comments', sa.String(1024), nullable=False),
++        sa.Column('comments', sa.Text, nullable=False),
+ 
+         # old, CVS-related boolean
+         sa.Column('is_dir', sa.SmallInteger, nullable=False), # old, for CVS
+diff --git a/master/buildbot/test/unit/test_db_migrate_versions_023_increase_comments_property_lengths.py b/master/buildbot/test/unit/test_db_migrate_versions_023_increase_comments_property_lengths.py
+new file mode 100644
+index 0000000..74187be
+--- /dev/null
++++ b/master/buildbot/test/unit/test_db_migrate_versions_023_increase_comments_property_lengths.py
+@@ -0,0 +1,60 @@
++# This file is part of Buildbot.  Buildbot is free software: you can
++# redistribute it and/or modify it under the terms of the GNU General Public
++# License as published by the Free Software Foundation, version 2.
++#
++# This program is distributed in the hope that it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++# details.
++#
++# You should have received a copy of the GNU General Public License along with
++# this program; if not, write to the Free Software Foundation, Inc., 51
++# Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++#
++# Copyright Buildbot Team Members
++
++import sqlalchemy as sa
++from twisted.trial import unittest
++from buildbot.test.util import migration
++
++class Migration(migration.MigrateTestMixin, unittest.TestCase):
++
++    table_columns = [
++        ('changes', 'comments'),
++        ('buildset_properties', 'property_value'),
++    ]
++
++    def setUp(self):
++        return self.setUpMigrateTest()
++
++    def tearDown(self):
++        return self.tearDownMigrateTest()
++
++    def create_tables_thd(self, conn):
++        metadata = sa.MetaData()
++        metadata.bind = conn
++
++        # Create the tables/columns we're testing
++        for table, column in self.table_columns:
++            tbl = sa.Table(table, metadata,
++                sa.Column(column, sa.String(1024), nullable=False),
++                # the rest is unimportant
++            )
++            tbl.create()
++
++    # tests
++
++    def test_update(self):
++        def setup_thd(conn):
++            self.create_tables_thd(conn)
++
++        def verify_thd(conn):
++            metadata = sa.MetaData()
++            metadata.bind = conn
++
++            # Verify that the columns have been upate to the Text type.
++            for table, column in self.table_columns:
++                tbl = sa.Table(table, metadata, autoload=True)
++                self.assertIsInstance(getattr(tbl.c, column).type, sa.Text)
++
++        return self.do_test_migration(22, 23, setup_thd, verify_thd)
