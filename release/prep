@@ -394,7 +394,7 @@ if ! ${revflag} || ! ${numflag} || ! ${treeflag} || ! ${tarflag} ; then
 fi
 
 # make sure we are running as root
-if (( `id -u` != 0 )); then { echo "Sorry, ${0} must be run using sudo. Exiting..."; exit; } fi
+#if (( `id -u` != 0 )); then { echo "Sorry, ${0} must be run using sudo. Exiting..."; exit; } fi
 
 # Display usage message and quit if necessary
 if [ "${displayusage}" = "yes" ] || [ "${run_script}" != "yes" ]; then
@@ -449,7 +449,7 @@ if [ ${log} = "yes" ]; then
   logSettings
 fi
 
-exit 0;
+#exit 0;
 
 
 echo
@@ -749,7 +749,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
   # going to be created and if it doesn't already exist
   if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
     if [ ! -d ${release_dir}/repo-no-mgc/${num} ]; then
-      mkdir ${release_dir}/repo-no-mgc/${num}
+      mkdir -vp ${release_dir}/repo-no-mgc/${num}
     fi
   fi
 
@@ -823,6 +823,9 @@ if [ "${galera_suffix}" != "-galera" ]; then
 
     # after creating the yum repo, copy it to ${release_dir}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
+    if [ ! -d ${release_dir}/yum-no-mgc ]; then
+      mkdir -vp ${release_dir}/yum-no-mgc
+    fi
     if [ -d ${release_dir}/yum-no-mgc/${num} ]; then
       rm -rf ${release_dir}/yum-no-mgc/${num}
     fi
