@@ -1,0 +1,855 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE: prep
+# 
+#         USAGE: ./prep
+# 
+#   DESCRIPTION: This script exists so that I don't need to remember or look up
+#                where things are when it is time to prepare a release. It also
+#                ensures no steps are forgotten, and prevents many errors.
+# 
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Daniel Bartholomew (db), dbart@mariadb.org
+#  ORGANIZATION: 
+#       CREATED: 03/16/2015 20:37
+#      REVISION:  ---
+#===============================================================================
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+#------------------------------------------------------------------------------
+# Options (set these before running the script)
+#------------------------------------------------------------------------------
+
+
+# The ${galera_suffix} var contains text added to the end of the directory
+# name, and to certain file names when this script is processing a release of
+# MariaDB Galera Cluster. When not processing a galera release, it is empty.
+# Simply uncomment the appropriate of the two lines below:
+#galera_suffix="-galera"
+#galera_suffix=""
+
+# Set ${galera_versions} to the currently supported Galera versions,
+# multiple versions are separated with spaces.
+galera_versions="25.3.9"
+
+# Set ${galera_preferred} to the version we include in the bintars and
+# repositories (often the same as ${galera_versions} but can be different).
+galera_preferred="25.3.9"
+
+# We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
+# Duplicate & edit the appropriate lines below. Old settings are generally
+# commented out & saved for future reference. Make doubly sure all are set to
+# the correct values for the release.
+
+#-------------------------------------------------------------------------------
+# Options below this point you probably don't need to change
+#-------------------------------------------------------------------------------
+
+# Various miscellaneous options
+rsync_opts="-a -L"
+
+#-------------------------------------------------------------------------------
+#  The ${build_dirs} option contains two-part names of various bintar builds
+#  separated by a colon. The first part is the name of the directory that
+#  buildbot saves, the second part is the name we use on the mirrors.
+#-------------------------------------------------------------------------------
+#build_dirs="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-hardy-amd64:bintar-linux-hardy-x86_64 kvm-bintar-hardy-x86:bintar-linux-hardy-x86 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
+
+# Sunanda Menon : 02/27/2015
+# Splitting build dirs (refer ME-91). 
+# Enterprise builds need to grab only Linux 64bit, no 32bit builds
+build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86"
+build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
+
+# defaults (to prevent errors)
+ displayusage="no"
+   run_script="no"
+       is_ent="no"
+create_bintar="no"
+   create_win="no"
+create_debian="no"
+create_ubuntu="no"
+   create_yum="no"
+  incl_galera="no"
+   is_cluster="no"
+          log="no"
+galera_suffix=""
+     treeflag=false
+      revflag=false
+      numflag=false
+      tarflag=false
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+#function runCommand() {
+#  echo "+ ${@}"
+#  sleep 1
+#  if ${@} ; then
+#    return 0
+#  else
+#    return 1
+#  fi
+#}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
+secureUserInput() {
+  question="${@}"
+  SECUREINPUT="false"
+  REPLY="alsofalse"
+  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
+    read -s -p "${question} "
+    echo
+    SECUREINPUT="${REPLY}"
+    read -s -p "Please enter it again: "
+    echo
+    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
+      echo
+      echo "The two entries do not match."
+      echo
+    else
+      echo
+      echo "The two entries match. Continuing."
+      echo
+      return 0
+    fi
+  done
+}
+
+prepare_bintar_and_source_packages() {
+  create_bintar="yes"
+}
+
+prepare_Windows_packages() {
+  create_win="yes"
+}
+
+prepare_Debian_packages() {
+  create_debian="yes"
+}
+
+prepare_Ubuntu_packages() {
+  create_ubuntu="yes"
+}
+
+prepare_yum_packages() {
+  create_yum="yes"
+}
+
+include_Galera_packages_in_repositories() {
+  incl_galera="yes"
+}
+
+create_a_template_file() {
+cat >> ${HOME}/.prep.conf <<END
+#-------------------------------------------------------------------------------
+# default conf file for the MariaDB 'prep' script
+#-------------------------------------------------------------------------------
+# The 'prep' script is part of mariadb-tools on Launchpad
+#   bzr branch lp:mariadb-tools
+
+# Please edit and put in valid paths
+
+# Full path to where buildbot saves files
+archive_dir="/path/to/archive/pack"
+
+# Full path to where the Galera packages are located
+galera_dir="/path/to/galera"
+  
+# Full paths to the mkrepo-* scripts
+DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
+UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
+   YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
+
+# URL where Windows Builds are located
+winbuilder="http://example.net/builds"
+
+# Full paths to where the script should store releases
+    release_dir="/path/to/mariadb/releases"
+ent_release_dir="/path/to/mariadb-enterprise/releases"
+
+# Full path to P8 builds (if needed)
+p8_archive_dir="/ds413/archive/builds"
+
+# vim: filetype=sh
+
+END
+chown $(basename ${HOME}): ${HOME}/.prep.conf
+}
+
+logSettings() {
+cat >> ${HOME}/.prep.log <<END
+
+# Prepped $(date)
+# tree="${tree}"
+# rev="${rev}"
+# num="${num}"
+# tarbuildnum="${tarbuildnum}"
+# version="${version}"
+# release_dir/dir_name="${release_dir}/${dir_name}"
+# is_ent="${is_ent}"
+# is_cluster="${is_cluster}"
+# create_bintar="${create_bintar}"
+# create_win="${create_win}"
+# create_debian="${create_debian}"
+# create_ubuntu="${create_ubuntu}"
+# create_yum="${create_yum}"
+# incl_galera="${incl_galera}"
+# archive_dir="${archive_dir}"
+# galera_dir="${galera_dir}"
+# DEBIAN="${DEBIAN}"
+# UBUNTU="${UBUNTU}"
+# YUM="${YUM}"
+# winbuilder="${winbuilder}"
+# p8_archive_dir="${p8_archive_dir}"
+# gpg_opts="${gpg_opts}"
+
+END
+chown $(basename ${HOME}): ${HOME}/.prep.conf
+}
+
+pressAnyKeyToContinue() {
+  echo
+  read -p "Press any key to continue." -n 1
+  echo
+  return 0
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home"
+    echo "directory. If it does not exist, and have valid settings in it,"
+    echo "this script will fail. I can create a default template file for you"
+    echo "to fill out. Afterwards, please re-run this script."
+    echo
+    shouldI create_a_template_file
+    # after creating the file, check if it exists again, if not, exit
+    if [ ! -f ${HOME}/.prep.conf ]; then
+      echo "I was unable to create ${HOME}/.prep.conf"
+      echo "Exiting..."
+      exit 3
+    else
+      echo
+      echo "Template file created at ${HOME}/.prep.conf"
+      echo "Please edit and re-run this script."
+      echo
+      exit 0
+    fi
+  fi
+}
+
+usage() {
+  set +x
+  echo
+  echo
+  echo "usage: $0 -y[deghl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
+  echo "  -y : actually run the script"
+  echo "  -d : run the script in demo mode"
+  echo "  -e : this is a MariaDB Enterprise release"
+  echo "  -g : this is a MariaDB Galera Cluster or Enterprise Cluster release"
+  echo "  -h : display this usage message"
+  echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ~/.prep.log"
+  echo "  -t <tree> : the MariaDB source code tree"
+  echo "  -r <revision> : the MariaDB source code tree revision"
+  echo "  -v <version> : the MariaDB version number"
+  echo "  -b <tarbuildnum> : the Buildbot tarbuildnum"
+  echo
+  echo
+  set -x
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+# The first thing we need to do is parse the options
+while getopts 'b:deghlr:t:v:y' OPTION
+do
+  case $OPTION in
+    d)  # Not implemented yet
+      demo="yes"
+      ;;
+    e)  # This is a MariaDB Enterprise or MariaDB Enterprise Cluster release
+      is_ent="yes"
+      ;;
+    g)  # This is a MariaDB Galera Cluster or Enterprise Cluster release
+        # -e & -g both need to be set for a MariaDB Enterprise Cluster release
+      galera_suffix="-galera"
+      is_cluster="yes"
+      ;;
+    h)  # Display a helpful usage message
+      displayusage="yes"
+      ;;
+    l)  # Log the release to ~/.prep.log
+      log="yes"
+      ;;
+    r)  # The release revision
+      rev="${OPTARG}"
+      revflag=true
+      ;;
+    t)  # The release tree
+      tree="${OPTARG}"
+      treeflag=true
+      ;;
+    v)  # The version number of this release
+      num="${OPTARG}"
+      numflag=true
+      ;;
+    b)  # The tarbuildnum of the release
+      tarbuildnum="${OPTARG}"
+      tarflag=true
+      ;;
+    y)  # Actually run this script (helps prevent accidental runs)
+      run_script="yes"
+      ;;
+    \?) # Display a helpful usage message
+      displayusage="yes"
+      ;;
+    :)  # Error when an option is used that requires an argument
+      displayusage="yes"
+      echo "Option -$OPTARG requires an argument."
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+if ! ${revflag} || ! ${numflag} || ! ${treeflag} || ! ${tarflag} ; then
+  #if [[ -d $1 ]]; then
+    echo
+    line
+    echo "-r -t -v and -b, along with their appropriate arguments, are mandatory" >&2
+    line
+    usage
+    exit 4
+  #fi
+fi
+
+# make sure we are running as root
+if (( `id -u` != 0 )); then { echo "Sorry, ${0} must be run using sudo. Exiting..."; exit; } fi
+
+# Display usage message and quit if necessary
+if [ "${displayusage}" = "yes" ] || [ "${run_script}" != "yes" ]; then
+  usage
+  exit 0
+fi
+
+loadDefaults                                    # Load Default paths and vars
+
+# Put ${galera_suffix} and ${num} together to form the base version string
+version="mariadb${galera_suffix}-${num}"
+
+shouldI prepare_bintar_and_source_packages
+shouldI prepare_Windows_packages
+shouldI prepare_Debian_packages
+shouldI prepare_Ubuntu_packages
+shouldI prepare_yum_packages
+shouldI include_Galera_packages_in_repositories
+
+# Set various options that change depending on whether this is an enterprise
+# release or not
+if [ "${is_ent}" = "yes" ];then
+  suffix="signed-ent"
+
+  # new enterprise key (2014-12-18)
+  gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
+
+  release_dir="${ent_release_dir}"  # Default location for MariaDB Enterprise
+  build_dirs="${build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
+
+  p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
+                 p8-rhel7-bintar:bintar-linux-rhel7-ppc64
+                 p8-trusty-bintar:bintar-linux-trusty-ppc64le"
+
+  if [ "${galera_suffix}" = "-galera" ]; then
+    dir_name="${num}-cluster" # release directory name for Enterprise Cluster
+  else
+    dir_name="${num}"         # release directory name for MariaDB Enterprise
+  fi
+else
+  suffix="signed"
+  build_dirs="${build_dirs_x86} ${build_dirs_x86_64}" # Default dirs for MariaDB
+  if [ "${tree}" = "10.0-FusionIO" ]; then
+    dir_name="${version}-FusionIO" # FusionIO releases get a custom directory
+  else
+    dir_name="${version}" # normal releases use ${version} as ${dir_name}
+  fi
+  gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
+fi
+
+if [ ${log} = "yes" ]; then
+  logSettings
+fi
+
+exit 0;
+
+
+echo
+echo
+line
+echo "+ creating the ${version} release"
+line
+eval "$(gpg-agent --daemon)"
+if [ ! -d ${release_dir}/${dir_name} ]; then
+  line
+  echo "+ creating release dir..."
+  line
+  mkdir ${release_dir}/${dir_name}
+fi
+cd ${release_dir}/${dir_name}
+echo
+line
+echo "+ fixing permissions..."
+line
+for dir in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type d);do sudo chmod 755 "${dir}";done
+for file in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type f);do sudo chmod 644 "${file}";done
+echo "+ done fixing permissions"
+echo
+echo
+
+
+
+
+#-------------------------------------------------------------------------------
+#  Binary Tarballs and Source
+#-------------------------------------------------------------------------------
+if [ "${create_bintar}" != "no" ]; then
+  line
+  echo "+ transfering bintar & source packages..."
+  line
+  for dir_pair in ${build_dirs}; do
+    dir_array=(${dir_pair//:/ })
+    if [ ! -d ${dir_array[1]} ]; then
+      mkdir ${dir_array[1]}
+    fi
+    if [ "${dir_array[1]}" = "source" ]; then
+      if rsync ${rsync_opts} "${archive_dir}/${tree}/build-${tarbuildnum}/${dir_array[0]}/mariadb-${num}.tar.gz" "./${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+        cd ${dir_array[1]}
+        echo "+ updating source tarball md5sum..."
+        if [ -e md5sums.txt ]; then
+          rm md5sums.txt
+        fi
+        md5sum ./mariadb* >> md5sums.txt
+        echo "+ signing source tarball and md5sum file..."
+
+        # remove any signature files before signing, if they exist
+        for sig_file in $(ls ./*.asc); do
+          rm "${sig_file}"
+        done
+        # sign the MariaDB source tarball
+        gpg ${gpg_opts} mariadb${galera_suffix}-${num}.tar.gz
+        # sign the md5sum file as well
+        gpg ${gpg_opts} md5sums.txt
+        
+        cd ..
+      fi
+      echo "+ transfer of ${dir_array[1]} done"
+      echo
+    elif rsync ${rsync_opts} "${archive_dir}/${tree}/build-${tarbuildnum}/${dir_array[0]}/" "./${dir_array[1]}/"; then
+      echo "+ transfer of ${dir_array[1]} done"
+      cd ${dir_array[1]}
+      if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
+        # for the quantal bintars, we need to rename them before signing
+        if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
+          mv ${version}-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
+          galera_arch="x86_64"
+        else
+          mv ${version}-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
+          galera_arch="i686"
+        fi
+
+        if [ "${galera_suffix}" = "-galera" ]; then
+          # If this is a galera release we need to copy in the galera libraries
+          # and repack the bintar
+          tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
+          mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+          mv -vi ${version}-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/garbd ${version}-linux-glibc_214-${galera_arch}/bin/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/libgalera_smm.so ${version}-linux-glibc_214-${galera_arch}/lib/
+          tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
+          rm -rf ${version}-linux-glibc_214-${galera_arch}
+        else
+          echo "not repacking bintar as this is not a galera release"
+        fi
+
+        # since we renamed them, we also need to regenerate the md5sums
+        if [ -e md5sums.txt ]; then
+          rm md5sums.txt
+        fi
+        md5sum ./${version}-*.tar.gz >> md5sums.txt
+      elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
+        if [ "${galera_suffix}" = "-galera" ]; then
+          # If this is a galera release we need to copy in the galera libraries
+          # and repack the bintar, but first we need to set ${galera_arch} to the
+          # correct value
+          if [ "${dir_array[1]}" = "bintar-linux-x86_64" ]; then
+            galera_arch="x86_64"
+          else
+            galera_arch="i686"
+          fi
+          tar -zxf ${version}-linux-${galera_arch}.tar.gz
+          mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/garbd ${version}-linux-${galera_arch}/bin/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/libgalera_smm.so ${version}-linux-${galera_arch}/lib/
+          tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
+          rm -rf ${version}-linux-${galera_arch}
+          # since we repacked them, we also need to regenerate the md5sums
+          if [ -e md5sums.txt ]; then
+            rm md5sums.txt
+          fi
+          md5sum ./${version}-*.tar.gz >> md5sums.txt
+        else
+          echo "not repacking as this is not a galera release"
+        fi
+      fi
+      echo "+ signing files in ${dir_array[1]}..."
+      # remove any signature files before signing, if they exist
+      for sig_file in $(ls ./*.asc); do
+        rm "${sig_file}"
+      done
+      # now that old signatures are gone, sign all files that remain
+      for dir_file in $(find . -type f | grep -v orig); do
+        gpg ${gpg_opts} ${dir_file}
+      done
+      cd ..
+      echo "+ finished signing files in ${dir_array[1]}"
+      echo
+      echo
+    else
+      echo "! failed to transfer ${dir_array[1]}"
+      # if the transfer failed, the directory might be empty, if it is we want it
+      # removed, so we run rmdir on it
+      rmdir ./${dir_array[1]}
+      echo
+    fi
+  done
+
+
+  if [ "${is_ent}" = "yes" ];then
+    # MariaDB Enterprise includes Power8 builds of MariaDB, the above section
+    # accounts for traditional x86/x86_64 builds, this section accounts for the
+    # P8 builds
+    for p8_dir_pair in ${p8_build_dirs}; do
+      p8_dir_array=(${p8_dir_pair//:/ })
+      if [ ! -d ${p8_dir_array[1]} ]; then
+        mkdir ${p8_dir_array[1]}
+      fi
+      if rsync ${rsync_opts} "${p8_archive_dir}/${tree}/${rev}/${p8_dir_array[0]}/" "./${p8_dir_array[1]}/"; then
+        echo "+ transfer of ${p8_dir_array[1]} done"
+        cd ${p8_dir_array[1]}
+
+        case ${p8_dir_array[1]} in
+          'bintar-linux-rhel6-ppc64'|'bintar-linux-rhel7-ppc64')
+            # for the rhel6/rhel7 ppc64 bintars, we need to rename them before
+            # signing (refer ME-159)
+            BINTAR=$(echo ${p8_dir_array[1]} | awk -F "-" '{print $3}')
+            echo "Value of BINTAR is ${BINTAR}"
+            mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
+            ;;
+        esac
+
+        echo "+ signing files in ${p8_dir_array[1]}..."
+        # remove any signature files before signing, if they exist
+        for sig_file in $(ls ./*.asc); do
+          rm "${sig_file}"
+        done
+        # now that old signatures are gone, sign all files that remain
+        for dir_file in $(find . -type f | grep -v orig); do
+          gpg ${gpg_opts} ${dir_file}
+        done
+        cd ..
+        echo "+ finished signing files in ${p8_dir_array[1]}"
+        echo
+        echo
+      else
+        echo "! failed to transfer ${p8_dir_array[1]}"
+        # if the transfer failed, the directory might be empty, if it is we want it
+        # removed, so we run rmdir on it
+        rmdir -v ./${p8_dir_array[1]}
+        echo
+      fi
+    done
+  fi
+
+  # if we are creating a Galera release we need to copy in the galera source and
+  # packages (for those not using the repositories)
+  if [ "${galera_suffix}" = "-galera" ]; then
+    line
+    echo "+ transfering Galera source and package files..."
+    line
+    for galera_version in ${galera_versions}; do
+      mkdir -vp ./galera-${galera_version}
+      if rsync ${rsync_opts} --exclude=bintar --exclude=repo "${galera_dir}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
+        echo "+ transfer of ${galera_dir}/galera-${galera_version} done"
+        echo
+      else
+        echo "! failed to transfer ${galera_dir}/galera-${galera_version}"
+        # if the transfer failed, the directory might be empty, if it is we want it
+        # removed, so we run rmdir on it
+        rmdir "galera-${galera_version}"
+        echo
+      fi
+    done
+    echo "+ done transfering Galera source and package files"
+    echo
+  fi
+
+  echo "+ done transfering bintar & source packages"
+else
+  line
+  echo "+ skipping transfering bintar & source packages, as requested..."
+  line
+fi
+
+#-------------------------------------------------------------------------------
+#  Windows packages
+#-------------------------------------------------------------------------------
+# We don't need Windows packages for Galera, so don't even try
+if [ "${galera_suffix}" != "-galera" ]; then
+  if [ "${create_win}" != "no" ]; then
+    line
+    echo "+ transfering Windows packages..."
+    line
+    for arch in win32 winx64; do
+      if [ ! -d ${release_dir}/${dir_name}/${arch}-packages ]; then
+        mkdir ${release_dir}/${dir_name}/${arch}-packages
+      fi
+      cd ${release_dir}/${dir_name}/${arch}-packages
+      for pkgtype in msi zip; do
+        wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
+      done
+      wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+    done
+    line
+    echo "+ fixing Win md5sums..."
+    line
+    for arch in win32 winx64; do
+      cd ${release_dir}/${dir_name}/${arch}-packages
+      pwd
+      dos2unix md5sums.txt
+      grep ${arch} md5sums.txt > md5sums.txt.tmp
+      mv -v md5sums.txt.tmp md5sums.txt
+      #pwd
+      #cat md5sums.txt
+      #echo
+      #echo
+      #rm -v md5sums.txt
+      #md5sum mariadb* >> md5sums.txt
+      #cat md5sums.txt
+      #echo
+      md5sum -c md5sums.txt
+      echo
+      echo "+ signing ${arch} files"
+      # remove any signature files before signing, if they exist
+      for sig_file in $(ls ./*.asc); do
+        rm "${sig_file}"
+      done
+      # now that old signatures are gone, sign all files that remain
+      for dir_file in $(find . -type f); do
+        gpg ${gpg_opts} ${dir_file}
+      done
+      echo "+ finished signing ${arch} files"
+      echo
+      echo
+    done
+    echo "+ done transfering Windows packages"
+  else
+    line
+    echo "+ skipping transfering Windows packages, as requested..."
+    line
+  fi
+fi
+
+
+#-------------------------------------------------------------------------------
+#  Repositories
+#-------------------------------------------------------------------------------
+# We don't have separate .deb or .rpm package repos for Galera so if we're
+# doing a Galera release, don't try to create them
+if [ "${galera_suffix}" != "-galera" ]; then
+  echo
+  echo
+  echo
+  # if the dir doesn't exist, create it
+  if [ ! -d ${release_dir}/${dir_name}/repo ]; then
+    mkdir ${release_dir}/${dir_name}/repo
+  fi
+
+  cd ${release_dir}/${dir_name}/repo
+
+  # create directory for the non-mgc version, if ubuntu or debian packages are
+  # going to be created and if it doesn't already exist
+  if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
+    if [ ! -d ${release_dir}/repo-no-mgc/${num} ]; then
+      mkdir ${release_dir}/repo-no-mgc/${num}
+    fi
+  fi
+
+
+  #-------------------------------------------------------------------------------
+  #  Create Debian Repos
+  #-------------------------------------------------------------------------------
+  if [ "${create_debian}" != "no" ]; then
+    # if the debian repo dir exists, delete it
+    if [ -d ${release_dir}/${dir_name}/repo/debian ]; then
+      rm -rf "${release_dir}/${dir_name}/repo/debian"
+    fi
+    line
+    echo "+ creating Debian repos..."
+    line
+    ${DEBIAN} ${incl_galera} ${is_ent} debian ${archive_dir}/${tree}/build-${tarbuildnum}
+
+    # after creating the repo, copy it to ${release_dir}/repo-no-mgc
+    rsync -a --delete ${release_dir}/${dir_name}/repo/debian ${release_dir}/repo-no-mgc/${num}/
+  else
+    line
+    echo "+ Skipping Debian repo creation, as requested..."
+    line
+  fi
+
+  #-------------------------------------------------------------------------------
+  #  Create Ubuntu Repos
+  #-------------------------------------------------------------------------------
+  if [ "${create_ubuntu}" != "no" ]; then
+    if [ -d ${release_dir}/${dir_name}/repo/ubuntu ]; then
+      rm -rf "${release_dir}/${dir_name}/repo/ubuntu"
+    fi
+    line
+    echo "+ creating Ubuntu repos..."
+    line
+
+    if [ "${is_ent}" = "yes" ];then
+      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+    else
+      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${archive_dir}/${tree}/build-${tarbuildnum}
+    fi
+
+    # after creating the repo, copy it to ${release_dir}/repo-no-mgc
+    rsync -a --delete ${release_dir}/${dir_name}/repo/ubuntu ${release_dir}/repo-no-mgc/${num}/
+  else
+    line
+    echo "+ Skipping Ubuntu repo creation, as requested..."
+    line
+  fi
+  cd ${release_dir}/${dir_name}
+  echo
+
+  #-------------------------------------------------------------------------------
+  #  Create Yum Repos
+  #-------------------------------------------------------------------------------
+  if [ "${create_yum}" != "no" ]; then
+    line
+    echo "creating Yum repos..."
+    line
+    if [ -d ${release_dir}/${dir_name}/yum ]; then
+      rm -rf "${release_dir}/${dir_name}/yum"
+    fi
+    mkdir ${release_dir}/${dir_name}/yum
+    cd ${release_dir}/${dir_name}/yum
+
+    if [ "${is_ent}" = "yes" ];then
+      ${YUM} ${incl_galera} ${is_ent} ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+    else
+      ${YUM} ${incl_galera} ${is_ent} ${archive_dir}/${tree}/build-${tarbuildnum}
+    fi
+
+    # after creating the yum repo, copy it to ${release_dir}/yum-no-mgc (deleting
+    # an old version beforehand, if one exists)
+    if [ -d ${release_dir}/yum-no-mgc/${num} ]; then
+      rm -rf ${release_dir}/yum-no-mgc/${num}
+    fi
+    cp -ai ${release_dir}/${dir_name}/yum ${release_dir}/yum-no-mgc/${num}
+  else
+    line
+    echo "+ Skipping Yum repo creation, as requested..."
+    line
+  fi
+fi
+
+echo
+echo
+line
+echo "+ done creating the ${version} release!"
+line
+echo
+
+# now upload to mirror
+if [ "${is_ent}" = "yes" ];then
+  echo "+ Now upload using a command similar to the following: 
+rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} web04:/home/mariadb-repos/mariadb-enterprise/${num}
+"
+else
+  echo "+ Now upload using a command similar to the following: 
+rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
+"
+fi
+
+# vim: filetype=sh
