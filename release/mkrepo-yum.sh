@@ -43,7 +43,7 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.5"                          # Version of galera in repos
+galera_versions="25.3.9"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -245,39 +245,37 @@ for REPONAME in ${dists}; do
         for gv in ${galera_versions}; do
           if [ "${ARCH}" = "amd64" ]; then
             if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*rhel5.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora17" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc17.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora18" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc18.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc19.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc20.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*sles11.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*sles12.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "opensuse13" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             else
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*rhel6.x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             fi
           else
             if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*rhel5.i386.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora17" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc17.i686.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora18" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc18.i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*i386.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc19.i386.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*fc20.i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*sles11.i586.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "sles12" ] || [ "${REPONAME}" = "opensuse13" ] || [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "opensuse13" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*i586.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "sles12" ] || [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
               echo "+ no packages for ${REPONAME}-${ARCH}"
             else
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/*rhel6.i*86.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*i*86.rpm ./${REPONAME}-${ARCH}/rpms/
             fi
           fi
         done
@@ -348,7 +346,7 @@ fi
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
 
-for DIR in *; do
+for DIR in *-*; do
   if [ -d "${DIR}" ]; then
     # regenerate the md5sums.txt file (signing packages changes their checksum)
     cd ${DIR}
