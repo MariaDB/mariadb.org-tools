@@ -136,7 +136,6 @@ for dist in ${ubuntu_dists}; do
     * )
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.gz'); do reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
   esac
 

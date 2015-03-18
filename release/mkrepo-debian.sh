@@ -126,7 +126,6 @@ for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
     * )
       for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb $1 $i ; done
       for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc $1 $i ; done
-      for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.gz'); do reprepro --basedir=. includedsc $1 $i ; done
       ;;
   esac
 
