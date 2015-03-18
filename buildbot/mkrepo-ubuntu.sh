@@ -43,7 +43,7 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.5"                          # Version of galera in repos
+galera_versions="25.3.9"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -135,6 +135,8 @@ for dist in ${ubuntu_dists}; do
       ;;
     * )
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.gz'); do reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
   esac
 
@@ -183,9 +185,12 @@ for dist in ${ubuntu_dists}; do
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
-        for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
       else
-        for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
       fi
     done
   fi
