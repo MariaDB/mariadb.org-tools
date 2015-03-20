@@ -189,6 +189,12 @@ for distro in ${distros}; do
       fi
     set -u
 
+    # Add in special RHEL links
+    if [ "${distro}" = "rhel" ]; then
+      ln -sv ${ver_maj} ${distro}/${ver_maj}Server
+      ln -sv ${ver_maj} ${distro}/${ver_maj}Client
+    fi
+
   done
 done
 #exit 0 # Ending here for testing
