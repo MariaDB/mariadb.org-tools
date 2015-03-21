@@ -1,0 +1,234 @@
+#!/bin/bash - 
+#
+# This script exists so that I don't need to remember or look up where things
+# are when it is time to copy files over from the build servers for a release.
+# It also helps me to not forget any steps.
+#
+# The purpose of this script is to add files from buildbot from a new MariaDB
+# Galera Cluster release to the current MariaDB release.
+
+#------------------------------------------------------------------------------
+# Options (set these before running the script)
+#------------------------------------------------------------------------------
+
+
+create_debian="${1}"  # Create Debian repository?
+create_ubuntu="${2}"  # Create Ubuntu repository?
+   create_yum="${3}"  # Create Yum repositories?
+       is_ent="${4}"  # Is this an Enterprise release?
+         tree="${5}"  # Tree
+          rev="${6}"  # Revision
+          num="${7}"  # Version number
+  tarbuildnum="${8}"  # Buildbot tarbuildnum
+
+yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
+ubuntu_dists="lucid precise trusty utopic"
+
+#------------------------------------------------------------------------------
+# Options below this point you probably don't need to change
+#------------------------------------------------------------------------------
+
+# Import common variables
+. ${HOME}/.prep.conf
+
+release="mariadb-${num}"                  # release to add galera packages to
+
+gv="25.3.9"                 # version of galera in repositories
+
+# Set various options that change depending on whether this is an enterprise release or not
+if [ "${is_ent}" = "yes" ];then
+  suffix="signed-ent"
+  #gpg_key="0xd324876ebe6a595f"                 # old enterprise key
+  gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
+  release_dir="${ent_release_dir}" # Default location for mdbe releases
+  dir_name="${num}"
+else
+  suffix="signed"
+  gpg_key="0xcbcb082a1bb943db"
+  dir_name="${release}"
+fi
+
+#------------------------------------------------------------------------------
+# Functions
+#------------------------------------------------------------------------------
+
+function runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+#------------------------------------------------------------------------------
+# Main Script
+#------------------------------------------------------------------------------
+
+eval $(gpg-agent --daemon)
+
+# At this point, all variables should be set. Print a usage message if the
+# ${tarbuildnum} variable is not set (the last of the command-line variables)
+if [ ! -d "$tarbuildnum" ] ; then
+    echo 1>&2 "Usage: $0 <debian?> <ubuntu?> <yum?> <is_ent?> <tree> <rev> <num> <tarbuildnum>"
+    echo 1>&2 "example: $0 yes yes yes no 10.0 1234 10.0.17 9876"
+    exit 1
+fi
+
+# After this point, we tread unset variables as an error
+set -u
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+
+#-------------------------------------------------------------------------------
+#  Ubuntu
+#-------------------------------------------------------------------------------
+if [ "${create_ubuntu}" != "no" ]; then
+  echo;echo;
+  line
+  echo "+ Adding files to Ubuntu repo..."
+  line
+  cd ${release_dir}/${dir_name}/repo/ubuntu
+  for dist in ${ubuntu_dists} ; do
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-server*${dist}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+    done;
+    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
+    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+  done
+else
+  line
+  echo "+ Skipping adding files to Ubuntu repo, as requested..."
+  line
+fi
+
+#-------------------------------------------------------------------------------
+#  Debian
+#-------------------------------------------------------------------------------
+if [ "${create_debian}" != "no" ]; then
+    echo;echo;
+  line
+  echo "+ Adding files to Debian repo..."
+  line
+  cd ${release_dir}/${dir_name}/repo/debian
+  
+  #for i in "squeeze debian6" "wheezy wheezy"; do
+  for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
+    set $i;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-amd64/" -name "*galera-server*${1}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-amd64/" -name "*galera-test*${1}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-server*${1}*i386.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+    done;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-test*${1}*i386.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+    done;
+    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
+    runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_amd64.changes
+    runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+  done
+else
+  line
+  echo "+ Skipping adding to Debian repo, as requested..."
+  line
+fi
+
+#-------------------------------------------------------------------------------
+#  RHEL, CentOS, Fedora, SUSE, openSUSE
+#-------------------------------------------------------------------------------
+if [ "${create_yum}" != "no" ]; then
+  echo;echo;
+  line
+  echo "+ Adding files to rpm repos..."
+  line
+  cd ${release_dir}/${dir_name}/yum
+  for REPONAME in ${yum_dists}; do
+    for ARCH in amd64 x86; do
+      # Remove old Galera files
+      runCommand rm -v ./${REPONAME}-${ARCH}/rpms/MariaDB-Galera*
+
+      # Copy in the new MariaDB Galera files
+      case ${REPONAME} in 
+        'rhel7'|'centos7')
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
+          ;;
+        'rhel6')
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          ;;
+        'opensuse13'|'sles11')
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          ;;
+        'sles12')
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
+          ;;
+        *)
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          ;;
+      esac
+    done
+    echo;echo;
+  done
+  cd ${release_dir}/${dir_name}/yum
+  rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
+  
+  for DIR in * ; do
+    cd ${release_dir}/${dir_name}/yum/${DIR}
+    echo
+    pwd
+    if [ -e md5sums.txt ]; then
+      rm -v md5sums.txt
+    fi
+    md5sum $(find . -name '*.rpm') >> md5sums.txt
+    runCommand md5sum -c md5sums.txt
+    cd ${release_dir}/${dir_name}/yum
+    # Create the repository and sign the repomd.xml file
+    case ${DIR} in
+      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
+        # CentOS & RHEL 5 don't support newer sha256 checksums
+        runCommand createrepo -s sha --database --pretty ${DIR}
+        ;;
+      *)
+        runCommand createrepo --database --pretty ${DIR}
+        ;;
+    esac
+    #runCommand createrepo --update --database --pretty ${DIR}
+    runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+    runCommand gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
+  done
+
+else
+  line
+  echo "+ Skipping adding files to Yum repo, as requested..."
+  line
+fi
+
+# vim: filetype=sh

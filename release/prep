@@ -195,6 +195,9 @@ DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
 UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
 
+# Full path to the galera-* scripts
+GALERA_NEW="/path/to/mariadb-tools/release/galera-new.sh"
+
 # URL where Windows Builds are located
 winbuilder="http://example.net/builds"
 
@@ -732,9 +735,18 @@ fi
 #-------------------------------------------------------------------------------
 #  Repositories
 #-------------------------------------------------------------------------------
-# We don't have separate .deb or .rpm package repos for Galera so if we're
-# doing a Galera release, don't try to create them
-if [ "${galera_suffix}" != "-galera" ]; then
+if [ "${galera_suffix}" = "-galera" ]; then
+  # We don't have separate .deb or .rpm package repos for Galera so if we're
+  # doing a Galera release, don't try to create them in the normal way,
+  # instead, run the galera-new script to add packages to existing repositories
+
+  line
+  echo "+ adding Galera Cluster files to existing repos..."
+  line
+  ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
+
+else
+  # Since this is not a galera release, create repos normally
   echo
   echo
   echo
