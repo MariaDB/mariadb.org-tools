@@ -42,10 +42,12 @@ if [ "${is_ent}" = "yes" ];then
   gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
   release_dir="${ent_release_dir}" # Default location for mdbe releases
   dir_name="${num}"
+  architectures="amd64"
 else
   suffix="signed"
   gpg_key="0xcbcb082a1bb943db"
   dir_name="${release}"
+  architectures="amd64 x86"
 fi
 
 #------------------------------------------------------------------------------
@@ -74,7 +76,8 @@ eval $(gpg-agent --daemon)
 
 # At this point, all variables should be set. Print a usage message if the
 # ${tarbuildnum} variable is not set (the last of the command-line variables)
-if [ ! -d "$tarbuildnum" ] ; then
+
+if [ "$tarbuildnum" = "" ] ; then
     echo 1>&2 "Usage: $0 <debian?> <ubuntu?> <yum?> <is_ent?> <tree> <rev> <num> <tarbuildnum>"
     echo 1>&2 "example: $0 yes yes yes no 10.0 1234 10.0.17 9876"
     exit 1
@@ -102,15 +105,17 @@ if [ "${create_ubuntu}" != "no" ]; then
     for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
       runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
     done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-    done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-    done;
+    if [ "${is_ent}" != "yes" ];then
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+      done;
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+      done;
+      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+    fi
     #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
     runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
   done
 else
   line
@@ -137,15 +142,17 @@ if [ "${create_debian}" != "no" ]; then
     for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-amd64/" -name "*galera-test*${1}*.deb"); do
       runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
     done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-server*${1}*i386.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
-    done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-test*${1}*i386.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
-    done;
+    if [ "${is_ent}" != "yes" ];then
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-server*${1}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+      done;
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-test*${1}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+      done;
+      runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+    fi
     #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
     runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_amd64.changes
-    runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
   done
 else
   line
@@ -163,7 +170,7 @@ if [ "${create_yum}" != "no" ]; then
   line
   cd ${release_dir}/${dir_name}/yum
   for REPONAME in ${yum_dists}; do
-    for ARCH in amd64 x86; do
+    for ARCH in ${architectures}; do
       # Remove old Galera files
       runCommand rm -v ./${REPONAME}-${ARCH}/rpms/MariaDB-Galera*
 
@@ -200,7 +207,7 @@ if [ "${create_yum}" != "no" ]; then
   cd ${release_dir}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
-  for DIR in * ; do
+  for DIR in *-* ; do
     cd ${release_dir}/${dir_name}/yum/${DIR}
     echo
     pwd
