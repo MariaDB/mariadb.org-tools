@@ -196,7 +196,7 @@ UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
 
 # Full path to the galera-* scripts
-GALERA_NEW="/path/to/mariadb-tools/release/galera-new.sh"
+GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
 
 # URL where Windows Builds are located
 winbuilder="http://example.net/builds"
@@ -408,14 +408,21 @@ fi
 loadDefaults                                    # Load Default paths and vars
 
 # Put ${galera_suffix} and ${num} together to form the base version string
-version="mariadb${galera_suffix}-${num}"
+if [ "${is_ent}" = "yes" ];then
+  version="mariadb-enterprise-cluster-${num}"
+else
+  version="mariadb${galera_suffix}-${num}"
+fi
 
 shouldI prepare_bintar_and_source_packages
-shouldI prepare_Windows_packages
+if [ "${galera_suffix}" != "-galera" ]; then
+  shouldI prepare_Windows_packages
+fi
 shouldI prepare_Debian_packages
 shouldI prepare_Ubuntu_packages
 shouldI prepare_yum_packages
-shouldI include_Galera_packages_in_repositories
+#shouldI include_Galera_packages_in_repositories
+include_Galera_packages_in_repositories
 
 # Set various options that change depending on whether this is an enterprise
 # release or not
@@ -474,6 +481,10 @@ echo "+ fixing permissions..."
 line
 for dir in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type d);do sudo chmod 755 "${dir}";done
 for file in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type f);do sudo chmod 644 "${file}";done
+if [ "${is_ent}" = "yes" ];then
+  for dir in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type d);do sudo chmod 755 "${dir}";done
+  for file in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type f);do sudo chmod 644 "${file}";done
+fi
 echo "+ done fixing permissions"
 echo
 echo
@@ -500,6 +511,10 @@ if [ "${create_bintar}" != "no" ]; then
         if [ -e md5sums.txt ]; then
           rm md5sums.txt
         fi
+        # rename the source tarball for enterprise
+        if [ "${is_ent}" = "yes" ];then
+          mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
+        fi
         md5sum ./mariadb* >> md5sums.txt
         echo "+ signing source tarball and md5sum file..."
 
@@ -508,7 +523,7 @@ if [ "${create_bintar}" != "no" ]; then
           rm "${sig_file}"
         done
         # sign the MariaDB source tarball
-        gpg ${gpg_opts} mariadb${galera_suffix}-${num}.tar.gz
+        gpg ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
         # sign the md5sum file as well
         gpg ${gpg_opts} md5sums.txt
         
@@ -522,10 +537,10 @@ if [ "${create_bintar}" != "no" ]; then
       if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
         # for the quantal bintars, we need to rename them before signing
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
-          mv ${version}-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
+          mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
           galera_arch="x86_64"
         else
-          mv ${version}-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
+          mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
           galera_arch="i686"
         fi
 
@@ -534,7 +549,7 @@ if [ "${create_bintar}" != "no" ]; then
           # and repack the bintar
           tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
           mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
-          mv -vi ${version}-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+          mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/garbd ${version}-linux-glibc_214-${galera_arch}/bin/
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/libgalera_smm.so ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
@@ -554,12 +569,19 @@ if [ "${create_bintar}" != "no" ]; then
           # and repack the bintar, but first we need to set ${galera_arch} to the
           # correct value
           if [ "${dir_array[1]}" = "bintar-linux-x86_64" ]; then
+            if [ "${is_ent}" = "yes" ];then
+              mv -vi *-linux-x86_64.tar.gz ${version}-linux-x86_64.tar.gz
+            fi
             galera_arch="x86_64"
           else
+            if [ "${is_ent}" = "yes" ];then
+              mv -vi *-linux-i686.tar.gz ${version}-linux-i686.tar.gz
+            fi
             galera_arch="i686"
           fi
           tar -zxf ${version}-linux-${galera_arch}.tar.gz
           mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
+          mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/garbd ${version}-linux-${galera_arch}/bin/
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/libgalera_smm.so ${version}-linux-${galera_arch}/lib/
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
