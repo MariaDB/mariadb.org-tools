@@ -151,7 +151,9 @@ for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
     for gv in ${galera_versions}; do
       #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
       reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_amd64.changes
-      reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+      if [ "${ENTERPRISE}" != "yes" ]; then
+        reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+      fi
     done
   fi
 
