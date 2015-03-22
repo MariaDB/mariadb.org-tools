@@ -305,7 +305,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
         elif [ "${P8_REPONAME}" = "centos71" ] || [ "${P8_REPONAME}" = "rhel71" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-rhel71-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
+            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-rhel71-rpm/ ./rhel7-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
@@ -337,8 +337,11 @@ if [ "${ENTERPRISE}" = "yes" ]; then
 
         # Add in advance-toolchain runtime for distros that need them
         case "${P8_REPONAME}-${P8_ARCH}" in
-          'centos6-ppc64'|'rhel6-ppc64'|'centos7-ppc64'|'rhel7-ppc64'|'centos71-ppc64le'|'rhel71-ppc64le'|'sles12-ppc64le')
+          'centos6-ppc64'|'rhel6-ppc64'|'centos7-ppc64'|'rhel7-ppc64'|'sles12-ppc64le')
             rsync -avP --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            ;;
+          'centos71-ppc64le'|'rhel71-ppc64le')
+            rsync -avP --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./rhel7-${P8_ARCH}/rpms/
             ;;
           * ) 
             echo "no advance-toolchain packages for ${P8_REPONAME}-${P8_ARCH}"
@@ -357,7 +360,9 @@ for DIR in *-*; do
     # regenerate the md5sums.txt file (signing packages changes their checksum)
     cd ${DIR}
     pwd
-    rm -v md5sums.txt
+    if [ -e md5sums.txt ]; then
+      rm -v md5sums.txt
+    fi
     md5sum $(find . -name '*.rpm') >> md5sums.txt
     md5sum -c md5sums.txt
     cd ..
