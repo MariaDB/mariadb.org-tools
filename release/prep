@@ -409,7 +409,11 @@ loadDefaults                                    # Load Default paths and vars
 
 # Put ${galera_suffix} and ${num} together to form the base version string
 if [ "${is_ent}" = "yes" ];then
-  version="mariadb-enterprise-cluster-${num}"
+  if [ "${galera_suffix}" != "-galera" ]; then
+    version="mariadb-enterprise-cluster-${num}"
+  else
+    version="mariadb-enterprise-${num}"
+  fi
 else
   version="mariadb${galera_suffix}-${num}"
 fi
