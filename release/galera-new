@@ -23,6 +23,13 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 
 yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
 ubuntu_dists="lucid precise trusty utopic"
+case ${tree} in 
+  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
+    debian_dists="squeeze wheezy"
+    ;;
+  *) debian_dists="squeeze wheezy sid"
+    ;;
+esac
 
 #------------------------------------------------------------------------------
 # Options below this point you probably don't need to change
@@ -134,25 +141,30 @@ if [ "${create_debian}" != "no" ]; then
   cd ${release_dir}/${dir_name}/repo/debian
   
   #for i in "squeeze debian6" "wheezy wheezy"; do
-  for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
-    set $i;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-amd64/" -name "*galera-server*${1}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+  #for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
+  for dist in ${debian_dists}; do
+    if [ "${dist}" = "squeeze" ];then
+      builder="debian6"
+    else
+      builder="${dist}"
+    fi
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-server*${dist}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
     done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-amd64/" -name "*galera-test*${1}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-test*${dist}*.deb"); do
+      runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
     done;
     if [ "${is_ent}" != "yes" ];then
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-server*${1}*i386.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
       done;
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${2}-x86/" -name "*galera-test*${1}*i386.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ;
+      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
       done;
-      runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
     fi
-    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
-    runCommand reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_amd64.changes
+    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
   done
 else
   line

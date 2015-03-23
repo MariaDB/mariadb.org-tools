@@ -803,7 +803,8 @@ else
     line
     echo "+ creating Debian repos..."
     line
-    ${DEBIAN} ${incl_galera} ${is_ent} debian ${archive_dir}/${tree}/build-${tarbuildnum}
+    echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${archive_dir}/${tree}/build-${tarbuildnum}"
+     ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${archive_dir}/${tree}/build-${tarbuildnum}
 
     # after creating the repo, copy it to ${release_dir}/repo-no-mgc
     rsync -a --delete ${release_dir}/${dir_name}/repo/debian ${release_dir}/repo-no-mgc/${num}/

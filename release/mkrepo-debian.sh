@@ -36,8 +36,9 @@ set -ex
 #-------------------------------------------------------------------------------
 GALERA="$1"                       # copy in galera packages? 'yes' or 'no'
 ENTERPRISE="$2"                   # is this an enterprise release? 'yes' or 'no'
-REPONAME="$3"                     # name of the dir, usually 'debian'
-ARCHDIR="$4"                      # path to the packages
+TREE="$3"                         # source tree
+REPONAME="$4"                     # name of the dir, usually 'debian'
+ARCHDIR="$5"                      # path to the packages
 
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
@@ -57,8 +58,8 @@ eval $(gpg-agent --daemon)
 # At this point, all variables should be set. Print a usage message if the
 # ${ARCHDIR} variable is not set (the last of the command-line variables).
 if [ ! -d "$ARCHDIR" ] ; then
-    echo 1>&2 "Usage: $0 <galera_pkgs?> <enterprise?> <reponame> <archive_dir>"
-    echo 1>&2 "example: $0 yes no debian /media/backup/archive/pack/10.0/build-1234"
+    echo 1>&2 "Usage: $0 <galera_pkgs?> <enterprise?> <tree> <reponame> <archive_dir>"
+    echo 1>&2 "example: $0 yes no 5.5 debian /media/backup/archive/pack/10.0/build-1234"
     exit 1
 fi
 
@@ -105,6 +106,17 @@ Architectures: ${architectures}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key}
+END
+
+case ${TREE} in 
+  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
+    #debian_dists='"squeeze debian6" "wheezy wheezy"'
+    debian_dists="squeeze wheezy"
+    ;;
+  *)
+    #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
+    debian_dists="squeeze wheezy sid"
+cat >>conf/distributions <<END
 
 Origin: ${origin}
 Label: MariaDB
@@ -114,45 +126,53 @@ Components: main
 Description: ${description}
 SignWith: ${gpg_key}
 END
-
+    ;;
+esac
 #for i in "squeeze debian6" "wheezy wheezy"; do
-for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
-  set $i
-  echo $1
-  case ${2} in 
+#for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
+for dist in ${debian_dists}; do
+  #set $i
+  #echo $1
+  echo ${dist}
+  if [ "${dist}" = "squeeze" ];then
+    builder="debian6"
+  else
+    builder="${dist}"
+  fi
+  case ${builder} in 
     'sid')
-      reprepro --basedir=. include $1 $ARCHDIR/kvm-deb-$2-amd64/debs/binary/mariadb-*_amd64.changes
+      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
-      for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb $1 $i ; done
-      for i in $(find "$ARCHDIR/kvm-deb-$2-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc $1 $i ; done
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc ${dist} $i ; done
       ;;
   esac
 
   if [ "${ENTERPRISE}" != "yes" ]; then
-    for i in $(find "$ARCHDIR/kvm-deb-$2-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb $1 $i ; done
+    for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
   fi
 
   # Add in custom jemalloc packages for distros that need them
-  case  ${2} in
+  case  ${builder} in
     "debian6")
-      for i in $(find "${jemalloc_dir}/${2}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${1} ${i} ; done
+      for i in $(find "${jemalloc_dir}/${builder}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for i in $(find "${jemalloc_dir}/${2}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${1} ${i} ; done
+        for i in $(find "${jemalloc_dir}/${builder}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
       fi
       ;;
     * )
-      echo "no custom jemalloc packages for ${1}"
+      echo "no custom jemalloc packages for ${dist}"
       ;;
   esac
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
-      #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${1}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $1 ${file} ; done
-      reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_amd64.changes
+      #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
       if [ "${ENTERPRISE}" != "yes" ]; then
-        reprepro --basedir=. include ${1} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${1}*_i386.changes
+        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
       fi
     done
   fi
