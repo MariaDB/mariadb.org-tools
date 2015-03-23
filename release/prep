@@ -471,7 +471,7 @@ echo
 line
 echo "+ creating the ${version} release"
 line
-eval "$(gpg-agent --daemon)"
+eval $(gpg-agent --daemon)
 if [ ! -d ${release_dir}/${dir_name} ]; then
   line
   echo "+ creating release dir..."
