@@ -47,6 +47,7 @@ galera_versions="25.3.9"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
+architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -77,14 +78,12 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   suffix="signed-ent"
-  architectures="amd64 source"                  # no x86 for Enterprise
 else
   origin="MariaDB"
   description="MariaDB Repository"
   gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
   suffix="signed"
-  architectures="amd64 i386 source"
 fi
 
 mkdir "$REPONAME"

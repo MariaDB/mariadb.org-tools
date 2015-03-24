@@ -79,14 +79,14 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   description="MariaDB Enterprise Repository"
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
-  p8_architectures="amd64 ppc64el source"      # add ppc64el, drop i386
+  architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
   suffix="signed-ent"
 else
   origin="MariaDB"
   description="MariaDB Repository"
   gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
-  p8_architectures="amd64 i386 source"
+  architectures_trusty="${architectures}"       # same if not enterprise
   suffix="signed"
 fi
 
@@ -113,7 +113,7 @@ SignWith: ${gpg_key}
 Origin: ${origin}
 Label: MariaDB
 Codename: trusty
-Architectures: ${p8_architectures}
+Architectures: ${architectures_trusty}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key}
