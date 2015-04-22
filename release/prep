@@ -19,6 +19,8 @@
 #      REVISION:  ---
 #===============================================================================
 
+umask 002
+
 set -eu
   # -e  Exit immediately if a simple command exits with a non-zero status,
   #     unless the command that fails is part of an until or  while loop, part
@@ -187,8 +189,12 @@ cat >> ${HOME}/.prep.conf <<END
 # Full path to where buildbot saves files
 archive_dir="/path/to/archive/pack"
 
-# Full path to where the Galera packages are located
+# Full path to where various packages are located
 galera_dir="/path/to/galera"
+jemalloc_dir="/path/to/jemalloc" # Location of jemalloc pkgs
+nmap_dir="/path/to/nmap" # nmap pkg for sles12
+nmap_ver="6.25" # current nmap ver in sles12 repo
+at_dir="/path/to/advance-toolchain/" # Location of at pkgs
   
 # Full paths to the mkrepo-* scripts
 DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
