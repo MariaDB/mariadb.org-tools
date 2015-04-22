@@ -64,6 +64,8 @@ vers_maj_sles="11 12"
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
+  dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20 (refer ME-234)
+  distros="sles opensuse centos rhel"    #remove fedora19, fedora20(refer ME-234)
   p8_dists="rhel6 rhel7 rhel71 sles12"
   p8_architectures="ppc64 ppc64le"
   #gpg_key="0xd324876ebe6a595f"               # original enterprise key
