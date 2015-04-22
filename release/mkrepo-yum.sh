@@ -20,6 +20,8 @@
 # 
 #===============================================================================
 
+umask 002
+
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
 set -ex
@@ -44,9 +46,9 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
 galera_versions="25.3.9"                          # Version of galera in repos
-galera_dir="/ds413/galera"                        # Location of galera pkgs
-jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
-at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
+#galera_dir="/ds413/galera"                        # Location of galera pkgs
+#jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
+#at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
 dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20"
 distros="sles opensuse centos rhel fedora"
 
@@ -105,11 +107,29 @@ vers_min_rhel_6="0 6"
 vers_min_rhel_7="0 1"
 
 #-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
+
+#-------------------------------------------------------------------------------
 #  Main Script
 #-------------------------------------------------------------------------------
 # Get the GPG daemon running so we don't have to keep entering the password for
 # the GPG key every time we sign a package
 eval $(gpg-agent --daemon)
+
+loadDefaults                                    # Load Default paths and vars
 
 # At this point, all variables should be set. Print a usage message if the
 # ${ARCHDIR} variable is not set (the last of the command-line variables).
@@ -243,6 +263,14 @@ for REPONAME in ${dists}; do
           echo "no custom jemalloc packages for ${REPONAME}-${ARCH}"
           ;;
         * ) rsync -avP --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}-${ARCH}/rpms/
+          ;;
+      esac
+
+      # Add in nmap where needed
+      case "${REPONAME}-${ARCH}" in
+        #'sles12-amd64'|'sles12-x86')
+        'sles12-amd64')
+          rsync -avP --keep-dirlinks ${nmap_dir}/${ARCH}/${nmap_ver}-${suffix}/rpms/*.rpm ./${REPONAME}-${ARCH}/rpms/
           ;;
       esac
 
