@@ -83,6 +83,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   description="MariaDB Enterprise Repository"
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
+  ubuntu_dists="precise trusty utopic"
   architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
   suffix="signed-ent"
 else
@@ -97,23 +98,11 @@ fi
 mkdir "$REPONAME"
 cd "$REPONAME"
 mkdir conf
-cat >conf/distributions <<END
-Origin: ${origin}
-Label: MariaDB
-Codename: lucid
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
 
-Origin: ${origin}
-Label: MariaDB
-Codename: precise
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-
+# Create the conf/distributions file
+for dist in ${ubuntu_dists}; do
+  case ${dist} in 
+    'trusty') cat >>conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
 Codename: trusty
@@ -122,15 +111,23 @@ Components: main
 Description: ${description}
 SignWith: ${gpg_key}
 
+END
+      ;;
+    *) cat >>conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
-Codename: utopic
+Codename: ${dist}
 Architectures: ${architectures}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key}
-END
 
+END
+      ;;
+  esac
+done
+
+# Add packages
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
