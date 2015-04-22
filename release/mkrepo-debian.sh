@@ -20,6 +20,8 @@
 # 
 #===============================================================================
 
+umask 002
+
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
 set -ex

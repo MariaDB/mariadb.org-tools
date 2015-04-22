@@ -11,6 +11,7 @@
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
+umask 002
 
 create_debian="${1}"  # Create Debian repository?
 create_ubuntu="${2}"  # Create Ubuntu repository?
