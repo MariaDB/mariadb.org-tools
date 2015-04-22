@@ -20,6 +20,8 @@
 # 
 #===============================================================================
 
+umask 002
+
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
 set -ex
@@ -44,9 +46,11 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
 galera_versions="25.3.9"                          # Version of galera in repos
-galera_dir="/ds413/galera"                        # Location of galera pkgs
-jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
-at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
+dir_galera="/ds413/galera"                        # Location of galera pkgs
+dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
+dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
+ver_xtrabackup="2.2.9"                            # Version of xtrabackup
+dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 ubuntu_dists="lucid precise trusty utopic"
 #ubuntu_dists="lucid precise trusty"
 architectures="amd64 i386 source"
@@ -150,7 +154,10 @@ for dist in ${ubuntu_dists}; do
         exit 1
       else
         for file in $(find "${P8_ARCHDIR}/p8-trusty-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-        for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        # Add Advance Toolkit files
+        for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        # Add xtrabackup files
+        reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/debs/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
     fi
   fi
@@ -158,21 +165,21 @@ for dist in ${ubuntu_dists}; do
   # Add in custom jemalloc packages for distros that need them
   case ${dist} in
     "lucid")
-      for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     "precise")
-      for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     "quantal")
-      for file in $(find "${jemalloc_dir}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${jemalloc_dir}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     * )
@@ -180,16 +187,20 @@ for dist in ${ubuntu_dists}; do
       ;;
   esac
 
+
+
+
+
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
-        #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
       else
-        #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
       fi
     done
   fi
