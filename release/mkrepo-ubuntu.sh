@@ -154,7 +154,7 @@ for dist in ${ubuntu_dists}; do
         # Add Advance Toolkit files
         for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
         # Add xtrabackup files
-        reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/debs/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
+        reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
     fi
   fi
