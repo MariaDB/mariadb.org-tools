@@ -591,7 +591,10 @@ if [ "${create_bintar}" != "no" ]; then
           fi
           tar -zxf ${version}-linux-${galera_arch}.tar.gz
           mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
-          mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
+          # if the directory isn't named like we want, rename it
+          if [ ! -d ${version}-linux-${galera_arch} ]; then
+            mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
+          fi
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/garbd ${version}-linux-${galera_arch}/bin/
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/libgalera_smm.so ${version}-linux-${galera_arch}/lib/
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
