@@ -22,13 +22,15 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
           num="${7}"  # Version number
   tarbuildnum="${8}"  # Buildbot tarbuildnum
 
-yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
-ubuntu_dists="lucid precise trusty utopic"
 case ${tree} in 
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
     debian_dists="squeeze wheezy"
+    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
+    ubuntu_dists="lucid precise trusty utopic"
     ;;
-  *) debian_dists="squeeze wheezy sid"
+  *) debian_dists="squeeze wheezy jessie sid"
+     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 fedora21 opensuse13 sles11 sles12"
+     ubuntu_dists="lucid precise trusty utopic vivid"
     ;;
 esac
 
