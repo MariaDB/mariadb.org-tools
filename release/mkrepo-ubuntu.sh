@@ -194,6 +194,7 @@ for dist in ${ubuntu_dists}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/power8/at8.0/*_${gv}-${dist}*_ppc64el.changes
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
