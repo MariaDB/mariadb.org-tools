@@ -52,6 +52,7 @@ if [ "${is_ent}" = "yes" ];then
   gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
   release_dir="${ent_release_dir}" # Default location for mdbe releases
   dir_name="${num}"
+  ubuntu_dists="precise trusty utopic"
   architectures="amd64"
 else
   suffix="signed"
@@ -115,7 +116,16 @@ if [ "${create_ubuntu}" != "no" ]; then
     for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
       runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
     done;
-    if [ "${is_ent}" != "yes" ];then
+    if [ "${is_ent}" = "yes" ];then
+      if [ "${dist}" = "trusty" ]; then
+        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+      fi
+    else
       for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
         runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
       done;
