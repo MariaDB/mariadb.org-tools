@@ -118,10 +118,10 @@ if [ "${create_ubuntu}" != "no" ]; then
     done;
     if [ "${is_ent}" = "yes" ];then
       if [ "${dist}" = "trusty" ]; then
-        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*.deb"); do
+        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
           runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
         done;
-        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*.deb"); do
+        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*ppc64el.deb"); do
           runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
         done;
       fi
