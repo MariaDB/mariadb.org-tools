@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash - 
 #===============================================================================
 #
 #          FILE:  mkrepo-ubuntu.sh
@@ -51,8 +51,13 @@ dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
 ver_xtrabackup="2.2.9"                            # Version of xtrabackup
 dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
-ubuntu_dists="precise trusty utopic vivid"
-#ubuntu_dists="lucid precise trusty"
+
+# If we are on 5.5 then no vivid
+if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+  ubuntu_dists="precise trusty utopic"
+else
+  ubuntu_dists="precise trusty utopic vivid"
+fi
 architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
