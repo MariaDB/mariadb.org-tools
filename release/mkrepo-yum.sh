@@ -49,7 +49,7 @@ galera_versions="25.3.9"                          # Version of galera in repos
 #galera_dir="/ds413/galera"                        # Location of galera pkgs
 #jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
-dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 fedora21"
+dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
 distros="sles opensuse centos rhel fedora"
 
 
@@ -58,7 +58,7 @@ distros="sles opensuse centos rhel fedora"
 vers_maj_opensuse="13"
 vers_maj_rhel="5 6 7"
 vers_maj_centos="5 6 7"
-vers_maj_fedora="19 20 21"
+vers_maj_fedora="20 21"
 vers_maj_sles="11 12"
 
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
@@ -92,7 +92,7 @@ archs_rhel_5=${archs_std}
 archs_centos_5=${archs_std}
 archs_centos_6=${archs_std}
 archs_centos_7="amd64:x86_64"
-archs_fedora_19=${archs_std}
+#archs_fedora_19=${archs_std}
 archs_fedora_20=${archs_std}
 archs_fedora_21=${archs_std}
 archs_sles_11=${archs_std}

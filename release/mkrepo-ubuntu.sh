@@ -51,7 +51,7 @@ dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
 ver_xtrabackup="2.2.9"                            # Version of xtrabackup
 dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
-ubuntu_dists="lucid precise trusty utopic vivid"
+ubuntu_dists="precise trusty utopic vivid"
 #ubuntu_dists="lucid precise trusty"
 architectures="amd64 i386 source"
 
