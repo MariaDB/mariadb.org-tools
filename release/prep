@@ -79,6 +79,9 @@ rsync_opts="-a -L"
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86"
 build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
 
+## Enterprise builds should not build solaris10 for now
+ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-tarbake-jaunty-x86:source bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
+
 # defaults (to prevent errors)
  displayusage="no"
    run_script="no"
@@ -443,7 +446,7 @@ if [ "${is_ent}" = "yes" ];then
   gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 
   release_dir="${ent_release_dir}"  # Default location for MariaDB Enterprise
-  build_dirs="${build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
+  build_dirs="${ent_build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
 
   p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
                  p8-rhel7-bintar:bintar-linux-rhel7-ppc64
