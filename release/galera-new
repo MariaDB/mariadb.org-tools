@@ -53,6 +53,7 @@ if [ "${is_ent}" = "yes" ];then
   release_dir="${ent_release_dir}" # Default location for mdbe releases
   dir_name="${num}"
   ubuntu_dists="precise trusty utopic"
+  p8_yum_dists="rhel71 rhel7 rhel6"
   architectures="amd64"
 else
   suffix="signed"
@@ -229,6 +230,30 @@ if [ "${create_yum}" != "no" ]; then
     done
     echo;echo;
   done
+
+  if [ "${is_ent}" = "yes" ];then
+    for P8_REPONAME in ${p8_yum_dists}; do
+      case ${P8_REPONAME} in 
+        'rhel7'|'rhel6')
+          P8_DIR="${P8_REPONAME}"
+          P8_ARCH='ppc64'
+          ;;
+        'rhel71')
+          P8_DIR='rhel7'
+          P8_ARCH='ppc64le'
+          ;;
+        *)
+          echo "UNKNOWN ERROR: Unable to assign P8_DIR or P8_ARCH variables."
+          echo "Something has gone wrong."
+          exit 1
+          ;;
+      esac
+      runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
+      runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
+    done
+    echo;echo;
+  fi
+
   cd ${release_dir}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
