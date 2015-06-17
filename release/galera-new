@@ -231,6 +231,7 @@ if [ "${create_yum}" != "no" ]; then
     echo;echo;
   done
 
+  # we now need to handle MariaDB Enterprise dists
   if [ "${is_ent}" = "yes" ];then
     for P8_REPONAME in ${p8_yum_dists}; do
       case ${P8_REPONAME} in 
@@ -254,9 +255,11 @@ if [ "${create_yum}" != "no" ]; then
     echo;echo;
   fi
 
+  # all rpm packages are now in place, sign them
   cd ${release_dir}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
+  # update the md5sums, refresh the repo metadata, & sign the repomd.xml files
   for DIR in *-* ; do
     cd ${release_dir}/${dir_name}/yum/${DIR}
     echo
