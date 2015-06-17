@@ -29,6 +29,6 @@ cat >> $file <<__EOF__
 __EOF__
 touch $input
 test -t 0 || cat >$input
-xterm -e "libtool --mode=execute gdb -x $file"
+xterm -e "libtool --mode=execute gdb -return-child-result -x $file"
 rm $file $input
 
