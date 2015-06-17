@@ -450,6 +450,7 @@ if [ "${is_ent}" = "yes" ];then
 
   p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
                  p8-rhel7-bintar:bintar-linux-rhel7-ppc64
+                 p8-rhel71-bintar:bintar-linux-rhel71-ppc64le
                  p8-trusty-bintar:bintar-linux-trusty-ppc64le"
 
   if [ "${galera_suffix}" = "-galera" ]; then
