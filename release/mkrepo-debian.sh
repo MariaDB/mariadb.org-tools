@@ -116,8 +116,16 @@ case ${TREE} in
     ;;
   *)
     #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
-    debian_dists="squeeze wheezy sid"
+    debian_dists="squeeze wheezy jessie sid"
 cat >>conf/distributions <<END
+
+Origin: ${origin}
+Label: MariaDB
+Codename: jessie
+Architectures: ${architectures}
+Components: main
+Description: ${description}
+SignWith: ${gpg_key}
 
 Origin: ${origin}
 Label: MariaDB
@@ -171,10 +179,17 @@ for dist in ${debian_dists}; do
   if [ ${GALERA} = "yes" ]; then
     for gv in ${galera_versions}; do
       #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-      reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-      if [ "${ENTERPRISE}" != "yes" ]; then
-        reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-      fi
+      #case ${dist} in
+      #  'jessie')
+      #    echo "no galera packages for jessie... yet"
+      #    ;;
+      #  * )
+          reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+          if [ "${ENTERPRISE}" != "yes" ]; then
+            reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+          fi
+      #    ;;
+      #esac
     done
   fi
 
