@@ -26,11 +26,11 @@ case ${tree} in
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera'|'10.0e'|'10.0e-galera')
     debian_dists="squeeze wheezy"
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
-    ubuntu_dists="lucid precise trusty utopic"
+    ubuntu_dists="precise trusty utopic"
     ;;
   *) debian_dists="squeeze wheezy jessie sid"
      yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 fedora21 opensuse13 sles11 sles12"
-     ubuntu_dists="lucid precise trusty utopic vivid"
+     ubuntu_dists="precise trusty utopic vivid"
     ;;
 esac
 
@@ -95,7 +95,7 @@ if [ "$tarbuildnum" = "" ] ; then
     exit 1
 fi
 
-# After this point, we tread unset variables as an error
+# After this point, we treat unset variables as an error
 set -u
   # -u  Treat unset variables as an error when performing parameter expansion.
   #     An error message will be written to the standard error, and a
