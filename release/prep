@@ -656,6 +656,12 @@ if [ "${create_bintar}" != "no" ]; then
             echo "Value of BINTAR is ${BINTAR}"
             mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
             ;;
+          'bintar-linux-rhel71-ppc64le')
+            # For rhel71 ppc64le bintars, we need to rename them before signing  
+            BINTAR=rhel7 
+            echo "Value of BINTAR is ${BINTAR}"
+            mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+            ;;
         esac
 
         echo "+ signing files in ${p8_dir_array[1]}..."
