@@ -71,8 +71,8 @@ vers_maj_sles="11 12"
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
-  dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20 (refer ME-234)
-  distros="sles opensuse centos rhel"    #remove fedora19, fedora20(refer ME-234)
+  dists="sles11 sles12 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
+  distros="sles centos rhel"    #remove fedora19, fedora20, opensuse13(refer ME-234)
   p8_dists="rhel6 rhel7 rhel71 sles12"
   p8_architectures="ppc64 ppc64le"
   #gpg_key="0xd324876ebe6a595f"               # original enterprise key
@@ -373,6 +373,21 @@ if [ "${ENTERPRISE}" = "yes" ]; then
             ;;
         esac
 
+        # Add galera packages for enterprise cluster  
+        case "${P8_REPONAME}-${P8_ARCH}" in
+          'rhel6-ppc64')
+            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            ;;
+          'rhel7-ppc64')
+            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            ;;
+          'rhel71-ppc64le')
+            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/             ;; 
+          * )
+            echo "no galera packages found for enterprise cluster release"
+            ;;
+        esac
+ 
         # Add in advance-toolchain runtime for distros that need them
         case "${P8_REPONAME}-${P8_ARCH}" in
           'centos6-ppc64'|'rhel6-ppc64'|'centos7-ppc64'|'rhel7-ppc64'|'sles12-ppc64le')
