@@ -48,8 +48,8 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 galera_versions="25.3.9"                          # Version of galera in repos
 dir_galera="/ds413/galera"                        # Location of galera pkgs
 dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
-dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
-ver_xtrabackup="2.2.9"                            # Version of xtrabackup
+#dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
+#ver_xtrabackup="2.2.9"                            # Version of xtrabackup
 dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 
 # If we are on 5.5 then no vivid
@@ -161,7 +161,7 @@ for dist in ${ubuntu_dists}; do
         # Add Advance Toolkit files
         for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
         # Add xtrabackup files
-        reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
+        #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
     fi
   fi
