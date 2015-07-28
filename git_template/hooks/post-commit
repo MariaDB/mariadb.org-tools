@@ -43,7 +43,7 @@ create_email()
 	Content-Transfer-Encoding: 8bit
 
 	EOF
-	git show --patch-with-stat --format="revision-id: %H%nparent(s): %P%ncommitter: %cN%nbranch nick: $branch_nick%ntimestamp: %ci%nmessage:%n%n%B"
+	git show --patch-with-stat --format="revision-id: %H ($(git describe --tags --first-parent))%nparent(s): %P%ncommitter: %cN%ntimestamp: %ci%nmessage:%n%n%B"
 
 }
 
@@ -109,7 +109,6 @@ fi
 sender=$(git config hooks.postcommitsender)
 sender=${sender:-$(git config user.email)}
 mailer=$(git config hooks.postcommitmailer)
-branch_nick=$(basename `readlink -f \`dirname \\\`git rev-parse --git-dir\\\`\``)
 
 create_email | send_mail
 
