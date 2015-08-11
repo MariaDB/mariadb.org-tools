@@ -654,13 +654,38 @@ if [ "${create_bintar}" != "no" ]; then
             # signing (refer ME-159)
             BINTAR=$(echo ${p8_dir_array[1]} | awk -F "-" '{print $3}')
             echo "Value of BINTAR is ${BINTAR}"
-            mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
+            if [ "${galera_suffix}" = "-galera" ]; then 
+                mv -vi mariadb-enterprise-${num}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz 
+                echo "creating md5sum now......"
+                md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
+            else 
+                mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
+                echo "creating md5sum now......"
+                md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
+            fi 
             ;;
           'bintar-linux-rhel71-ppc64le')
             # For rhel71 ppc64le bintars, we need to rename them before signing  
             BINTAR=rhel7 
             echo "Value of BINTAR is ${BINTAR}"
-            mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+            if [ "${galera_suffix}" = "-galera" ]; then 
+                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz  ##cluster release for enterrise should have cluster in their names
+                echo "creating md5sum now...."
+                md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
+            else
+                mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+                echo "creating md5sum now...." 
+                md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
+            fi
+            ;;
+          'bintar-linux-trusty-ppc64le')
+            if [ "${galera_suffix}" = "-galera" ]; then   
+                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-linux-ppc64le.tar.gz
+                echo "creating md5sum now....."
+                md5sum ${version}-linux-ppc64le.tar.gz > md5sums.txt
+            else
+                echo "This is an Enterprise Server Release, no need to change the name for the p8-trusty BINTAR...." 
+            fi 
             ;;
         esac
 
