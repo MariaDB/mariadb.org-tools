@@ -382,7 +382,8 @@ if [ "${ENTERPRISE}" = "yes" ]; then
             rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
           'rhel71-ppc64le')
-            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/             ;; 
+            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
+            ;; 
           * )
             echo "no galera packages found for enterprise cluster release"
             ;;
