@@ -90,8 +90,8 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   #ubuntu_dists="precise trusty utopic"
   ubuntu_dists="precise trusty"                # no utopic for enterprise just yet 
-  architectures="amd64 source"                  # for enterprise, no i386
-  architectures_trusty="amd64 ppc64el source"   # for trusty, add ppc64el
+  architectures="amd64 i386 source"                  # for enterprise, add i386
+  architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
   suffix="signed-ent"
 else
   origin="MariaDB"
