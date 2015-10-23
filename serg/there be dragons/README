@@ -16,7 +16,7 @@ is my bzr repo.
 The only help I've was able to find was this:
 http://git.661346.n2.nabble.com/git-remote-bzr-fatal-mark-399654-not-declared-td7603246.html
 
-Below is what I've fiured out (take with a grain of salt):
+Below is what I've figured out (take it with a grain of salt):
 
 git-remote-bzr uses two files to remember the import status.
 .git/bzr/origin/mark-git and .git/bzr/origin/mark-int
