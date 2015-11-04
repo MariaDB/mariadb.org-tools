@@ -56,7 +56,7 @@ dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   ubuntu_dists="precise trusty utopic"
 else
-  ubuntu_dists="precise trusty utopic vivid"
+  ubuntu_dists="precise trusty utopic vivid wily"
 fi
 architectures="amd64 i386 source"
 
@@ -206,13 +206,20 @@ for dist in ${ubuntu_dists}; do
         fi
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        if [ "${dist}" = "wily" ]; then
+          reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+          reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        else
+          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        fi
       fi
     done
   fi
 done
 
-# Create md5sums of .deb packages
+# Create sums of .deb packages
 md5sum ./pool/main/*/*/*.deb >> md5sums.txt
+sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
+sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
 
