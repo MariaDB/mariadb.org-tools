@@ -52,14 +52,17 @@ galera_versions="25.3.9"                          # Version of galera in repos
 
 # If we are on 5.5 then no fedora21
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20"
+  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20"
+  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora20"
   vers_maj_fedora="20"
 else
-  dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
-  vers_maj_fedora="20 21"
+  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
+  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora20 fedora21 fedora22"
+  vers_maj_fedora="20 21 22"
 fi
 
-distros="sles opensuse centos rhel fedora"
+#distros="sles opensuse centos rhel fedora"
+distros="sles opensuse rhel fedora"
 
 # The following set the major versions of various Linux distributions for which
 # we build packages.
@@ -71,8 +74,10 @@ vers_maj_sles="11 12"
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
-  dists="sles11 sles12 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
-  distros="sles centos rhel"    #remove fedora19, fedora20, opensuse13(refer ME-234)
+  #dists="sles11 sles12 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
+  dists="sles11 sles12 rhel5 rhel6 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
+  #distros="sles centos rhel"    #remove fedora19, fedora20, opensuse13(refer ME-234)
+  distros="sles rhel"
   p8_dists="rhel6 rhel7 rhel71 sles12"
   p8_architectures="ppc64 ppc64le"
   #gpg_key="0xd324876ebe6a595f"               # original enterprise key
@@ -102,6 +107,7 @@ archs_centos_7="amd64:x86_64"
 #archs_fedora_19=${archs_std}
 archs_fedora_20=${archs_std}
 archs_fedora_21=${archs_std}
+archs_fedora_22=${archs_std}
 archs_sles_11=${archs_std}
 archs_opensuse_13=${archs_std}
 
@@ -174,31 +180,31 @@ for distro in ${distros}; do
       ARCH=${arch_array[0]}
       REPONAME="${distro}${ver_maj}"
 
-      case "${REPONAME}" in
-        'rhel6')
-          echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
-          ;;
-        'centos7'|'rhel7')
-          if [ "${ARCH}" = "amd64" ]; then
-            echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
-          else
-            echo "+ no packages for ${REPONAME}-${ARCH}"
-          fi
-          ;;
-        'opensuse13'|'sles11')
-          echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
-          ;;
-        'sles12')
-          if [ "${ARCH}" = "amd64" ]; then
-            echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
-          else
-            echo "+ no packages for ${REPONAME}-${ARCH}"
-          fi
-          ;;
-        *)
-          echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
-          ;;
-      esac
+      #case "${REPONAME}" in
+      #  'rhel6')
+      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    ;;
+      #  'centos7'|'rhel7')
+      #    if [ "${ARCH}" = "amd64" ]; then
+      #      echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    else
+      #      echo "+ no packages for ${REPONAME}-${ARCH}"
+      #    fi
+      #    ;;
+      #  'opensuse13'|'sles11')
+      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    ;;
+      #  'sles12')
+      #    if [ "${ARCH}" = "amd64" ]; then
+      #      echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    else
+      #      echo "+ no packages for ${REPONAME}-${ARCH}"
+      #    fi
+      #    ;;
+      #  *)
+      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    ;;
+      #esac
 
     done
 
@@ -234,6 +240,10 @@ done
 for REPONAME in ${dists}; do
   for ARCH in ${architectures}; do
     case "${REPONAME}" in
+      'rhel5')
+        #mkdir -vp "${REPONAME}-${ARCH}"
+        rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos5-${ARCH}/ ./${REPONAME}-${ARCH}/
+        ;;
       'rhel6')
         #mkdir -vp "${REPONAME}-${ARCH}"
         rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
@@ -266,13 +276,10 @@ for REPONAME in ${dists}; do
 
       # Add in custom jemalloc packages for distros that need them
       case "${REPONAME}-${ARCH}" in
-        'opensuse13-x86'|'opensuse13-amd64'|'sles11-x86'|'sles11-amd64'|'sles12-amd64'|'sles12-x86')
-          echo "no custom jemalloc packages for ${REPONAME}-${ARCH}"
+        'rhel5-amd64'|'rhel5-x86'|'rhel6-amd64'|'rhel6-x86'|'rhel6-ppc64'|'rhel7-amd64'|'rhel7-ppc64') 
+          rsync -avP --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}-${ARCH}/rpms/
           ;;
-        'centos7-x86'|'rhel7-x86'|'fedora19-x86'|'fedora19-amd64'|'fedora20-x86'|'fedora20-amd64'|'fedora21-x86'|'fedora21-amd64')
-          echo "no custom jemalloc packages for ${REPONAME}-${ARCH}"
-          ;;
-        * ) rsync -avP --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}-${ARCH}/rpms/
+        * ) echo "no custom jemalloc packages for ${REPONAME}-${ARCH}"
           ;;
       esac
 
@@ -414,11 +421,17 @@ for DIR in *-*; do
     # regenerate the md5sums.txt file (signing packages changes their checksum)
     cd ${DIR}
     pwd
-    if [ -e md5sums.txt ]; then
-      rm -v md5sums.txt
-    fi
+    if [ -e md5sums.txt ]; then rm -v md5sums.txt ; fi
     md5sum $(find . -name '*.rpm') >> md5sums.txt
     md5sum -c md5sums.txt
+
+    if [ -e sha1sums.txt ]; then rm -v sha1sums.txt ; fi
+    sha1sum $(find . -name '*.rpm') >> sha1sums.txt
+    sha1sum -c sha1sums.txt
+
+    if [ -e sha256sums.txt ]; then rm -v sha256sums.txt ; fi
+    sha256sum $(find . -name '*.rpm') >> sha256sums.txt
+    sha256sum -c sha256sums.txt
     cd ..
 
     # Create the repository and sign the repomd.xml file
@@ -441,5 +454,19 @@ https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
 " > ${DIR}/srpms/README
   fi
 done
+
+ln -sv rhel centos
+
+if [ -e "rhel5-x86"     ]; then ln -sv rhel5-x86     centos5-x86     ;fi
+if [ -e "rhel5-amd64"   ]; then ln -sv rhel5-amd64   centos5-amd64   ;fi
+
+if [ -e "rhel6-x86"     ]; then ln -sv rhel6-x86     centos6-x86     ;fi
+if [ -e "rhel6-amd64"   ]; then ln -sv rhel6-amd64   centos6-amd64   ;fi
+if [ -e "rhel6-ppc64"   ]; then ln -sv rhel6-ppc64   centos6-ppc64   ;fi
+
+if [ -e "rhel7-amd64"   ]; then ln -sv rhel7-amd64   centos7-amd64   ;fi
+if [ -e "rhel7-ppc64"   ]; then ln -sv rhel7-ppc64   centos7-ppc64   ;fi
+if [ -e "rhel7-ppc64le" ]; then ln -sv rhel7-ppc64le centos7-ppc64le ;fi
+
 
 # vim: filetype=sh
