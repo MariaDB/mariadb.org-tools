@@ -269,7 +269,7 @@ if [ "${create_yum}" != "no" ]; then
   cd ${release_dir}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
-  # update the md5sums, refresh the repo metadata, & sign the repomd.xml files
+  # update the sums, refresh the repo metadata, & sign the repomd.xml files
   for DIR in *-* ; do
     cd ${release_dir}/${dir_name}/yum/${DIR}
     echo
@@ -279,6 +279,19 @@ if [ "${create_yum}" != "no" ]; then
     fi
     md5sum $(find . -name '*.rpm') >> md5sums.txt
     runCommand md5sum -c md5sums.txt
+
+    if [ -e sha1sums.txt ]; then
+      rm -v sha1sums.txt
+    fi
+    sha1sum $(find . -name '*.rpm') >> sha1sums.txt
+    runCommand sha1sum -c sha1sums.txt
+
+    if [ -e sha256sums.txt ]; then
+      rm -v sha256sums.txt
+    fi
+    sha256sum $(find . -name '*.rpm') >> sha256sums.txt
+    runCommand sha256sum -c sha256sums.txt
+
     cd ${release_dir}/${dir_name}/yum
     # Create the repository and sign the repomd.xml file
     case ${DIR} in
@@ -291,7 +304,9 @@ if [ "${create_yum}" != "no" ]; then
         ;;
     esac
     #runCommand createrepo --update --database --pretty ${DIR}
-    runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+    if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
+      runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+    fi
     runCommand gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
 
