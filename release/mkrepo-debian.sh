@@ -208,6 +208,8 @@ for dist in ${debian_dists}; do
 
 done
 
-# Create md5sums of .deb packages
+# Create sums of .deb packages
 md5sum ./pool/main/*/*/*.deb >> md5sums.txt
+sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
+sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
 
