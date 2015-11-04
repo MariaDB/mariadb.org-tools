@@ -521,25 +521,39 @@ if [ "${create_bintar}" != "no" ]; then
     if [ "${dir_array[1]}" = "source" ]; then
       if rsync ${rsync_opts} "${archive_dir}/${tree}/build-${tarbuildnum}/${dir_array[0]}/mariadb-${num}.tar.gz" "./${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
         cd ${dir_array[1]}
-        echo "+ updating source tarball md5sum..."
-        if [ -e md5sums.txt ]; then
-          rm md5sums.txt
-        fi
         # rename the source tarball for enterprise
         if [ "${is_ent}" = "yes" ];then
           mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
         fi
+        echo "+ updating source tarball md5sum..."
+        if [ -e md5sums.txt ]; then
+          rm -v md5sums.txt
+        fi
         md5sum ./mariadb* >> md5sums.txt
-        echo "+ signing source tarball and md5sum file..."
 
+        echo "+ updating source tarball sha1sum..."
+        if [ -e sha1sums.txt ]; then
+          rm -v sha1sums.txt
+        fi
+        sha1sum ./mariadb* >> sha1sums.txt
+
+        echo "+ updating source tarball sha256sum..."
+        if [ -e sha256sums.txt ]; then
+          rm -v sha256sums.txt
+        fi
+        sha256sum ./mariadb* >> sha256sums.txt
+
+        echo "+ signing source tarball and sum files..."
         # remove any signature files before signing, if they exist
         for sig_file in $(ls ./*.asc); do
           rm "${sig_file}"
         done
         # sign the MariaDB source tarball
         gpg ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
-        # sign the md5sum file as well
+        # sign the sum files as well
         gpg ${gpg_opts} md5sums.txt
+        gpg ${gpg_opts} sha1sums.txt
+        gpg ${gpg_opts} sha256sums.txt
         
         cd ..
       fi
@@ -572,11 +586,21 @@ if [ "${create_bintar}" != "no" ]; then
           echo "not repacking bintar as this is not a galera release"
         fi
 
-        # since we renamed them, we also need to regenerate the md5sums
+        # since we renamed them, we also need to regenerate the sums
         if [ -e md5sums.txt ]; then
-          rm md5sums.txt
+          rm -v md5sums.txt
         fi
         md5sum ./${version}-*.tar.gz >> md5sums.txt
+
+        if [ -e sha1sums.txt ]; then
+          rm -v sha1sums.txt
+        fi
+        sha1sum ./${version}-*.tar.gz >> sha1sums.txt
+
+        if [ -e sha256sums.txt ]; then
+          rm -v sha256sums.txt
+        fi
+        sha256sum ./${version}-*.tar.gz >> sha256sums.txt
       elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
         if [ "${galera_suffix}" = "-galera" ]; then
           # If this is a galera release we need to copy in the galera libraries
@@ -603,19 +627,53 @@ if [ "${create_bintar}" != "no" ]; then
           cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/libgalera_smm.so ${version}-linux-${galera_arch}/lib/
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
           rm -rf ${version}-linux-${galera_arch}
-          # since we repacked them, we also need to regenerate the md5sums
+          # since we repacked them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
-            rm md5sums.txt
+            rm -v md5sums.txt
           fi
           md5sum ./${version}-*.tar.gz >> md5sums.txt
+
+          if [ -e sha1sums.txt ]; then
+            rm -v sha1sums.txt
+          fi
+          sha1sum ./${version}-*.tar.gz >> sha1sums.txt
+
+          if [ -e sha256sums.txt ]; then
+            rm -v sha256sums.txt
+          fi
+          sha256sum ./${version}-*.tar.gz >> sha256sums.txt
         else
           echo "not repacking as this is not a galera release"
         fi
       fi
+
+      echo "+ generating sums in ${dir_array[1]} if they don't exist..."
+      if [ -e md5sums.txt ]; then
+        echo "...md5sums.txt exists"
+      else
+        echo "...generating md5sums.txt"
+        md5sum ./${version}-*.tar.gz >> md5sums.txt
+      fi
+
+      if [ -e sha1sums.txt ]; then
+        echo "...sha1sums.txt exists"
+      else
+        echo "...generating sha1sums.txt"
+        sha1sum ./${version}-*.tar.gz >> sha1sums.txt
+      fi
+
+      if [ -e sha256sums.txt ]; then
+        echo "...sha256sums.txt exists"
+      else
+        echo "...generating sha256sums.txt"
+        sha256sum ./${version}-*.tar.gz >> sha256sums.txt
+      fi
+      echo "+ finished generating sums in ${dir_array[1]}"
+
       echo "+ signing files in ${dir_array[1]}..."
       # remove any signature files before signing, if they exist
       for sig_file in $(ls ./*.asc); do
-        rm "${sig_file}"
+        rm -v "${sig_file}"
       done
       # now that old signatures are gone, sign all files that remain
       for dir_file in $(find . -type f | grep -v orig); do
@@ -656,36 +714,39 @@ if [ "${create_bintar}" != "no" ]; then
             echo "Value of BINTAR is ${BINTAR}"
             if [ "${galera_suffix}" = "-galera" ]; then 
                 mv -vi mariadb-enterprise-${num}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz 
-                echo "creating md5sum now......"
-                md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
             else 
                 mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
-                echo "creating md5sum now......"
-                md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
             fi 
+            echo "creating sums now......"
+            md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
+            sha1sum ${version}-${BINTAR}-ppc64.tar.gz > sha1sums.txt  
+            sha256sum ${version}-${BINTAR}-ppc64.tar.gz > sha256sums.txt  
             ;;
           'bintar-linux-rhel71-ppc64le')
             # For rhel71 ppc64le bintars, we need to rename them before signing  
             BINTAR=rhel7 
             echo "Value of BINTAR is ${BINTAR}"
             if [ "${galera_suffix}" = "-galera" ]; then 
-                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz  ##cluster release for enterrise should have cluster in their names
-                echo "creating md5sum now...."
-                md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
+                # cluster release for enterprise should have cluster in their names
+                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
             else
                 mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
-                echo "creating md5sum now...." 
-                md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
             fi
+            echo "creating sums now...." 
+            md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
+            sha1sum ${version}-${BINTAR}-ppc64le.tar.gz > sha1sums.txt
+            sha256sum ${version}-${BINTAR}-ppc64le.tar.gz > sha256sums.txt
             ;;
           'bintar-linux-trusty-ppc64le')
             if [ "${galera_suffix}" = "-galera" ]; then   
                 mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-linux-ppc64le.tar.gz
-                echo "creating md5sum now....."
-                md5sum ${version}-linux-ppc64le.tar.gz > md5sums.txt
             else
                 echo "This is an Enterprise Server Release, no need to change the name for the p8-trusty BINTAR...." 
             fi 
+            echo "creating sums now....."
+            md5sum ${version}-linux-ppc64le.tar.gz > md5sums.txt
+            sha1sum ${version}-linux-ppc64le.tar.gz > sha1sums.txt
+            sha256sum ${version}-linux-ppc64le.tar.gz > sha256sums.txt
             ;;
         esac
 
@@ -779,6 +840,10 @@ if [ "${galera_suffix}" != "-galera" ]; then
       #cat md5sums.txt
       #echo
       md5sum -c md5sums.txt
+      sha1sum ./mariadb* > sha1sums.txt
+      sha1sum -c sha1sums.txt
+      sha256sum ./mariadb* > sha256sums.txt
+      sha256sum -c sha256sums.txt
       echo
       echo "+ signing ${arch} files"
       # remove any signature files before signing, if they exist
