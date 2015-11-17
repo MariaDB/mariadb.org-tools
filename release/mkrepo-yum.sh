@@ -303,6 +303,12 @@ for REPONAME in ${dists}; do
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora21" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora22" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora23" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] ; then
@@ -319,6 +325,12 @@ for REPONAME in ${dists}; do
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora21" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora22" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora23" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse13" ] ; then
