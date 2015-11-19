@@ -25,8 +25,8 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="squeeze wheezy"
-    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 opensuse13 sles11 sles12"
-    ubuntu_dists="precise trusty utopic"
+    yum_dists="rhel5 rhel6 rhel7 fedora20 opensuse13 sles11 sles12"
+    ubuntu_dists="precise trusty"
     ;;
   '10.0e'|'10.0e-galera')
     debian_dists="squeeze wheezy jessie"
@@ -39,8 +39,8 @@ case ${tree} in
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   *) debian_dists="squeeze wheezy jessie sid"
-     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora19 fedora20 fedora21 opensuse13 sles11 sles12"
-     ubuntu_dists="precise trusty utopic vivid"
+     yum_dists="rhel5 rhel6 rhel7 fedora20 fedora21 fedora22 opensuse13 sles11 sles12"
+     ubuntu_dists="precise trusty utopic vivid wily"
     ;;
 esac
 
@@ -62,7 +62,7 @@ if [ "${is_ent}" = "yes" ];then
   gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
   release_dir="${ent_release_dir}" # Default location for mdbe releases
   dir_name="${num}"
-  ubuntu_dists="precise trusty utopic"
+  ubuntu_dists="precise trusty"
   p8_yum_dists="rhel71 rhel7 rhel6"
   architectures="amd64"
 else
