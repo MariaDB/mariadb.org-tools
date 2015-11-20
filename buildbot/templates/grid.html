@@ -8,13 +8,15 @@
   {% if not categories %}
 <script type="text/javascript">
 <!--
-window.location = "grid?branch={{branch|urlencode}}&category=main"
+window.location = "grid?category=main&branch={{branch|urlencode}}"
 //-->
 </script>
   {% endif %}
-<a href="grid?branch={{branch|urlencode}}&category=main">Main builders</a> |
-<a href="grid?branch={{branch|urlencode}}&category=experimental">Unstable builders</a> |
-<a href="grid?branch={{branch|urlencode}}&category=main&category=experimental">All builders</a>
+<a href="grid?category=main&branch={{branch|urlencode}}">Main</a> |
+<a href="grid?category=galera&branch={{branch|urlencode}}">Galera</a> |
+<a href="grid?category=connectors&branch={{branch|urlencode}}">Connectors</a> |
+<a href="grid?category=experimental&branch={{branch|urlencode}}">Experimental</a> |
+<a href="grid?category=main&category=experimental&category=galera&category=connectors&branch={{branch|urlencode}}">All</a>
  {% endif %}
 </h1>
 
