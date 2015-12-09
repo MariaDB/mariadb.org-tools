@@ -54,9 +54,9 @@ dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 
 # If we are on 5.5 then no vivid
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  ubuntu_dists="precise trusty utopic"
+  ubuntu_dists="precise trusty"
 else
-  ubuntu_dists="precise trusty utopic vivid wily"
+  ubuntu_dists="precise trusty vivid wily"
 fi
 architectures="amd64 i386 source"
 
