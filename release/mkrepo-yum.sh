@@ -259,7 +259,12 @@ for REPONAME in ${dists}; do
         ;;
       'opensuse13'|'sles11')
         #mkdir -vp "${REPONAME}-${ARCH}"
-        rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+        if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
+          # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
+          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
+        else
+          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+        fi
         ;;
       'sles12')
         if [ "${ARCH}" = "amd64" ]; then
@@ -449,7 +454,7 @@ for DIR in *-*; do
 
     # Create the repository and sign the repomd.xml file
     case ${DIR} in
-      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
+      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
         # CentOS & RHEL 5 don't support newer sha256 checksums
         createrepo -s sha --database --pretty ${DIR}
         ;;
@@ -468,6 +473,11 @@ https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
   fi
 done
 
+# create a symlink from the sles11-amd64 dir to a dir named after the sp1
+# builder (this is done so buildbot tests work)
+ln -sv sles11-amd64 sles11sp1-amd64
+
+# add in links from rhel dirs to equivalent centos dirs
 ln -sv rhel centos
 
 if [ -e "rhel5-x86"     ]; then ln -sv rhel5-x86     centos5-x86     ;fi
