@@ -43,7 +43,7 @@ create_email()
 	Content-Transfer-Encoding: 8bit
 
 	EOF
-	git show --patch-with-stat --format="revision-id: %H ($(git describe --tags --first-parent))%nparent(s): %P%ncommitter: %cN%ntimestamp: %ci%nmessage:%n%n%B"
+	git show --patch-with-stat --format="revision-id: %H ($(git describe --tags --first-parent))%nparent(s): %P%nauthor: %aN%ncommitter: %cN%ntimestamp: %ci%nmessage:%n%n%B"
 
 }
 
