@@ -91,6 +91,9 @@ fi
 mkdir "$REPONAME"
 cd "$REPONAME"
 mkdir conf
+case ${TREE} in
+  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera'|'10.0'|'10.0e'|'10.0-galera'|'10.0e-galera')
+    squeeze="squeeze"
 cat >conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
@@ -99,6 +102,14 @@ Architectures: ${architectures}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key}
+END
+  ;;
+  *)
+    squeeze=""
+    ;;
+esac
+
+cat >>conf/distributions <<END
 
 Origin: ${origin}
 Label: MariaDB
@@ -112,10 +123,10 @@ END
 case ${TREE} in 
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
     #debian_dists='"squeeze debian6" "wheezy wheezy"'
-    debian_dists="squeeze wheezy"
+    debian_dists="${squeeze} wheezy"
     ;;
   '10.0e'|'10.0e-galera')
-    debian_dists="squeeze wheezy jessie"
+    debian_dists="${squeeze} wheezy jessie"
 cat >>conf/distributions <<END
 
 Origin: ${origin}
@@ -129,7 +140,7 @@ END
     ;;
   *)
     #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
-    debian_dists="squeeze wheezy jessie sid"
+    debian_dists="${squeeze} wheezy jessie sid"
 cat >>conf/distributions <<END
 
 Origin: ${origin}
