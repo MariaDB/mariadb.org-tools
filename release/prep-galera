@@ -1,0 +1,674 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE: prep-galera
+# 
+#         USAGE: ./prep-galera
+# 
+#   DESCRIPTION: This script exists so that I don't need to remember or look up
+#                where things are when it is time to prepare new galera files.
+#                It also ensures no steps are forgotten, and prevents many
+#                errors.
+# 
+#        AUTHOR: Daniel Bartholomew (db), dbart@mariadb.org
+#  ORGANIZATION: 
+#       CREATED: 2016-01-28 15:08 EDT
+#      REVISION:  ---
+#===============================================================================
+
+umask 002
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+#------------------------------------------------------------------------------
+# Options (set these before running the script)
+#------------------------------------------------------------------------------
+
+# Set ${galera_versions} to the currently supported Galera versions,
+# multiple versions are separated with spaces.
+galera_versions="25.3.12"
+
+# Set ${galera_preferred} to the version we include in the bintars and
+# repositories (often the same as ${galera_versions} but can be different).
+galera_preferred="25.3.12"
+
+
+deb_dists="precise trusty vivid wily debian6 wheezy jessie sid"
+rpm_dists="centos5 centos6 centos7 fedora22 fedora23 rhel71"
+zyp_dists="opensuse13 sles11 sles12"
+
+#-------------------------------------------------------------------------------
+# Options below this point you probably don't need to change
+#-------------------------------------------------------------------------------
+
+# Various miscellaneous options
+rsync_opts="-a -L"
+
+build_dirs_x86="kvm-rpm-centos5-x86-gal:galera-${galera_preferred}-i686 kvm-deb-precise-x86-gal:galera-${galera_preferred}-glibc_214-i686"
+build_dirs_x86_64="kvm-rpm-centos5-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-precise-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 p8-rhel71-rpm-gal:galera-${galera_preferred}-ppc64le source:src"
+
+build_dirs="${build_dirs_x86} ${build_dirs_x86_64}"
+
+# defaults (to prevent errors)
+    displayusage="no"
+log_displayusage=""
+            demo="no"
+        log_demo=""
+      run_script="no"
+  log_run_script=""
+          is_ent="no"
+      log_is_ent=""
+   create_bintar="no"
+      create_win="no"
+      create_deb="no"
+      create_rpm="no"
+     incl_galera="no"
+      is_cluster="no"
+  log_is_cluster=""
+             log="no"
+         log_log=""
+galera_suffix=""
+     treeflag=false
+      revflag=false
+      numflag=false
+      tarflag=false
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+#function runCommand() {
+#  echo "+ ${@}"
+#  sleep 1
+#  if ${@} ; then
+#    return 0
+#  else
+#    return 1
+#  fi
+#}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
+secureUserInput() {
+  question="${@}"
+  SECUREINPUT="false"
+  REPLY="alsofalse"
+  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
+    read -s -p "${question} "
+    echo
+    SECUREINPUT="${REPLY}"
+    read -s -p "Please enter it again: "
+    echo
+    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
+      echo
+      echo "The two entries do not match."
+      echo
+    else
+      echo
+      echo "The two entries match. Continuing."
+      echo
+      return 0
+    fi
+  done
+}
+
+prepare_bintar_and_source_packages() {
+  create_bintar="yes"
+}
+
+prepare_Windows_packages() {
+  create_win="yes"
+}
+
+prepare_deb_packages() {
+  create_deb="yes"
+}
+
+prepare_rpm_packages() {
+  create_rpm="yes"
+}
+
+include_Galera_packages_in_repositories() {
+  incl_galera="yes"
+}
+
+logSettings() {
+cat >> ${HOME}/.prep.log <<END
+
+# Prepped $(date)
+# Command:
+#   prep-galera -${log_displayusage}${log_demo}${log_run_script}${log_log} -t ${tree} -r ${rev} -v ${version}
+# tree="${tree}"
+# rev="${rev}"
+# num="${num}"
+# version="${version}"
+# release_dir/dir_name="${release_dir}/${dir_name}"
+# create_bintar="${create_bintar}"
+# create_deb="${create_deb}"
+# create_rpm="${create_rpm}"
+# archive_dir="${archive_dir}"
+# galera_dir="${galera_dir}"
+# gpg_opts="${gpg_opts}"
+# ent_gpg_opts="${ent_gpg_opts}"
+END
+chown $(basename ${HOME}): ${HOME}/.prep.log
+}
+
+
+pressAnyKeyToContinue() {
+  echo
+  read -p "Press any key to continue." -n 1
+  echo
+  return 0
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home"
+    echo "directory. If it does not exist, and have valid settings in it,"
+    echo "this script will fail. I can create a default template file for you"
+    echo "to fill out. Afterwards, please re-run this script."
+    echo
+    shouldI create_a_template_file
+    # after creating the file, check if it exists again, if not, exit
+    if [ ! -f ${HOME}/.prep.conf ]; then
+      echo "I was unable to create ${HOME}/.prep.conf"
+      echo "Exiting..."
+      exit 3
+    else
+      echo
+      echo "Template file created at ${HOME}/.prep.conf"
+      echo "Please edit and re-run this script."
+      echo
+      exit 0
+    fi
+  fi
+}
+
+usage() {
+  set +x
+  echo
+  echo
+  echo "usage: $0 -y[deghl] -t <tree> -r <revision> -v <version>"
+  echo "  -y : actually run the script"
+  echo "  -d : run the script in demo mode"
+  echo "  -h : display this usage message"
+  echo "  -l : log the <tree>, <revision>, & etc... to ~/.prep.log"
+  echo "  -t <tree> : the Galera source code tree"
+  echo "  -r <revision> : the Galera source code tree revision"
+  echo "  -v <version> : the Galera version number"
+  echo
+  echo
+  set -x
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+# The first thing we need to do is parse the options
+while getopts 'dhlr:t:v:y' OPTION
+do
+  case $OPTION in
+    d)  # Not implemented yet
+      demo="yes"
+      log_demo="d"
+      ;;
+    h)  # Display a helpful usage message
+      displayusage="yes"
+      log_displayusage="h"
+      ;;
+    l)  # Log the release to ~/.prep.log
+      log="yes"
+      log_log="l"
+      ;;
+    r)  # The release revision
+      rev="${OPTARG}"
+      revflag=true
+      ;;
+    t)  # The release tree
+      tree="${OPTARG}"
+      treeflag=true
+      ;;
+    v)  # The version number of this release
+      num="${OPTARG}"
+      numflag=true
+      ;;
+    y)  # Actually run this script (helps prevent accidental runs)
+      run_script="yes"
+      log_run_script="y"
+      ;;
+    \?) # Display a helpful usage message
+      displayusage="yes"
+      ;;
+    :)  # Error when an option is used that requires an argument
+      displayusage="yes"
+      echo "Option -$OPTARG requires an argument."
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+if ! ${revflag} || ! ${numflag} || ! ${treeflag} ; then
+  #if [[ -d $1 ]]; then
+    echo
+    line
+    echo "-r -t and -v, along with their appropriate arguments, are mandatory" >&2
+    line
+    usage
+    exit 4
+  #fi
+fi
+
+# make sure we are running as root
+#if (( `id -u` != 0 )); then { echo "Sorry, ${0} must be run using sudo. Exiting..."; exit; } fi
+
+# Display usage message and quit if necessary
+if [ "${displayusage}" = "yes" ] || [ "${run_script}" != "yes" ]; then
+  usage
+  exit 0
+fi
+
+loadDefaults                                    # Load Default paths and vars
+
+# Customizations because we are not prepping a MariaDB release
+version="galera-${num}"
+suffix_ent="signed-ent"
+suffix="signed"
+release_dir="${galera_dir}"
+dir_name="${version}"
+archive_dir="/ds413/archive/builds"
+
+shouldI prepare_bintar_and_source_packages
+shouldI prepare_deb_packages
+shouldI prepare_rpm_packages
+
+
+if [ ${log} = "yes" ]; then
+  logSettings
+fi
+
+#exit 0;
+
+
+echo
+echo
+line
+echo "+ creating the ${version} release"
+line
+eval $(gpg-agent --daemon)
+
+if [ ! -d ${release_dir}/${dir_name} ]; then
+  line
+  echo "+ creating release dir..."
+  line
+  mkdir -v ${release_dir}/${dir_name}
+  if [ ! -d ${release_dir}/${dir_name}-signed ]; then
+    mkdir -v ${release_dir}/${dir_name}-signed
+  fi
+  if [ ! -d ${release_dir}/${dir_name}-signed-ent ]; then
+    mkdir -v ${release_dir}/${dir_name}-signed-ent
+  fi
+fi
+cd ${release_dir}/${dir_name}
+echo
+line
+echo "+ fixing permissions..."
+line
+for dir in $(sudo find ${archive_dir}/${tree}/${rev}/ -type d);do sudo chmod 755 "${dir}";done
+for file in $(sudo find ${archive_dir}/${tree}/${rev}/ -type f);do sudo chmod 644 "${file}";done
+echo "+ done fixing permissions"
+echo
+echo
+
+
+
+
+#-------------------------------------------------------------------------------
+#  Binary Tarballs and Source
+#-------------------------------------------------------------------------------
+if [ "${create_bintar}" != "no" ]; then
+  line
+  echo "+ transfering bintar & source packages..."
+  line
+  if [ ! -d ${release_dir}/${dir_name}/bintar ]; then
+    line
+    echo "+ creating bintar dir..."
+    line
+    mkdir -v ${release_dir}/${dir_name}/bintar
+    mkdir -v ${release_dir}/${dir_name}-signed/bintar
+    mkdir -v ${release_dir}/${dir_name}-signed-ent/bintar
+  fi
+  cd ${release_dir}/${dir_name}/bintar
+  echo
+  for dir_pair in ${build_dirs}; do
+    dir_array=(${dir_pair//:/ })
+    # create the directory
+    if [ "${dir_array[1]}" = "src" ]; then
+      if [ ! -d ${release_dir}/${dir_name}/${dir_array[1]} ]; then
+        mkdir -v ${release_dir}/${dir_name}/${dir_array[1]}
+      fi
+    else 
+      if [ ! -d ${release_dir}/${dir_name}/bintar/${dir_array[1]} ]; then
+        mkdir -v ${release_dir}/${dir_name}/bintar/${dir_array[1]}
+      fi
+    fi
+    if [ "${dir_array[1]}" = "src" ]; then
+      if rsync ${rsync_opts} "${archive_dir}/${tree}/${rev}/${dir_array[0]}/galera-${num}.tar.gz" "${release_dir}/${dir_name}/${dir_array[1]}/"; then
+        cd ${release_dir}/${dir_name}/${dir_array[1]}
+        for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+
+        # before signing the files, copy them to the ent dir
+        cp -avi ${release_dir}/${dir_name}/${dir_array[1]} ${release_dir}/${dir_name}-signed-ent/
+
+        echo "+ signing source tarball and sum files..."
+        cd ${release_dir}/${dir_name}/${dir_array[1]}/
+        # remove any signature files before signing, if they exist
+        for sig_file in $(ls ./*.asc); do
+          rm -v "${sig_file}"
+        done
+        # sign the source tarball
+        gpg ${gpg_opts} galera-${num}.tar.gz
+        # sign the sum files as well
+        for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+        
+        # Copy to the -signed folder
+        cp -avi ${release_dir}/${dir_name}/${dir_array[1]} ${release_dir}/${dir_name}-signed/
+
+        # Switch over to the -signed-ent folder and sign those
+        echo "+ signing source tarball and sum files in the -signed-ent folder..."
+        cd ${release_dir}/${dir_name}-signed-ent/${dir_array[1]}/
+        # remove any signature files before signing, if they exist
+        for sig_file in $(ls ./*.asc); do
+          rm "${sig_file}"
+        done
+        # sign the source tarball
+        gpg ${ent_gpg_opts} galera-${num}.tar.gz
+        # sign the sum files as well
+        for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
+      fi
+      echo "+ transfer of ${dir_array[1]} done"
+      echo
+    else
+      # This is where we actually extract the binary files
+      cd ${release_dir}/${dir_name}/bintar/${dir_array[1]}
+      case ${dir_array[1]} in
+        "galera-${galera_preferred}-x86_64"|"galera-${galera_preferred}-i686"|"galera-${galera_preferred}-ppc64le")
+            # we are dealing with an .rpm file
+            rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
+            ;;
+        *)
+            # we are dealing with .deb files
+            dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
+            dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
+            ;;
+      esac
+
+      # copy dir over to -signed and -signed-ent directories
+      cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]} ${release_dir}/${dir_name}-signed/bintar/
+      cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]} ${release_dir}/${dir_name}-signed-ent/bintar/
+
+      echo "+ transfer of ${dir_array[1]} done"
+      echo;line;echo
+
+    fi
+  done
+
+  echo "+ done transfering bintar & source packages"
+  line
+else
+  line
+  echo "+ skipping transfering bintar & source packages, as requested..."
+  line
+fi
+
+
+#-------------------------------------------------------------------------------
+#  Create deb dir
+#-------------------------------------------------------------------------------
+if [ "${create_deb}" != "no" ]; then
+  # if the deb dir exists, delete it
+  if [ -d ${release_dir}/${dir_name}/deb ]; then
+    rm -rf "${release_dir}/${dir_name}/deb"
+  fi
+  if [ -d ${release_dir}/${dir_name}-signed/deb ]; then
+    rm -rf "${release_dir}/${dir_name}-signed/deb"
+  fi
+  if [ -d ${release_dir}/${dir_name}-signed-ent/deb ]; then
+    rm -rf "${release_dir}/${dir_name}-signed-ent/deb"
+  fi
+  line
+  echo "+ creating deb dir..."
+  line
+  mkdir -v ${release_dir}/${dir_name}/deb
+  cd ${release_dir}/${dir_name}/deb/
+
+  for dist in ${deb_dists}; do
+    for arch in amd64 x86; do
+      cp -avi ${archive_dir}/${tree}/${rev}/kvm-deb-${dist}-${arch}-gal/debs/binary/galera* ${release_dir}/${dir_name}/deb/
+    done
+  done
+
+  # sum the deb files prior to copying them to -signed and -signed-ent
+  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+
+  # copy deb dir to signed and signed-ent dirs
+  cp -avi ${release_dir}/${dir_name}/deb ${release_dir}/${dir_name}-signed/
+  cp -avi ${release_dir}/${dir_name}/deb ${release_dir}/${dir_name}-signed-ent/
+
+  # sign the deb files for mariadb.org
+  cd ${release_dir}/${dir_name}-signed/deb/
+  # sign the deb files
+  for file in galera* ; do gpg ${gpg_opts} ${file};done
+  # sign the sum files as well
+  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+
+
+  # sign the deb files for mariadb.com (aka MariaDB Enterprise)
+  cd ${release_dir}/${dir_name}-signed-ent/deb/
+  # sign the deb files
+  for file in galera* ; do gpg ${ent_gpg_opts} ${file};done
+  # sign the sum files as well
+  for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
+
+
+
+else
+  line
+  echo "+ Skipping deb dir creation, as requested..."
+  line
+fi
+
+#-------------------------------------------------------------------------------
+#  Create rpm dir
+#-------------------------------------------------------------------------------
+if [ "${create_rpm}" != "no" ]; then
+  line
+  echo "creating rpm dir..."
+  line
+  if [ -d ${release_dir}/${dir_name}/rpm ]; then
+    rm -rf "${release_dir}/${dir_name}/rpm"
+  fi
+  if [ -d ${release_dir}/${dir_name}-signed/rpm ]; then
+    rm -rf "${release_dir}/${dir_name}-signed/rpm"
+  fi
+  if [ -d ${release_dir}/${dir_name}-signed-ent/rpm ]; then
+    rm -rf "${release_dir}/${dir_name}-signed-ent/rpm"
+  fi
+  mkdir -v ${release_dir}/${dir_name}/rpm
+  cd ${release_dir}/${dir_name}/rpm/
+
+  for dist in ${rpm_dists}; do
+    for arch in amd64 x86; do
+      case ${dist}-${arch} in
+        'centos7-x86'|'rhel71-x86')
+            echo "skipping non-existent ${dist}-${arch}..."
+            ;;
+        *)
+            if [ "${dist}-${arch}" = "rhel71-amd64" ]; then
+              # we're cheating a bit here, there's no rhel71-amd64 rpm, but
+              # there is an rhel71-ppc64le one, and rather than add logic to
+              # cover the ppc64le architecture, we'll just piggy-back on amd64
+              cp -avi ${archive_dir}/${tree}/${rev}/p8-${dist}-rpm-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
+            else
+              cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
+            fi
+            ;;
+      esac
+    done
+  done
+
+  for dist in ${zyp_dists}; do
+    for arch in amd64 x86; do
+      if [ "${dist}-${arch}" = "sles12-x86" ]; then
+        echo "skipping non-existent ${dist}-${arch}..."
+      else
+        cp -avi ${archive_dir}/${tree}/${rev}/kvm-zyp-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
+      fi
+    done
+  done
+
+  #-------------------------------------------------------------------------------
+  #  copy rpm dir to signed and signed-ent dirs
+  #-------------------------------------------------------------------------------
+  cp -avi ${release_dir}/${dir_name}/rpm ${release_dir}/${dir_name}-signed/
+  cp -avi ${release_dir}/${dir_name}/rpm ${release_dir}/${dir_name}-signed-ent/
+
+  cd ${release_dir}/${dir_name}/rpm/
+  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  # sign the rpms
+  for file in galera*.rpm ; do gpg ${gpg_opts} ${file};done
+  # sign the sum files as well
+  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+  
+  #-------------------------------------------------------------------------------
+  #  sign and sum rpm files for mariadb.org
+  #-------------------------------------------------------------------------------
+  cd ${HOME}
+  echo
+  echo "Switching ~/.rpmmacros file to std version..."
+  echo 
+  rm -v .rpmmacros
+  ln -sv .rpmmacros-std .rpmmacros
+  cd ${release_dir}/${dir_name}-signed/rpm/
+  rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
+  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  # sign the rpms
+  for file in galera*.rpm ; do gpg ${gpg_opts} ${file};done
+  # sign the sum files as well
+  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+
+
+  #-------------------------------------------------------------------------------
+  #  sign and sum rpm files for mariadb.com (aka MariaDB Enterprise)
+  #-------------------------------------------------------------------------------
+  cd ${HOME}
+  echo
+  echo "Switching ~/.rpmmacros file to ent version..."
+  echo 
+  rm -v .rpmmacros
+  ln -sv .rpmmacros-ent-v3 .rpmmacros
+
+  cd ${release_dir}/${dir_name}-signed-ent/rpm/
+  rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
+  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  # sign the rpms
+  for file in galera*.rpm ; do gpg ${ent_gpg_opts} ${file};done
+  # sign the sum files as well
+  for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
+  
+  cd ${HOME}
+  echo
+  echo "Switching ~/.rpmmacros file back to standard version..."
+  echo 
+  rm -v .rpmmacros
+  ln -sv .rpmmacros-std .rpmmacros
+  cd ${release_dir}/${dir_name}-signed-ent/rpm/
+
+else
+  line
+  echo "+ Skipping rpm dir creation, as requested..."
+  line
+fi
+
+echo
+echo
+line
+echo "+ done creating the ${version} release!"
+line
+echo
+
+# now upload to mirror
+#if [ "${is_ent}" = "yes" ];then
+#  echo "+ Now upload using a command similar to the following: 
+#rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} web04:/home/mariadb-repos/mariadb-enterprise/${num}
+#"
+#else
+#  echo "+ Now upload using a command similar to the following: 
+#rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
+#"
+#fi
+
+# vim: filetype=sh
