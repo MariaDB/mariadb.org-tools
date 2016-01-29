@@ -25,7 +25,7 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="squeeze wheezy"
-    yum_dists="rhel5 rhel6 rhel7 fedora20 opensuse13 sles11 sles12"
+    yum_dists="rhel5 rhel6 rhel7 opensuse13 sles11 sles12"
     ubuntu_dists="precise trusty"
     ;;
   '10.0e'|'10.0e-galera')
@@ -39,8 +39,8 @@ case ${tree} in
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   *) debian_dists="squeeze wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora20 fedora21 fedora22 opensuse13 sles11 sles12"
-     ubuntu_dists="precise trusty utopic vivid wily"
+     yum_dists="rhel5 rhel6 rhel7 fedora21 fedora22 fedora23 opensuse13 sles11 sles12"
+     ubuntu_dists="precise trusty vivid wily"
     ;;
 esac
 
@@ -218,13 +218,23 @@ if [ "${create_yum}" != "no" ]; then
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
-        'rhel6')
+        'rhel6'|'centos6')
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           ;;
+        'rhel5'|'centos5')
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          ;;
         'opensuse13'|'sles11')
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
+            # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
           ;;
         'sles12')
           if [ "${ARCH}" = "amd64" ]; then
@@ -271,43 +281,45 @@ if [ "${create_yum}" != "no" ]; then
   
   # update the sums, refresh the repo metadata, & sign the repomd.xml files
   for DIR in *-* ; do
-    cd ${release_dir}/${dir_name}/yum/${DIR}
-    echo
-    pwd
-    if [ -e md5sums.txt ]; then
-      rm -v md5sums.txt
-    fi
-    md5sum $(find . -name '*.rpm') >> md5sums.txt
-    runCommand md5sum -c md5sums.txt
+    if [ -d "${DIR}" ]; then
+      cd ${release_dir}/${dir_name}/yum/${DIR}
+      echo
+      pwd
+      if [ -e md5sums.txt ]; then
+        rm -v md5sums.txt
+      fi
+      md5sum $(find . -name '*.rpm') >> md5sums.txt
+      runCommand md5sum -c md5sums.txt
 
-    if [ -e sha1sums.txt ]; then
-      rm -v sha1sums.txt
-    fi
-    sha1sum $(find . -name '*.rpm') >> sha1sums.txt
-    runCommand sha1sum -c sha1sums.txt
+      if [ -e sha1sums.txt ]; then
+        rm -v sha1sums.txt
+      fi
+      sha1sum $(find . -name '*.rpm') >> sha1sums.txt
+      runCommand sha1sum -c sha1sums.txt
 
-    if [ -e sha256sums.txt ]; then
-      rm -v sha256sums.txt
-    fi
-    sha256sum $(find . -name '*.rpm') >> sha256sums.txt
-    runCommand sha256sum -c sha256sums.txt
+      if [ -e sha256sums.txt ]; then
+        rm -v sha256sums.txt
+      fi
+      sha256sum $(find . -name '*.rpm') >> sha256sums.txt
+      runCommand sha256sum -c sha256sums.txt
 
-    cd ${release_dir}/${dir_name}/yum
-    # Create the repository and sign the repomd.xml file
-    case ${DIR} in
-      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86')
-        # CentOS & RHEL 5 don't support newer sha256 checksums
-        runCommand createrepo -s sha --database --pretty ${DIR}
-        ;;
-      *)
-        runCommand createrepo --database --pretty ${DIR}
-        ;;
-    esac
-    #runCommand createrepo --update --database --pretty ${DIR}
-    if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
-      runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+      cd ${release_dir}/${dir_name}/yum
+      # Create the repository and sign the repomd.xml file
+      case ${DIR} in
+        'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
+          # CentOS & RHEL 5 don't support newer sha256 checksums
+          runCommand createrepo -s sha --database --pretty ${DIR}
+          ;;
+        *)
+          runCommand createrepo --database --pretty ${DIR}
+          ;;
+      esac
+      #runCommand createrepo --update --database --pretty ${DIR}
+      if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
+        runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+      fi
+      runCommand gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
     fi
-    runCommand gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
 
 else
