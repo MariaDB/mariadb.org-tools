@@ -50,19 +50,18 @@ galera_versions="25.3.9"                          # Version of galera in repos
 #jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
 
-# If we are on 5.5 then no fedora21 or higher
+# If we are on 5.5 then no fedora
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20"
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7"
-  vers_maj_fedora="20"
+  vers_maj_fedora=""                            # no Fedora in 5.5 any more
+  distros="sles opensuse rhel"
 else
   #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora21 fedora22 fedora23"
   vers_maj_fedora="21 22 23"
+  distros="sles opensuse rhel fedora"
 fi
-
-#distros="sles opensuse centos rhel fedora"
-distros="sles opensuse rhel fedora"
 
 # The following set the major versions of various Linux distributions for which
 # we build packages.
