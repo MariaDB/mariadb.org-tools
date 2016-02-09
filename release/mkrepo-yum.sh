@@ -45,7 +45,7 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.9"                          # Version of galera in repos
+galera_versions="25.3.12"                          # Version of galera in repos
 #galera_dir="/ds413/galera"                        # Location of galera pkgs
 #jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -58,8 +58,8 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   distros="sles opensuse rhel"
 else
   #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
-  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora21 fedora22 fedora23"
-  vers_maj_fedora="21 22 23"
+  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora22 fedora23"
+  vers_maj_fedora="22 23"
   distros="sles opensuse rhel fedora"
 fi
 
