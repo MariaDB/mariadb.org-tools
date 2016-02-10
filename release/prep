@@ -597,8 +597,8 @@ if [ "${create_bintar}" != "no" ]; then
           tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
           mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
           mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/garbd ${version}-linux-glibc_214-${galera_arch}/bin/
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/libgalera_smm.so ${version}-linux-glibc_214-${galera_arch}/lib/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
         else
@@ -642,8 +642,8 @@ if [ "${create_bintar}" != "no" ]; then
           if [ ! -d ${version}-linux-${galera_arch} ]; then
             mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
           fi
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/garbd ${version}-linux-${galera_arch}/bin/
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/libgalera_smm.so ${version}-linux-${galera_arch}/lib/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
+          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
           rm -rf ${version}-linux-${galera_arch}
           # since we repacked them, we also need to regenerate the sums
