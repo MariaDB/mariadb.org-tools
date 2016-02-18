@@ -880,7 +880,7 @@ rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera/$
 ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${num}/repo ./\" ; 
 line=\"----------------------------------------\"
 for host in bb02 bb03 bb04;do 
-  echo;echo;echo;echo ${line} ; echo \"uploading to ${host}\";echo ${line};echo;echo;echo;
+  echo;echo;echo;echo \${line} ; echo \"uploading to ${host}\";echo \${line};echo;echo;echo;
   ssh -t -t bb01 \"rsync -avP --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done
 "
