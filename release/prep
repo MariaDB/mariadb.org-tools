@@ -1019,6 +1019,22 @@ rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_
 else
   echo "+ Now upload using a command similar to the following: 
 rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
+
++ After the primary mirror has the files, rsync to the bb boxes
+line=\"----------------------------------------\"
+for host in bb01 bb02 bb03 bb04;do 
+  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;echo;echo;
+  ssh -t -t \${host} \"mkdir -v /var/www/${num} ; rsync -avP --delete-after --delay-updates ftp.osuosl.org::mariadb/${dir_name}/yum/ /var/www/${num}/\"; 
+done
+
++ Then prior to activating the release, activate the yum repos:
+line=\"----------------------------------------\"
+for host in bb01 bb02 bb03 bb04;do 
+  echo;echo;echo;echo \${line} ; echo \"Activating ${dir_name} on \${host}\";echo \${line};echo;echo;echo;
+  ssh -t -t \${host} \"cd /var/www/;rm -v ${tree}; ln -sv ${num} ${tree}\"; 
+done
+
+
 "
 fi
 
