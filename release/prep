@@ -48,11 +48,11 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.9"
+galera_versions="25.3.14"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.9"
+galera_preferred="25.3.14"
 
 # We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
 # Duplicate & edit the appropriate lines below. Old settings are generally
