@@ -45,7 +45,7 @@ ARCHDIR="$5"                      # path to the packages
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.9"                          # Version of galera in repos
+galera_versions="25.3.14"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
