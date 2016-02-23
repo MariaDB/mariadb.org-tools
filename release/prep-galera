@@ -852,9 +852,12 @@ if [ "${create_yum}" != "no" ]; then
     esac
     gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
-  # one final thing: create a symlink from the sles11-amd64 dir to a dir named
-  # after the sp1 builder (this is done so buildbot tests work)
+  # one final thing: create symlinks from the sles11-amd64 dir to a dir named
+  # after the sp1 builder and from the centos5 builders to rhel5 dirs
+  # (this is done so buildbot tests work)
   ln -sv sles11-amd64 sles11sp1-amd64
+  ln -sv centos5-amd64 rhel5-amd64
+  ln -sv centos5-x86 rhel5-x86
 else
   line
   echo "+ Skipping yum repository creation, as requested..."
