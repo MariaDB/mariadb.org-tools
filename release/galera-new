@@ -39,7 +39,7 @@ case ${tree} in
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   *) debian_dists="squeeze wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora21 fedora22 fedora23 opensuse13 sles11 sles12"
+     yum_dists="rhel5 rhel6 rhel7 fedora22 fedora23 opensuse13 sles11 sles12"
      ubuntu_dists="precise trusty vivid wily"
     ;;
 esac
@@ -53,7 +53,7 @@ esac
 
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.9"                 # version of galera in repositories
+gv="25.3.14"                 # version of galera in repositories
 
 # Set various options that change depending on whether this is an enterprise release or not
 if [ "${is_ent}" = "yes" ];then
@@ -63,7 +63,7 @@ if [ "${is_ent}" = "yes" ];then
   release_dir="${ent_release_dir}" # Default location for mdbe releases
   dir_name="${num}"
   ubuntu_dists="precise trusty"
-  p8_yum_dists="rhel71 rhel7 rhel6"
+  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
   architectures="amd64"
 else
   suffix="signed"
@@ -209,6 +209,7 @@ if [ "${create_yum}" != "no" ]; then
     for ARCH in ${architectures}; do
       # Remove old Galera files
       runCommand rm -v ./${REPONAME}-${ARCH}/rpms/MariaDB-Galera*
+      runCommand rm -v ./${REPONAME}-${ARCH}/rpms/galera*
 
       # Copy in the new MariaDB Galera files
       case ${REPONAME} in 
@@ -216,17 +217,37 @@ if [ "${create_yum}" != "no" ]; then
           if [ "${ARCH}" = "amd64" ]; then
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel7*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
         'rhel6'|'centos6')
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*i686.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
           ;;
         'rhel5'|'centos5')
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*i386.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
           ;;
-        'opensuse13'|'sles11')
+        'opensuse13')
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*i586.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
+          ;;
+        'sles11')
           if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
             # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
@@ -235,11 +256,17 @@ if [ "${create_yum}" != "no" ]; then
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           fi
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*i586.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
           ;;
         'sles12')
           if [ "${ARCH}" = "amd64" ]; then
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
         *)
@@ -271,6 +298,7 @@ if [ "${create_yum}" != "no" ]; then
       esac
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
+      runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${REPONAME}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
     done
     echo;echo;
   fi
