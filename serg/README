@@ -33,3 +33,19 @@ Converts bison output file (from bison --verbose) to a huge html file,
 that takes quite a while to load, but then one can navigate the grammar
 with a comfort of a browser.
 
+mtr-rejects
+^^^^^^^^^^^
+
+After running mysql-test-run.pl (particularly with --force), you can get many
+*.reject files. Simply run this script from the mysql-test/ dir and it'll fire
+gvimdiff for every reject file, you can review and merge changes as you like.
+When you exit gvimdiff and .reject and .result file are still different, the
+script will ask whether you want to overwrite .result with .reject (so you
+don't need to merge all diffs in gvimdiff, but can simply answer 'y' later).
+
+For many diffs with identical changes, where you mainly need review and full
+overwrite (not chunk-by-chunk manual merging) run this script with --diff
+option.  It will use diff instead of gvimdiff, saving you a few keypresses
+per reject file.
+
+It can also be run with the explicit list of reject files as arguments.

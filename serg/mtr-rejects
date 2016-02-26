@@ -1,0 +1,54 @@
+#!/bin/sh
+
+last() {
+  echo ""
+  echo -n "Conflicts left: "
+  find . -name '*.reject'|wc -l
+  exit
+}
+
+trap last SIGINT
+
+if [ "$1" = "--diff" ] ; then
+  diff=1
+  shift
+fi
+
+GREEN="[1;32m"
+RED="[1;31m"
+YELLOW="[1;33m"
+NORM="[0;39m"
+
+if [ -z "$1" ] ; then
+  A=`find r suite ../{storage,plugin}/*/mysql-test/* -name '*.reject'`
+  if [ -z "$A" ]; then
+    echo "No reject files to process"
+    exit 1
+  fi
+  set -- $A
+fi
+
+while [ -n "$1" ]; do
+  A=${1%.reject}
+  if [ ! -f $A.reject -o ! -f $A.result ] ; then
+    echo "$RED$A.re* does not exist!$NORM"
+  else
+    echo "$GREEN$A$NORM"
+
+    if [ -n "$diff" ] ; then
+      diff -u "$A".{result,reject}
+    else
+      gvimdiff -f "$A".{reject,result}
+    fi
+    
+    if cmp -s "$A".{reject,result} ; then
+      rm -v "$A".reject
+    else
+      mv -iv "$A".{reject,result}
+    fi
+  fi
+  shift
+done
+
+last
+
