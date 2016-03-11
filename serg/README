@@ -49,3 +49,11 @@ option.  It will use diff instead of gvimdiff, saving you a few keypresses
 per reject file.
 
 It can also be run with the explicit list of reject files as arguments.
+
+dbug-relative-times.pl
+^^^^^^^^^^^^^^^^^^^^^^
+
+when the trace is generated with i:T
+replaces absolute timestamps with relative, since the last timestamp
+of the same thread
+
