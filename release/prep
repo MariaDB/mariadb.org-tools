@@ -48,11 +48,11 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.14"
+galera_versions="25.3.15"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.14"
+galera_preferred="25.3.15"
 
 # We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
 # Duplicate & edit the appropriate lines below. Old settings are generally
@@ -485,7 +485,8 @@ else
   else
     dir_name="${version}" # normal releases use ${version} as ${dir_name}
   fi
-  gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
+  gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor" 
+  #gpg_opts="--quiet -u 0xF1656F24C74CD1D8 --detach-sign --armor" # new GPG key for Sid
 fi
 
 if [ ${log} = "yes" ]; then
@@ -597,8 +598,10 @@ if [ "${create_bintar}" != "no" ]; then
           tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
           mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
           mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
         else
@@ -642,8 +645,13 @@ if [ "${create_bintar}" != "no" ]; then
           if [ ! -d ${version}-linux-${galera_arch} ]; then
             mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
           fi
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
-          cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+          #if [ -d ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ];then
+          #  rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
+          #fi
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
           rm -rf ${version}-linux-${galera_arch}
           # since we repacked them, we also need to regenerate the sums
@@ -800,7 +808,7 @@ if [ "${create_bintar}" != "no" ]; then
     line
     for galera_version in ${galera_versions}; do
       mkdir -vp ./galera-${galera_version}
-      if rsync ${rsync_opts} --exclude=bintar --exclude=repo "${galera_dir}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
+      if rsync ${rsync_opts} --exclude=repo "${galera_dir}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
         echo "+ transfer of ${galera_dir}/galera-${galera_version} done"
         echo
       else
@@ -837,9 +845,11 @@ if [ "${galera_suffix}" != "-galera" ]; then
       fi
       cd ${release_dir}/${dir_name}/${arch}-packages
       for pkgtype in msi zip; do
-        wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
+        #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
+        wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
       done
-      wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+      #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+      wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
     done
     line
     echo "+ fixing Win md5sums..."
