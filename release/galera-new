@@ -24,23 +24,23 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 
 case ${tree} in 
   '5.5'|'5.5-galera')
-    debian_dists="squeeze wheezy"
+    debian_dists="wheezy"
     yum_dists="rhel5 rhel6 rhel7 opensuse13 sles11 sles12"
     ubuntu_dists="precise trusty"
     ;;
   '10.0e'|'10.0e-galera')
-    debian_dists="squeeze wheezy jessie"
+    debian_dists="wheezy jessie"
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12" #remove fedora19, fedora20, opensuse13 for ent builds
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   '5.5e'|'5.5e-galera')
-    debian_dists="squeeze wheezy"
+    debian_dists="wheezy"
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12" #remove fedora19, fedora20, opensuse13 for ent builds
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
-  *) debian_dists="squeeze wheezy jessie sid"
+  *) debian_dists="wheezy jessie sid"
      yum_dists="rhel5 rhel6 rhel7 fedora22 fedora23 opensuse13 sles11 sles12"
-     ubuntu_dists="precise trusty vivid wily"
+     ubuntu_dists="precise trusty wily xenial"
     ;;
 esac
 
@@ -53,7 +53,7 @@ esac
 
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.14"                 # version of galera in repositories
+gv="25.3.15"                 # version of galera in repositories
 
 # Set various options that change depending on whether this is an enterprise release or not
 if [ "${is_ent}" = "yes" ];then
@@ -269,9 +269,15 @@ if [ "${create_yum}" != "no" ]; then
             runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
-        *)
+        'fedora22'|'fedora23')
+          fcnum="${REPONAME:(-2)}"
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          else
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*i686.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
           ;;
       esac
     done
