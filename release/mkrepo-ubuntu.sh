@@ -45,7 +45,7 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.14"                          # Version of galera in repos
+galera_versions="25.3.15"                          # Version of galera in repos
 dir_galera="/ds413/galera"                        # Location of galera pkgs
 dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
@@ -56,7 +56,7 @@ dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   ubuntu_dists="precise trusty"
 else
-  ubuntu_dists="precise trusty vivid wily"
+  ubuntu_dists="precise trusty wily xenial"
 fi
 architectures="amd64 i386 source"
 
@@ -96,8 +96,10 @@ if [ "${ENTERPRISE}" = "yes" ]; then
 else
   origin="MariaDB"
   description="MariaDB Repository"
-  gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
-  #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
+  #gpg_key="package-signing-key@mariadb.org"    # mariadb.org signing key
+  gpg_key="0xcbcb082a1bb943db"                  # mariadb.org signing key
+  gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
+  #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
   architectures_trusty="${architectures}"       # same if not enterprise
   suffix="signed"
 fi
@@ -120,6 +122,17 @@ SignWith: ${gpg_key}
 
 END
       ;;
+    'xenial') cat >>conf/distributions <<END
+Origin: ${origin}
+Label: MariaDB
+Codename: ${dist}
+Architectures: ${architectures}
+Components: main
+Description: ${description}
+SignWith: ${gpg_key_2016}
+
+END
+      ;;
     *) cat >>conf/distributions <<END
 Origin: ${origin}
 Label: MariaDB
@@ -138,7 +151,7 @@ done
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
-    'trusty'|'utopic')
+    'trusty'|'utopic'|'wily'|'xenial')
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
@@ -206,13 +219,8 @@ for dist in ${ubuntu_dists}; do
         fi
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        if [ "${dist}" = "wily" ]; then
-          reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-          reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-        else
-          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-        fi
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
       fi
     done
   fi
