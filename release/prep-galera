@@ -38,14 +38,15 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.14"
+galera_versions="25.3.15"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.14"
+galera_preferred="25.3.15"
 
 
-deb_dists="precise trusty vivid wily debian6 wheezy jessie sid"
+#deb_dists="precise trusty vivid wily debian6 wheezy jessie sid"
+deb_dists="jessie precise sid trusty wheezy wily xenial"
 rpm_dists="centos5 centos6 centos7 fedora22 fedora23"
 rpm_dists_p8="rhel6 rhel7 rhel71 suse12"
 zyp_dists="opensuse13 sles11 sles11sp1 sles12"
@@ -349,9 +350,8 @@ loadDefaults                                    # Load Default paths and vars
 version="galera-${num}"
 suffix_ent="signed-ent"
 suffix="signed"
-# testing change
-#release_dir="${galera_dir}"
-release_dir="/ds413/tmp"
+release_dir="${galera_dir}"
+#release_dir="/ds413/tmp"
 dir_name="${version}"
 archive_dir="/ds413/archive/builds"
 
@@ -474,6 +474,22 @@ if [ "${create_bintar}" != "no" ]; then
         "galera-${galera_preferred}-x86_64"|"galera-${galera_preferred}-i686"|"galera-${galera_preferred}-ppc64le")
             # we are dealing with an .rpm file
             rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
+            cd usr
+            if [ -d lib64 ];then
+              if [ -d lib ];then
+                # what to do if we have BOTH lib and lib64 dirs
+                cd lib
+                ln -sv ../lib64/galera ./
+                cd ../lib64
+                ln -sv galera/libgalera_smm.so ./
+                cd ../
+              else
+                # if we have a lib64 dir and no lib dir
+                ln -sv lib64 lib
+              fi
+            fi
+            cd lib
+            ln -sv galera/libgalera_smm.so ./
             ;;
         *)
             # we are dealing with .deb files
@@ -700,7 +716,8 @@ fi
 if [ "${create_repo}" != "no" ]; then
   architectures="amd64 i386 source"
   architectures_trusty="amd64 i386 ppc64el source"
-  gpg_key="package-signing-key@mariadb.org"
+  gpg_key="0xcbcb082a1bb943db"
+  gpg_key_2016="0xF1656F24C74CD1D8"
   mkdir -vp ${release_dir}/${dir_name}/repo/deb/conf
   cd ${release_dir}/${dir_name}/repo/deb/
 
@@ -725,6 +742,17 @@ Architectures: ${architectures}
 Components: main
 Description: Galera test repository
 SignWith: ${gpg_key}
+
+END
+        ;;
+      'xenial'|'sid') cat >>conf/distributions <<END
+Origin: Galera
+Label: Galera
+Codename: ${dist}
+Architectures: ${architectures}
+Components: main
+Description: Galera test repository
+SignWith: ${gpg_key_2016}
 
 END
         ;;
@@ -883,7 +911,7 @@ rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera/$
 ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${num}/repo ./\" ; 
 line=\"----------------------------------------\"
 for host in bb02 bb03 bb04;do 
-  echo;echo;echo;echo \${line} ; echo \"uploading to ${host}\";echo \${line};echo;echo;echo;
+  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;echo;echo;
   ssh -t -t bb01 \"rsync -avP --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done
 "
