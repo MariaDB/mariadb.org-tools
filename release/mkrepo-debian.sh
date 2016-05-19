@@ -45,7 +45,7 @@ ARCHDIR="$5"                      # path to the packages
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.14"                          # Version of galera in repos
+galera_versions="25.3.15"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -83,31 +83,33 @@ if [ "${ENTERPRISE}" = "yes" ]; then
 else
   origin="MariaDB"
   description="MariaDB Repository"
-  gpg_key="package-signing-key@mariadb.org"     # mariadb.org signing key
-  #gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
+  #gpg_key="package-signing-key@mariadb.org"    # mariadb.org signing key
+  gpg_key="0xcbcb082a1bb943db"                  # mariadb.org signing key
+  gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
+  #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
   suffix="signed"
 fi
 
 mkdir "$REPONAME"
 cd "$REPONAME"
 mkdir conf
-case ${TREE} in
-  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera'|'10.0'|'10.0e'|'10.0-galera'|'10.0e-galera')
-    squeeze="squeeze"
-cat >conf/distributions <<END
-Origin: ${origin}
-Label: MariaDB
-Codename: squeeze
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-END
-  ;;
-  *)
-    squeeze=""
-    ;;
-esac
+#case ${TREE} in
+#  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera'|'10.0'|'10.0e'|'10.0-galera'|'10.0e-galera')
+#    squeeze="squeeze"
+#cat >conf/distributions <<END
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: squeeze
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#END
+#  ;;
+#  *)
+#    squeeze=""
+#    ;;
+#esac
 
 cat >>conf/distributions <<END
 
@@ -123,10 +125,12 @@ END
 case ${TREE} in 
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
     #debian_dists='"squeeze debian6" "wheezy wheezy"'
-    debian_dists="${squeeze} wheezy"
+    #debian_dists="${squeeze} wheezy"
+    debian_dists="wheezy"
     ;;
   '10.0e'|'10.0e-galera')
-    debian_dists="${squeeze} wheezy jessie"
+    #debian_dists="${squeeze} wheezy jessie"
+    debian_dists="wheezy jessie"
 cat >>conf/distributions <<END
 
 Origin: ${origin}
@@ -140,7 +144,8 @@ END
     ;;
   *)
     #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
-    debian_dists="${squeeze} wheezy jessie sid"
+    #debian_dists="${squeeze} wheezy jessie sid"
+    debian_dists="wheezy jessie sid"
 cat >>conf/distributions <<END
 
 Origin: ${origin}
@@ -157,7 +162,7 @@ Codename: sid
 Architectures: ${architectures}
 Components: main
 Description: ${description}
-SignWith: ${gpg_key}
+SignWith: ${gpg_key_2016}
 END
     ;;
 esac
@@ -174,7 +179,7 @@ for dist in ${debian_dists}; do
   fi
   case ${builder} in 
     'sid')
-      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      reprepro --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
       for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
