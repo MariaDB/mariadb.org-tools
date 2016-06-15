@@ -100,7 +100,8 @@ else
   gpg_key="0xcbcb082a1bb943db"                  # mariadb.org signing key
   gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
-  architectures_trusty="${architectures}"       # same if not enterprise
+  #architectures_trusty="${architectures}"       # same if not enterprise
+  architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
   suffix="signed"
 fi
 
@@ -164,7 +165,7 @@ for dist in ${ubuntu_dists}; do
     for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
-  if [ "${ENTERPRISE}" = "yes" ]; then
+  #if [ "${ENTERPRISE}" = "yes" ]; then
     if [ "${dist}" = "trusty" ]; then
       if [ ! -d "${P8_ARCHDIR}" ] ; then
         echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
@@ -177,7 +178,7 @@ for dist in ${ubuntu_dists}; do
         #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
     fi
-  fi
+  #fi
 
   # Add in custom jemalloc packages for distros that need them
   case ${dist} in
@@ -215,12 +216,15 @@ for dist in ${ubuntu_dists}; do
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
         if [ "${dist}" = "trusty" ]; then
-          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/power8/at8.0/*_${gv}-${dist}*_ppc64el.changes
+          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        if [ "${dist}" = "trusty" ]; then
+          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+        fi
       fi
     done
   fi

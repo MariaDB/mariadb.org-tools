@@ -38,11 +38,11 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.15"
+galera_versions="25.3.16"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.15"
+galera_preferred="25.3.16"
 
 
 #deb_dists="precise trusty vivid wily debian6 wheezy jessie sid"
@@ -565,8 +565,9 @@ if [ "${create_deb}" != "no" ]; then
     done
   done
 
-  # Copy over the P8 Trusty packages
+  # Copy over the P8 Trusty and Xenial packages
   cp -avi ${archive_dir}/${tree}/${rev}/p8-trusty-deb-gal/debs/binary/galera* ${release_dir}/${dir_name}/deb/
+  cp -avi ${archive_dir}/${tree}/${rev}/p8-xenial-deb-gal/debs/binary/galera* ${release_dir}/${dir_name}/deb/
 
   # sum the deb files prior to copying them to -signed and -signed-ent
   for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
@@ -715,7 +716,7 @@ fi
 #-------------------------------------------------------------------------------
 if [ "${create_repo}" != "no" ]; then
   architectures="amd64 i386 source"
-  architectures_trusty="amd64 i386 ppc64el source"
+  architectures_w_ppc64el="amd64 i386 ppc64el source"
   gpg_key="0xcbcb082a1bb943db"
   gpg_key_2016="0xF1656F24C74CD1D8"
   mkdir -vp ${release_dir}/${dir_name}/repo/deb/conf
@@ -727,7 +728,7 @@ if [ "${create_repo}" != "no" ]; then
 Origin: Galera
 Label: Galera
 Codename: trusty
-Architectures: ${architectures_trusty}
+Architectures: ${architectures_w_ppc64el}
 Components: main
 Description: Galera test repository
 SignWith: ${gpg_key}
@@ -749,7 +750,7 @@ END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
-Architectures: ${architectures}
+Architectures: ${architectures_w_ppc64el}
 Components: main
 Description: Galera test repository
 SignWith: ${gpg_key_2016}
@@ -783,7 +784,7 @@ END
         reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_i386.changes
         ;;
     esac
-    if [ "${dist}" = "trusty" ]; then
+    if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
       reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_ppc64el.changes
     fi
   done
