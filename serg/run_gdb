@@ -24,11 +24,14 @@ fi
 file=$$.args
 input=$$.input
 echo file ${0}.exe > $file
-echo set args "$@" "$dash_dash_gdb < $input" >> $file
+#echo set args "$@" "$dash_dash_gdb < $input" >> $file
+echo -n set args >> $file
+for a in "$@"; do echo -n " " \"$a\" >> $file; done
+echo "$dash_dash_gdb < $input" >> $file
 cat >> $file <<__EOF__
 __EOF__
 touch $input
 test -t 0 || cat >$input
-xterm -e "libtool --mode=execute gdb -return-child-result -x $file"
+xterm -e "libtool --mode execute gdb -return-child-result -x $file"
 rm $file $input
 
