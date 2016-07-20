@@ -90,9 +90,24 @@ else
   suffix="signed"
 fi
 
-mkdir "$REPONAME"
+if [ ! -d ${REPONAME} ]; then
+  mkdir "$REPONAME"
+fi
+
 cd "$REPONAME"
-mkdir conf
+
+if [ ! -d conf ]; then
+  mkdir conf
+fi
+
+# Delete the conf/distributions file if it exists
+if [ -f conf/distributions ]; then
+  rm -f "conf/distributions"
+fi
+
+
+# Create the conf/distributions file
+
 #case ${TREE} in
 #  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera'|'10.0'|'10.0e'|'10.0-galera'|'10.0e-galera')
 #    squeeze="squeeze"
