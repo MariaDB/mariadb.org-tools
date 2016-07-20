@@ -70,6 +70,7 @@ else
   gpg_key="0xcbcb082a1bb943db"
   dir_name="${release}"
   architectures="amd64 x86"
+  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
 fi
 
 #------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ if [ "${create_ubuntu}" != "no" ]; then
       runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
     done;
     #if [ "${is_ent}" = "yes" ];then
-      if [ "${dist}" = "trusty" ]; then
+      if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
         for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
           runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
         done;
@@ -285,12 +286,16 @@ if [ "${create_yum}" != "no" ]; then
   done
 
   # we now need to handle MariaDB Enterprise dists
-  if [ "${is_ent}" = "yes" ];then
+  #if [ "${is_ent}" = "yes" ];then
     for P8_REPONAME in ${p8_yum_dists}; do
       case ${P8_REPONAME} in 
         'rhel7'|'rhel6')
           P8_DIR="${P8_REPONAME}"
           P8_ARCH='ppc64'
+          ;;
+        'sles12')
+          P8_DIR='sles12'
+          P8_ARCH='ppc64le'
           ;;
         'rhel71')
           P8_DIR='rhel7'
@@ -307,7 +312,7 @@ if [ "${create_yum}" != "no" ]; then
       runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${REPONAME}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
     done
     echo;echo;
-  fi
+  #fi
 
   # all rpm packages are now in place, sign them
   cd ${release_dir}/${dir_name}/yum
