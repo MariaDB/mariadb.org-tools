@@ -59,7 +59,7 @@ zyp_dists="opensuse13 sles11 sles11sp1 sles12"
 rsync_opts="-a -L"
 
 build_dirs_x86="kvm-rpm-centos5-x86-gal:galera-${galera_preferred}-i686 kvm-deb-precise-x86-gal:galera-${galera_preferred}-glibc_214-i686"
-build_dirs_x86_64="kvm-rpm-centos5-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-precise-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 p8-rhel71-rpm-gal:galera-${galera_preferred}-ppc64le src:src"
+build_dirs_x86_64="kvm-rpm-centos5-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-precise-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 p8-rhel71-rpm-gal:galera-${galera_preferred}-ppc64le p8-rhel6-rpm-gal:galera-${galera_preferred}-ppc64 src:src"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64}"
 
