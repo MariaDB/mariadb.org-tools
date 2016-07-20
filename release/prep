@@ -76,11 +76,28 @@ rsync_opts="-a -L"
 # Sunanda Menon : 02/27/2015
 # Splitting build dirs (refer ME-91). 
 # Enterprise builds need to grab only Linux 64bit, no 32bit builds
-build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86"
-build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
+build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
+                kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86"
+
+build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
+                   kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
+                   kvm-tarbake-jaunty-x86:source
+                   sol10-64:bintar-sol10-64
+                   bsd9-64:bintar-bsd9-64
+                   opensolaris-511-bintar:bintar-opensolaris-511"
 
 ## Enterprise builds should not build solaris10 for now
-ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-tarbake-jaunty-x86:source bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
+ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
+                       kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
+                       kvm-tarbake-jaunty-x86:source
+                       bsd9-64:bintar-bsd9-64
+                       opensolaris-511-bintar:bintar-opensolaris-511"
+
+p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
+               p8-rhel7-bintar:bintar-linux-rhel7-ppc64
+               p8-rhel71-bintar:bintar-linux-rhel71-ppc64le
+               p8-trusty-bintar:bintar-linux-trusty-ppc64le
+               p8-xenial-bintar:bintar-linux-xenial-ppc64le"
 
 # defaults (to prevent errors)
     displayusage="no"
@@ -239,7 +256,7 @@ cat >> ${HOME}/.prep.log <<END
 
 # Prepped $(date)
 # Command:
-#   prep -${log_displayusage}${log_demo}${log_run_script}${log_log}${log_is_ent}${log_is_cluster} -t ${tree} -r ${rev} -v ${version} -b ${tarbuildnum} 
+#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log}${log_is_ent}${log_is_cluster} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum} 
 # tree="${tree}"
 # rev="${rev}"
 # num="${num}"
@@ -466,11 +483,6 @@ if [ "${is_ent}" = "yes" ];then
 
   release_dir="${ent_release_dir}"  # Default location for MariaDB Enterprise
   build_dirs="${ent_build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
-
-  p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
-                 p8-rhel7-bintar:bintar-linux-rhel7-ppc64
-                 p8-rhel71-bintar:bintar-linux-rhel71-ppc64le
-                 p8-trusty-bintar:bintar-linux-trusty-ppc64le"
 
   if [ "${galera_suffix}" = "-galera" ]; then
     dir_name="${num}-cluster" # release directory name for Enterprise Cluster
@@ -724,6 +736,10 @@ if [ "${create_bintar}" != "no" ]; then
     # MariaDB Enterprise includes Power8 builds of MariaDB, the above section
     # accounts for traditional x86/x86_64 builds, this section accounts for the
     # P8 builds
+  line
+  echo "+ transfering p8 bintar packages..."
+  echo ${p8_build_dirs}
+  line
     for p8_dir_pair in ${p8_build_dirs}; do
       p8_dir_array=(${p8_dir_pair//:/ })
       if [ ! -d ${p8_dir_array[1]} ]; then
@@ -740,9 +756,21 @@ if [ "${create_bintar}" != "no" ]; then
             BINTAR=$(echo ${p8_dir_array[1]} | awk -F "-" '{print $3}')
             echo "Value of BINTAR is ${BINTAR}"
             if [ "${galera_suffix}" = "-galera" ]; then 
-                mv -vi mariadb-enterprise-${num}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz 
+              mv -vi mariadb*${num}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz 
+              #tar -zxf ${version}-${BINTAR}-ppc64.tar.gz 
+              #mv -vi ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz.orig
+              ## if the directory isn't named like we want, rename it
+              #if [ ! -d ${version}-${BINTAR}-ppc64 ]; then
+              #  mv -vi *-linux-ppc64 ${version}-${BINTAR}-ppc64.tar.gz
+              #fi
+              ## copy over the bin/ and lib/ dirs
+              #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
+              #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
+              ## repack the tarball & cleanup
+              #tar -czf ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64
+              #rm -rf ${version}-${BINTAR}-ppc64
             else 
-                mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
+              mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
             fi 
             echo "creating sums now......"
             md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
@@ -754,10 +782,22 @@ if [ "${create_bintar}" != "no" ]; then
             BINTAR=rhel7 
             echo "Value of BINTAR is ${BINTAR}"
             if [ "${galera_suffix}" = "-galera" ]; then 
-                # cluster release for enterprise should have cluster in their names
-                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+              # cluster release for enterprise should have cluster in their names
+              mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+              #tar -zxf ${version}-${BINTAR}-ppc64le.tar.gz 
+              #mv -vi ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz.orig
+              ## if the directory isn't named like we want, rename it
+              #if [ ! -d ${version}-${BINTAR}-ppc64le ]; then
+              #  mv -vi *-linux-ppc64le ${version}-${BINTAR}-ppc64le.tar.gz
+              #fi
+              ## copy over the bin/ and lib/ dirs
+              #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
+              #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
+              ## repack the tarball & cleanup
+              #tar -czf ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le
+              #rm -rf ${version}-${BINTAR}-ppc64le
             else
-                mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
+              mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
             fi
             echo "creating sums now...." 
             md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
@@ -765,15 +805,28 @@ if [ "${create_bintar}" != "no" ]; then
             sha256sum ${version}-${BINTAR}-ppc64le.tar.gz > sha256sums.txt
             ;;
           'bintar-linux-trusty-ppc64le')
+            BINTAR=trusty
             if [ "${galera_suffix}" = "-galera" ]; then   
-                mv -vi mariadb-enterprise-${num}-linux-ppc64le.tar.gz ${version}-linux-ppc64le.tar.gz
+                mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
             else
-                echo "This is an Enterprise Server Release, no need to change the name for the p8-trusty BINTAR...." 
+                mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
             fi 
             echo "creating sums now....."
-            md5sum ${version}-linux-ppc64le.tar.gz > md5sums.txt
-            sha1sum ${version}-linux-ppc64le.tar.gz > sha1sums.txt
-            sha256sum ${version}-linux-ppc64le.tar.gz > sha256sums.txt
+            md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
+            sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
+            sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
+            ;;
+          'bintar-linux-xenial-ppc64le')
+            BINTAR=xenial
+            if [ "${galera_suffix}" = "-galera" ]; then   
+                mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
+            else
+                mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
+            fi 
+            echo "creating sums now....."
+            md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
+            sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
+            sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
             ;;
         esac
 
@@ -929,15 +982,23 @@ else
     fi
   fi
 
+  if [ "${create_ubuntu}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
+    userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
+    prev_release="${INPUT}"
+  fi
 
   #-------------------------------------------------------------------------------
   #  Create Debian Repos
   #-------------------------------------------------------------------------------
   if [ "${create_debian}" != "no" ]; then
-    # if the debian repo dir exists, delete it
-    if [ -d ${release_dir}/${dir_name}/repo/debian ]; then
-      rm -rf "${release_dir}/${dir_name}/repo/debian"
-    fi
+    ## if the debian repo dir exists, delete it
+    #if [ -d ${release_dir}/${dir_name}/repo/debian ]; then
+    #  rm -rf "${release_dir}/${dir_name}/repo/debian"
+    #fi
+
+    # trying updating the previous repo instead of creating a new one every time
+    rsync -a --delete ${release_dir}/mariadb-${prev_release}/repo/debian ${release_dir}/${dir_name}/repo/
+
     line
     echo "+ creating Debian repos..."
     line
@@ -956,9 +1017,14 @@ else
   #  Create Ubuntu Repos
   #-------------------------------------------------------------------------------
   if [ "${create_ubuntu}" != "no" ]; then
-    if [ -d ${release_dir}/${dir_name}/repo/ubuntu ]; then
-      rm -rf "${release_dir}/${dir_name}/repo/ubuntu"
-    fi
+    ## if the ubuntu repo dir exists, delete it
+    #if [ -d ${release_dir}/${dir_name}/repo/ubuntu ]; then
+    #  rm -rf "${release_dir}/${dir_name}/repo/ubuntu"
+    #fi
+
+    # trying updating the previous repo instead of creating a new one every time
+    rsync -a --delete ${release_dir}/mariadb-${prev_release}/repo/ubuntu ${release_dir}/${dir_name}/repo/
+
     line
     echo "+ creating Ubuntu repos..."
     line
@@ -1027,24 +1093,27 @@ if [ "${is_ent}" = "yes" ];then
 rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} web04:/home/mariadb-repos/mariadb-enterprise/${num}
 "
 else
-  echo "+ Now upload using a command similar to the following: 
+  echo "# Now upload using a command similar to the following: 
 rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
 
-+ After the primary mirror has the files, rsync to the bb boxes
+# After the primary mirror has the files, rsync to the bb boxes:
 line=\"----------------------------------------\"
 for host in bb01 bb02 bb03 bb04;do 
   echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;echo;echo;
   ssh -t -t \${host} \"mkdir -v /var/www/${num} ; rsync -avP --delete-after --delay-updates ftp.osuosl.org::mariadb/${dir_name}/yum/ /var/www/${num}/\"; 
 done
 
-+ Then prior to activating the release, activate the yum repos:
+# Then prior to activating the release, activate the repos on the bb boxes:
 line=\"----------------------------------------\"
 for host in bb01 bb02 bb03 bb04;do 
   echo;echo;echo;echo \${line} ; echo \"Activating ${dir_name} on \${host}\";echo \${line};echo;echo;echo;
   ssh -t -t \${host} \"cd /var/www/;rm -v ${tree}; ln -sv ${num} ${tree}\"; 
 done
 
-
+# And lastly, activate the repos on osuosl:
+ssh -t -t osuosl \"rsync --delete-after -ahP data/${dir_name}/repo/ data/repo/${tree}/\";
+ssh -t -t osuosl \"rsync --delete-after -ahP data/${dir_name}/yum/ data/yum/${tree}/\";
+ssh -t -t osuosl \"./trigger-mariadb\";
 "
 fi
 
