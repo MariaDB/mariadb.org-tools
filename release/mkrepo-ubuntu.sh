@@ -52,7 +52,7 @@ dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #ver_xtrabackup="2.2.9"                            # Version of xtrabackup
 dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 
-# If we are on 5.5 then no vivid
+# If we are on 5.5 then only precise & trusty
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   ubuntu_dists="precise trusty"
 else
@@ -91,7 +91,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   #ubuntu_dists="precise trusty utopic"
   ubuntu_dists="precise trusty"                # no utopic for enterprise just yet 
   architectures="amd64 i386 source"                  # for enterprise, add i386
-  architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
+  architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed-ent"
 else
   origin="MariaDB"
@@ -100,14 +100,25 @@ else
   gpg_key="0xcbcb082a1bb943db"                  # mariadb.org signing key
   gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
-  #architectures_trusty="${architectures}"       # same if not enterprise
-  architectures_trusty="amd64 i386 ppc64el source"   # for trusty, add ppc64el
+  #architectures_ppc64el="${architectures}"       # same if not enterprise
+  architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed"
 fi
 
-mkdir "$REPONAME"
+if [ ! -d ${REPONAME} ]; then
+  mkdir "$REPONAME"
+fi
+
 cd "$REPONAME"
-mkdir conf
+
+if [ ! -d conf ]; then
+  mkdir conf
+fi
+
+# Delete the conf/distributions file if it exists
+if [ -f conf/distributions ]; then
+  rm -f "conf/distributions"
+fi
 
 # Create the conf/distributions file
 for dist in ${ubuntu_dists}; do
@@ -116,7 +127,7 @@ for dist in ${ubuntu_dists}; do
 Origin: ${origin}
 Label: MariaDB
 Codename: trusty
-Architectures: ${architectures_trusty}
+Architectures: ${architectures_ppc64el}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key}
@@ -127,7 +138,7 @@ END
 Origin: ${origin}
 Label: MariaDB
 Codename: ${dist}
-Architectures: ${architectures}
+Architectures: ${architectures_ppc64el}
 Components: main
 Description: ${description}
 SignWith: ${gpg_key_2016}
@@ -166,14 +177,16 @@ for dist in ${ubuntu_dists}; do
   fi
 
   #if [ "${ENTERPRISE}" = "yes" ]; then
-    if [ "${dist}" = "trusty" ]; then
+    if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
       if [ ! -d "${P8_ARCHDIR}" ] ; then
         echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
         exit 1
       else
-        for file in $(find "${P8_ARCHDIR}/p8-trusty-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-        # Add Advance Toolkit files
-        for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${P8_ARCHDIR}/p8-${dist}-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        # Add Advance Toolkit files for trusty
+        if [ "${dist}" = "trusty" ]; then
+          for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        fi
         # Add xtrabackup files
         #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
