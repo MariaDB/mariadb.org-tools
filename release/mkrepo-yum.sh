@@ -89,12 +89,18 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
 else
   gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
+  p8_dists="rhel6 rhel7 rhel71 sles12"
+  #p8_dists="rhel6 rhel7 rhel71"
+  p8_architectures="ppc64 ppc64le"
   suffix="signed"
   architectures="amd64 x86"
   archs_std="x86:i386 amd64:x86_64"
-  archs_rhel_6=${archs_std}
-  archs_rhel_7="amd64:x86_64"
-  archs_sles_12="amd64:x86_64"
+  #archs_rhel_6=${archs_std}
+  archs_rhel_6="x86:i386 amd64:x86_64 ppc64:ppc64"
+  #archs_rhel_7="amd64:x86_64 "
+  archs_rhel_7="amd64:x86_64 ppc64:ppc64 ppc64le:ppc64le"
+  #archs_sles_12="amd64:x86_64"
+  archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
 fi
 
 # The following Linux distributions have the same architectures for both
@@ -116,10 +122,10 @@ archs_opensuse_13=${archs_std}
 # They are expanded to all the other values using the seq utility. For example,
 # a value of '0 4' will be expanded to '0 1 2 3 4'.
 vers_min_centos_5="0 11"
-vers_min_centos_6="0 6"
+vers_min_centos_6="0 8"
 vers_min_centos_7="0"
 vers_min_rhel_5="0 11"
-vers_min_rhel_6="0 6"
+vers_min_rhel_6="0 8"
 vers_min_rhel_7="0 1"
 
 #-------------------------------------------------------------------------------
@@ -354,7 +360,7 @@ done
 
 
 
-if [ "${ENTERPRISE}" = "yes" ]; then
+#if [ "${ENTERPRISE}" = "yes" ]; then
   for P8_REPONAME in ${p8_dists}; do
     for P8_ARCH in ${p8_architectures}; do
         if [ "${P8_REPONAME}" = "rhel6" ]; then
@@ -405,6 +411,9 @@ if [ "${ENTERPRISE}" = "yes" ]; then
           'rhel7-ppc64')
             rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
+          'sles12-ppc64le')
+            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            ;; 
           'rhel71-ppc64le')
             rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
             ;; 
@@ -428,7 +437,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
 
     done
   done
-fi
+#fi
 
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
