@@ -30,16 +30,16 @@ case ${tree} in
     ;;
   '10.0e'|'10.0e-galera')
     debian_dists="wheezy jessie"
-    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12" #remove fedora19, fedora20, opensuse13 for ent builds
+    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   '5.5e'|'5.5e-galera')
     debian_dists="wheezy"
-    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12" #remove fedora19, fedora20, opensuse13 for ent builds
+    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
     ubuntu_dists="precise trusty"              #remove utopic for ent builds
     ;;
   *) debian_dists="wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora22 fedora23 opensuse13 sles11 sles12"
+     yum_dists="rhel5 rhel6 rhel7 fedora22 fedora23 fedora24 opensuse13 sles11 sles12"
      ubuntu_dists="precise trusty xenial"
     ;;
 esac
@@ -270,7 +270,7 @@ if [ "${create_yum}" != "no" ]; then
             runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
-        'fedora22'|'fedora23')
+        'fedora22'|'fedora23'|'fedora24')
           fcnum="${REPONAME:(-2)}"
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
           runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/

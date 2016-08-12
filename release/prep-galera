@@ -822,6 +822,12 @@ if [ "${create_yum}" != "no" ]; then
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc23*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc23*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
         ;;
+      'fedora24')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
+        ;;
       'centos5')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
