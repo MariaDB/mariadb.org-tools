@@ -56,7 +56,7 @@ dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   ubuntu_dists="precise trusty"
 else
-  ubuntu_dists="precise trusty wily xenial"
+  ubuntu_dists="precise trusty xenial"
 fi
 architectures="amd64 i386 source"
 
@@ -163,7 +163,7 @@ done
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
-    'trusty'|'utopic'|'wily'|'xenial')
+    'trusty'|'utopic'|'xenial')
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
