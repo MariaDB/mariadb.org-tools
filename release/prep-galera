@@ -808,7 +808,7 @@ if [ "${create_yum}" != "no" ]; then
   # Here we are going to iterate through the various distros and:
   #   1. create the needed directories
   #   2. copy the correct rpm packages into those directories
-  for dist in ${rpm_dists} ${zyp_dists};do
+  for dist in ${rpm_dists} ${zyp_dists} ${rpm_dists_p8};do
     case ${dist} in
       'fedora22')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
@@ -848,8 +848,10 @@ if [ "${create_yum}" != "no" ]; then
         ;;
       'sles12')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles12*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
+        ;;
+      'suse12')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles12*ppc64le.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
         ;;
       'opensuse13')
@@ -868,7 +870,7 @@ if [ "${create_yum}" != "no" ]; then
         ;;
       'rhel71')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel7*ppc64le.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms/
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel7*ppc64le.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
         ;;
     esac
   done
@@ -891,8 +893,13 @@ if [ "${create_yum}" != "no" ]; then
   # after the sp1 builder and from the centos5 builders to rhel5 dirs
   # (this is done so buildbot tests work)
   ln -sv sles11-amd64 sles11sp1-amd64
+  ln -sv suse12-ppc64le sles12-ppc64le
   ln -sv centos5-amd64 rhel5-amd64
   ln -sv centos5-x86 rhel5-x86
+  ln -sv centos6-amd64 rhel6-amd64
+  ln -sv centos6-x86 rhel6-x86
+  ln -sv centos7-amd64 rhel7-amd64
+  ln -sv rhel71-ppc64le rhel7-ppc64le
 else
   line
   echo "+ Skipping yum repository creation, as requested..."
