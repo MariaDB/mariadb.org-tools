@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+
+my $file=shift || (-e 'typescript' ? 'typescript' : -e 'text' ? 'text' : undef);
+die unless -e $file;
+
+rename $file, "$file.orig" or die "rename($file, $file.orig): $!";
+open (I, '<', "$file.orig") or die "open(<$file.orig): $!";
+open (O, '>', $file) or die "open(>$file): $!";
+
+while(<I>) {
+  s/\e.*\a//;
+  s/[\r\n\a]//g;
+  s/^worker\[(\d)\]/w$1/;
+  s/ '(.+?)'( +w\d \[ [-a-z]+ \])/,$1 $2/;
+  print O "$_\n";
+}

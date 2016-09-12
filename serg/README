@@ -57,3 +57,23 @@ when the trace is generated with i:T
 replaces absolute timestamps with relative, since the last timestamp
 of the same thread
 
+mtr-log-pp
+^^^^^^^^^^
+
+Filters the 'typescript' (result of script -c './mtr --force') or
+'text' ("save as" plain-text buildbot log of an mtr run) or any file specified
+on the command-line (expected to be mtr output) as follows:
+
+  test 'c1' w1 [ pass ]^M
+  worker[2] - Restart^M
+  test      w2 [ fail ]^M^G
+
+becomes
+
+  test,c1  w1 [ pass ]
+  w2 - Restart
+  test      w2 [ fail ]
+
+That is, control characters are removed. One can grep for "w2" to
+find all tests of the second worker and when it was restarted.
+And one can easily copy-paste tests that were run (note "test,c1").
