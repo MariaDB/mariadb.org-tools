@@ -56,6 +56,10 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 5.5 any more
   distros="sles opensuse rhel"
+elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
+  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora22 fedora23"
+  vers_maj_fedora="22 23"                       # no Fedora 24 in 10.0
+  distros="sles opensuse rhel fedora"
 else
   #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora22 fedora23 fedora24"
