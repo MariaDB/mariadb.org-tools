@@ -53,7 +53,7 @@ esac
 
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.17"                 # version of galera in repositories
+gv="25.3.18"                 # version of galera in repositories
 
 # Set various options that change depending on whether this is an enterprise release or not
 if [ "${is_ent}" = "yes" ];then
