@@ -38,16 +38,16 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.17"
+galera_versions="25.3.18"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.17"
+galera_preferred="25.3.18"
 
 
 #deb_dists="precise trusty vivid debian6 wheezy jessie sid"
 deb_dists="jessie precise sid trusty wheezy xenial"
-rpm_dists="centos5 centos6 centos7 fedora22 fedora23 fedora24"
+rpm_dists="centos5 centos6 centos7 fedora23 fedora24"
 rpm_dists_p8="rhel6 rhel7 rhel71 suse12"
 zyp_dists="opensuse13 sles11 sles11sp1 sles12"
 
