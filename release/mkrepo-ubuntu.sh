@@ -116,48 +116,52 @@ if [ ! -d conf ]; then
 fi
 
 # Delete the conf/distributions file if it exists
-if [ -f conf/distributions ]; then
-  rm -f "conf/distributions"
-fi
+#if [ -f conf/distributions ]; then
+#  rm -f "conf/distributions"
+#fi
 
-# Create the conf/distributions file
-for dist in ${ubuntu_dists}; do
-  case ${dist} in 
-    'trusty') cat >>conf/distributions <<END
-Origin: ${origin}
-Label: MariaDB
-Codename: trusty
-Architectures: ${architectures_ppc64el}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
+# Removing conf/distributions file creation step - 2016-09-12
+## Create the conf/distributions file
+#for dist in ${ubuntu_dists}; do
+#  case ${dist} in 
+#    'trusty') cat >>conf/distributions <<END
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: trusty
+#Architectures: ${architectures_ppc64el}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#
+#END
+#      ;;
+#    'xenial') cat >>conf/distributions <<END
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: ${dist}
+#Architectures: ${architectures_ppc64el}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key_2016}
+#
+#END
+#      ;;
+#    *) cat >>conf/distributions <<END
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: ${dist}
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#
+#END
+#      ;;
+#  esac
+#done
 
-END
-      ;;
-    'xenial') cat >>conf/distributions <<END
-Origin: ${origin}
-Label: MariaDB
-Codename: ${dist}
-Architectures: ${architectures_ppc64el}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key_2016}
-
-END
-      ;;
-    *) cat >>conf/distributions <<END
-Origin: ${origin}
-Label: MariaDB
-Codename: ${dist}
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-
-END
-      ;;
-  esac
-done
+# Remove packages from deprecated distros (if they are present)
+#reprepro --basedir=. --delete clearvanished
 
 # Add packages
 for dist in ${ubuntu_dists}; do
@@ -228,14 +232,14 @@ for dist in ${ubuntu_dists}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        if [ "${dist}" = "trusty" ]; then
+        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
           reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-        if [ "${dist}" = "trusty" ]; then
+        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
           reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       fi
