@@ -148,6 +148,9 @@ if [ "${create_ubuntu}" != "no" ]; then
     #fi
     #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
     runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+    if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+    fi
   done
 else
   line
@@ -294,6 +297,7 @@ if [ "${create_yum}" != "no" ]; then
           P8_ARCH='ppc64'
           ;;
         'sles12')
+          P8_REPONAME='suse12'
           P8_DIR='sles12'
           P8_ARCH='ppc64le'
           ;;
@@ -309,7 +313,7 @@ if [ "${create_yum}" != "no" ]; then
       esac
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
-      runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${REPONAME}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
+      runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${P8_DIR}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
     done
     echo;echo;
   #fi
