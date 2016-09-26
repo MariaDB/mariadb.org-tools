@@ -982,7 +982,7 @@ else
     fi
   fi
 
-  if [ "${create_ubuntu}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
+  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ]; then
     userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
     prev_release="${INPUT}"
   fi
