@@ -101,9 +101,9 @@ if [ ! -d conf ]; then
 fi
 
 # Delete the conf/distributions file if it exists
-if [ -f conf/distributions ]; then
-  rm -f "conf/distributions"
-fi
+#if [ -f conf/distributions ]; then
+#  rm -f "conf/distributions"
+#fi
 
 
 # Create the conf/distributions file
@@ -126,16 +126,65 @@ fi
 #    ;;
 #esac
 
-cat >>conf/distributions <<END
+# removing conf/distributions file creation step - 2016-09-12
+#cat >>conf/distributions <<END
+#
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: wheezy
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#END
+#
+#case ${TREE} in 
+#  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
+#    #debian_dists='"squeeze debian6" "wheezy wheezy"'
+#    #debian_dists="${squeeze} wheezy"
+#    debian_dists="wheezy"
+#    ;;
+#  '10.0e'|'10.0e-galera')
+#    #debian_dists="${squeeze} wheezy jessie"
+#    debian_dists="wheezy jessie"
+#cat >>conf/distributions <<END
+#
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: jessie
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#END
+#    ;;
+#  *)
+#    #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
+#    #debian_dists="${squeeze} wheezy jessie sid"
+#    debian_dists="wheezy jessie sid"
+#cat >>conf/distributions <<END
+#
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: jessie
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key}
+#
+#Origin: ${origin}
+#Label: MariaDB
+#Codename: sid
+#Architectures: ${architectures}
+#Components: main
+#Description: ${description}
+#SignWith: ${gpg_key_2016}
+#END
+#    ;;
+#esac
 
-Origin: ${origin}
-Label: MariaDB
-Codename: wheezy
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-END
+# Remove packages from deprecated distros (if they are present)
+#reprepro --basedir=. --delete clearvanished
 
 case ${TREE} in 
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
@@ -146,43 +195,15 @@ case ${TREE} in
   '10.0e'|'10.0e-galera')
     #debian_dists="${squeeze} wheezy jessie"
     debian_dists="wheezy jessie"
-cat >>conf/distributions <<END
-
-Origin: ${origin}
-Label: MariaDB
-Codename: jessie
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-END
     ;;
   *)
     #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
     #debian_dists="${squeeze} wheezy jessie sid"
     debian_dists="wheezy jessie sid"
-cat >>conf/distributions <<END
-
-Origin: ${origin}
-Label: MariaDB
-Codename: jessie
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key}
-
-Origin: ${origin}
-Label: MariaDB
-Codename: sid
-Architectures: ${architectures}
-Components: main
-Description: ${description}
-SignWith: ${gpg_key_2016}
-END
     ;;
 esac
-#for i in "squeeze debian6" "wheezy wheezy"; do
-#for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
+
+# Add packages
 for dist in ${debian_dists}; do
   #set $i
   #echo $1
