@@ -56,7 +56,7 @@ dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   ubuntu_dists="precise trusty"
 else
-  ubuntu_dists="precise trusty xenial"
+  ubuntu_dists="precise trusty xenial yakkety"
 fi
 architectures="amd64 i386 source"
 
@@ -89,7 +89,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   #ubuntu_dists="precise trusty utopic"
-  ubuntu_dists="precise trusty"                # no utopic for enterprise just yet 
+  ubuntu_dists="precise trusty xenial"                # no utopic for enterprise just yet 
   architectures="amd64 i386 source"                  # for enterprise, add i386
   architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed-ent"

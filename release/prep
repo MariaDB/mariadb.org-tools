@@ -1094,7 +1094,7 @@ rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_
 "
 else
   echo "# Now upload using a command similar to the following: 
-rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
+rsync -avP --delete-after --exlude=exclude --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
 
 # After the primary mirror has the files, rsync to the bb boxes:
 line=\"----------------------------------------\"
