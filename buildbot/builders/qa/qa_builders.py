@@ -243,7 +243,7 @@ rm -Rf build
 tar zxf "buildbot/%(distname)s"
 mv "%(distdirname)s" build
 cd build
-cmake . -DCMAKE_BUILD_TYPE=Debug 
+cmake . -DCMAKE_BUILD_TYPE=Debug -DPLUGIN_AWS_KEY_MANAGEMENT=NO
 make -j4
 cd /home/buildbot/rqg
 git pull
@@ -274,17 +274,16 @@ grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[
     ]))
 
 f_qa_linux.addStep(ShellCommand(
-#    doStepIf=branch_is_10_2_or_later,
-	doStepIf=False,
-    description=["mdev6112"],
-    descriptionDone=["mdev6112"],
+    doStepIf=branch_is_10_2_or_later,
+    description=["10.2-features"],
+    descriptionDone=["10.2-features"],
     timeout=3600,
     env={"TERM": "vt102"},
     command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
     WithProperties("""
 set -ex
 cd rqg
-perl ./combinations.pl --new --config=conf/mariadb/mdev6112.cc --run-all-combinations-once --force --basedir=/home/buildbot/build --workdir=/home/buildbot/mdev6112
+perl ./combinations.pl --new --config=conf/mariadb/10.2-new-features.cc --run-all-combinations-once --force --basedir=/home/buildbot/build --workdir=/home/buildbot/10.2-features
 """),
     ]))
 

@@ -38,9 +38,9 @@ cmake -DWITH_OPENSSL=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFI
 make
 sudo make install
 rm CMakeCache.txt CMakeFiles -rf
-cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c
-make
-sudo make install
+#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c
+#make
+#sudo make install
 cd ..
 rm build -rf
 time git clone --depth 1 -b odbc-2.0 "https://github.com/MariaDB/mariadb-connector-odbc.git" build
@@ -122,9 +122,9 @@ setarch i386 cmake -DWITH_OPENSSL=OFF -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_too
 setarch i386 make
 setarch i386 sudo make install
 rm CMakeCache.txt CMakeFiles -rf
-cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c_32
-make
-sudo make install
+#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c_32
+#make
+#sudo make install
 cd ..
 rm build -rf
 time git clone --depth 1 -b odbc-2.0 "https://github.com/MariaDB/mariadb-connector-odbc.git" build

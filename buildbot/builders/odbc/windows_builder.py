@@ -3,7 +3,7 @@ f_win_connector_odbc = factory.BuildFactory()
 
 f_win_connector_odbc.addStep(ShellCommand(
         name = "remove_old_build",
-        command=["dojob", "rm -rf" , 
+        command=["dojob", "pwd && rm -rf" , 
         WithProperties("d:\\buildbot\\%(buildername)s\\build")],
         timeout = 4*3600,
         haltOnFailure = True
@@ -12,7 +12,7 @@ f_win_connector_odbc.addStep(ShellCommand(
 # f_win_connector_odbc.addStep(maybe_git_checkout)
 f_win_connector_odbc.addStep(ShellCommand(
         name= "git_checkout",
-        command=["dojob", WithProperties("rm -rf src && git clone -b %(branch)s %(repository)s src && cd src && git reset --hard %(revision)s && cd ..")],
+        command=["dojob", WithProperties("pwd && rm -rf src && git clone -b %(branch)s %(repository)s src && cd src && git reset --hard %(revision)s && dir")],
         timeout=7200,
         doStepIf=do_step_win
   ));
@@ -28,7 +28,7 @@ f_win_connector_odbc.addStep(ShellCommand(
 	name= "build_connc_32",
 	command=["dojob",
 #        WithProperties("pwd && cd .. && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../build -G \"Visual Studio 10\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("pwd && cd connector_c && del CMakeCache.txt && cmake . -G \"Visual Studio 14 2015\" && cmake --build . --config RelWithDebInfo && cd ..")
+        WithProperties("pwd && cd connector_c && del CMakeCache.txt && cmake . -G \"Visual Studio 14 2015\" && cmake --build . --config RelWithDebInfo")
 #        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
         ],
         haltOnFailure = True
