@@ -29,11 +29,20 @@
 # hooks.postcommitmailer (default /usr/sbin/sendmail)
 #   Tool to send the e-mail
 #
+# Command line arguments
+# ----------------------
+# post-commit [commit-hash]
+#
+# The script also takes an optional parameter that acts as a git hash.
+# Ex:
+# ./post-commit HEAD~1
+# ./post-commit <commit-hash>
+# The script will email the contents of that commit instead of HEAD.
 
 create_email()
 {
 	# Subject will have format <abbreviated revid>: <First line of commit comment>
-	subj=$(git log --pretty="%h: %B" | head -1)
+	subj=$(git log $1 --pretty="%h: %B" | head -1)
 
 	cat <<-EOF
 	To: $recipients
@@ -43,7 +52,7 @@ create_email()
 	Content-Transfer-Encoding: 8bit
 
 	EOF
-	git show --patch-with-stat --format="revision-id: %H ($(git describe --tags --first-parent))%nparent(s): %P%nauthor: %aN%ncommitter: %cN%ntimestamp: %ci%nmessage:%n%n%B"
+	git show $1 --patch-with-stat --format="revision-id: %H ($(git describe $1 --tags --first-parent))%nparent(s): %P%nauthor: %aN%ncommitter: %cN%ntimestamp: %ci%nmessage:%n%n%B"
 
 }
 
@@ -116,6 +125,6 @@ sender=$(git config hooks.postcommitsender)
 sender=${sender:-$(git config user.email)}
 mailer=$(git config hooks.postcommitmailer)
 
-create_email | send_mail
+create_email $1 | send_mail
 
 
