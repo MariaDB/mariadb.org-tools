@@ -1,0 +1,48 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE:  prep-shared-rpms.sh
+# 
+#         USAGE:  ./prep-shared-rpms.sh 
+# 
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+version="10.1.20"
+
+if [ -f ${HOME}/.prep.conf ]; then
+    . ${HOME}/.prep.conf
+else
+
+dists="
+kvm-rpm-centos5-amd64:centos5-x86_64:rhel/5/x86_64
+kvm-rpm-centos5-x86:centos5-i686:rhel/5/i386
+kvm-rpm-centos6-amd64:centos6-x86_64:rhel/6/x86_64
+kvm-rpm-centos6-x86:centos6-i686:rhel/6/i386
+kvm-rpm-centos7-amd64:centos7-x86_64:rhel/7/x86_64
+kvm-rpm-fedora23-amd64:fedora23-x86_64:fedora/23/x86_64
+kvm-rpm-fedora23-x86:fedora23-i686:fedora/23/i386
+kvm-rpm-fedora24-amd64:fedora24-x86_64:fedora/24/x86_64
+kvm-rpm-fedora24-x86:fedora24-i686:fedora/24/i386
+kvm-zyp-sles11sp1-amd64:sles11sp1-x86_64:sles/11/x86_64
+kvm-zyp-sles11-x86:sles11-i686:sles/11/i386
+kvm-zyp-sles12-amd64:sles12-x86_64:sles/12/x86_64
+p8-rhel6-rpm-ppc64:rhel6-ppc64:rhel/6/ppc64
+p8-rhel7-rpm-ppc64le:rhel7-ppc64le:rhel/7/ppc64le
+p8-rhel7-rpm-ppc64:rhel7-ppc64:rhel/7/ppc64
+p8-suse12-rpm-ppc64le:suse12-ppc64le:sles/12/ppc64le
+" 
+
+cd ${shared_rpm_dir}
+
+for dist_pair in ${dists}; do
+  dist=(${dist_pair//:/ })
+  cp -avi ${release_dir}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-${version}-${dist[1]}-shared.rpm ./
+  if [ -e "mariadb-shared-10.1-${dist[0]}.rpm" ]; then
+    rm -v mariadb-shared-10.1-${dist[0]}.rpm
+  fi
+  ln -sv MariaDB-${version}-${dist[1]}-shared.rpm mariadb-shared-10.1-${dist[0]}.rpm
+  echo;echo
+done
+
