@@ -22,6 +22,7 @@
 
 umask 002
 
+#killall gpg-agent
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
 set -ex
@@ -45,7 +46,7 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.18"                          # Version of galera in repos
+galera_versions="25.3.19"                          # Version of galera in repos
 #galera_dir="/ds413/galera"                        # Location of galera pkgs
 #jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -271,7 +272,10 @@ for REPONAME in ${dists}; do
         #mkdir -vp "${REPONAME}-${ARCH}"
         if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
           # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
+          #rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
+
+          # 2017-01-16 - we no longer pull from sp1 - dbart
+          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         else
           rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         fi
@@ -480,7 +484,7 @@ for DIR in *-*; do
         ;;
     esac
     
-    gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
+    gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
 
     # Add a README to the srpms directory
     mkdir -vp ${DIR}/srpms
@@ -507,6 +511,5 @@ if [ -e "rhel6-ppc64"   ]; then ln -sv rhel6-ppc64   centos6-ppc64   ;fi
 if [ -e "rhel7-amd64"   ]; then ln -sv rhel7-amd64   centos7-amd64   ;fi
 if [ -e "rhel7-ppc64"   ]; then ln -sv rhel7-ppc64   centos7-ppc64   ;fi
 if [ -e "rhel7-ppc64le" ]; then ln -sv rhel7-ppc64le centos7-ppc64le ;fi
-
 
 # vim: filetype=sh
