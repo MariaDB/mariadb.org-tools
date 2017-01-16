@@ -19,6 +19,7 @@
 
 umask 002
 
+#killall gpg-agent
 set -eu
   # -e  Exit immediately if a simple command exits with a non-zero status,
   #     unless the command that fails is part of an until or  while loop, part
@@ -433,7 +434,20 @@ if [ "${create_bintar}" != "no" ]; then
       fi
     fi
     if [ "${dir_array[1]}" = "src" ]; then
-      if rsync ${rsync_opts} "${archive_dir}/${tree}/${rev}/${dir_array[0]}/${version}.tar.gz" "${release_dir}/${dir_name}/${dir_array[1]}/"; then
+      # Manually generate the src tarball
+      cd ~/src
+      if [ -d galera ];then
+        rm -rf galera
+      fi
+      git clone https://github.com/MariaDB/galera.git
+      cd galera
+      git checkout mariadb-3.x
+      scripts/build.sh -a
+      mv -vi ${version}.tar.gz ${release_dir}/${dir_name}/${dir_array[1]}/
+      rm -rf ~/src/galera
+
+      # removing src rsync if statement (db:2017-01-06)
+      #if rsync ${rsync_opts} "${archive_dir}/${tree}/${rev}/${dir_array[0]}/${version}.tar.gz" "${release_dir}/${dir_name}/${dir_array[1]}/"; then
         cd ${release_dir}/${dir_name}/${dir_array[1]}
         for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
@@ -447,9 +461,9 @@ if [ "${create_bintar}" != "no" ]; then
           rm -v "${sig_file}"
         done
         # sign the source tarball
-        gpg ${gpg_opts} ${version}.tar.gz
+        gpg2 ${gpg_opts} ${version}.tar.gz
         # sign the sum files as well
-        for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+        for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
         
         # Copy to the -signed folder
         cp -avi ${release_dir}/${dir_name}/${dir_array[1]} ${release_dir}/${dir_name}-signed/
@@ -462,10 +476,10 @@ if [ "${create_bintar}" != "no" ]; then
           rm "${sig_file}"
         done
         # sign the source tarball
-        gpg ${ent_gpg_opts} ${version}.tar.gz
+        gpg2 ${ent_gpg_opts} ${version}.tar.gz
         # sign the sum files as well
-        for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
-      fi
+        for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+      #fi # removing src rsync if statement (db:2017-01-06)
       echo "+ transfer of ${dir_array[1]} done"
       echo
     else
@@ -521,15 +535,15 @@ if [ "${create_bintar}" != "no" ]; then
 
   # sign the bintars
   cd ${release_dir}/${dir_name}-signed/bintar/
-  for file in galera*.tar.gz ; do gpg ${gpg_opts} ${file};done
+  for file in galera*.tar.gz ; do gpg2 ${gpg_opts} ${file};done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${gpg_opts} ${sum}sums.txt;done
 
   # sign the ent-bintars
   cd ${release_dir}/${dir_name}-signed-ent/bintar/
-  for file in galera*.tar.gz ; do gpg ${ent_gpg_opts} ${file};done
+  for file in galera*.tar.gz ; do gpg2 ${ent_gpg_opts} ${file};done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
 
   echo "+ done transfering bintar & source packages"
   line
@@ -582,17 +596,17 @@ if [ "${create_deb}" != "no" ]; then
   # sign the deb files for mariadb.org
   cd ${release_dir}/${dir_name}-signed/deb/
   # sign the deb files
-  for file in galera* ; do gpg ${gpg_opts} ${file};done
+  for file in galera* ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
 
 
   # sign the deb files for mariadb.com (aka MariaDB Enterprise)
   cd ${release_dir}/${dir_name}-signed-ent/deb/
   # sign the deb files
-  for file in galera* ; do gpg ${ent_gpg_opts} ${file};done
+  for file in galera* ; do gpg2 ${ent_gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
 
 
 
@@ -660,9 +674,9 @@ if [ "${create_rpm}" != "no" ]; then
   cd ${release_dir}/${dir_name}/rpm/
   for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm ; do gpg ${gpg_opts} ${file};done
+  for file in galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
   
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.org
@@ -677,9 +691,9 @@ if [ "${create_rpm}" != "no" ]; then
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm ; do gpg ${gpg_opts} ${file};done
+  for file in galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
 
 
   #-------------------------------------------------------------------------------
@@ -696,9 +710,9 @@ if [ "${create_rpm}" != "no" ]; then
   rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm ; do gpg ${ent_gpg_opts} ${file};done
+  for file in galera*.rpm ; do gpg2 ${ent_gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
   
   cd ${HOME}
   echo
@@ -901,7 +915,7 @@ if [ "${create_yum}" != "no" ]; then
         createrepo --database --pretty ${DIR}
         ;;
     esac
-    gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
+    gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
   # one final thing: create symlinks from the sles11-amd64 dir to a dir named
   # after the sp1 builder and from the centos5 builders to rhel5 dirs
