@@ -13,6 +13,8 @@
 
 umask 002
 
+#killall gpg-agent
+
 create_debian="${1}"  # Create Debian repository?
 create_ubuntu="${2}"  # Create Ubuntu repository?
    create_yum="${3}"  # Create Yum repositories?
@@ -58,7 +60,7 @@ esac
 
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.18"                 # version of galera in repositories
+gv="25.3.19"                 # version of galera in repositories
 
 # Set various options that change depending on whether this is an enterprise release or not
 if [ "${is_ent}" = "yes" ];then
@@ -259,8 +261,10 @@ if [ "${create_yum}" != "no" ]; then
         'sles11')
           if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
             # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            #runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            #runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           else
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
             runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
@@ -316,6 +320,11 @@ if [ "${create_yum}" != "no" ]; then
           exit 1
           ;;
       esac
+      # Remove old Galera files
+      runCommand rm -v ${P8_DIR}-${P8-ARCH}/rpms/MariaDB-Galera*
+      runCommand rm -v ${P8_DIR}-${P8-ARCH}/rpms/galera*
+      
+      # copy in new files
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
       runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${P8_DIR}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
@@ -327,10 +336,15 @@ if [ "${create_yum}" != "no" ]; then
   cd ${release_dir}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
+  # updating the repositories doesn't work over nfs so we need to move the
+  # yum dir to $HOME and then move it back when we're done
+  runCommand mv -i ${release_dir}/${dir_name}/yum ~/
+  cd ~/yum
+  
   # update the sums, refresh the repo metadata, & sign the repomd.xml files
   for DIR in *-* ; do
     if [ -d "${DIR}" ]; then
-      cd ${release_dir}/${dir_name}/yum/${DIR}
+      cd ~/yum/${DIR}
       echo
       pwd
       if [ -e md5sums.txt ]; then
@@ -351,7 +365,7 @@ if [ "${create_yum}" != "no" ]; then
       sha256sum $(find . -name '*.rpm') >> sha256sums.txt
       runCommand sha256sum -c sha256sums.txt
 
-      cd ${release_dir}/${dir_name}/yum
+      cd ~/yum
       # Create the repository and sign the repomd.xml file
       case ${DIR} in
         'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
@@ -366,9 +380,12 @@ if [ "${create_yum}" != "no" ]; then
       if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
         runCommand rm -v ${DIR}/repodata/repomd.xml.asc
       fi
-      runCommand gpg --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
+      runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
     fi
   done
+
+  # moving the yum dir back to where it belongs
+  runCommand mv -i ~/yum ${release_dir}/${dir_name}/
 
 else
   line
