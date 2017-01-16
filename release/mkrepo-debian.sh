@@ -22,6 +22,7 @@
 
 umask 002
 
+#killall gpg-agent
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
 set -ex
@@ -45,7 +46,7 @@ ARCHDIR="$5"                      # path to the packages
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.18"                          # Version of galera in repos
+galera_versions="25.3.19"                          # Version of galera in repos
 galera_dir="/ds413/galera"                        # Location of galera pkgs
 jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -193,13 +194,13 @@ case ${TREE} in
     debian_dists="wheezy"
     ;;
   '10.0e'|'10.0e-galera')
-    #debian_dists="${squeeze} wheezy jessie"
     debian_dists="wheezy jessie"
     ;;
-  *)
-    #debian_dists='"squeeze debian6" "wheezy wheezy" "sid sid"'
-    #debian_dists="${squeeze} wheezy jessie sid"
+  '10.0'|'10.0-galera')
     debian_dists="wheezy jessie sid"
+    ;;
+  *)
+    debian_dists="wheezy jessie stretch sid"
     ;;
 esac
 
@@ -223,8 +224,14 @@ for dist in ${debian_dists}; do
       ;;
   esac
 
+  if [ "${builder}" = "jessie" ]; then
+    for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+  fi
+
   if [ "${ENTERPRISE}" != "yes" ]; then
-    for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+    if [ "${builder}" != "stretch" ] && [ "${TREE}" != "10.1" ]; then      # stretch-x86 builder is not working for 10.1
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+    fi
   fi
 
   # Add in custom jemalloc packages for distros that need them
@@ -250,6 +257,11 @@ for dist in ${debian_dists}; do
       #    ;;
       #  * )
           reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+
+          if [ "${dist}" = "jessie" ]; then
+            reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+          fi
+
           if [ "${ENTERPRISE}" != "yes" ]; then
             reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
           fi
@@ -264,4 +276,3 @@ done
 md5sum ./pool/main/*/*/*.deb >> md5sums.txt
 sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
 sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
-
