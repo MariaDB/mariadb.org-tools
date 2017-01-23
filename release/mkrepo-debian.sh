@@ -226,10 +226,12 @@ for dist in ${debian_dists}; do
 
   if [ "${builder}" = "jessie" ]; then
     for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+    # Add Advance Toolkit files
+    for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
   if [ "${ENTERPRISE}" != "yes" ]; then
-    if [ "${builder}" != "stretch" ] && [ "${TREE}" != "10.1" ]; then      # stretch-x86 builder is not working for 10.1
+    if [ "${builder}" != "stretch" ] || [ "${TREE}" != "10.1" ]; then      # stretch-x86 builder is not working for 10.1
       for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
     fi
   fi
