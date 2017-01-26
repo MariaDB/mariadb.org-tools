@@ -19,7 +19,16 @@ set -o nounset                              # Treat unset variables as an error
 #-------------------------------------------------------------------------------
 
 age=7200 # how old, in seconds, the file must be to auto-commit; 7200 = 2 hours
-file="maria-master.cfg"  # The file this script is monitoring
+#file="maria-master.cfg"  # The file this script is monitoring
+files="maria-master.cfg
+       builders/bld_xenial_valgrind.py
+       builders/__init__.py
+       builders/odbc/__init__.py
+       builders/odbc/linux_builders.py
+       builders/odbc/windows_builder.py
+       builders/qa/__init__.py
+       builders/qa/qa_builders.py
+       builders/qa/qa_schedulers.py"
 repo_dir="$(pwd)"        # the repository directory, default is "$(pwd)"
 prod_dir="/etc/buildbot" # the production directory, default is "/etc/buildbot"
 quiet="--quiet"          # nomally "--quiet", set to "" to have more output
@@ -28,22 +37,23 @@ quiet="--quiet"          # nomally "--quiet", set to "" to have more output
 #  main script
 #-------------------------------------------------------------------------------
 
-
-# first check the age of the production file
-if [ $(stat --format=%Y ${prod_dir}/${file}) -le $(( $(date +%s) - ${age} )) ]; then 
-  # file is more than ${age} old, now see if it differs from the repo file
-  bzr pull ${quiet}    # first make sure we have the latest version in the repo
-  if [ -n "$(diff ${repo_dir}/${file} ${prod_dir}/${file})" ]; then 
-    # if we are here, we need to commit changes, first copy the file over
-    cp -a ${prod_dir}/${file} ${repo_dir}/${file}
-    # then update the permissions
-    chmod 644 ${repo_dir}/${file}
-    # one last check to make sure there are differences
-    if [ -n "$(bzr diff ${file})" ]; then
-      # there are changes, commit them and push to launchpad
-      bzr commit ${quiet} --message "automatic ${file} commit" ${file}
-      bzr push ${quiet}
+for file in ${files};do
+  # first check the age of the file
+  if [ $(stat --format=%Y ${prod_dir}/${file}) -le $(( $(date +%s) - ${age} )) ]; then 
+    # file is more than ${age} old, now see if it differs from the repo file
+    bzr pull ${quiet}    # first make sure we have the latest version in the repo
+    if [ -n "$(diff ${repo_dir}/${file} ${prod_dir}/${file})" ]; then 
+      # if we are here, we need to commit changes, first copy the file over
+      cp -a ${prod_dir}/${file} ${repo_dir}/${file}
+      # then update the permissions
+      chmod 644 ${repo_dir}/${file}
+      # one last check to make sure there are differences
+      if [ -n "$(bzr diff ${file})" ]; then
+        # there are changes, commit them and push to launchpad
+        bzr commit ${quiet} --message "automatic ${file} commit" ${file}
+        bzr push ${quiet}
+      fi
     fi
   fi
-fi
+done
 
