@@ -1,6 +1,6 @@
 
 ################################# bld_linux_connector_oddbc ################################
-def bld_linux_connector_odbc(name, port, kvm_image, cflags, yum):
+def bld_linux_connector_odbc(name, port, kvm_image, cflags, yum, conc_branch, cmake_params):
     args= ["--port="+port, "--user=buildbot", "--smp=4", "--cpu=qemu64"]
     linux_connector_odbc= factory.BuildFactory()
     linux_connector_odbc.addStep(ShellCommand(
@@ -32,32 +32,19 @@ sudo yum -y install unixODBC-devel
 """ if yum else """sudo apt-get update
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
-""") + """time git clone -b connector_c_2.3 --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
-cd build
-cmake -DWITH_OPENSSL=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX= ../connector_c .
-make
-sudo make install
-rm CMakeCache.txt CMakeFiles -rf
-#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c
-#make
-#sudo make install
-cd ..
-rm build -rf
-time git clone --depth 1 -b odbc-2.0 "https://github.com/MariaDB/mariadb-connector-odbc.git" build
+""") + """time git clone -b """ + conc_branch + """ --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
 cd build
 export CFLAGS="${CFLAGS}"""+ cflags + """"
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=OFF -DMARIADB_DIR=../connector_c .
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c .
+make
+sudo make install
+cd ..
+rm build -rf
+time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
+cd build
+rm -rf ./test
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DMARIADB_DIR=../connector_c .
 cmake --build . --config RelWithDebInfo --target package
-make clean
-rm CMakeCache.txt CMakeFiles -rf
-cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_DIR=../connector_c
-cmake --build . --config RelWithDebInfo --target package
-make clean
-rm CMakeCache.txt CMakeFiles -rf
-cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_DIR=../connector_c
-cmake --build . --config RelWithDebInfo --target package
-make package
-
 """),
         "= scp -r -P "+port+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
@@ -72,17 +59,32 @@ make package
             "category": "connectors"}
 ######################## bld_linux_connector_oddbc - END #####################
 
-bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "2250", "vm-centos6-amd64", "", True);
-bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "2250", "vm-centos6-i386", "", True);
-bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "2250", "vm-centos7-amd64", "", True);
-# These two are not usable atm
-bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "2250", "vm-jessie-i386", "", False);
-bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "2250", "vm-jessie-amd64", "", False);
+######################## Current GA/stable version builders ######################
+bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "2250", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "2250", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "2250", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
 
-bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "2250", "vm-centos5-i386", " -D_GNU_SOURCE", True);
-bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "2250", "vm-centos5-amd64", " -D_GNU_SOURCE", True);
+bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "2250", "vm-jessie-i386", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "2250", "vm-jessie-amd64", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
 
-def bld_xcomp_linux_connector_odbc(name, port, kvm_image):
+bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "2250", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "2250", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+#################$### Current GA/stable version builders - END ###################
+
+######################## New (unstable) version builders ######################
+bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "2250", "vm-centos6-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "2250", "vm-centos6-i386", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "2250", "vm-centos7-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+
+bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "2250", "vm-jessie-i386", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "2250", "vm-jessie-amd64", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+
+bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "2250", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "2250", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+##################### New (unstable) version builders - END ###################
+
+
+def bld_xcomp_linux_connector_odbc(name, port, kvm_image, conc_branch, cmake_params):
     args= ["--port="+port, "--user=buildbot", "--smp=4", "--cpu=qemu64"]
     linux_connector_odbc= factory.BuildFactory()
     linux_connector_odbc.addStep(ShellCommand(
@@ -116,30 +118,29 @@ sudo yum -y install unixODBC-devel.x86_64
 sudo yum -y install unixODBC-devel.i686
 sudo yum -y install zlib.x86_64
 sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
-time git clone -b connector_c_2.3 --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
+sudo yum -y install openssl-devel.i686
+time git clone -b """ + conc_branch + """ --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
 cd build
-setarch i386 cmake -DWITH_OPENSSL=OFF -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
+setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
 setarch i386 make
 setarch i386 sudo make install
 rm CMakeCache.txt CMakeFiles -rf
-#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=../connector_c_32
-#make
-#sudo make install
 cd ..
 rm build -rf
-time git clone --depth 1 -b odbc-2.0 "https://github.com/MariaDB/mariadb-connector-odbc.git" build
+time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
-setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=OFF -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
+rm -rf ./test
+setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
 setarch i386 cmake --build . --config RelWithDebInfo --target package
 setarch i386 make package
-make clean
-rm CMakeCache.txt CMakeFiles -rf
 
-export CFLAGS=-m32
-
-cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_DIR=../connector_c_32
-cmake --build . --config RelWithDebInfo --target package
-make package
+#### Another way to go. For some reasons we used to go both
+#make clean
+#rm CMakeCache.txt CMakeFiles -rf
+#export CFLAGS=-m32
+#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_DIR=../connector_c_32
+#cmake --build . --config RelWithDebInfo --target package
+#make package
 
 """),
         "= scp -r -P "+port+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
@@ -154,5 +155,6 @@ make package
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "2250", "vm-centos7-amd64");
+bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "2250", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "2250", "vm-centos7-amd64", "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 

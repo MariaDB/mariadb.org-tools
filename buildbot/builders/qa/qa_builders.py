@@ -214,10 +214,12 @@ f_qa_linux.addStep(ShellCommand(
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
              "bb01.mariadb.net::kvm/vms/vm-jessie-amd64-qa.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-jessie-amd64-qa-upgrade.qcow2",
              "/kvm/vms/"]))
 f_qa_linux.addStep(DownloadSourceTarball())
 # Extract the compiler warning suppressions file from the source tarball.
 f_qa_linux.addStep(ShellCommand(
+    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
     description=["getting", ".supp"],
     descriptionDone=["get", ".supp"],
     command=["sh", "-c", WithProperties("""
@@ -234,7 +236,7 @@ f_qa_linux.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=/kvm/vms/vm-jessie-amd64-qa.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-jessie-amd64-qa-upgrade.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
     "rm -Rf buildbot && mkdir buildbot",
     ScpSourceIntoVM("10710"),
     WithProperties("""
@@ -245,16 +247,19 @@ mv "%(distdirname)s" build
 cd build
 cmake . -DCMAKE_BUILD_TYPE=Debug -DPLUGIN_AWS_KEY_MANAGEMENT=NO
 make -j4
+. /home/buildbot/mariadb-toolbox/scripts/create_so_symlinks.sh
 cd /home/buildbot/rqg
 git pull
 cd /home/buildbot/mariadb-toolbox
 git pull
 """),
     ]))
-f_qa_linux.addStep(ShellCommand(
-    doStepIf=branch_is_10_x,
-    description=["gtid"],
-    descriptionDone=["gtid"],
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
+    doStepIf=False,
+    name="gtid_stress",
+    description=["GTID-based replication"],
+    descriptionDone=["GTID-based replication"],
     timeout=3600,
     env={"TERM": "vt102"},
     command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
@@ -273,10 +278,113 @@ grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[
 """),
     ]))
 
-f_qa_linux.addStep(ShellCommand(
-    doStepIf=branch_is_10_2_or_later,
-    description=["10.2-features"],
-    descriptionDone=["10.2-features"],
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
+    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    name="from_10_0",
+    description=["Upgrade from 10.0"],
+    descriptionDone=["Upgrade from 10.0"],
+    timeout=3600,
+    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
+    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+    WithProperties("""
+set -ex
+cd rqg
+export BUILD_HOME=/home/buildbot
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-10.0-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.0
+then
+  res=0
+else
+  res=1
+fi
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-10.0/trial*
+exit $res
+"""),
+    ]))
+
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
+    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    name="from_5.6",
+    description=["Upgrade from MySQL 5.6"],
+    descriptionDone=["Upgrade from MySQL 5.6"],
+    timeout=3600,
+    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
+    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+    WithProperties("""
+set -ex
+cd rqg
+export BUILD_HOME=/home/buildbot
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-mysql-5.6-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.6
+then
+  res=0
+else
+  res=1
+fi
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-mysql-5.6/trial*
+exit $res
+"""),
+    ]))
+
+
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
+    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    name="from_10_1",
+    description=["Upgrade from 10.1"],
+    descriptionDone=["Upgrade from 10.1"],
+    timeout=3600,
+    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
+    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+    WithProperties("""
+set -ex
+cd rqg
+export BUILD_HOME=/home/buildbot 
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-10.1-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.1
+then
+  res=0
+else
+  res=1
+fi
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-10.1/trial*
+exit $res
+"""),
+    ]))
+
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
+#    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.2"),
+    doStepIf=False,
+    name="from_5.7",
+    description=["Upgrade from MySQL 5.7"],
+    descriptionDone=["Upgrade from MySQL 5.7"],
+    timeout=3600,
+    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
+    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+    WithProperties("""
+set -ex
+cd rqg
+export BUILD_HOME=/home/buildbot 
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-mysql-5.7-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.7
+then
+  res=0
+else
+  res=1
+fi
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-mysql-5.7/trial*
+exit $res
+"""),
+    ]))
+
+
+
+f_qa_linux.addStep(Test(
+#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
+#    doStepIf=False,
+    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
+    name="10.2",
+    description=["10.2 features"],
+    descriptionDone=["10.2 features"],
     timeout=3600,
     env={"TERM": "vt102"},
     command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
@@ -288,7 +396,10 @@ perl ./combinations.pl --new --config=conf/mariadb/10.2-new-features.cc --run-al
     ]))
 
 f_qa_linux.addStep(getMTR(
-    doStepIf=branch_is_10_x,
+#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
+#    doStepIf=False,
+    doStepIf=(lambda(step): step.getProperty("branch") == "10.0" or step.getProperty("branch") == "10.1"),
+    name="engines",
     test_type="engines",
     test_info="MySQL engines/* tests",
     timeout=7200,
@@ -302,8 +413,11 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
     ]))
 
 f_qa_linux.addStep(getMTR(
-    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_2(step)),
-    test_type="stable_tests",
+#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step) and branch_is_not_10_2(step)),
+    doStepIf=False,
+#    doStepIf=(lambda(step): step.getProperty("branch") == "10.1"),
+    name="stable_tests",
+    test_type="nm",
     test_info="Skip unstable tests",
     timeout=7200,
     env={"TERM": "vt102"},
@@ -317,7 +431,7 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
 
 bld_kvm_qa_linux = {
         'name': "kvm-qa-linux",
-        'slavenames': ["bb03","bb04"],
+        'slavenames': ["bb02","bb03","bb04"],
         'builddir': "kvm-qa-linux",
         'factory': f_qa_linux,
         "nextBuild": myNextBuild,
@@ -531,6 +645,61 @@ bld_win_rqg_se = {
         'builddir': "win-rqg-se",
 #        'vsconfig': "Debug",
         'factory': f_win_rqg_se,
+        "nextBuild": myNextBuild,
+        'category': "experimental"
+}
+
+###############################################################################################
+#
+# Buildbot experiments
+
+f_bb_exp = factory.BuildFactory()
+
+f_bb_exp.addStep(ShellCommand(
+    description=["rsyncing", "VMs"],
+    descriptionDone=["rsync", "VMs"],
+    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-xenial-amd64-build.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-xenial-amd64-valgrind.qcow2",
+             "/kvm/vms/"]))
+
+f_bb_exp.addStep(getMTR(
+#    doStepIf=isMainTree,
+    test_info="Buildbot experiment",
+    timeout=9600,
+    mtr_subdir=".",
+    env={"TERM": "vt102","MTR_FEEDBACK_PLUGIN": "1"},
+    command=["runvm", "--base-image=/kvm/vms/vm-xenial-amd64-valgrind.qcow2", "--port=10711", "--user=buildbot", "--smp=2", "--mem=2048", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10711.log", "vm-tmp-10711.qcow2",
+    WithProperties("""
+set -ex
+wget http://hasky.askmonty.org/archive/5.5/build-12450/kvm-tarbake-jaunty-x86/mariadb-5.5.55.tar.gz
+tar zxvf mariadb-5.5.55.tar.gz
+cd mariadb-5.5.55
+cmake . -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES
+make -j5
+cd mysql-test
+if perl mysql-test-run.pl  --verbose-restart --vardir="$(readlink -f /dev/shm/var)" --valgrind --valgrind-option=--show-reachable=yes --valgrind-option=--gen-suppressions=all --force --max-test-fail=100 --max-save-core=0 --max-save-datadir=1 --skip-test="tokudb\.|tokudb_alter_table\.|tokudb_bugs\.|main.mdev-504|binlog_encryption\.|rpl\." --suite=federated --parallel=2 federated.federatedx 
+then
+  exit 0
+else
+  rm -rf var
+  mv /dev/shm/var ./
+  exit 1
+fi
+"""),
+   WithProperties(
+     "!= rm -Rf var/ ; scp -rp -P 10711 " + kvm_scpopt +
+     " buildbot@localhost:~buildbot/mariadb-5.5.55/mysql-test/var . || :")
+    ],
+    parallel=2))
+
+bld_qa_bb_experiments = {
+        'name': "qa-buildbot-experiments",
+        'slavenames': ["bb03","bb04","bb02"],
+        'builddir': "qa-buildbot-experiments",
+        'factory': f_bb_exp,
         "nextBuild": myNextBuild,
         'category': "experimental"
 }
