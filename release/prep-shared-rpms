@@ -1,19 +1,19 @@
 #!/bin/bash - 
 #===============================================================================
 #
-#          FILE:  prep-shared-rpms.sh
+#          FILE:  prep-shared-rpms
 # 
-#         USAGE:  ./prep-shared-rpms.sh 
+#         USAGE:  ./prep-shared-rpms
 # 
 #===============================================================================
 
 set -o nounset                              # Treat unset variables as an error
 
-version="10.1.20"
+version="10.1.21"
 
 if [ -f ${HOME}/.prep.conf ]; then
     . ${HOME}/.prep.conf
-else
+fi
 
 dists="
 kvm-rpm-centos5-amd64:centos5-x86_64:rhel/5/x86_64
@@ -25,7 +25,9 @@ kvm-rpm-fedora23-amd64:fedora23-x86_64:fedora/23/x86_64
 kvm-rpm-fedora23-x86:fedora23-i686:fedora/23/i386
 kvm-rpm-fedora24-amd64:fedora24-x86_64:fedora/24/x86_64
 kvm-rpm-fedora24-x86:fedora24-i686:fedora/24/i386
-kvm-zyp-sles11sp1-amd64:sles11sp1-x86_64:sles/11/x86_64
+kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64
+kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386
+kvm-zyp-sles11-amd64:sles11-x86_64:sles/11/x86_64
 kvm-zyp-sles11-x86:sles11-i686:sles/11/i386
 kvm-zyp-sles12-amd64:sles12-x86_64:sles/12/x86_64
 p8-rhel6-rpm-ppc64:rhel6-ppc64:rhel/6/ppc64
