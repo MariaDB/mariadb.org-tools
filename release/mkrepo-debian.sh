@@ -224,11 +224,17 @@ for dist in ${debian_dists}; do
       ;;
   esac
 
-  if [ "${builder}" = "jessie" ]; then
-    for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
-    # Add Advance Toolkit files
-    for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-  fi
+  case ${builder} in
+    'jessie')
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+      # Add Advance Toolkit files
+      for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+    'stretch')
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+      ;;
+  esac
+
 
   if [ "${ENTERPRISE}" != "yes" ]; then
     if [ "${builder}" != "stretch" ] || [ "${TREE}" != "10.1" ]; then      # stretch-x86 builder is not working for 10.1
@@ -260,9 +266,11 @@ for dist in ${debian_dists}; do
       #  * )
           reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
 
-          if [ "${dist}" = "jessie" ]; then
-            reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
-          fi
+          case ${dist} in
+            "jessie"|"stretch")
+              reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+              ;;
+          esac
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
