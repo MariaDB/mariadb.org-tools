@@ -49,9 +49,9 @@ galera_preferred="25.3.19"
 #deb_dists="precise trusty vivid debian6 wheezy jessie sid"
 deb_dists="jessie precise sid stretch trusty wheezy xenial yakkety"
 deb_dists_p8="jessie trusty xenial stretch"
-rpm_dists="centos5 centos6 centos7 fedora23 fedora24"
+rpm_dists="centos5 centos6 centos7 fedora23 fedora24 fedora25"
 rpm_dists_p8="rhel6 rhel7 rhel71 suse12"
-zyp_dists="opensuse13 sles11 sles11sp1 sles12"
+zyp_dists="opensuse13 sles11 sles11sp1 sles12 opensuse42"
 
 #-------------------------------------------------------------------------------
 # Options below this point you probably don't need to change
@@ -856,6 +856,12 @@ if [ "${create_yum}" != "no" ]; then
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
         ;;
+      'fedora25')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
+        ;;
       'centos5')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
@@ -887,6 +893,10 @@ if [ "${create_yum}" != "no" ]; then
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles13*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles13*i586.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
+        ;;
+      'opensuse42')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles42*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         ;;
       'centos7')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
@@ -953,7 +963,7 @@ rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera/$
 ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${num}/repo ./\" ; 
 line=\"----------------------------------------\"
 for host in bb02 bb03 bb04;do 
-  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;echo;echo;
+  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;
   ssh -t -t bb01 \"rsync -avP --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done
 "
