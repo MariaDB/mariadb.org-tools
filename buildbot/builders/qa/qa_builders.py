@@ -297,7 +297,8 @@ then
 else
   res=1
 fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-10.0/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-10.0/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-10.0/trial*
 exit $res
 """),
     ]))
@@ -321,7 +322,8 @@ then
 else
   res=1
 fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-mysql-5.6/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-mysql-5.6/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-mysql-5.6/trial*
 exit $res
 """),
     ]))
@@ -340,13 +342,24 @@ f_qa_linux.addStep(Test(
 set -ex
 cd rqg
 export BUILD_HOME=/home/buildbot 
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-10.1-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.1
+
+case "%(branch)s" in
+*10.2*)
+  config=bb-upgrade-10.1-to-10.2-small.cc
+  ;;
+*)
+  config=bb-upgrade-from-10.1-small.cc
+  ;;
+esac
+
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.1
 then
   res=0
 else
   res=1
 fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-10.1/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-10.1/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-10.1/trial*
 exit $res
 """),
     ]))
@@ -371,7 +384,8 @@ then
 else
   res=1
 fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs_for_jira.pl /home/buildbot/upgrade-from-mysql-5.7/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-mysql-5.7/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-mysql-5.7/trial*
 exit $res
 """),
     ]))
