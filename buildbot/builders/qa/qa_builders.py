@@ -281,7 +281,7 @@ grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[
 f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
     doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
-    name="from_10_0",
+    name="upgr_10.0",
     description=["Upgrade from 10.0"],
     descriptionDone=["Upgrade from 10.0"],
     timeout=3600,
@@ -291,7 +291,17 @@ f_qa_linux.addStep(Test(
 set -ex
 cd rqg
 export BUILD_HOME=/home/buildbot
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-10.0-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.0
+
+case "%(branch)s" in
+*10.0*|*10.1*)
+  config=bb-upgrade-from-10.0-small.cc
+  ;;
+*)
+  config=bb-upgrade-10.0-to-10.2-small.cc
+  ;;
+esac
+
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.0
 then
   res=0
 else
@@ -306,7 +316,7 @@ exit $res
 f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
     doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
-    name="from_5.6",
+    name="upgr_5.6",
     description=["Upgrade from MySQL 5.6"],
     descriptionDone=["Upgrade from MySQL 5.6"],
     timeout=3600,
@@ -332,7 +342,7 @@ exit $res
 f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
     doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
-    name="from_10_1",
+    name="upgr_10_1",
     description=["Upgrade from 10.1"],
     descriptionDone=["Upgrade from 10.1"],
     timeout=3600,
@@ -344,11 +354,11 @@ cd rqg
 export BUILD_HOME=/home/buildbot 
 
 case "%(branch)s" in
-*10.2*)
-  config=bb-upgrade-10.1-to-10.2-small.cc
+*10.1*)
+  config=bb-upgrade-from-10.1-small.cc
   ;;
 *)
-  config=bb-upgrade-from-10.1-small.cc
+  config=bb-upgrade-10.1-to-10.2-small.cc
   ;;
 esac
 
@@ -368,7 +378,7 @@ f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
 #    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.2"),
     doStepIf=False,
-    name="from_5.7",
+    name="upgr_5.7",
     description=["Upgrade from MySQL 5.7"],
     descriptionDone=["Upgrade from MySQL 5.7"],
     timeout=3600,
@@ -396,7 +406,7 @@ f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
 #    doStepIf=False,
     doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
-    name="10.2",
+    name="rqg_10.2",
     description=["10.2 features"],
     descriptionDone=["10.2 features"],
     timeout=3600,
