@@ -815,6 +815,9 @@ END
   done
   for dist in ${deb_dists_p8};do
     reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_ppc64el.changes
+    if [ ${dist} = "trusty" ]; then
+      reprepro --basedir . includedeb ${dist} ${at_dir}/${dist}-ppc64el-${suffix}/*runtime*ppc64el.deb
+    fi
   done
 else
   line
