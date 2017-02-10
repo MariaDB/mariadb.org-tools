@@ -294,10 +294,10 @@ export BUILD_HOME=/home/buildbot
 
 case "%(branch)s" in
 *10.0*|*10.1*)
-  config=bb-upgrade-from-10.0-small.cc
+  config=bb-upgrade-10.0-to-10.1-small.cc
   ;;
 *)
-  config=bb-upgrade-10.0-to-10.2-small.cc
+  config=bb-upgrade-from-10.0-small.cc
   ;;
 esac
 
@@ -326,7 +326,17 @@ f_qa_linux.addStep(Test(
 set -ex
 cd rqg
 export BUILD_HOME=/home/buildbot
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-mysql-5.6-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.6
+
+case "%(branch)s" in
+*10.0*|*10.1*)
+  config=bb-upgrade-mysql-5.6-to-10.1-small.cc
+  ;;
+*)
+  config=bb-upgrade-from-mysql-5.6-small.cc
+  ;;
+esac
+
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.6
 then
   res=0
 else
@@ -355,10 +365,10 @@ export BUILD_HOME=/home/buildbot
 
 case "%(branch)s" in
 *10.1*)
-  config=bb-upgrade-from-10.1-small.cc
+  config=bb-upgrade-10.1-to-10.1-small.cc
   ;;
 *)
-  config=bb-upgrade-10.1-to-10.2-small.cc
+  config=bb-upgrade-from-10.1-small.cc
   ;;
 esac
 
@@ -677,12 +687,32 @@ bld_win_rqg_se = {
 #
 # Buildbot experiments
 
+def getPackageType(step):
+  if step.getProperty("buildername") == "rpm-centos7":
+    return "-DRPM=centos7"
+  if step.getProperty("buildername") == "rpm-centos6":
+    return "-DRPM=centos6"
+  if step.getProperty("buildername") == "deb-ubuntu16":
+    return "-DDEB=xenial"
+  if step.getProperty("buildername") == "deb-debian8":
+    return "-DDEB=jessie"
+  if step.getProperty("buildername") == "rpm-suse12":
+    return "-DDEB=sles12"
+
 f_bb_exp = factory.BuildFactory()
+
+f_bb_exp.addStep(ShellCommand(command=["echo",
+                                            "-DWITH_READLINE=1",
+                                            getPackageType,
+                                            "-DPLUGIN_CONNECT=NO"],
+                                   description="ColumnStore test",
+                                   descriptionDone="CS test"))
 
 f_bb_exp.addStep(ShellCommand(
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
-    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+#    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    doStepIf=False,
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
              "bb01.mariadb.net::kvm/vms/vm-xenial-amd64-build.qcow2",
@@ -691,6 +721,7 @@ f_bb_exp.addStep(ShellCommand(
 
 f_bb_exp.addStep(getMTR(
 #    doStepIf=isMainTree,
+    doStepIf=False,
     test_info="Buildbot experiment",
     timeout=9600,
     mtr_subdir=".",
