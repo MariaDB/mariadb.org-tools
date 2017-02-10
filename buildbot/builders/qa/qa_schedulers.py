@@ -12,6 +12,7 @@ c['schedulers'].append(AnyBranchScheduler(
     treeStableTimer=60,
 #    change_filter=BranchFilter(on_github=gitBranches),
     change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("bb-10.2-elenst")}),
+#    change_filter=default_branch_filter,
     builderNames=["qa-buildbot-experiments"]
 ))
 
