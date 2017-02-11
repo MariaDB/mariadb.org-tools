@@ -1,25 +1,45 @@
 import gdb.printing
 
-class ppString:
-    def __init__(self, val):
-        self.val = val
+def PrettyPrinter(func):
 
-    def to_string(self):
-        return '_' + self.val['str_charset']['name'].string() + \
-               ' "' + self.val['Ptr'].string('ascii', 'strict',
-                        self.val['str_length']) + '"'
+    class PrettyPrinterWrapperWrapper:
 
-class ppMY_BITMAP:
-    def __init__(self, val):
-        self.val = val
+        class PrettyPrinterWrapper:
+            def __init__(self, prefix, val, cb):
+                self.prefix = prefix
+                self.val = val
+                self.cb = cb
+            def to_string(self):
+                return self.prefix + self.cb(self.val)
 
-    def to_string(self):
-        s=''
-        for i in range((self.val['n_bits']+7)//8):
-            s = format(int(self.val['bitmap'][i]), '032b') + s
-        return "b'" + s[-int(self.val['n_bits']):] + "'"
+        def __init__(self, name, cb):
+            self.name = name
+            self.enabled = True
+            self.cb = cb
 
-pp = gdb.printing.RegexpCollectionPrettyPrinter(".gdb.py")
-pp.add_printer('String', '^String$', ppString)
-pp.add_printer('st_bitmap', '^st_bitmap$', ppMY_BITMAP)
-gdb.printing.register_pretty_printer(None, pp, True)
+        def __call__(self, val):
+            prefix = ''
+            if val.type.code == gdb.TYPE_CODE_PTR:
+                prefix = '({}) {:#08x} '.format(str(val.type), long(val))
+                val = val.dereference()
+            typename = val.type.unqualified().strip_typedefs().name
+            if typename == self.name:
+                return self.PrettyPrinterWrapper(prefix, val, self.cb)
+            return None
+
+    pp=PrettyPrinterWrapperWrapper(func.__name__, func)
+    gdb.printing.register_pretty_printer(None, pp, True)
+    return func
+
+@PrettyPrinter
+def String(val):
+    return '_' + val['str_charset']['name'].string() + \
+           ' "' + val['Ptr'].string('ascii', 'strict',
+                    val['str_length']) + '"'
+
+@PrettyPrinter
+def st_bitmap(val):
+    s=''
+    for i in range((val['n_bits']+7)//8):
+        s = format(int(val['bitmap'][i]), '032b') + s
+    return "b'" + s[-int(val['n_bits']):] + "'"
