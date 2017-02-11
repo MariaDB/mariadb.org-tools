@@ -3,8 +3,8 @@
 my $file=shift || (-e 'typescript' ? 'typescript' : -e 'text' ? 'text' : undef);
 die unless -e $file;
 
-rename $file, "$file.orig" or die "rename($file, $file.orig): $!";
-open (I, '<', "$file.orig") or die "open(<$file.orig): $!";
+rename $file, "$file~" or die "rename($file, $file~): $!";
+open (I, '<', "$file~") or die "open(<$file~): $!";
 open (O, '>', $file) or die "open(>$file): $!";
 
 while(<I>) {
