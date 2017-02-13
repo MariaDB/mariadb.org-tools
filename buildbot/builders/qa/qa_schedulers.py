@@ -75,7 +75,7 @@ c['schedulers'].append(AnyBranchScheduler(
                                              "lp:~maria-captains/maria/5.5" : "5.5",
                                              "lp:~maria-captains/maria/10.0-elenst" : "10.0-elenst",
                                              "lp:~maria-captains/maria/10.0" : "10.0"},
-                               on_github={"https://github.com/MariaDB/server" : ("10.2","10.1","10.0","5.5",)}),
+                               on_github={"https://github.com/MariaDB/server" : ("10.2","10.1","10.0","5.5","bb-10.2-serg")}),
     builderNames=["win-rqg-se"]
 ))
 
