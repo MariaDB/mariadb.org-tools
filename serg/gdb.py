@@ -21,7 +21,8 @@ def PrettyPrinter(func):
             prefix = ''
             if val.type.code == gdb.TYPE_CODE_PTR:
                 prefix = '({}) {:#08x} '.format(str(val.type), long(val))
-                val = val.dereference()
+                try: val = val.dereference()
+                except: return None
             typename = val.type.unqualified().strip_typedefs().name
             if typename == self.name:
                 return self.PrettyPrinterWrapper(prefix, val, self.cb)
