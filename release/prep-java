@@ -1,0 +1,322 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE:  prep-java
+# 
+#         USAGE:  ./prep-java <version>
+# 
+#   DESCRIPTION:  
+# 
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR: Daniel Bartholomew
+#       CREATED: 15/02/17 04:30:32 EET
+#      REVISION:  ---
+#===============================================================================
+
+
+#-------------------------------------------------------------------------------
+#  Variables
+#-------------------------------------------------------------------------------
+version=${1}
+
+name_dir="connector-java-${version}"
+name_tarball="mariadb-java-client-${version}.tar.gz"
+
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+
+sumgen() {
+  for sum in md5 sha1 sha256;do
+	echo;line;echo ${sum};
+	${sum}sum ./mar* >> ${sum}sums.txt
+	${sum}sum -c ${sum}sums.txt
+  done
+  echo;line;echo
+}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+
+create_a_template_file() {
+cat >> ${HOME}/.prep.conf <<END
+#-------------------------------------------------------------------------------
+# default conf file for the MariaDB 'prep' script
+#-------------------------------------------------------------------------------
+# The 'prep' script is part of mariadb-tools on Launchpad
+#   bzr branch lp:mariadb-tools
+
+# Please edit and put in valid paths
+
+# Full path to where buildbot saves files
+archive_dir="/path/to/archive/pack"
+
+# Full path to where various packages are located
+galera_dir="/path/to/galera"
+jemalloc_dir="/path/to/jemalloc" # Location of jemalloc pkgs
+nmap_dir="/path/to/nmap" # nmap pkg for sles12
+nmap_ver="6.25" # current nmap ver in sles12 repo
+at_dir="/path/to/advance-toolchain/" # Location of at pkgs
+  
+# Full paths to the mkrepo-* scripts
+DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
+UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
+   YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
+
+# Full path to the galera-* scripts
+GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
+
+# URL where Windows Builds are located
+winbuilder="http://example.net/builds"
+
+# Default gpg options, including the key to use
+    gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
+ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
+
+# Full paths to where the script should store releases
+    release_dir="/path/to/mariadb/releases"
+ent_release_dir="/path/to/mariadb-enterprise/releases"
+
+# Full path to P8 builds (if needed)
+p8_archive_dir="/path/to/p8/archive/builds"
+
+# Mirrors
+staging_mirror="mirror_name"
+primary_mirror="mirror_name"
+primary_mirror_rsync="rsync_addr_of_primary_mirror"
+corp_mirror="mirror_name"
+corp_mirror_path="/dest/dir/on/corp/mirror"
+yum_mirrors="mirror names"
+
+# Connectors
+cj_home="/path/to/connector/java/home"
+cj_home_corp="remote_home"
+cc_home="/path/to/connector/c/home"
+cc_home_corp="remote_home"
+co_home="/path/to/connector/odbc/home"
+co_home_corp="remote_home"
+
+# vim: filetype=sh
+
+END
+chown $(basename ${HOME}): ${HOME}/.prep.conf
+}
+
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home"
+    echo "directory. If it does not exist, and have valid settings in it,"
+    echo "this script will fail. I can create a default template file for you"
+    echo "to fill out. Afterwards, please re-run this script."
+    echo
+    shouldI create_a_template_file
+    # after creating the file, check if it exists again, if not, exit
+    if [ ! -f ${HOME}/.prep.conf ]; then
+      echo "I was unable to create ${HOME}/.prep.conf"
+      echo "Exiting..."
+      exit 3
+    else
+      echo
+      echo "Template file created at ${HOME}/.prep.conf"
+      echo "Please edit and re-run this script."
+      echo
+      exit 0
+    fi
+  fi
+}
+
+
+usage() {
+  set +x
+  echo
+  echo "usage: $0 <version>"
+  echo
+  set -x
+  exit 1
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+unzip_and_stage_files() {
+  # Unzip and Stage files
+  echo;line;echo "Unzipping and staging files";line;
+  set -x
+  cd ${cj_home}
+  unzip ${version}*.zip
+  mv -vi ${version} ${name_dir}
+  rm -v ${version}*.zip
+  set +x
+  echo;echo;echo
+}
+
+prep_org_files() {
+  # Prep .org files
+  echo;line;echo "Prepping org files";line;
+  set -x
+  mkdir ${release_dir}/${name_dir}
+  cp -avi ${cj_home}/${name_dir}/${name_tarball} ${release_dir}/${name_dir}/
+  cd ${release_dir}/${name_dir}
+  sumgen
+  for file in *;do
+    gpg2 ${gpg_opts} ${file}
+  done
+  set +x
+  echo;echo;echo
+}
+
+prep_com_files() {
+  # Prep .com files
+  echo;line;echo "Prepping com files";line;
+  set -x
+  cd ${cj_home}/${name_dir}
+  sumgen
+  for file in *;do
+    gpg2 ${ent_gpg_opts} ${file}
+  done
+  set +x
+  echo;echo;echo
+}
+
+upload_to_the_primary_mirror() {
+  local upload
+  upload=""
+  echo;echo;echo;
+  echo;line;echo "Doing a dry-run...";line;
+  set -x
+  rsync --dry-run -avP --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+  set +x
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        set -x
+        rsync -avP --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+        set +x
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+upload_to_the_corp_mirror() {
+  local upload
+  upload=""
+  echo;echo;echo;
+  echo;line;echo "Doing a dry-run...";line;
+  set -x
+  rsync --dry-run -avP --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+  set +x
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        set -x
+        rsync -avP --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+        set +x
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults
+
+if [ "${version}" = "" ]; then
+  usage
+fi
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+shouldI unzip_and_stage_files
+
+shouldI prep_org_files
+
+shouldI prep_com_files
+
+shouldI upload_to_the_primary_mirror
+
+shouldI upload_to_the_corp_mirror
+
+echo "+ All done!"
+echo;echo;echo
