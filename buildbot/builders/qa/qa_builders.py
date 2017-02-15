@@ -386,8 +386,8 @@ exit $res
 
 f_qa_linux.addStep(Test(
 #    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-#    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.2"),
-    doStepIf=False,
+    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
+#    doStepIf=False,
     name="upgr_5.7",
     description=["Upgrade from MySQL 5.7"],
     descriptionDone=["Upgrade from MySQL 5.7"],
