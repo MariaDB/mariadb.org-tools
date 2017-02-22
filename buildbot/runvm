@@ -382,6 +382,10 @@ sub shutdown_kvm {
         exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
                         @user_cmd_opt, 'localhost',
                         'shutdown', '-s', '-f', '-t', '1');
+      } elsif ($opt_baseimage =~ /freebsd/) {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'sudo', '/sbin/shutdown', '-p', 'now');
       } else {
         exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
                         @user_cmd_opt, 'localhost',
