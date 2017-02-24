@@ -57,23 +57,30 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 5.5 any more
   distros="sles opensuse rhel"
+  vers_maj_sles="11 12"
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora23"
   vers_maj_fedora="23"                       # no Fedora 24+ in 10.0
   distros="sles opensuse rhel fedora"
-else
-  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
+  vers_maj_sles="11 12"
+elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
   dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
   vers_maj_fedora="23 24 25"
   distros="sles opensuse rhel fedora"
+  vers_maj_sles="11 12"
+else
+  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
+  dists="sles12 opensuse13 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
+  vers_maj_fedora="23 24 25"
+  distros="sles opensuse rhel fedora"
+  vers_maj_sles="12"
 fi
 
 # The following set the major versions of various Linux distributions for which
 # we build packages.
-vers_maj_opensuse="13"
+vers_maj_opensuse="13 42"
 vers_maj_rhel="5 6 7"
 vers_maj_centos="5 6 7"
-vers_maj_sles="11 12"
 
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
@@ -123,6 +130,7 @@ archs_fedora_24=${archs_std}
 archs_fedora_25=${archs_std}
 archs_sles_11=${archs_std}
 archs_opensuse_13=${archs_std}
+archs_opensuse_42="amd64:x86_64"
 
 # CentOS and Redhat have minor versions that need to be accounted for in the
 # dir structure. The values here are the first and last value, respectively.
@@ -269,6 +277,13 @@ for REPONAME in ${dists}; do
           echo "+ no packages for ${REPONAME}-${ARCH}"
         fi
         ;;
+      'opensuse42')
+        if [ "${ARCH}" = "amd64" ]; then
+          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+        else
+          echo "+ no packages for ${REPONAME}-${ARCH}"
+        fi
+        ;;
       'opensuse13'|'sles11')
         #mkdir -vp "${REPONAME}-${ARCH}"
         if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
@@ -340,6 +355,8 @@ for REPONAME in ${dists}; do
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse13" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "opensuse42" ] ; then
+              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles42*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             else
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             fi
@@ -362,6 +379,8 @@ for REPONAME in ${dists}; do
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc25*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "opensuse42" ] ; then
+              echo "+ no packages for ${REPONAME}-${ARCH}"
             elif [ "${REPONAME}" = "opensuse13" ] ; then
               rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*i586.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] || [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
