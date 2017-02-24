@@ -121,7 +121,7 @@ sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
 sudo yum -y install openssl-devel.i686
 time git clone -b """ + conc_branch + """ --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
 cd build
-setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
+setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
 setarch i386 make
 setarch i386 sudo make install
 rm CMakeCache.txt CMakeFiles -rf
@@ -130,8 +130,8 @@ rm build -rf
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
-setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
-setarch i386 cmake --build . --config RelWithDebInfo --target package
+setarch i386 cmake -DCMAKE_BUILD_TYPE=Debug """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
+setarch i386 cmake --build . --config Debug --target package
 setarch i386 make package
 
 #### Another way to go. For some reasons we used to go both
@@ -143,6 +143,11 @@ setarch i386 make package
 #make package
 
 """),
+###
+#RelWithDebInfo
+#setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
+#setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
+#setarch i386 cmake --build . --config RelWithDebInfo --target package
         "= scp -r -P "+port+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
