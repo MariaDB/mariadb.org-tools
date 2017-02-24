@@ -118,6 +118,7 @@ create_p8_bintar="no"
    create_debian="no"
    create_ubuntu="no"
       create_yum="no"
+           fixed="no"
      incl_galera="no"
       is_cluster="no"
   log_is_cluster=""
@@ -252,7 +253,23 @@ ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 ent_release_dir="/path/to/mariadb-enterprise/releases"
 
 # Full path to P8 builds (if needed)
-p8_archive_dir="/ds413/archive/builds"
+p8_archive_dir="/path/to/p8/archive/builds"
+
+# Mirrors
+staging_mirror="mirror_name"
+primary_mirror="mirror_name"
+primary_mirror_rsync="rsync_addr_of_primary_mirror"
+corp_mirror="mirror_name"
+corp_mirror_path="/dest/dir/on/corp/mirror"
+yum_mirrors="mirror names"
+
+# Connectors
+cj_home="/path/to/connector/java/home"
+cj_home_corp="remote_home"
+cc_home="/path/to/connector/c/home"
+cc_home_corp="remote_home"
+co_home="/path/to/connector/odbc/home"
+co_home_corp="remote_home"
 
 # vim: filetype=sh
 
@@ -298,6 +315,11 @@ pressAnyKeyToContinue() {
   read -p "Press any key to continue." -n 1
   echo
   return 0
+}
+
+readyToSign() {
+  local cont
+  cont=""
 }
 
 shouldI() {
@@ -374,6 +396,130 @@ usage() {
 
 line() {
   echo "-------------------------------------------------------------------------------"
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_to_the_staging_mirror
+#   DESCRIPTION:  Transfer the release to the staging mirror
+#===============================================================================
+upload_to_the_staging_mirror() {
+  set -x
+  if [ "${galera_suffix}" = "-galera" ]; then
+    rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${staging_mirror}:data/
+  else
+    rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${staging_mirror}:data/
+  fi
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_from_the_staging_mirror_to_the_primary_mirror
+#   DESCRIPTION:  Transfer the release from the staging mirror to the primary
+#                 mirror
+#===============================================================================
+upload_from_the_staging_mirror_to_the_primary_mirror() {
+  set -x
+  if [ "${galera_suffix}" = "-galera" ]; then
+    ssh -t -t ${staging_mirror} "rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${primary_mirror}:data/"
+  else
+    ssh -t -t ${staging_mirror} "rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${primary_mirror}:data/"
+  fi
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_from_the_primary_mirror_to_the_yum_mirrors
+#   DESCRIPTION:  Transfer files from the primary mirror to the yum repository
+#                 mirrors
+#===============================================================================
+upload_from_the_primary_mirror_to_the_yum_mirrors() {
+  set -x
+  # After the primary mirror has the files, rsync to the bb boxes:
+  for yum_mirror in ${yum_mirrors} ;do 
+    echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
+    ssh -t -t ${yum_mirror} "mkdir -v /var/www/${num} ; rsync -avP --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ /var/www/${num}/"; 
+  done
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  activate_repos
+#   DESCRIPTION:  Run the commands necessary to make the repository files public
+#===============================================================================
+activate_repos() {
+  set -x
+  for yum_mirror in ${yum_mirrors} ;do 
+    echo;echo;echo;line ; echo "Activating ${dir_name} on ${yum_mirror}";line;
+    ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
+  done
+  echo;echo;echo
+  ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/repo/ data/repo/${tree}/";
+  echo;echo;echo
+  ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/yum/ data/yum/${tree}/";
+  echo;echo;echo
+  ssh -t -t ${primary_mirror} "./trigger-mariadb";
+  echo;echo;echo
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_to_the_corp_mirror
+#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
+#                 mirror
+#===============================================================================
+upload_to_the_corp_mirror() {
+  set -x
+  if [ "${galera_suffix}" = "-galera" ]; then
+    ssh -t -t ${corp_mirror} rsync -avP --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+  else
+    ssh -t -t ${corp_mirror} rsync -avP --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+  fi
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  maybe_create_release_dir
+#   DESCRIPTION:  Create the release dir if it doesn't exist
+#===============================================================================
+maybe_create_release_dir() {
+  if [ ! -d ${release_dir}/${dir_name} ]; then
+    echo
+    line
+    echo "+ creating release dir..."
+    line
+    mkdir -v ${release_dir}/${dir_name}
+    echo
+  fi
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  maybe_fix_permissions
+#   DESCRIPTION:  Fix permissions on the buildbot dirs, if they haven't been
+#                 fixed already during this run of the script
+#===============================================================================
+maybe_fix_permissions() {
+  if [ "${fixed}" = "no" ]; then
+    echo
+    line
+    echo "+ fixing permissions..."
+    line
+    for dir in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type d);do
+      sudo chmod 755 "${dir}"
+    done
+    for file in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type f);do
+      sudo chmod 644 "${file}"
+    done
+    for dir in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type d);do
+      sudo chmod 755 "${dir}"
+    done
+    for file in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type f);do
+      sudo chmod 644 "${file}"
+    done
+    fixed="yes" # set fixed to 'yes' so that this function doesn't run again
+    echo "+ done fixing permissions"
+    echo
+    echo
+  fi
 }
 
 
@@ -470,6 +616,7 @@ if [ "${is_ent}" = "yes" ];then
   fi
 else
   version="mariadb${galera_suffix}-${num}"
+  version_nog="mariadb-${num}"
 fi
 
 shouldI prepare_bintar_and_source_packages
@@ -524,26 +671,6 @@ line
 echo "+ creating the ${version} release"
 line
 eval $(gpg-agent --daemon)
-if [ ! -d ${release_dir}/${dir_name} ]; then
-  line
-  echo "+ creating release dir..."
-  line
-  mkdir ${release_dir}/${dir_name}
-fi
-cd ${release_dir}/${dir_name}
-echo
-line
-echo "+ fixing permissions..."
-line
-for dir in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type d);do sudo chmod 755 "${dir}";done
-for file in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type f);do sudo chmod 644 "${file}";done
-#if [ "${is_ent}" = "yes" ];then
-  for dir in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type d);do sudo chmod 755 "${dir}";done
-  for file in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type f);do sudo chmod 644 "${file}";done
-#fi
-echo "+ done fixing permissions"
-echo
-echo
 
 
 
@@ -552,6 +679,9 @@ echo
 #  Binary Tarballs and Source
 #-------------------------------------------------------------------------------
 if [ "${create_bintar}" != "no" ]; then
+  maybe_create_release_dir
+  maybe_fix_permissions # fix permissions if they haven't already been fixed
+  cd ${release_dir}/${dir_name}
   line
   echo "+ transfering bintar & source packages..."
   line
@@ -626,6 +756,47 @@ if [ "${create_bintar}" != "no" ]; then
           rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
+        else
+          echo "not repacking bintar as this is not a galera release"
+        fi
+
+        # since we renamed them, we also need to regenerate the sums
+        if [ -e md5sums.txt ]; then
+          rm -v md5sums.txt
+        fi
+        md5sum ./${version}-*.tar.gz >> md5sums.txt
+
+        if [ -e sha1sums.txt ]; then
+          rm -v sha1sums.txt
+        fi
+        sha1sum ./${version}-*.tar.gz >> sha1sums.txt
+
+        if [ -e sha256sums.txt ]; then
+          rm -v sha256sums.txt
+        fi
+        sha256sum ./${version}-*.tar.gz >> sha256sums.txt
+      elif [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-systemd-x86" ]; then
+        # for the systemd bintars, we need to rename them before signing
+        if [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ]; then
+          mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
+          galera_arch="x86_64"
+        else
+          mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
+          galera_arch="i686"
+        fi
+
+        if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-2] ]]; then
+          # If this is a galera release we need to copy in the galera libraries
+          # and repack the bintar
+          tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
+          mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+          mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
+          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+          tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
+          rm -rf ${version}-linux-systemd-${galera_arch}
         else
           echo "not repacking bintar as this is not a galera release"
         fi
@@ -777,6 +948,9 @@ fi
 #  P8 Bintar packages
 #-------------------------------------------------------------------------------
 if [ "${create_p8_bintar}" != "no" ]; then
+  maybe_create_release_dir
+  maybe_fix_permissions # fix permissions if they haven't already been fixed
+  cd ${release_dir}/${dir_name}
   line
   echo "+ transfering p8 bintar packages..."
   echo ${p8_build_dirs}
@@ -907,6 +1081,9 @@ fi
 # We don't need Windows packages for Galera, so don't even try
 if [ "${galera_suffix}" != "-galera" ]; then
   if [ "${create_win}" != "no" ]; then
+    maybe_create_release_dir
+    maybe_fix_permissions # fix permissions if they haven't already been fixed
+    cd ${release_dir}/${dir_name}
     line
     echo "+ transfering Windows packages..."
     line
@@ -974,6 +1151,7 @@ if [ "${galera_suffix}" = "-galera" ]; then
   # We don't have separate .deb or .rpm package repos for Galera so if we're
   # doing a Galera release, don't try to create them in the normal way,
   # instead, run the galera-new script to add packages to existing repositories
+  maybe_fix_permissions # fix permissions if they haven't already been fixed
 
   line
   echo "+ adding Galera Cluster files to existing repos..."
@@ -981,6 +1159,9 @@ if [ "${galera_suffix}" = "-galera" ]; then
   ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
 
 else
+  maybe_create_release_dir
+  maybe_fix_permissions # fix permissions if they haven't already been fixed
+  cd ${release_dir}/${dir_name}
   # Since this is not a galera release, create repos normally
   echo
   echo
@@ -1107,38 +1288,33 @@ fi
 echo
 echo
 line
-echo "+ done creating the ${version} release!"
+echo "+ done creating the ${version} release"
 line
 echo
 
-# now upload to mirror
-if [ "${is_ent}" = "yes" ];then
-  echo "+ Now upload using a command similar to the following: 
-rsync -avP --delete-after --delay-updates --exclude=*.orig ${release_dir}/${dir_name} web04:/home/mariadb-repos/mariadb-enterprise/${num}
-"
-else
-  echo "# Now upload using a command similar to the following: 
-rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} osuosl:data/
+# now upload
+echo;echo;echo;echo
 
-# After the primary mirror has the files, rsync to the bb boxes:
-line=\"----------------------------------------\"
-for host in bb01 bb02 bb03 bb04;do 
-  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;echo;echo;
-  ssh -t -t \${host} \"mkdir -v /var/www/${num} ; rsync -avP --delete-after --delay-updates ftp.osuosl.org::mariadb/${dir_name}/yum/ /var/www/${num}/\"; 
-done
+shouldI upload_to_the_staging_mirror
 
-# Then prior to activating the release, activate the repos on the bb boxes:
-line=\"----------------------------------------\"
-for host in bb01 bb02 bb03 bb04;do 
-  echo;echo;echo;echo \${line} ; echo \"Activating ${dir_name} on \${host}\";echo \${line};echo;echo;echo;
-  ssh -t -t \${host} \"cd /var/www/;rm -v ${tree}; ln -sv ${num} ${tree}\"; 
-done
+echo;echo;echo;echo
 
-# And lastly, activate the repos on osuosl:
-ssh -t -t osuosl \"rsync --delete-after -ahP data/${dir_name}/repo/ data/repo/${tree}/\";
-ssh -t -t osuosl \"rsync --delete-after -ahP data/${dir_name}/yum/ data/yum/${tree}/\";
-ssh -t -t osuosl \"./trigger-mariadb\";
-"
-fi
+shouldI upload_from_the_staging_mirror_to_the_primary_mirror
+
+echo;echo;echo;echo
+
+shouldI upload_from_the_primary_mirror_to_the_yum_mirrors
+
+echo;echo;echo;echo
+
+shouldI activate_repos
+
+echo;echo;echo;echo
+
+shouldI upload_to_the_corp_mirror
+
+echo;echo;echo;echo
+echo "+ all done!"
+echo;echo;echo;echo
 
 # vim: filetype=sh
