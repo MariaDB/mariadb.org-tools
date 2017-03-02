@@ -449,7 +449,7 @@ if [ "${create_bintar}" != "no" ]; then
       # removing src rsync if statement (db:2017-01-06)
       #if rsync ${rsync_opts} "${archive_dir}/${tree}/${rev}/${dir_array[0]}/${version}.tar.gz" "${release_dir}/${dir_name}/${dir_array[1]}/"; then
         cd ${release_dir}/${dir_name}/${dir_array[1]}
-        for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+        for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
         # before signing the files, copy them to the ent dir
         cp -avi ${release_dir}/${dir_name}/${dir_array[1]} ${release_dir}/${dir_name}-signed-ent/
@@ -463,7 +463,7 @@ if [ "${create_bintar}" != "no" ]; then
         # sign the source tarball
         gpg2 ${gpg_opts} ${version}.tar.gz
         # sign the sum files as well
-        for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+        for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
         
         # Copy to the -signed folder
         cp -avi ${release_dir}/${dir_name}/${dir_array[1]} ${release_dir}/${dir_name}-signed/
@@ -478,7 +478,7 @@ if [ "${create_bintar}" != "no" ]; then
         # sign the source tarball
         gpg2 ${ent_gpg_opts} ${version}.tar.gz
         # sign the sum files as well
-        for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+        for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
       #fi # removing src rsync if statement (db:2017-01-06)
       echo "+ transfer of ${dir_array[1]} done"
       echo
@@ -516,7 +516,7 @@ if [ "${create_bintar}" != "no" ]; then
       # create a tarball
       cd ${release_dir}/${dir_name}/bintar/
       tar -czvf ${dir_array[1]}.tar.gz ${dir_array[1]}/
-      for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./${dir_array[1]}.tar.gz >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+      for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./${dir_array[1]}.tar.gz >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
       # copy the tarball over to -signed and -signed-ent directories
       cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${release_dir}/${dir_name}-signed/bintar/
@@ -537,13 +537,13 @@ if [ "${create_bintar}" != "no" ]; then
   cd ${release_dir}/${dir_name}-signed/bintar/
   for file in galera*.tar.gz ; do gpg2 ${gpg_opts} ${file};done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${gpg_opts} ${sum}sums.txt;done
 
   # sign the ent-bintars
   cd ${release_dir}/${dir_name}-signed-ent/bintar/
   for file in galera*.tar.gz ; do gpg2 ${ent_gpg_opts} ${file};done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
 
   echo "+ done transfering bintar & source packages"
   line
@@ -587,7 +587,7 @@ if [ "${create_deb}" != "no" ]; then
   done
 
   # sum the deb files prior to copying them to -signed and -signed-ent
-  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
   # copy deb dir to signed and signed-ent dirs
   cp -avi ${release_dir}/${dir_name}/deb ${release_dir}/${dir_name}-signed/
@@ -598,7 +598,7 @@ if [ "${create_deb}" != "no" ]; then
   # sign the deb files
   for file in galera* ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
 
 
   # sign the deb files for mariadb.com (aka MariaDB Enterprise)
@@ -606,7 +606,7 @@ if [ "${create_deb}" != "no" ]; then
   # sign the deb files
   for file in galera* ; do gpg2 ${ent_gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
 
 
 
@@ -672,11 +672,11 @@ if [ "${create_rpm}" != "no" ]; then
   cp -avi ${release_dir}/${dir_name}/rpm ${release_dir}/${dir_name}-signed-ent/
 
   cd ${release_dir}/${dir_name}/rpm/
-  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   for file in galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
   
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.org
@@ -689,11 +689,11 @@ if [ "${create_rpm}" != "no" ]; then
   ln -sv .rpmmacros-std .rpmmacros
   cd ${release_dir}/${dir_name}-signed/rpm/
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   for file in galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
 
 
   #-------------------------------------------------------------------------------
@@ -708,11 +708,11 @@ if [ "${create_rpm}" != "no" ]; then
 
   cd ${release_dir}/${dir_name}-signed-ent/rpm/
   rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   for file in galera*.rpm ; do gpg2 ${ent_gpg_opts} ${file};done
   # sign the sum files as well
-  for sum in md5 sha1 sha256;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
   
   cd ${HOME}
   echo

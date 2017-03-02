@@ -252,3 +252,5 @@ done
 md5sum ./pool/main/*/*/*.deb >> md5sums.txt
 sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
 sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
+sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
+

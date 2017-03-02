@@ -495,6 +495,11 @@ for DIR in *-*; do
     if [ -e sha256sums.txt ]; then rm -v sha256sums.txt ; fi
     sha256sum $(find . -name '*.rpm') >> sha256sums.txt
     sha256sum -c sha256sums.txt
+
+    if [ -e sha512sums.txt ]; then rm -v sha512sums.txt ; fi
+    sha512sum $(find . -name '*.rpm') >> sha512sums.txt
+    sha512sum -c sha512sums.txt
+
     cd ..
 
     # Create the repository and sign the repomd.xml file

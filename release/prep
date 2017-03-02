@@ -715,6 +715,12 @@ if [ "${create_bintar}" != "no" ]; then
         fi
         sha256sum ./mariadb* >> sha256sums.txt
 
+        echo "+ updating source tarball sha512sum..."
+        if [ -e sha512sums.txt ]; then
+          rm -v sha512sums.txt
+        fi
+        sha512sum ./mariadb* >> sha512sums.txt
+
         echo "+ signing source tarball and sum files..."
         # remove any signature files before signing, if they exist
         for sig_file in $(ls ./*.asc); do
@@ -726,6 +732,7 @@ if [ "${create_bintar}" != "no" ]; then
         gpg2 ${gpg_opts} md5sums.txt
         gpg2 ${gpg_opts} sha1sums.txt
         gpg2 ${gpg_opts} sha256sums.txt
+        gpg2 ${gpg_opts} sha512sums.txt
         
         cd ..
       fi
@@ -775,6 +782,12 @@ if [ "${create_bintar}" != "no" ]; then
           rm -v sha256sums.txt
         fi
         sha256sum ./${version}-*.tar.gz >> sha256sums.txt
+
+        if [ -e sha512sums.txt ]; then
+          rm -v sha512sums.txt
+        fi
+        sha512sum ./${version}-*.tar.gz >> sha512sums.txt
+
       elif [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-systemd-x86" ]; then
         # for the systemd bintars, we need to rename them before signing
         if [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ]; then
@@ -816,6 +829,12 @@ if [ "${create_bintar}" != "no" ]; then
           rm -v sha256sums.txt
         fi
         sha256sum ./${version}-*.tar.gz >> sha256sums.txt
+
+        if [ -e sha512sums.txt ]; then
+          rm -v sha512sums.txt
+        fi
+        sha512sum ./${version}-*.tar.gz >> sha512sums.txt
+
       elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
         if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-2] ]]; then
           # If this is a galera release we need to copy in the galera libraries
@@ -862,6 +881,12 @@ if [ "${create_bintar}" != "no" ]; then
             rm -v sha256sums.txt
           fi
           sha256sum ./${version}-*.tar.gz >> sha256sums.txt
+
+          if [ -e sha512sums.txt ]; then
+            rm -v sha512sums.txt
+          fi
+          sha512sum ./${version}-*.tar.gz >> sha512sums.txt
+
         else
           echo "not repacking as this is not a galera release"
         fi
@@ -888,6 +913,14 @@ if [ "${create_bintar}" != "no" ]; then
         echo "...generating sha256sums.txt"
         sha256sum ./${version}-*.tar.gz >> sha256sums.txt
       fi
+
+      if [ -e sha512sums.txt ]; then
+        echo "...sha512sums.txt exists"
+      else
+        echo "...generating sha512sums.txt"
+        sha512sum ./${version}-*.tar.gz >> sha512sums.txt
+      fi
+
       echo "+ finished generating sums in ${dir_array[1]}"
 
       echo "+ signing files in ${dir_array[1]}..."
@@ -991,6 +1024,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
           md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
           sha1sum ${version}-${BINTAR}-ppc64.tar.gz > sha1sums.txt  
           sha256sum ${version}-${BINTAR}-ppc64.tar.gz > sha256sums.txt  
+          sha512sum ${version}-${BINTAR}-ppc64.tar.gz > sha512sums.txt  
           ;;
         'bintar-linux-rhel71-ppc64le')
           # For rhel71 ppc64le bintars, we need to rename them before signing  
@@ -1018,6 +1052,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
           md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
           sha1sum ${version}-${BINTAR}-ppc64le.tar.gz > sha1sums.txt
           sha256sum ${version}-${BINTAR}-ppc64le.tar.gz > sha256sums.txt
+          sha512sum ${version}-${BINTAR}-ppc64le.tar.gz > sha512sums.txt
           ;;
         'bintar-linux-trusty-ppc64le')
           BINTAR=trusty
@@ -1030,6 +1065,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
           md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
           sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
           sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
+          sha512sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha512sums.txt
           ;;
         'bintar-linux-xenial-ppc64le')
           BINTAR=xenial
@@ -1042,6 +1078,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
           md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
           sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
           sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
+          sha512sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha512sums.txt
           ;;
       esac
 
@@ -1121,6 +1158,8 @@ if [ "${galera_suffix}" != "-galera" ]; then
       sha1sum -c sha1sums.txt
       sha256sum ./mariadb* > sha256sums.txt
       sha256sum -c sha256sums.txt
+      sha512sum ./mariadb* > sha512sums.txt
+      sha512sum -c sha512sums.txt
       echo
       echo "+ signing ${arch} files"
       # remove any signature files before signing, if they exist

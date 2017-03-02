@@ -267,7 +267,8 @@ for dist in ${debian_dists}; do
           reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
 
           case ${dist} in
-            "jessie"|"stretch")
+            #"jessie"|"stretch")
+            "jessie")
               reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
               ;;
           esac
@@ -286,3 +287,5 @@ done
 md5sum ./pool/main/*/*/*.deb >> md5sums.txt
 sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
 sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
+sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
+

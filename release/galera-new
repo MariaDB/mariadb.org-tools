@@ -365,6 +365,12 @@ if [ "${create_yum}" != "no" ]; then
       sha256sum $(find . -name '*.rpm') >> sha256sums.txt
       runCommand sha256sum -c sha256sums.txt
 
+      if [ -e sha512sums.txt ]; then
+        rm -v sha512sums.txt
+      fi
+      sha512sum $(find . -name '*.rpm') >> sha512sums.txt
+      runCommand sha512sum -c sha512sums.txt
+
       cd ~/yum
       # Create the repository and sign the repomd.xml file
       case ${DIR} in
