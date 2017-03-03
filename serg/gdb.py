@@ -1,5 +1,9 @@
 import gdb.printing
 
+# in python2 gdb.Value can only be converted to long(), python3 only has int()
+try: a=long(1)
+except: long=int
+
 def PrettyPrinter(func):
 
     class PrettyPrinterWrapperWrapper:
