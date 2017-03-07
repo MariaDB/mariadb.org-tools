@@ -764,7 +764,12 @@ if [ "${create_bintar}" != "no" ]; then
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
         else
-          echo "not repacking bintar as this is not a galera release"
+          echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
+          tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
+          mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+          mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+          tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
+          rm -rf ${version}-linux-glibc_214-${galera_arch}
         fi
 
         # since we renamed them, we also need to regenerate the sums
@@ -811,7 +816,12 @@ if [ "${create_bintar}" != "no" ]; then
           tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
           rm -rf ${version}-linux-systemd-${galera_arch}
         else
-          echo "not repacking bintar as this is not a galera release"
+          echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
+          tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
+          mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+          mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+          tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
+          rm -rf ${version}-linux-systemd-${galera_arch}
         fi
 
         # since we renamed them, we also need to regenerate the sums
