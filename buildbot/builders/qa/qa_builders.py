@@ -491,14 +491,19 @@ f_win_rqg_se.addStep(ShellCommand(
 # e.g. E:\buildbot
 f_win_rqg_se.addStep(SetPropertyFromCommand(
         property="scriptdir",
-        command=["dojob", "echo %cd%\\..\\..\\.."]
+        command=["dojob", "echo E:\\buildbot"]
+));
+
+f_win_rqg_se.addStep(SetPropertyFromCommand(
+        property="build_dir",
+        command=["dojob", "echo D:\\win-rqg-se"]
 ));
 
 # bbdir is the home dir for the builder, it's where sources and builds are, 
 # e.g. E:\buildbot\bbwin1\win-rqg-se
 f_win_rqg_se.addStep(SetPropertyFromCommand(
         property="bbdir",
-        command=["dojob", "echo %cd%\\.."]
+        command=["dojob", "echo E:\\buildbot\\bbwin1\win-rqg-se"]
 ));
 
 # logdir is where vardirs are written, e.g.
@@ -514,9 +519,10 @@ f_win_rqg_se.addStep(SetPropertyFromCommand(
         command=["dojob", WithProperties("cat %(scriptdir)s\\vs_generator.txt")]
 ));
 
+f_win_rqg_se.addStep(RemoveDirectory(name="remove_builds",       dir=WithProperties("%(build_dir)s")));
 f_win_rqg_se.addStep(RemoveDirectory(name="remove_build",       dir=WithProperties("%(bbdir)s\\build")));
-f_win_rqg_se.addStep(RemoveDirectory(name="remove_debug_build", dir=WithProperties("%(bbdir)s\\build-debug")));
-f_win_rqg_se.addStep(RemoveDirectory(name="remove_last_release",dir=WithProperties("%(bbdir)s\\build-last-release")));
+#f_win_rqg_se.addStep(RemoveDirectory(name="remove_debug_build", dir=WithProperties("%(bbdir)s\\build-debug")));
+#f_win_rqg_se.addStep(RemoveDirectory(name="remove_last_release",dir=WithProperties("%(bbdir)s\\build-last-release")));
 f_win_rqg_se.addStep(RemoveDirectory(name="remove_old_logs",    dir=WithProperties("%(logdir)s")));
 
 # Clones the required revision into c:\buildbot\<slave name>\<builder name>\build
@@ -531,11 +537,18 @@ f_win_rqg_se.addStep(maybe_git_checkout)
 #));
 
 # Copies  c:\buildbot\<slave name>\<builder name>\build into  c:\buildbot\<slave name>\<builder name>\build-debug
+
 f_win_rqg_se.addStep(ShellCommand(
-        name = "copy_for_debug",
-        command=["dojob", "cp", "-r", WithProperties("%(bbdir)s\\build"), WithProperties("%(bbdir)s\\build-debug")],
+        name = "create_build_dirs",
+        command=["dojob", WithProperties("mkdir %(build_dir)s && mkdir %(build_dir)s\\build && mkdir %(build_dir)s\\build-debug && mkdir %(build_dir)s\\build-last-release")],
         timeout = 3600
 ));
+
+#f_win_rqg_se.addStep(ShellCommand(
+#        name = "copy_for_debug",
+#        command=["dojob", "cp", "-r", WithProperties("%(bbdir)s\\build"), WithProperties("%(bbdir)s\\build-debug")],
+#        timeout = 3600
+#));
 
 #f_win_rqg_se.addStep(ShellCommand(
 #        name = "bzr_checkout_non_debug",
@@ -552,26 +565,26 @@ f_win_rqg_se.addStep(ShellCommand(
 
 f_win_rqg_se.addStep(ShellCommand(
         name = "get_previous_release",
-        command=["dojob", WithProperties("perl %(scriptdir)s\\mariadb-toolbox\\scripts\\last_release_tag.pl --source-tree=%(bbdir)s/build-debug --dest-tree=%(bbdir)s/build-last-release")],
+        command=["dojob", WithProperties("perl %(scriptdir)s\\mariadb-toolbox\\scripts\\last_release_tag.pl --source-tree=%(bbdir)s/build --dest-tree=%(build_dir)s/build-last-release")],
         timeout = 3600
 ));
 
-f_win_rqg_se.addStep(ShellCommand(
-        name = "bzr_version_info",
-        command=["dojob", WithProperties("bzr version-info %(bbdir)s\\build-debug && bzr version-info %(bbdir)s\\build-last-release && bzr version-info %(bbdir)s\\..\\..\\rqg && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
-        doStepIf=not_on_github
-));
+#f_win_rqg_se.addStep(ShellCommand(
+#        name = "bzr_version_info",
+#        command=["dojob", WithProperties("bzr version-info %(bbdir)s\\build-debug && bzr version-info %(bbdir)s\\build-last-release && bzr version-info %(bbdir)s\\..\\..\\rqg && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
+#        doStepIf=not_on_github
+#));
 
 f_win_rqg_se.addStep(ShellCommand(
         name = "version_info",
-        command=["dojob", WithProperties("cd %(bbdir)s\\build-debug && git log -1 && cd %(bbdir)s\\build-last-release && git log -1 && bzr version-info %(scriptdir)s\\rqg && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
+        command=["dojob", WithProperties("cd %(bbdir)s\\build && git log -1 && cd %(build_dir)s\\build-last-release && git log -1 && cd %(scriptdir)s\\rqg && git log -1 && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
         timeout = 3600,
         doStepIf=on_github
 ));
 
 f_win_rqg_se.addStep(Compile(
         name = "build_debug",
-        command=["dojob", WithProperties("cd %(bbdir)s\\build-debug && cmake . -G %(vs_generator)s && cmake --build . --config Debug")],
+        command=["dojob", WithProperties("cd %(build_dir)s\\build-debug && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config Debug")],
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
 ));
@@ -582,7 +595,7 @@ f_win_rqg_se.addStep(getMTR(
         test_type="storage_engine", 
         test_info="Storage engine test suites",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(bbdir)s\\build-debug\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
+        command=["dojob", WithProperties("cd %(build_dir)s\\build-debug\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
 ));
 
 #f_win_rqg_se.addStep(Test(
@@ -594,7 +607,7 @@ f_win_rqg_se.addStep(getMTR(
 f_win_rqg_se.addStep(Test(
         name = "rqg_crash_tests",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(bbdir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
 ));
 
 #f_win_rqg_se.addStep(Test(
@@ -607,14 +620,14 @@ f_win_rqg_se.addStep(Compile(
         name = "build_relwithdebinfo",
         doStepIf=branch_is_5_5_or_later,
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(bbdir)s\\build && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
+        command=["dojob", WithProperties("cd %(build_dir)s\\build && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
 	warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
 ));
 
 f_win_rqg_se.addStep(Compile(
         name = "build_previous_release",
-        command=["dojob", WithProperties("cd %(bbdir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
+        command=["dojob", WithProperties("cd %(build_dir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
 	timeout=3600,
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
@@ -632,7 +645,7 @@ f_win_rqg_se.addStep(Test(
 f_win_rqg_se.addStep(Test(
         name = "rqg_opt_comparison",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(bbdir)s\\build --basedir2=%(bbdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
 ));
 
 #f_win_rqg_se.addStep(Test(
