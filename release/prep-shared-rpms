@@ -7,9 +7,19 @@
 # 
 #===============================================================================
 
-set -o nounset                              # Treat unset variables as an error
+version=$1
 
-version="10.1.21"
+usage() {
+  echo "usage: $0 <version>"
+  echo "e.g.: $0 10.1.22"
+}
+
+if [ "${version}" = "" ];then
+  usage
+  exit 1
+fi
+
+set -o nounset                              # Treat unset variables as an error
 
 if [ -f ${HOME}/.prep.conf ]; then
     . ${HOME}/.prep.conf
@@ -27,14 +37,18 @@ kvm-rpm-fedora24-amd64:fedora24-x86_64:fedora/24/x86_64
 kvm-rpm-fedora24-x86:fedora24-i686:fedora/24/i386
 kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64
 kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386
-kvm-zyp-sles11-amd64:sles11-x86_64:sles/11/x86_64
-kvm-zyp-sles11-x86:sles11-i686:sles/11/i386
 kvm-zyp-sles12-amd64:sles12-x86_64:sles/12/x86_64
+kvm-zyp-opensuse13-amd64:opensuse13-x86_64:opensuse/13/x86_64
+kvm-zyp-opensuse42-amd64:opensuse42-x86_64:opensuse/42/x86_64
 p8-rhel6-rpm-ppc64:rhel6-ppc64:rhel/6/ppc64
 p8-rhel7-rpm-ppc64le:rhel7-ppc64le:rhel/7/ppc64le
 p8-rhel7-rpm-ppc64:rhel7-ppc64:rhel/7/ppc64
 p8-suse12-rpm-ppc64le:suse12-ppc64le:sles/12/ppc64le
 " 
+old_dists="
+kvm-zyp-sles11-amd64:sles11-x86_64:sles/11/x86_64
+kvm-zyp-sles11-x86:sles11-i686:sles/11/i386
+"
 
 cd ${shared_rpm_dir}
 
