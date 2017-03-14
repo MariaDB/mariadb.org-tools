@@ -213,8 +213,7 @@ f_qa_linux.addStep(ShellCommand(
     doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
-             "bb01.mariadb.net::kvm/vms/vm-jessie-amd64-qa.qcow2",
-             "bb01.mariadb.net::kvm/vms/vm-jessie-amd64-qa-upgrade.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-jessie-qa.qcow2",
              "/kvm/vms/"]))
 f_qa_linux.addStep(DownloadSourceTarball())
 # Extract the compiler warning suppressions file from the source tarball.
@@ -236,7 +235,7 @@ f_qa_linux.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=/kvm/vms/vm-jessie-amd64-qa-upgrade.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-jessie-qa.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
     "rm -Rf buildbot && mkdir buildbot",
     ScpSourceIntoVM("10710"),
     WithProperties("""
