@@ -443,22 +443,26 @@ upload_from_the_primary_mirror_to_the_yum_mirrors() {
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  activate_repos
+#          NAME:  activate_the_yum_repos
 #   DESCRIPTION:  Run the commands necessary to make the repository files public
 #===============================================================================
-activate_repos() {
-  set -x
+activate_the_yum_repos() {
   for yum_mirror in ${yum_mirrors} ;do 
     echo;echo;echo;line ; echo "Activating ${dir_name} on ${yum_mirror}";line;
     ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
   done
   echo;echo;echo
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  activate_the_deb_repos
+#   DESCRIPTION:  Run the commands necessary to make the repository files public
+#===============================================================================
+activate_the_deb_repos() {
+  set -x
   ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/repo/ data/repo/${tree}/";
-  echo;echo;echo
   ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/yum/ data/yum/${tree}/";
-  echo;echo;echo
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
-  echo;echo;echo
   set +x
 }
 
@@ -1305,7 +1309,7 @@ else
     fi
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
-    mkdir ${HOME}/yum
+    mkdir -v ${HOME}/yum
     cd ${HOME}/yum
 
     if [ "${is_ent}" = "yes" ];then
@@ -1315,6 +1319,7 @@ else
     fi
 
     # move the yum dir to where it needs to go
+    echo "+ mv -i ${HOME}/yum ${release_dir}/${dir_name}/"
     mv -i ${HOME}/yum ${release_dir}/${dir_name}/
     cd ${release_dir}/${dir_name}/yum
 
@@ -1324,8 +1329,10 @@ else
       mkdir -vp ${release_dir}/yum-no-mgc
     fi
     if [ -d ${release_dir}/yum-no-mgc/${num} ]; then
+      echo "+ rm -rf ${release_dir}/yum-no-mgc/${num}"
       rm -rf ${release_dir}/yum-no-mgc/${num}
     fi
+    echo "+ cp -ai ${release_dir}/${dir_name}/yum ${release_dir}/yum-no-mgc/${num}"
     cp -ai ${release_dir}/${dir_name}/yum ${release_dir}/yum-no-mgc/${num}
   else
     line
@@ -1356,7 +1363,11 @@ shouldI upload_from_the_primary_mirror_to_the_yum_mirrors
 
 echo;echo;echo;echo
 
-shouldI activate_repos
+shouldI activate_the_yum_repos
+
+echo;echo;echo;echo
+
+shouldI activate_the_deb_repos
 
 echo;echo;echo;echo
 
