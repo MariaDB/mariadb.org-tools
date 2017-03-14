@@ -181,17 +181,19 @@ for dist in ${ubuntu_dists}; do
     for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
+  # Include trusty ppc64le debs
+  if [ "${dist}" = "trusty" ]; then
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+  fi
+
   #if [ "${ENTERPRISE}" = "yes" ]; then
-    if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+    if [ "${dist}" = "xenial" ]; then
       if [ ! -d "${P8_ARCHDIR}" ] ; then
         echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
         exit 1
       else
         for file in $(find "${P8_ARCHDIR}/p8-${dist}-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-        # Add Advance Toolkit files for trusty
-        if [ "${dist}" = "trusty" ]; then
-          for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-        fi
         # Add xtrabackup files
         #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
       fi
