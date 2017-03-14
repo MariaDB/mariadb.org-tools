@@ -53,24 +53,22 @@ galera_versions="25.3.19"                          # Version of galera in repos
 
 # If we are on 5.5 then no fedora
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20"
-  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7"
+  dists="sles12 rhel5 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 5.5 any more
-  distros="sles opensuse rhel"
-  vers_maj_sles="11 12"
+  distros="sles rhel"
+  vers_maj_sles="12"
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
-  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora23"
+  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23"
   vers_maj_fedora="23"                       # no Fedora 24+ in 10.0
   distros="sles opensuse rhel fedora"
-  vers_maj_sles="11 12"
+  vers_maj_sles="12"
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="sles11 sles12 opensuse13 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
+  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
   vers_maj_fedora="23 24 25"
   distros="sles opensuse rhel fedora"
-  vers_maj_sles="11 12"
+  vers_maj_sles="12"
 else
-  #dists="sles11 sles12 opensuse13 centos5 rhel5 centos6 rhel6 centos7 rhel7 fedora20 fedora21"
-  dists="sles12 opensuse13 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
+  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
   vers_maj_fedora="23 24 25"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
@@ -78,16 +76,14 @@ fi
 
 # The following set the major versions of various Linux distributions for which
 # we build packages.
-vers_maj_opensuse="13 42"
+vers_maj_opensuse="42"
 vers_maj_rhel="5 6 7"
 vers_maj_centos="5 6 7"
 
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
-  #dists="sles11 sles12 centos5 rhel5 centos6 rhel6 centos7 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
-  dists="sles11 sles12 rhel5 rhel6 rhel7" #remove fedora19, fedora20, opensuse13 (refer ME-234)
-  #distros="sles centos rhel"    #remove fedora19, fedora20, opensuse13(refer ME-234)
+  dists="sles12 rhel5 rhel6 rhel7"
   distros="sles rhel"
   p8_dists="rhel6 rhel7 rhel71 sles12"
   p8_architectures="ppc64 ppc64le"
@@ -525,7 +521,7 @@ done
 
 # create a symlink from the sles11-amd64 dir to a dir named after the sp1
 # builder (this is done so buildbot tests work)
-ln -sv sles11-amd64 sles11sp1-amd64
+#ln -sv sles11-amd64 sles11sp1-amd64
 
 # add in links from rhel dirs to equivalent centos dirs
 ln -sv rhel centos
