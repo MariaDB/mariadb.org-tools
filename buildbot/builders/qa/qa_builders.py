@@ -558,7 +558,7 @@ f_win_rqg_se.addStep(ShellCommand(
 
 f_win_rqg_se.addStep(ShellCommand(
         name = "pull_rqg",
-        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && git pull && cd %(scriptdir)s\\mariadb-toolbox && git pull")],
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && git pull && cd /d %(scriptdir)s\\mariadb-toolbox && git pull")],
         timeout = 3600
 ));
 
@@ -576,14 +576,14 @@ f_win_rqg_se.addStep(ShellCommand(
 
 f_win_rqg_se.addStep(ShellCommand(
         name = "version_info",
-        command=["dojob", WithProperties("cd %(bbdir)s\\build && git log -1 && cd %(build_dir)s\\build-last-release && git log -1 && cd %(scriptdir)s\\rqg && git log -1 && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
+        command=["dojob", WithProperties("cd /d %(bbdir)s\\build && git log -1 && cd /d %(build_dir)s\\build-last-release && git log -1 && cd /d %(scriptdir)s\\rqg && git log -1 && cd /d %(scriptdir)s\\mariadb-toolbox && git log -1")],
         timeout = 3600,
         doStepIf=on_github
 ));
 
 f_win_rqg_se.addStep(Compile(
         name = "build_debug",
-        command=["dojob", WithProperties("cd %(build_dir)s\\build-debug && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config Debug")],
+        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-debug && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config Debug")],
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
 ));
@@ -594,7 +594,7 @@ f_win_rqg_se.addStep(getMTR(
         test_type="storage_engine", 
         test_info="Storage engine test suites",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(build_dir)s\\build-debug\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
+        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-debug\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
 ));
 
 #f_win_rqg_se.addStep(Test(
@@ -606,7 +606,7 @@ f_win_rqg_se.addStep(getMTR(
 f_win_rqg_se.addStep(Test(
         name = "rqg_crash_tests",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
 ));
 
 #f_win_rqg_se.addStep(Test(
@@ -619,14 +619,14 @@ f_win_rqg_se.addStep(Compile(
         name = "build_relwithdebinfo",
         doStepIf=branch_is_5_5_or_later,
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(build_dir)s\\build && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
+        command=["dojob", WithProperties("cd /d %(build_dir)s\\build && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
 	warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
 ));
 
 f_win_rqg_se.addStep(Compile(
         name = "build_previous_release",
-        command=["dojob", WithProperties("cd %(build_dir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
+        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
 	timeout=3600,
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
@@ -644,7 +644,7 @@ f_win_rqg_se.addStep(Test(
 f_win_rqg_se.addStep(Test(
         name = "rqg_opt_comparison",
 	timeout=3600,
-        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
 ));
 
 #f_win_rqg_se.addStep(Test(
