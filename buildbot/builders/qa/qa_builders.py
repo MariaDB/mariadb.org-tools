@@ -636,8 +636,8 @@ f_win_rqg_se.addStep(Compile(
 # now the tests just report crashes, but no stack trace or anything in the log
 f_win_rqg_se.addStep(Test(
         name = "enable_app_verifier",
-        doStepIf=branch_is_10_1_or_later,
-#	doStepIf=False,
+#        doStepIf=branch_is_10_1_or_later,
+	doStepIf=False,
         command=["dojob", "appverif", "/verify", "mysqld.exe"]
 ));
 
