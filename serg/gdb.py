@@ -4,7 +4,7 @@ import gdb.printing
 try: a=long(1)
 except: long=int
 
-def PrettyPrinter(func):
+def PrettyPrinter(arg):
 
     class PrettyPrinterWrapperWrapper:
 
@@ -34,9 +34,17 @@ def PrettyPrinter(func):
                 return self.PrettyPrinterWrapper(prefix, val, self.cb)
             return None
 
-    pp=PrettyPrinterWrapperWrapper(func.__name__, func)
-    gdb.printing.register_pretty_printer(None, pp, True)
-    return func
+    name = getattr(arg, '__name__', arg)
+
+    def PrettyPrinterWrapperWrapperWrapper(func):
+        pp=PrettyPrinterWrapperWrapper(name, func)
+        gdb.printing.register_pretty_printer(None, pp, True)
+        return func
+
+    if callable(arg):
+        return PrettyPrinterWrapperWrapperWrapper(arg)
+
+    return PrettyPrinterWrapperWrapperWrapper
 
 @PrettyPrinter
 def String(val):
@@ -64,6 +72,30 @@ def sql_mode_t(val):
            'NO_ZERO_DATE', 'INVALID_DATES', 'ERROR_FOR_DIVISION_BY_ZERO',
            'TRADITIONAL', 'NO_AUTO_CREATE_USER', 'HIGH_NOT_PRECEDENCE',
            'NO_ENGINE_SUBSTITUTION', 'PAD_CHAR_TO_FULL_LENGTH']
+    for i in range(0,len(modes)):
+        if val & (1 << i): s += ',' + modes[i]
+    return s[1:]
+
+@PrettyPrinter('Alter_inplace_info::HA_ALTER_FLAGS')
+def HA_ALTER_FLAGS(val):
+    s=''
+    modes=[ 'ADD_INDEX', 'DROP_INDEX', 'ADD_UNIQUE_INDEX', 'DROP_UNIQUE_INDEX',
+            'ADD_PK_INDEX', 'DROP_PK_INDEX', 'ADD_VIRTUAL_COLUMN',
+            'ADD_STORED_BASE_COLUMN', 'ADD_STORED_GENERATED_COLUMN',
+            'DROP_VIRTUAL_COLUMN', 'DROP_STORED_COLUMN', 'ALTER_COLUMN_NAME',
+            'ALTER_VIRTUAL_COLUMN_TYPE', 'ALTER_STORED_COLUMN_TYPE',
+            'ALTER_COLUMN_EQUAL_PACK_LENGTH', 'ALTER_STORED_COLUMN_ORDER',
+            'ALTER_VIRTUAL_COLUMN_ORDER', 'ALTER_COLUMN_NULLABLE',
+            'ALTER_COLUMN_NOT_NULLABLE', 'ALTER_COLUMN_DEFAULT',
+            'ALTER_VIRTUAL_GCOL_EXPR', 'ALTER_STORED_GCOL_EXPR',
+            'ADD_FOREIGN_KEY', 'DROP_FOREIGN_KEY', 'CHANGE_CREATE_OPTION',
+            'ALTER_RENAME', 'ALTER_COLUMN_OPTION',
+            'ALTER_COLUMN_COLUMN_FORMAT', 'ADD_PARTITION', 'DROP_PARTITION',
+            'ALTER_PARTITION', 'COALESCE_PARTITION', 'REORGANIZE_PARTITION',
+            'ALTER_TABLE_REORG', 'ALTER_REMOVE_PARTITIONING',
+            'ALTER_ALL_PARTITION', 'RECREATE_TABLE', 'ALTER_COLUMN_VCOL',
+            'ALTER_PARTITIONED', 'ALTER_ADD_CHECK_CONSTRAINT',
+            'ALTER_DROP_CHECK_CONSTRAINT']
     for i in range(0,len(modes)):
         if val & (1 << i): s += ',' + modes[i]
     return s[1:]
