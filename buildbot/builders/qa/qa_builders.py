@@ -512,11 +512,24 @@ f_win_rqg_se.addStep(SetPropertyFromCommand(
         command=["dojob",WithProperties("echo %(scriptdir)s\\vardirs\\%(branch)s-%(buildnumber)s")]
 ));
 
+f_win_rqg_se.addStep(ShellCommand(
+        name= "close_open_handles",
+        command=["dojob", WithProperties("cd /d %(build_dir)s && %(scriptdir)s\\mariadb-tools\\buildbot\\unlock_handles.bat")],
+        alwaysRun=True
+));
+
+f_win_rqg_se.addStep(ShellCommand(
+        name= "kill_stale_mysqld",
+        command=["dojob", WithProperties("taskkill /IM mysqld.exe /F || tasklist")],
+        alwaysRun=True
+));
 
 f_win_rqg_se.addStep(SetPropertyFromCommand(
         property="vs_generator",
         command=["dojob", WithProperties("cat %(scriptdir)s\\vs_generator.txt")]
 ));
+
+
 
 f_win_rqg_se.addStep(RemoveDirectory(name="remove_builds",       dir=WithProperties("%(build_dir)s")));
 f_win_rqg_se.addStep(RemoveDirectory(name="remove_build",       dir=WithProperties("%(bbdir)s\\build")));
