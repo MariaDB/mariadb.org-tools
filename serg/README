@@ -1,3 +1,6 @@
+Everything in this directory, unless specifically noted
+is under BSD-new (3-clause) license.
+
 run_gdb
 ^^^^^^^
 A wrapper that can run any executable under gdb.  useful for debugging mysqld
@@ -81,7 +84,7 @@ And one can easily copy-paste tests that were run (note "test,c1").
 gdb.py
 ^^^^^^
 
-Pretty-printing for String and MY_BITMAP. Put in your ~/.gdbinit:
+Pretty-printing for various structures and types. Put in your ~/.gdbinit:
 
   source /path/to/this/gdb.py
 
