@@ -40,13 +40,13 @@ case ${tree} in
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
     ubuntu_dists="precise trusty"
     ;;
-  '10.0')
+  '10.0'|'10.0-galera')
     debian_dists="wheezy jessie sid"
-    yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse13 sles11 sles12"
+    yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse13 opensuse42 sles12"
     ubuntu_dists="precise trusty xenial yakkety"
     ;;
   *) debian_dists="wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse13 sles11 sles12"
+     yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse13 opensuse42 sles11 sles12"
      ubuntu_dists="precise trusty xenial yakkety"
     ;;
 esac
@@ -258,6 +258,13 @@ if [ "${create_yum}" != "no" ]; then
             runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*i586.rpm ${REPONAME}-${ARCH}/rpms/
           fi
           ;;
+        'opensuse42')
+          if [ "${ARCH}" = "amd64" ]; then
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles42*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+          fi
+          ;;
         'sles11')
           if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
             # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
@@ -321,8 +328,8 @@ if [ "${create_yum}" != "no" ]; then
           ;;
       esac
       # Remove old Galera files
-      runCommand rm -v ${P8_DIR}-${P8-ARCH}/rpms/MariaDB-Galera*
-      runCommand rm -v ${P8_DIR}-${P8-ARCH}/rpms/galera*
+      runCommand rm -v ${P8_DIR}-${P8_ARCH}/rpms/MariaDB-Galera*
+      runCommand rm -v ${P8_DIR}-${P8_ARCH}/rpms/galera*
       
       # copy in new files
       runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
@@ -344,50 +351,56 @@ if [ "${create_yum}" != "no" ]; then
   # update the sums, refresh the repo metadata, & sign the repomd.xml files
   for DIR in *-* ; do
     if [ -d "${DIR}" ]; then
-      cd ~/yum/${DIR}
-      echo
-      pwd
-      if [ -e md5sums.txt ]; then
-        rm -v md5sums.txt
-      fi
-      md5sum $(find . -name '*.rpm') >> md5sums.txt
-      runCommand md5sum -c md5sums.txt
+      # test for CentOS
+      if [ "${DIR:0:6}" = "centos" ]; then
+        echo "+ skipping centos dir"
+      else
+        # Not CentOS, so we're good to go
+        cd ~/yum/${DIR}
+        echo
+        pwd
+        if [ -e md5sums.txt ]; then
+          rm -v md5sums.txt
+        fi
+        md5sum $(find . -name '*.rpm') >> md5sums.txt
+        runCommand md5sum -c md5sums.txt
 
-      if [ -e sha1sums.txt ]; then
-        rm -v sha1sums.txt
-      fi
-      sha1sum $(find . -name '*.rpm') >> sha1sums.txt
-      runCommand sha1sum -c sha1sums.txt
+        if [ -e sha1sums.txt ]; then
+          rm -v sha1sums.txt
+        fi
+        sha1sum $(find . -name '*.rpm') >> sha1sums.txt
+        runCommand sha1sum -c sha1sums.txt
 
-      if [ -e sha256sums.txt ]; then
-        rm -v sha256sums.txt
-      fi
-      sha256sum $(find . -name '*.rpm') >> sha256sums.txt
-      runCommand sha256sum -c sha256sums.txt
+        if [ -e sha256sums.txt ]; then
+          rm -v sha256sums.txt
+        fi
+        sha256sum $(find . -name '*.rpm') >> sha256sums.txt
+        runCommand sha256sum -c sha256sums.txt
 
-      if [ -e sha512sums.txt ]; then
-        rm -v sha512sums.txt
-      fi
-      sha512sum $(find . -name '*.rpm') >> sha512sums.txt
-      runCommand sha512sum -c sha512sums.txt
+        if [ -e sha512sums.txt ]; then
+          rm -v sha512sums.txt
+        fi
+        sha512sum $(find . -name '*.rpm') >> sha512sums.txt
+        runCommand sha512sum -c sha512sums.txt
 
-      cd ~/yum
-      # Create the repository and sign the repomd.xml file
-      case ${DIR} in
-        'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
-          # CentOS & RHEL 5 don't support newer sha256 checksums
-          runCommand createrepo -s sha --database --pretty ${DIR}
-          ;;
-        *)
-          runCommand createrepo --database --pretty ${DIR}
-          ;;
-      esac
-      #runCommand createrepo --update --database --pretty ${DIR}
-      if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
-        runCommand rm -v ${DIR}/repodata/repomd.xml.asc
-      fi
-      runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
-    fi
+        cd ~/yum
+        # Create the repository and sign the repomd.xml file
+        case ${DIR} in
+          'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
+            # CentOS & RHEL 5 don't support newer sha256 checksums
+            runCommand createrepo -s sha --database --pretty ${DIR}
+            ;;
+          *)
+            runCommand createrepo --database --pretty ${DIR}
+            ;;
+        esac
+        #runCommand createrepo --update --database --pretty ${DIR}
+        if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
+          runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+        fi
+        runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
+      fi # end of CentOS test
+    fi   # end of -d test
   done
 
   # moving the yum dir back to where it belongs
