@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$2" ]; then
+if expr "$0" : ".*/run_gdb" > /dev/null; then
   if [ -f "$1" -a -x "$1" ]; then
     echo "Installing as $1"
     rm -f $1.exe
