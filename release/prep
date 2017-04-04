@@ -405,9 +405,9 @@ line() {
 upload_to_the_staging_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${staging_mirror}:data/
+    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${staging_mirror}:data/
   else
-    rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${staging_mirror}:data/
+    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${staging_mirror}:data/
   fi
   set +x
 }
@@ -420,9 +420,9 @@ upload_to_the_staging_mirror() {
 upload_from_the_staging_mirror_to_the_primary_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${staging_mirror} "rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${primary_mirror}:data/"
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${primary_mirror}:data/"
   else
-    ssh -t -t ${staging_mirror} "rsync -avP --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${primary_mirror}:data/"
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${primary_mirror}:data/"
   fi
   set +x
 }
@@ -437,7 +437,7 @@ upload_from_the_primary_mirror_to_the_yum_mirrors() {
   # After the primary mirror has the files, rsync to the bb boxes:
   for yum_mirror in ${yum_mirrors} ;do 
     echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
-    ssh -t -t ${yum_mirror} "mkdir -v /var/www/${num} ; rsync -avP --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ /var/www/${num}/"; 
+    ssh -t -t ${yum_mirror} "mkdir -v /var/www/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ /var/www/${num}/"; 
   done
   set +x
 }
@@ -447,11 +447,16 @@ upload_from_the_primary_mirror_to_the_yum_mirrors() {
 #   DESCRIPTION:  Run the commands necessary to make the repository files public
 #===============================================================================
 activate_the_yum_repos() {
-  for yum_mirror in ${yum_mirrors} ;do 
-    echo;echo;echo;line ; echo "Activating ${dir_name} on ${yum_mirror}";line;
-    ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
-  done
-  echo;echo;echo
+  if [ "${galera_suffix}" = "-galera" ]; then
+    # Do nothing if this is a galera release
+    echo "This is a galera release, skipping this step..."
+  else
+    set -x
+    for yum_mirror in ${yum_mirrors} ;do 
+      ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
+    done
+    set +x
+  fi
 }
 
 #===  FUNCTION  ================================================================
@@ -460,8 +465,19 @@ activate_the_yum_repos() {
 #===============================================================================
 activate_the_deb_repos() {
   set -x
-  ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/repo/ data/repo/${tree}/";
-  ssh -t -t ${primary_mirror} "rsync --delete-after -ahP data/${version_nog}/yum/ data/yum/${tree}/";
+  case ${tree} in
+    "5.5-galera")
+      osuosl_dir='5.5'
+      ;;
+    "10.0-galera")
+      osuosl_dir='10.0'
+      ;;
+    *)
+      osuosl_dir="${tree}"
+      ;;
+  esac
+  ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/repo/ data/repo/${osuosl_dir}/";
+  ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/yum/ data/yum/${osuosl_dir}/";
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
 }
@@ -474,9 +490,9 @@ activate_the_deb_repos() {
 upload_to_the_corp_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${corp_mirror} rsync -avP --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
   else
-    ssh -t -t ${corp_mirror} rsync -avP --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
   fi
   set +x
 }
@@ -763,8 +779,8 @@ if [ "${create_bintar}" != "no" ]; then
           mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
         else
@@ -815,8 +831,8 @@ if [ "${create_bintar}" != "no" ]; then
           mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
           tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
           rm -rf ${version}-linux-systemd-${galera_arch}
         else
@@ -873,10 +889,10 @@ if [ "${create_bintar}" != "no" ]; then
           fi
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
           #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-          rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
           #if [ -d ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ];then
-          #  rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
+          #  rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
           #fi
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
           rm -rf ${version}-linux-${galera_arch}
@@ -1026,8 +1042,8 @@ if [ "${create_p8_bintar}" != "no" ]; then
             #  mv -vi *-linux-ppc64 ${version}-${BINTAR}-ppc64.tar.gz
             #fi
             ## copy over the bin/ and lib/ dirs
-            #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
-            #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
+            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
+            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
             ## repack the tarball & cleanup
             #tar -czf ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64
             #rm -rf ${version}-${BINTAR}-ppc64
@@ -1054,8 +1070,8 @@ if [ "${create_p8_bintar}" != "no" ]; then
             #  mv -vi *-linux-ppc64le ${version}-${BINTAR}-ppc64le.tar.gz
             #fi
             ## copy over the bin/ and lib/ dirs
-            #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
-            #rsync -avP ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
+            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
+            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
             ## repack the tarball & cleanup
             #tar -czf ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le
             #rm -rf ${version}-${BINTAR}-ppc64le
