@@ -61,10 +61,7 @@ def st_bitmap(val):
     return "b'" + s[-int(val['n_bits']):] + "'"
 
 def print_flags(val, bits):
-    s=''
-    for i in range(0,len(bits)):
-        if val & (1 << i): s += ',' + bits[i]
-    return s[1:]
+    return ','.join([s for n,s in enumerate(bits) if val & (1 << n)])
 
 @PrettyPrinter
 def sql_mode_t(val):
