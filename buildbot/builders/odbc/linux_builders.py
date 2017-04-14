@@ -60,24 +60,24 @@ cmake --build . --config RelWithDebInfo --target package
 ######################## bld_linux_connector_oddbc - END #####################
 
 ######################## Current GA/stable version builders ######################
-bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "2250", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
-bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "2250", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
-bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "2250", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "2250", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ");
+bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "2250", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ");
+bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "2250", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ");
 
-bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "2250", "vm-jessie-i386", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
-bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "2250", "vm-jessie-amd64", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
+bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "2250", "vm-jessie-i386", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF  -DSYSTEM_NAME=debian ");
+bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "2250", "vm-jessie-amd64", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=debian ");
 
 bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "2250", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
 bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "2250", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
 #################$### Current GA/stable version builders - END ###################
 
 ######################## New (unstable) version builders ######################
-bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "2250", "vm-centos6-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "2250", "vm-centos6-i386", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "2250", "vm-centos7-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "2250", "vm-centos6-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ");
+bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "2250", "vm-centos6-i386", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ");
+bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "2250", "vm-centos7-amd64", "", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ");
 
-bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "2250", "vm-jessie-i386", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "2250", "vm-jessie-amd64", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "2250", "vm-jessie-i386", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ");
+bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "2250", "vm-jessie-amd64", "", False, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ");
 
 bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "2250", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "2250", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
@@ -160,6 +160,6 @@ setarch i386 make package
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "2250", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF ");
-bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "2250", "vm-centos7-amd64", "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "2250", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ");
+bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "2250", "vm-centos7-amd64", "connector_c_3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ");
 
