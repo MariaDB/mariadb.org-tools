@@ -187,17 +187,22 @@ for dist in ${ubuntu_dists}; do
     for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
+  # Include xenial ppc64le debs
+  if [ "${dist}" = "xenial" ]; then
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+  fi
+
   #if [ "${ENTERPRISE}" = "yes" ]; then
-    if [ "${dist}" = "xenial" ]; then
-      if [ ! -d "${P8_ARCHDIR}" ] ; then
-        echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
-        exit 1
-      else
-        for file in $(find "${P8_ARCHDIR}/p8-${dist}-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-        # Add xtrabackup files
-        #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
-      fi
-    fi
+    #if [ "${dist}" = "xenial" ]; then
+    #  if [ ! -d "${P8_ARCHDIR}" ] ; then
+    #    echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
+    #    exit 1
+    #  else
+    #    for file in $(find "${P8_ARCHDIR}/p8-${dist}-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+    #    # Add xtrabackup files
+    #    #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
+    #  fi
+    #fi
   #fi
 
   # Add in custom jemalloc packages for distros that need them
