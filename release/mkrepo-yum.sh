@@ -53,23 +53,23 @@ galera_versions="25.3.19"                          # Version of galera in repos
 
 # If we are on 5.5 then no fedora
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  dists="sles12 rhel5 rhel6 rhel7"
+  dists="sles12 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 5.5 any more
   distros="sles rhel"
   vers_maj_sles="12"
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
-  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23"
-  vers_maj_fedora="23"                       # no Fedora 24+ in 10.0
-  distros="sles opensuse rhel fedora"
+  dists="sles12 opensuse42 rhel6 rhel7"
+  vers_maj_fedora=""                            # no Fedora in 10.0 any more
+  distros="sles opensuse rhel"
   vers_maj_sles="12"
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
-  vers_maj_fedora="23 24 25"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25"
+  vers_maj_fedora="24 25"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 else
-  dists="sles12 opensuse42 rhel5 rhel6 rhel7 fedora23 fedora24 fedora25"
-  vers_maj_fedora="23 24 25"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25"
+  vers_maj_fedora="24 25"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 fi
@@ -77,13 +77,13 @@ fi
 # The following set the major versions of various Linux distributions for which
 # we build packages.
 vers_maj_opensuse="42"
-vers_maj_rhel="5 6 7"
-vers_maj_centos="5 6 7"
+vers_maj_rhel="6 7"
+vers_maj_centos="6 7"
 
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
-  dists="sles12 rhel5 rhel6 rhel7"
+  dists="sles12 rhel6 rhel7"
   distros="sles rhel"
   p8_dists="rhel6 rhel7 rhel71 sles12"
   p8_architectures="ppc64 ppc64le"
@@ -103,25 +103,25 @@ else
   suffix="signed"
   architectures="amd64 x86"
   archs_std="x86:i386 amd64:x86_64"
-  #archs_rhel_6=${archs_std}
-  archs_rhel_6="x86:i386 amd64:x86_64 ppc64:ppc64"
-  #archs_rhel_7="amd64:x86_64 "
-  archs_rhel_7="amd64:x86_64 ppc64:ppc64 ppc64le:ppc64le"
-  #archs_sles_12="amd64:x86_64"
-  archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
+  archs_rhel_6=${archs_std}
+  #archs_rhel_6="x86:i386 amd64:x86_64 ppc64:ppc64"
+  archs_rhel_7="amd64:x86_64"
+  #archs_rhel_7="amd64:x86_64 ppc64:ppc64 ppc64le:ppc64le"
+  archs_sles_12="amd64:x86_64"
+  #archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
 fi
 
 # The following Linux distributions have the same architectures for both
 # MariaDB and MariaDB Enterprise
-archs_rhel_5=${archs_std}
-archs_centos_5=${archs_std}
+#archs_rhel_5=${archs_std}
+#archs_centos_5=${archs_std}
 archs_centos_6=${archs_std}
 archs_centos_7="amd64:x86_64"
 #archs_fedora_19=${archs_std}
-archs_fedora_20=${archs_std}
-archs_fedora_21=${archs_std}
-archs_fedora_22=${archs_std}
-archs_fedora_23=${archs_std}
+#archs_fedora_20=${archs_std}
+#archs_fedora_21=${archs_std}
+#archs_fedora_22=${archs_std}
+#archs_fedora_23=${archs_std}
 archs_fedora_24=${archs_std}
 archs_fedora_25=${archs_std}
 archs_sles_11=${archs_std}
@@ -132,12 +132,12 @@ archs_opensuse_42="amd64:x86_64"
 # dir structure. The values here are the first and last value, respectively.
 # They are expanded to all the other values using the seq utility. For example,
 # a value of '0 4' will be expanded to '0 1 2 3 4'.
-vers_min_centos_5="0 11"
-vers_min_centos_6="0 8"
-vers_min_centos_7="0"
-vers_min_rhel_5="0 11"
+#vers_min_centos_5="0 11"
+vers_min_centos_6="0 9"
+vers_min_centos_7="0 3"
+#vers_min_rhel_5="0 11"
 vers_min_rhel_6="0 8"
-vers_min_rhel_7="0 1"
+vers_min_rhel_7="0 3"
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -199,27 +199,27 @@ for distro in ${distros}; do
 
       #case "${REPONAME}" in
       #  'rhel6')
-      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    echo rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
       #    ;;
       #  'centos7'|'rhel7')
       #    if [ "${ARCH}" = "amd64" ]; then
-      #      echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #      echo rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
       #    else
       #      echo "+ no packages for ${REPONAME}-${ARCH}"
       #    fi
       #    ;;
       #  'opensuse13'|'sles11')
-      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    echo rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
       #    ;;
       #  'sles12')
       #    if [ "${ARCH}" = "amd64" ]; then
-      #      echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #      echo rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
       #    else
       #      echo "+ no packages for ${REPONAME}-${ARCH}"
       #    fi
       #    ;;
       #  *)
-      #    echo rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+      #    echo rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
       #    ;;
       #esac
 
@@ -252,6 +252,15 @@ for distro in ${distros}; do
 done
 #exit 0 # Ending here for testing
 
+# Fix for CentOS/RHEL 7.3
+if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+  echo "+ No 5.5 packages for CentOS/RHEL 7.3 yet"
+else
+  rm -v rhel/7.3
+  mkdir -vp rhel/7.3/amd64
+  ln -sv rhel/7.3/amd64 rhel73-amd64
+fi
+
 
 # Copy over the packages
 for REPONAME in ${dists}; do
@@ -259,23 +268,28 @@ for REPONAME in ${dists}; do
     case "${REPONAME}" in
       'rhel5')
         #mkdir -vp "${REPONAME}-${ARCH}"
-        rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos5-${ARCH}/ ./${REPONAME}-${ARCH}/
+        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos5-${ARCH}/ ./${REPONAME}-${ARCH}/
         ;;
       'rhel6')
         #mkdir -vp "${REPONAME}-${ARCH}"
-        rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
+        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos6-${ARCH}/ ./${REPONAME}-${ARCH}/
         ;;
       'centos7'|'rhel7')
         if [ "${ARCH}" = "amd64" ]; then
           #mkdir -vp "${REPONAME}-${ARCH}"
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
+          if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+            echo "+ skipping rsync of 7.3 packages as they are not available for 5.5 yet"
+          else
+            rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos73-${ARCH}/ ./${REPONAME}3-${ARCH}/
+          fi
         else
           echo "+ no packages for ${REPONAME}-${ARCH}"
         fi
         ;;
       'opensuse42')
         if [ "${ARCH}" = "amd64" ]; then
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         else
           echo "+ no packages for ${REPONAME}-${ARCH}"
         fi
@@ -284,32 +298,40 @@ for REPONAME in ${dists}; do
         #mkdir -vp "${REPONAME}-${ARCH}"
         if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
           # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
-          #rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
+          #rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
 
           # 2017-01-16 - we no longer pull from sp1 - dbart
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         else
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         fi
         ;;
       'sles12')
         if [ "${ARCH}" = "amd64" ]; then
           #mkdir -vp "${REPONAME}-${ARCH}"
-          rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         else
           echo "+ no packages for ${REPONAME}-${ARCH}"
         fi
         ;;
       *)
         #mkdir -vp "${REPONAME}-${ARCH}"
-        rsync -avP --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
         ;;
     esac
 
       # Add in custom jemalloc packages for distros that need them
       case "${REPONAME}-${ARCH}" in
         'rhel5-amd64'|'rhel5-x86'|'rhel6-amd64'|'rhel6-x86'|'rhel6-ppc64'|'rhel7-amd64'|'rhel7-ppc64') 
-          rsync -avP --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}-${ARCH}/rpms/
+          rsync -av --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}-${ARCH}/rpms/
+          if [ "${REPONAME}" = 'rhel7' ]; then
+            # if $REPONAME is rhel7, don't forget rhel73
+            if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+              echo "+ skipping rsync of 7.3 packages as they are not available for 5.5 yet"
+            else
+              rsync -av --keep-dirlinks ${jemalloc_dir}/jemalloc-${REPONAME}-${ARCH}-${suffix}/*.rpm ./${REPONAME}3-${ARCH}/rpms/
+            fi
+          fi
           ;;
         * ) echo "no custom jemalloc packages for ${REPONAME}-${ARCH}"
           ;;
@@ -319,7 +341,7 @@ for REPONAME in ${dists}; do
       case "${REPONAME}-${ARCH}" in
         #'sles12-amd64'|'sles12-x86')
         'sles12-amd64')
-          rsync -avP --keep-dirlinks ${nmap_dir}/${ARCH}/${nmap_ver}-${suffix}/rpms/*.rpm ./${REPONAME}-${ARCH}/rpms/
+          rsync -av --keep-dirlinks ${nmap_dir}/${ARCH}/${nmap_ver}-${suffix}/rpms/*.rpm ./${REPONAME}-${ARCH}/rpms/
           ;;
       esac
 
@@ -328,61 +350,66 @@ for REPONAME in ${dists}; do
         for gv in ${galera_versions}; do
           if [ "${ARCH}" = "amd64" ]; then
             if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+                echo "+ No 5.5 packages for CentOS/RHEL 7.3 yet"
+              else
+                rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}3-${ARCH}/rpms/
+              fi
             elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora21" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora22" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora23" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora24" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc24*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc24*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc25*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc25*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse13" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse42" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles42*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles42*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             else
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             fi
           else
             if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*i386.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel5*i386.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora21" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc21*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora22" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc22*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora23" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc23*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora24" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc24*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc24*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc25*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*fc25*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse42" ] ; then
               echo "+ no packages for ${REPONAME}-${ARCH}"
             elif [ "${REPONAME}" = "opensuse13" ] ; then
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*i586.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles13*i586.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] || [ "${REPONAME}" = "centos7" ] || [ "${REPONAME}" = "rhel7" ]; then
               echo "+ no packages for ${REPONAME}-${ARCH}"
             else
-              rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*i*86.rpm ./${REPONAME}-${ARCH}/rpms/
+              rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*i*86.rpm ./${REPONAME}-${ARCH}/rpms/
             fi
           fi
         done
@@ -399,75 +426,75 @@ done
         if [ "${P8_REPONAME}" = "rhel6" ]; then
           if [ "${P8_ARCH}" = "ppc64" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-rhel6-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
+            rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel6-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
         elif [ "${P8_REPONAME}" = "centos71" ] || [ "${P8_REPONAME}" = "rhel71" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-rhel71-rpm/ ./rhel7-${P8_ARCH}/
+            rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel71-rpm/ ./rhel7-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
         elif [ "${P8_REPONAME}" = "centos7" ] || [ "${P8_REPONAME}" = "rhel7" ]; then
           if [ "${P8_ARCH}" = "ppc64" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-rhel7-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
+            rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel7-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
         elif [ "${P8_REPONAME}" = "sles12" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            rsync -avP --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
+            rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
         fi
-
+  
         # Add in custom jemalloc packages for distros that need them
         case "${P8_REPONAME}-${P8_ARCH}" in
           'centos7-ppc64'|'rhel7-ppc64'|'centos6-ppc64'|'rhel6-ppc64')
-            rsync -avP --keep-dirlinks ${jemalloc_dir}/jemalloc-${P8_REPONAME}-${P8_ARCH}-${suffix}/*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${jemalloc_dir}/jemalloc-${P8_REPONAME}-${P8_ARCH}-${suffix}/*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
             ;;
           * ) 
             echo "no custom jemalloc packages for ${P8_REPONAME}-${P8_ARCH}"
             ;;
         esac
-
+  
         # Add galera packages for enterprise cluster  
         case "${P8_REPONAME}-${P8_ARCH}" in
           'rhel6-ppc64')
-            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel6*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
           'rhel7-ppc64')
-            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
           'sles12-ppc64le')
-            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*sles12*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
             ;; 
           'rhel71-ppc64le')
-            rsync -avP --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
             ;; 
           * )
             echo "no galera packages found for enterprise cluster release"
             ;;
         esac
- 
+   
         # Add in advance-toolchain runtime for distros that need them
         case "${P8_REPONAME}-${P8_ARCH}" in
           'centos6-ppc64'|'rhel6-ppc64'|'centos7-ppc64'|'rhel7-ppc64'|'sles12-ppc64le')
-            rsync -avP --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
             ;;
           'centos71-ppc64le'|'rhel71-ppc64le')
-            rsync -avP --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./rhel7-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${at_dir}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./rhel7-${P8_ARCH}/rpms/
             ;;
           * ) 
             echo "no advance-toolchain packages for ${P8_REPONAME}-${P8_ARCH}"
             ;;
         esac
-
+  
     done
   done
 #fi
@@ -534,6 +561,7 @@ if [ -e "rhel6-amd64"   ]; then ln -sv rhel6-amd64   centos6-amd64   ;fi
 if [ -e "rhel6-ppc64"   ]; then ln -sv rhel6-ppc64   centos6-ppc64   ;fi
 
 if [ -e "rhel7-amd64"   ]; then ln -sv rhel7-amd64   centos7-amd64   ;fi
+if [ -e "rhel73-amd64"  ]; then ln -sv rhel73-amd64  centos73-amd64   ;fi
 if [ -e "rhel7-ppc64"   ]; then ln -sv rhel7-ppc64   centos7-ppc64   ;fi
 if [ -e "rhel7-ppc64le" ]; then ln -sv rhel7-ppc64le centos7-ppc64le ;fi
 
