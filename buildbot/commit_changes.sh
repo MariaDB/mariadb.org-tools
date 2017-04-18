@@ -41,7 +41,7 @@ for file in ${files};do
   # first check the age of the file
   if [ $(stat --format=%Y ${prod_dir}/${file}) -le $(( $(date +%s) - ${age} )) ]; then 
     # file is more than ${age} old, now see if it differs from the repo file
-    bzr pull ${quiet}    # first make sure we have the latest version in the repo
+    git pull ${quiet}    # first make sure we have the latest version in the repo
     if [ -n "$(diff ${repo_dir}/${file} ${prod_dir}/${file})" ]; then 
       # if we are here, we need to commit changes, first copy the file over
       cp -a ${prod_dir}/${file} ${repo_dir}/${file}
@@ -50,8 +50,8 @@ for file in ${files};do
       # one last check to make sure there are differences
       if [ -n "$(bzr diff ${file})" ]; then
         # there are changes, commit them and push to launchpad
-        bzr commit ${quiet} --message "automatic ${file} commit" ${file}
-        bzr push ${quiet}
+        git commit ${quiet} -m "automatic ${file} commit" ${file}
+        git push ${quiet} origin
       fi
     fi
   fi
