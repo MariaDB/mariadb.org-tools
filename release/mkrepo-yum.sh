@@ -426,6 +426,8 @@ done
         if [ "${P8_REPONAME}" = "rhel6" ]; then
           if [ "${P8_ARCH}" = "ppc64" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
+            mkdir -v rhel/6/${P8_ARCH}
+            ln -sv rhel/6/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
             rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel6-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
@@ -433,6 +435,8 @@ done
         elif [ "${P8_REPONAME}" = "centos71" ] || [ "${P8_REPONAME}" = "rhel71" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
+            mkdir -v rhel/7/${P8_ARCH}
+            ln -sv rhel/7/${P8_ARCH} ./rhel7-${P8_ARCH}
             rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel71-rpm/ ./rhel7-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
@@ -440,6 +444,8 @@ done
         elif [ "${P8_REPONAME}" = "centos7" ] || [ "${P8_REPONAME}" = "rhel7" ]; then
           if [ "${P8_ARCH}" = "ppc64" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
+            mkdir -v rhel/7/${P8_ARCH}
+            ln -sv rhel/7/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
             rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-rhel7-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
@@ -447,6 +453,8 @@ done
         elif [ "${P8_REPONAME}" = "sles12" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
+            mkdir -v suse/12/${P8_ARCH}
+            ln -sv suse/12/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
             rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
@@ -561,8 +569,11 @@ if [ -e "rhel6-amd64"   ]; then ln -sv rhel6-amd64   centos6-amd64   ;fi
 if [ -e "rhel6-ppc64"   ]; then ln -sv rhel6-ppc64   centos6-ppc64   ;fi
 
 if [ -e "rhel7-amd64"   ]; then ln -sv rhel7-amd64   centos7-amd64   ;fi
-if [ -e "rhel73-amd64"  ]; then ln -sv rhel73-amd64  centos73-amd64   ;fi
 if [ -e "rhel7-ppc64"   ]; then ln -sv rhel7-ppc64   centos7-ppc64   ;fi
 if [ -e "rhel7-ppc64le" ]; then ln -sv rhel7-ppc64le centos7-ppc64le ;fi
+
+if [ -e "rhel73-amd64"   ]; then ln -sv rhel73-amd64   centos73-amd64   ;fi
+if [ -e "rhel73-ppc64"   ]; then ln -sv rhel73-ppc64   centos73-ppc64   ;fi
+if [ -e "rhel73-ppc64le" ]; then ln -sv rhel73-ppc64le centos73-ppc64le ;fi
 
 # vim: filetype=sh
