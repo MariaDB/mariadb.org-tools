@@ -48,7 +48,7 @@ for file in ${files};do
       # then update the permissions
       chmod 644 ${repo_dir}/${file}
       # one last check to make sure there are differences
-      if [ -n "$(bzr diff ${file})" ]; then
+      if [ -n "$(git diff --raw ${file})" ]; then
         # there are changes, commit them and push to launchpad
         git commit ${quiet} -m "automatic ${file} commit" ${file}
         git push ${quiet} origin
