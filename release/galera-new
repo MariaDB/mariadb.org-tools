@@ -47,7 +47,7 @@ case ${tree} in
     ;;
   *) debian_dists="wheezy jessie sid"
      yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse13 opensuse42 sles11 sles12"
-     ubuntu_dists="precise trusty xenial yakkety"
+     ubuntu_dists="precise trusty xenial yakkety zesty"
     ;;
 esac
 
