@@ -53,12 +53,20 @@ dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #ver_xtrabackup="2.2.9"                            # Version of xtrabackup
 dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 
-# If we are on 5.5 then only precise & trusty
-if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  ubuntu_dists="precise trusty"
-else
-  ubuntu_dists="precise trusty xenial yakkety"
-fi
+# Set the appropriate dists based on the ${ARCHDIR} of the packages
+case ${ARCHDIR} in
+  *"5.5"*)
+    ubuntu_dists="precise trusty"
+    ;;
+  *"10.0"*)
+    ubuntu_dists="precise trusty xenial yakkety"
+    ;;
+  *)
+    ubuntu_dists="precise trusty xenial yakkety zesty"
+    ;;
+esac
+
+# Standard Architectures
 architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
@@ -168,7 +176,7 @@ fi
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
-    'trusty'|'utopic'|'xenial')
+    'trusty'|'utopic'|'xenial'|'yakkety'|'zesty')
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )

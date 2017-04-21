@@ -47,7 +47,7 @@ galera_preferred="25.3.19"
 
 
 #deb_dists="precise trusty vivid debian6 wheezy jessie sid"
-deb_dists="jessie precise sid stretch trusty wheezy xenial yakkety"
+deb_dists="jessie precise sid stretch trusty wheezy xenial yakkety zesty"
 deb_dists_p8="jessie trusty xenial stretch"
 rpm_dists="centos5 centos6 centos7 fedora23 fedora24 fedora25"
 rpm_dists_p8="rhel6 rhel7 rhel71 suse12"
@@ -774,7 +774,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
