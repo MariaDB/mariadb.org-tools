@@ -46,7 +46,7 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.19"                          # Version of galera in repos
+galera_versions="25.3.20"                          # Version of galera in repos
 dir_galera="/ds413/galera"                        # Location of galera pkgs
 dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
