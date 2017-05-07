@@ -46,7 +46,7 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.19"                          # Version of galera in repos
+galera_versions="25.3.20"                          # Version of galera in repos
 #galera_dir="/ds413/galera"                        # Location of galera pkgs
 #jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
 #at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
@@ -85,7 +85,7 @@ vers_maj_centos="6 7"
 if [ "${ENTERPRISE}" = "yes" ]; then
   dists="sles12 rhel6 rhel7"
   distros="sles rhel"
-  p8_dists="rhel6 rhel7 rhel71 sles12"
+  p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   p8_architectures="ppc64 ppc64le"
   #gpg_key="0xd324876ebe6a595f"               # original enterprise key
   gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
@@ -97,7 +97,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
 else
   gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
-  p8_dists="rhel6 rhel7 rhel71 sles12"
+  p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   #p8_dists="rhel6 rhel7 rhel71"
   p8_architectures="ppc64 ppc64le"
   suffix="signed"
@@ -257,8 +257,8 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   echo "+ No 5.5 packages for CentOS/RHEL 7.3 yet"
 else
   rm -v rhel/7.3
-  mkdir -vp rhel/7.3/amd64
-  ln -sv rhel/7.3/amd64 rhel73-amd64
+  mkdir -vp rhel/7.3/x86_64
+  ln -sv rhel/7.3/x86_64 rhel73-amd64
 fi
 
 
@@ -453,12 +453,16 @@ done
         elif [ "${P8_REPONAME}" = "sles12" ]; then
           if [ "${P8_ARCH}" = "ppc64le" ]; then
             #mkdir -vp "${P8_REPONAME}-${P8_ARCH}"
-            mkdir -v suse/12/${P8_ARCH}
-            ln -sv suse/12/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
+            mkdir -v sles/12/${P8_ARCH}
+            ln -sv sles/12/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
             rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${P8_REPONAME}-${P8_ARCH}/
           else
             echo "+ no packages for ${P8_REPONAME}-${P8_ARCH}"
           fi
+        elif [ "${P8_REPONAME}" = "rhel73" ]; then
+          mkdir -v rhel/7.3/${P8_ARCH}
+          ln -sv rhel/7.3/${P8_ARCH} ./${P8_REPONAME}-${P8_ARCH}
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos73-${P8_ARCH}/ ./${P8_REPONAME}-${P8_ARCH}/
         fi
   
         # Add in custom jemalloc packages for distros that need them
@@ -485,6 +489,12 @@ done
           'rhel71-ppc64le')
             rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
             ;; 
+          'rhel73-ppc64')
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            ;;
+          'rhel73-ppc64le')
+            rsync -av --keep-dirlinks ${galera_dir}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            ;;
           * )
             echo "no galera packages found for enterprise cluster release"
             ;;
