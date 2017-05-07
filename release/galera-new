@@ -27,7 +27,7 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="wheezy"
-    yum_dists="rhel5 rhel6 rhel7 opensuse13 sles11 sles12"
+    yum_dists="rhel5 rhel6 rhel7 sles11 sles12"
     ubuntu_dists="precise trusty"
     ;;
   '10.0e'|'10.0e-galera')
@@ -42,11 +42,11 @@ case ${tree} in
     ;;
   '10.0'|'10.0-galera')
     debian_dists="wheezy jessie sid"
-    yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse13 opensuse42 sles12"
+    yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse42 sles12"
     ubuntu_dists="precise trusty xenial yakkety"
     ;;
   *) debian_dists="wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse13 opensuse42 sles11 sles12"
+     yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse42 sles11 sles12"
      ubuntu_dists="precise trusty xenial yakkety zesty"
     ;;
 esac
@@ -60,7 +60,7 @@ esac
 
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.19"                 # version of galera in repositories
+gv="25.3.20"                 # version of galera in repositories
 
 # Set various options that change depending on whether this is an enterprise release or not
 if [ "${is_ent}" = "yes" ];then
