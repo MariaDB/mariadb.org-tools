@@ -475,7 +475,7 @@ fi
 #-------------------------------------------------------------------------------
 if [ "${create_bintar}" != "no" ]; then
   line
-  echo "+ transfering bintar & source packages..."
+  echo "+ transfering bintar packages..."
   line
   if [ ! -d ${release_dir}/${dir_name}/bintar ]; then
     line
