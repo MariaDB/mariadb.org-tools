@@ -1,0 +1,34 @@
+MariaDB Server 
+
+This package contains a number of .deb files that together comprise the MariaDB Server distribution.
+
+The packages included in this archive may vary depending on the OS you're using and its release version, as different components may require libraries or functionality available only in newer releases. 
+
+The .deb files can be installed individually, but there are complex interdependencies that are difficult to resolve using dpkg alone. For that reason, this package is distributed as a ready-to-use Debian archive, so that you can use apt to install the packages in it.
+
+In order for the package manager to be able to install these packages, you will need to place them in a location that the package manager has privileges to access. You may find that /opt is a good location where you can unpack the archive and the package manager will be able to read it.
+
+To use the archive with apt, create a mariadb.list file in /etc/apt/sources.list.d/ that points to the directory where you've extracted the files. A helpful script called setup_repository is included in this archive to do this for you.
+
+You'll need to do this work as root, so that you can write files to these locations.
+
+cd /opt
+tar -xf ~/mariadb-10.1.17-ubuntu-xenial-amd64-debs.tar
+mariadb-10.1.17-ubuntu-xenial-amd64-debs/setup_repository
+
+After the repository is set up, you should update apt and install the mariadb-server package.
+
+apt-get update && apt-get install mariadb-server
+
+If your operating system already provides its own MariaDB packages, you may need to manually specify the version of the package you've downloaded. Version numbers can be complicated, so you may wish to use a command such as this to see all available versions, from which you can choose one:
+
+# apt-cache show mariadb-server | grep Version
+Version: 10.1.17+maria-1~xenial
+Version: 10.0.27+maria-1~xenial
+Version: 10.0.25-0ubuntu0.16.04.1
+Version: 10.0.24-7
+# apt-get install mariadb-server=10.0.27+maria-1~xenial
+
+For more information about installing MariaDB .deb files, visit https://mariadb.com/kb/en/mariadb/installing-mariadb-deb-files/. 
+
+For more information about MariaDB Enterprise, visit https://mariadb.com/products/mariadb-enterprise and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/about/contact.

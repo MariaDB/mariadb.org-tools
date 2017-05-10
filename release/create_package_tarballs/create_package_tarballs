@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+# This script will take a base directory of MariaDB Server packages and combine them together into tar
+# files for each supported OS, which will be left in the directory structure of the original packages.
+#
+# This script generates repository information that's included in the packages, so that people can use
+# the files in this package as a standalone, local package repository.
+
+# DEPENDENCIES:
+# apt-ftparchive
+# createrepo
+
+# NOTE: Right now, this script only supports x86-64!
+
+# NOTE: Run this script from the directory where it lives. It needs to find the deb_files, rhel_files, and 
+# sles_files directories.
+
+# Run this script under sudo, as the permissions for the archive files are pretty weird.
+
+# Usage:
+# $ ./create_package_tarballs /home/mariadb-repos/staging/mariadb-enterprise/10.2.2/
+# ...
+# /home/MariaDB/mariadb-10.2.2/yum/sles/mariadb-10.2.2-sles-12-x86_64-rpms.tar
+# /home/MariaDB/mariadb-10.2.2/yum/sles/mariadb-10.2.2-sles-11-x86_64-rpms.tar
+# /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-6-x86_64-rpms.tar
+# /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-5-x86_64-rpms.tar
+# /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-7-x86_64-rpms.tar
+# /home/MariaDB/mariadb-10.2.2/repo/ubuntu/mariadb-10.2.2-ubuntu-trusty-amd64-debs.tar
+# /home/MariaDB/mariadb-10.2.2/repo/ubuntu/mariadb-10.2.2-ubuntu-xenial-amd64-debs.tar
+# /home/MariaDB/mariadb-10.2.2/repo/debian/mariadb-10.2.2-debian-wheezy-amd64-debs.tar
+# /home/MariaDB/mariadb-10.2.2/repo/debian/mariadb-10.2.2-debian-jessie-amd64-debs.tar
+ 
+set -xe
+
+# This is the "matrix" of support OSs/versions. There's no clean support right now
+# for different OSs/versions for different versions of MariaDB Server, but if packages
+# for a particular supported 
+debian_ver=( jessie wheezy )
+ubuntu_ver=( trusty xenial )
+rhel_ver=( 6 7 )
+sles_ver=( 12 )
+
+err() {
+  printf "[ERROR] %s\n" "$*" >&2
+  exit 1
+}
+
+# Exit if no command line argument has been given
+if ! [[ $1 ]] || ! [[ -d $1 ]]
+then
+  err 'You must provide an argument to this script. It should be a directory containing release files for MariaDB Server, e.g. /home/MariaDB/mariadb-10.2.5/. Aborting.'
+fi
+
+# Parse the command line argument given and extract some useful values from it
+dir=${1%/}
+version=${dir##*/}
+version=${version##*-}
+pwd=$PWD
+
+# do_pkgs <package type> <os name> <os version,...>
+# Create a full set of repositories for all specified versions of the given OS
+# For example: do_pkgs debs debian 7 8
+do_pkgs() {
+  type=$1
+  os=$2
+
+  case $type in 
+    debs) arch=amd64 ;;
+    rpms) arch=x86_64 ;;
+  esac
+
+  pushd "$os"
+  shift 2
+  for rel in "$@"; do
+    # Silently skip missing OS versions, i.e. if no builds for RHEL 5 are present
+    # for MariaDB Server 10.2, that'll just be ignored. Look in $PWD for EL/SLES
+    # and in $PWD/dists for Ubuntu/Debian.
+    if ! [[ -d $rel ]] && ! [[ -d dists/$rel ]]
+    then
+      continue
+    fi
+    newdir="mariadb-$version-$os-$rel-$arch-$type"
+    mkdir "/tmp/$newdir"
+    chown "$USER" "/tmp/$newdir"
+
+    # Call the function (defined below) to actually do the work of creating the
+    # repository metadata.
+    "do_$type"
+
+    mv -i "/tmp/$newdir" ./
+    tar cvf "$newdir.tar" "$newdir"
+    rm -rf "$newdir"
+  done
+  popd
+}
+
+do_debs() {
+  # Find all .deb files for this architecture and those for "all" architectures, and cp
+  # all of them to our work directory. Exclude dbg and test packages.
+  find pool/ \( -name "*${rel}_${arch}.deb" -o -name "*${rel}_all.deb" \) \
+      -a '!' \( -name '*dbg*' -o -name 'mariadb-test*' \) \
+      -exec cp -t "/tmp/$newdir" {} +
+
+  # Hop into the work directory and generate the package metadata.
+  pushd "/tmp/$newdir"
+  apt-ftparchive packages . > Packages
+  apt-ftparchive release . | { cat > Release; }
+
+  # Copy support files for this repository type.
+  cp -Rv "$pwd"/deb_files/* .
+  popd
+}
+
+do_rpms() {
+  unset gpgkey
+  # Hacky, temporary support for MariaDB Enterprise Server/Cluster packages
+  case $dir in
+    *mariadb-enterprise* ) gpgkey=https://downloads.mariadb.com/MariaDB/MariaDB-Enterprise-GPG-KEY ;;
+    * ) gpgkey=https://downloads.mariadb.com/MariaDB/yum/RPM-GPG-KEY-MariaDB ;;
+  esac
+  sed -i "0,/gpgkey=/{s#gpgkey=.*#gpgkey=$gpgkey#}" "$pwd"/"$os"_files/setup_repository
+
+  # Find all .rpm files for this OS/version (except test packages) and cp them to our work directory.
+  find "$rel/$arch" -name '*.rpm' -a '!' -name '*-test.rpm' -exec cp -t "/tmp/$newdir" {} +
+
+  # Hop into the work directory and generate the package metadata.
+  pushd "/tmp/$newdir"
+  createrepo .
+
+  # Copy support files for this repository type.
+  cp -Rv "$pwd"/"$os"_files/* .
+  popd
+}
+
+# Switch to the directory given as a command line argument. We retained $PWD above, which will
+# be needed to find support files.
+cd "$dir"
+
+# .deb files are kept in the "repo" subdirectory of a release directory.
+pushd repo
+do_pkgs debs debian "${debian_ver[@]}"
+do_pkgs debs ubuntu "${ubuntu_ver[@]}"
+popd
+
+# .rpm files are kept in the "yum" subdirectory of a release directory. Yes, even for SLES,
+# which does not use yum...
+pushd yum
+do_pkgs rpms rhel "${rhel_ver[@]}"
+do_pkgs rpms sles "${sles_ver[@]}"
+popd
+
+# Show a list of the generated files so a vigilant administrator can make sure they're all there!
+find "$dir" -name '*.tar' -exec ls -lh {} +

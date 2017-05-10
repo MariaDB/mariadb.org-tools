@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+file=/etc/apt/sources.list.d/mariadb.list
+install_cmd='apt-get update && apt-get install mariadb-server'
+
+err() {
+  msg=$1
+  shift
+  printf "[ERROR] $msg\n" "$@" >&2
+  exit 1
+}
+
+for d in "$PWD" "${0%/*}"; do
+  if [[ -f $d/Packages ]] ; then
+    dir=$d
+    if ! [[ $dir = /* ]] ; then
+      dir=$PWD/$dir
+    fi
+    break
+  fi
+done
+
+if ! [[ $dir ]] ; then
+  err 'Could not find a "Packages" file. Please change to the top level directory of the unpacked archive and re-run this script.'
+fi
+
+if [[ -e $file ]] ; then
+  err 'File "%s" already exists. Rename it and re-run this script, or manually create a new .repo file.' "$file"
+fi
+
+if ! cat > "$file" <<EoF
+deb file://$dir ./
+EoF
+  then
+  err 'Could not create "%s". Please investigate and re-run this script.' "$file"
+fi
+
+printf 'Repository file successfully created! Please install MariaDB Server with this command:\n\n   %s\n\n' "$install_cmd"
