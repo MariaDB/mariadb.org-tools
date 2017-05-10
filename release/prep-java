@@ -221,7 +221,7 @@ upload_to_the_primary_mirror() {
   echo;echo;echo;
   echo;line;echo "Doing a dry-run...";line;
   set -x
-  rsync --dry-run -avP --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+  rsync --dry-run -av --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
   set +x
   echo;echo;echo
   while [ -z ${upload} ]; do
@@ -229,7 +229,7 @@ upload_to_the_primary_mirror() {
     case ${ANSWER} in
       "y")
         set -x
-        rsync -avP --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+        rsync -av --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
         set +x
         echo;echo;echo
         upload="yes"
@@ -254,7 +254,7 @@ upload_to_the_corp_mirror() {
   echo;echo;echo;
   echo;line;echo "Doing a dry-run...";line;
   set -x
-  rsync --dry-run -avP --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+  rsync --dry-run -av --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
   set +x
   echo;echo;echo
   while [ -z ${upload} ]; do
@@ -262,7 +262,7 @@ upload_to_the_corp_mirror() {
     case ${ANSWER} in
       "y")
         set -x
-        rsync -avP --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+        rsync -av --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
         set +x
         echo;echo;echo
         upload="yes"
