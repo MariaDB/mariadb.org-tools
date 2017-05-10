@@ -242,24 +242,10 @@ loadDefaults() {
       . ${HOME}/.prep.conf
   else
     echo
-    echo "The file ${HOME}/.prep.conf does not exist in your home"
-    echo "directory. If it does not exist, and have valid settings in it,"
-    echo "this script will fail. I can create a default template file for you"
-    echo "to fill out. Afterwards, please re-run this script."
-    echo
-    shouldI create_a_template_file
-    # after creating the file, check if it exists again, if not, exit
-    if [ ! -f ${HOME}/.prep.conf ]; then
-      echo "I was unable to create ${HOME}/.prep.conf"
-      echo "Exiting..."
-      exit 3
-    else
-      echo
-      echo "Template file created at ${HOME}/.prep.conf"
-      echo "Please edit and re-run this script."
-      echo
-      exit 0
-    fi
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
   fi
 }
 

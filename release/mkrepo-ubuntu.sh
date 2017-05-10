@@ -46,12 +46,6 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.20"                          # Version of galera in repos
-dir_galera="/ds413/galera"                        # Location of galera pkgs
-dir_jemalloc="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
-#dir_xtrabackup="/ds413/repo/xtrabackup"           # Location of xtrabackup pkgs
-#ver_xtrabackup="2.2.9"                            # Version of xtrabackup
-dir_at="/ds413/vms-customizations/advance-toolchain" # Location of at pkgs
 
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
@@ -70,11 +64,29 @@ esac
 architectures="amd64 i386 source"
 
 #-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
+
+#-------------------------------------------------------------------------------
 #  Main Script
 #-------------------------------------------------------------------------------
 # Get the GPG daemon running so we don't have to keep entering the password for
 # the GPG key every time we sign a package
 eval $(gpg-agent --daemon)
+
+loadDefaults                                    # Load Default paths and vars
 
 # At this point, all variables should be set. Print a usage message if the
 # ${ARCHDIR} variable is not set (the last of the command-line variables).
@@ -234,17 +246,25 @@ for dist in ${ubuntu_dists}; do
       fi
       ;;
     * )
-      echo "no custom jemalloc packages for ${dist}"
+      echo "+ no custom jemalloc packages for ${dist}"
       ;;
   esac
 
 
-
+  # Add in custom libjudy packages for distros that need them
+  case ${dist} in
+    "trusty")
+      reprepro --basedir=. includedeb ${dist} ${dir_jemalloc}/libjudydebian1_1.0.5-4_ppc64el.deb
+      ;;
+    * )
+      echo "+ no custom judy packages for ${dist}"
+      ;;
+  esac
 
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
-    for gv in ${galera_versions}; do
+    for gv in ${ver_galera}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes

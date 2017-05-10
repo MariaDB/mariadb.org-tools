@@ -46,11 +46,23 @@ ARCHDIR="$5"                      # path to the packages
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
-galera_versions="25.3.20"                          # Version of galera in repos
-galera_dir="/ds413/galera"                        # Location of galera pkgs
-jemalloc_dir="/ds413/vms-customizations/jemalloc" # Location of jemalloc pkgs
-at_dir="/ds413/vms-customizations/advance-toolchain/" # Location of at pkgs
 architectures="amd64 i386 source"
+
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -58,6 +70,8 @@ architectures="amd64 i386 source"
 # Get the GPG daemon running so we don't have to keep entering the password for
 # the GPG key every time we sign a package
 eval $(gpg-agent --daemon)
+
+loadDefaults                                    # Load Default paths and vars
 
 # At this point, all variables should be set. Print a usage message if the
 # ${ARCHDIR} variable is not set (the last of the command-line variables).
@@ -237,7 +251,7 @@ for dist in ${debian_dists}; do
     'jessie')
       for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
       # Add Advance Toolkit files
-      for file in $(find "${at_dir}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
     'stretch')
       if [[ $TREE == '10.1' ]]; then
@@ -258,9 +272,9 @@ for dist in ${debian_dists}; do
   # Add in custom jemalloc packages for distros that need them
   case  ${builder} in
     "debian6")
-      for i in $(find "${jemalloc_dir}/${builder}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
+      for i in $(find "${dir_jemalloc}/${builder}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for i in $(find "${jemalloc_dir}/${builder}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
+        for i in $(find "${dir_jemalloc}/${builder}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
       fi
       ;;
     * )
@@ -270,8 +284,8 @@ for dist in ${debian_dists}; do
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
-    for gv in ${galera_versions}; do
-      #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+    for gv in ${ver_galera}; do
+      #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
       #case ${dist} in
       #  'jessie')
       #    echo "no galera packages for jessie... yet"
@@ -281,24 +295,24 @@ for dist in ${debian_dists}; do
           case ${dist} in
             #"jessie"|"stretch") #stretch is currently not building on ppc64le
             "jessie")
-              reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-              reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
               ;;
             "sid")
-              reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_amd64.changes
+              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_amd64.changes
               ;;
             *) 
-              reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
               ;;
           esac
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
               "sid")
-                reprepro --basedir=. include ${dist} ${galera_dir}/galera-25.3.19-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+                reprepro --basedir=. include ${dist} ${dir_galera}/galera-25.3.19-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
                 ;;
               *)
-                reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+                reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
                 ;;
             esac
           fi

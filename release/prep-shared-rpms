@@ -48,7 +48,7 @@ kvm-zyp-sles11-amd64:sles11-x86_64:sles/11/x86_64
 kvm-zyp-sles11-x86:sles11-i686:sles/11/i386
 "
 
-cd ${shared_rpm_dir}
+cd ${dir_rpm_shared}
 
 for dist_pair in ${dists}; do
   dist=(${dist_pair//:/ })

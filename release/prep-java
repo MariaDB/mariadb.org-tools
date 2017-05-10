@@ -18,8 +18,8 @@
 #-------------------------------------------------------------------------------
 version=${1}
 
-name_dir="connector-java-${version}"
-name_tarball="mariadb-java-client-${version}.tar.gz"
+dir_java="connector-java-${version}"
+tarball="mariadb-java-client-${version}.tar.gz"
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -43,99 +43,18 @@ userResponse() {
   return 0
 }
 
-
-create_a_template_file() {
-cat >> ${HOME}/.prep.conf <<END
-#-------------------------------------------------------------------------------
-# default conf file for the MariaDB 'prep' script
-#-------------------------------------------------------------------------------
-# The 'prep' script is part of mariadb-tools on Launchpad
-#   bzr branch lp:mariadb-tools
-
-# Please edit and put in valid paths
-
-# Full path to where buildbot saves files
-archive_dir="/path/to/archive/pack"
-
-# Full path to where various packages are located
-galera_dir="/path/to/galera"
-jemalloc_dir="/path/to/jemalloc" # Location of jemalloc pkgs
-nmap_dir="/path/to/nmap" # nmap pkg for sles12
-nmap_ver="6.25" # current nmap ver in sles12 repo
-at_dir="/path/to/advance-toolchain/" # Location of at pkgs
-  
-# Full paths to the mkrepo-* scripts
-DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
-UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
-   YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
-
-# Full path to the galera-* scripts
-GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
-
-# URL where Windows Builds are located
-winbuilder="http://example.net/builds"
-
-# Default gpg options, including the key to use
-    gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
-ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
-
-# Full paths to where the script should store releases
-    release_dir="/path/to/mariadb/releases"
-ent_release_dir="/path/to/mariadb-enterprise/releases"
-
-# Full path to P8 builds (if needed)
-p8_archive_dir="/path/to/p8/archive/builds"
-
-# Mirrors
-staging_mirror="mirror_name"
-primary_mirror="mirror_name"
-primary_mirror_rsync="rsync_addr_of_primary_mirror"
-corp_mirror="mirror_name"
-corp_mirror_path="/dest/dir/on/corp/mirror"
-yum_mirrors="mirror names"
-
-# Connectors
-cj_home="/path/to/connector/java/home"
-cj_home_corp="remote_home"
-cc_home="/path/to/connector/c/home"
-cc_home_corp="remote_home"
-co_home="/path/to/connector/odbc/home"
-co_home_corp="remote_home"
-
-# vim: filetype=sh
-
-END
-chown $(basename ${HOME}): ${HOME}/.prep.conf
-}
-
-
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${HOME}/.prep.conf ]; then
       . ${HOME}/.prep.conf
   else
     echo
-    echo "The file ${HOME}/.prep.conf does not exist in your home"
-    echo "directory. If it does not exist, and have valid settings in it,"
-    echo "this script will fail. I can create a default template file for you"
-    echo "to fill out. Afterwards, please re-run this script."
-    echo
-    shouldI create_a_template_file
-    # after creating the file, check if it exists again, if not, exit
-    if [ ! -f ${HOME}/.prep.conf ]; then
-      echo "I was unable to create ${HOME}/.prep.conf"
-      echo "Exiting..."
-      exit 3
-    else
-      echo
-      echo "Template file created at ${HOME}/.prep.conf"
-      echo "Please edit and re-run this script."
-      echo
-      exit 0
-    fi
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
   fi
 }
-
 
 usage() {
   set +x
@@ -181,7 +100,7 @@ unzip_and_stage_files() {
   set -x
   cd ${cj_home}
   unzip ${version}*.zip
-  mv -vi ${version} ${name_dir}
+  mv -vi ${version} ${dir_java}
   rm -v ${version}*.zip
   set +x
   echo;echo;echo
@@ -191,9 +110,9 @@ prep_org_files() {
   # Prep .org files
   echo;line;echo "Prepping org files";line;
   set -x
-  mkdir ${release_dir}/${name_dir}
-  cp -avi ${cj_home}/${name_dir}/${name_tarball} ${release_dir}/${name_dir}/
-  cd ${release_dir}/${name_dir}
+  mkdir ${dir_release}/${dir_java}
+  cp -avi ${cj_home}/${dir_java}/${tarball} ${dir_release}/${dir_java}/
+  cd ${dir_release}/${dir_java}
   sumgen
   for file in *;do
     gpg2 ${gpg_opts} ${file}
@@ -206,7 +125,7 @@ prep_com_files() {
   # Prep .com files
   echo;line;echo "Prepping com files";line;
   set -x
-  cd ${cj_home}/${name_dir}
+  cd ${cj_home}/${dir_java}
   sumgen
   for file in *;do
     gpg2 ${ent_gpg_opts} ${file}
@@ -221,7 +140,7 @@ upload_to_the_primary_mirror() {
   echo;echo;echo;
   echo;line;echo "Doing a dry-run...";line;
   set -x
-  rsync --dry-run -av --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+  rsync --dry-run -av --delete-after ${dir_release}/${dir_java} ${primary_mirror}:data/
   set +x
   echo;echo;echo
   while [ -z ${upload} ]; do
@@ -229,7 +148,7 @@ upload_to_the_primary_mirror() {
     case ${ANSWER} in
       "y")
         set -x
-        rsync -av --delete-after ${release_dir}/${name_dir} ${primary_mirror}:data/
+        rsync -av --delete-after ${dir_release}/${dir_java} ${primary_mirror}:data/
         set +x
         echo;echo;echo
         upload="yes"
@@ -254,7 +173,7 @@ upload_to_the_corp_mirror() {
   echo;echo;echo;
   echo;line;echo "Doing a dry-run...";line;
   set -x
-  rsync --dry-run -av --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+  rsync --dry-run -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
   set +x
   echo;echo;echo
   while [ -z ${upload} ]; do
@@ -262,7 +181,7 @@ upload_to_the_corp_mirror() {
     case ${ANSWER} in
       "y")
         set -x
-        rsync -av --delete-after ${cj_home}/${name_dir} ${cj_home_corp}/
+        rsync -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
         set +x
         echo;echo;echo
         upload="yes"

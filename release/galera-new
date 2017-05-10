@@ -55,34 +55,24 @@ esac
 # Options below this point you probably don't need to change
 #------------------------------------------------------------------------------
 
-# Import common variables
-. ${HOME}/.prep.conf
-
 release="mariadb-${num}"                  # release to add galera packages to
 
-gv="25.3.20"                 # version of galera in repositories
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
 
-# Set various options that change depending on whether this is an enterprise release or not
-if [ "${is_ent}" = "yes" ];then
-  suffix="signed-ent"
-  #gpg_key="0xd324876ebe6a595f"                 # old enterprise key
-  gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
-  release_dir="${ent_release_dir}" # Default location for mdbe releases
-  dir_name="${num}"
-  ubuntu_dists="precise trusty"
-  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
-  architectures="amd64"
-else
-  suffix="signed"
-  gpg_key="0xcbcb082a1bb943db"
-  dir_name="${release}"
-  architectures="amd64 x86"
-  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
-fi
-
-#------------------------------------------------------------------------------
-# Functions
-#------------------------------------------------------------------------------
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
 
 function runCommand() {
   echo "+ ${@}"
@@ -103,6 +93,26 @@ function line() {
 #------------------------------------------------------------------------------
 
 eval $(gpg-agent --daemon)
+
+loadDefaults                                    # Load Default paths and vars
+
+# Set various options that change depending on whether this is an enterprise release or not
+if [ "${is_ent}" = "yes" ];then
+  suffix="signed-ent"
+  #gpg_key="0xd324876ebe6a595f"                 # old enterprise key
+  gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
+  dir_release="${dir_release_ent}" # Default location for mdbe releases
+  dir_name="${num}"
+  ubuntu_dists="precise trusty"
+  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
+  architectures="amd64"
+else
+  suffix="signed"
+  gpg_key="0xcbcb082a1bb943db"
+  dir_name="${release}"
+  architectures="amd64 x86"
+  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
+fi
 
 # At this point, all variables should be set. Print a usage message if the
 # ${tarbuildnum} variable is not set (the last of the command-line variables)
@@ -127,37 +137,39 @@ if [ "${create_ubuntu}" != "no" ]; then
   line
   echo "+ Adding files to Ubuntu repo..."
   line
-  cd ${release_dir}/${dir_name}/repo/ubuntu
+  cd ${dir_release}/${dir_name}/repo/ubuntu
   for dist in ${ubuntu_dists} ; do
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-server*${dist}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-    done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-    done;
-    #if [ "${is_ent}" = "yes" ];then
+    for gv in ${ver_galera}; do
+      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-server*${dist}*.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+      done;
+      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
+        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+      done;
+      #if [ "${is_ent}" = "yes" ];then
+        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+          for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+          done;
+          for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*ppc64el.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+          done;
+        fi
+      #else
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+      #fi
+      #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
+      runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
       if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
-          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-        done;
-        for file in $(find "${p8_archive_dir}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*ppc64el.deb"); do
-          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-        done;
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
       fi
-    #else
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-      done;
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-      done;
-      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-    #fi
-    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
-    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-    if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
-    fi
+    done
   done
 else
   line
@@ -173,33 +185,35 @@ if [ "${create_debian}" != "no" ]; then
   line
   echo "+ Adding files to Debian repo..."
   line
-  cd ${release_dir}/${dir_name}/repo/debian
+  cd ${dir_release}/${dir_name}/repo/debian
   
   #for i in "squeeze debian6" "wheezy wheezy"; do
   #for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
   for dist in ${debian_dists}; do
-    if [ "${dist}" = "squeeze" ];then
-      builder="debian6"
-    else
-      builder="${dist}"
-    fi
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-server*${dist}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
-    done;
-    for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-test*${dist}*.deb"); do
-      runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
-    done;
-    if [ "${is_ent}" != "yes" ];then
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+    for gv in ${ver_galera}; do
+      if [ "${dist}" = "squeeze" ];then
+        builder="debian6"
+      else
+        builder="${dist}"
+      fi
+      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-server*${dist}*.deb"); do
         runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
       done;
-      for file in $(find "${archive_dir}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-test*${dist}*.deb"); do
         runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
       done;
-      runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-    fi
-    #for file in $(find "${galera_dir}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-    runCommand reprepro --basedir=. include ${dist} ${galera_dir}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+      if [ "${is_ent}" != "yes" ];then
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
+        done;
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
+        done;
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+      fi
+      #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+      runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+    done
   done
 else
   line
@@ -215,7 +229,7 @@ if [ "${create_yum}" != "no" ]; then
   line
   echo "+ Adding files to rpm repos..."
   line
-  cd ${release_dir}/${dir_name}/yum
+  cd ${dir_release}/${dir_name}/yum
   for REPONAME in ${yum_dists}; do
     for ARCH in ${architectures}; do
       # Remove old Galera files
@@ -226,78 +240,94 @@ if [ "${create_yum}" != "no" ]; then
       case ${REPONAME} in 
         'rhel7'|'centos7')
           if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel7*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            for gv in ${ver_galera}; do
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel7*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            done
           fi
           ;;
         'rhel6'|'centos6')
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*i686.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          for gv in ${ver_galera}; do
+            if [ "${ARCH}" = "amd64" ]; then
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            else
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*i686.rpm ${REPONAME}-${ARCH}/rpms/
+            fi
+          done
           ;;
         'rhel5'|'centos5')
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*i386.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          for gv in ${ver_galera}; do
+            if [ "${ARCH}" = "amd64" ]; then
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            else
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*i386.rpm ${REPONAME}-${ARCH}/rpms/
+            fi
+          done
           ;;
         'opensuse13')
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*i586.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          for gv in ${ver_galera}; do
+            if [ "${ARCH}" = "amd64" ]; then
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            else
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*i586.rpm ${REPONAME}-${ARCH}/rpms/
+            fi
+          done
           ;;
         'opensuse42')
           if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles42*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            for gv in ${ver_galera}; do
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles42*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            done
           fi
           ;;
         'sles11')
           if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
             # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
-            #runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            #runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            #runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            #runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           else
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
           fi
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*i586.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
+          for gv in ${ver_galera}; do
+            if [ "${ARCH}" = "amd64" ]; then
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            else
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*i586.rpm ${REPONAME}-${ARCH}/rpms/
+            fi
+          done
           ;;
         'sles12')
           if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+            for gv in ${ver_galera}; do
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            done
           fi
           ;;
         'fedora22'|'fedora23'|'fedora24')
           fcnum="${REPONAME:(-2)}"
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${archive_dir}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*i686.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
+          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
+          for gv in ${ver_galera}; do
+            if [ "${ARCH}" = "amd64" ]; then
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
+            else
+              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*i686.rpm ${REPONAME}-${ARCH}/rpms/
+            fi
+          done
           ;;
       esac
     done
@@ -332,20 +362,22 @@ if [ "${create_yum}" != "no" ]; then
       runCommand rm -v ${P8_DIR}-${P8_ARCH}/rpms/galera*
       
       # copy in new files
-      runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
-      runCommand cp -avi ${p8_archive_dir}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
-      runCommand cp -avi ${galera_dir}/galera-${gv}-${suffix}/rpm/galera-${gv}*${P8_DIR}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
+      runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
+      runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
+      for gv in ${ver_galera}; do
+        runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*${P8_DIR}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
+      done
     done
     echo;echo;
   #fi
 
   # all rpm packages are now in place, sign them
-  cd ${release_dir}/${dir_name}/yum
+  cd ${dir_release}/${dir_name}/yum
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   
   # updating the repositories doesn't work over nfs so we need to move the
   # yum dir to $HOME and then move it back when we're done
-  runCommand mv -i ${release_dir}/${dir_name}/yum ~/
+  runCommand mv -i ${dir_release}/${dir_name}/yum ~/
   cd ~/yum
   
   # update the sums, refresh the repo metadata, & sign the repomd.xml files
@@ -404,7 +436,7 @@ if [ "${create_yum}" != "no" ]; then
   done
 
   # moving the yum dir back to where it belongs
-  runCommand mv -i ~/yum ${release_dir}/${dir_name}/
+  runCommand mv -i ~/yum ${dir_release}/${dir_name}/
 
 else
   line

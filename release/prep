@@ -48,13 +48,13 @@ set -eu
 #galera_suffix="-galera"
 #galera_suffix=""
 
-# Set ${galera_versions} to the currently supported Galera versions,
+# Set ${ver_galera} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.20"
+ver_galera="25.3.20"
 
-# Set ${galera_preferred} to the version we include in the bintars and
-# repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.20"
+# Set ${ver_galera_preferred} to the version we include in the bintars and
+# repositories (often the same as ${ver_galera} but can be different).
+ver_galera_preferred="25.3.20"
 
 # We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
 # Duplicate & edit the appropriate lines below. Old settings are generally
@@ -218,25 +218,30 @@ cat >> ${HOME}/.prep.conf <<END
 #-------------------------------------------------------------------------------
 # default conf file for the MariaDB 'prep' script
 #-------------------------------------------------------------------------------
-# The 'prep' script is part of mariadb-tools on Launchpad
-#   bzr branch lp:mariadb-tools
+# The 'prep' script is part of mariadb.org-tools on GitHub
+#   git clone https://github.com/MariaDB/mariadb.org-tools.git
 
 # Please edit and put in valid paths
 
 # Full path to where buildbot saves files
-archive_dir="/path/to/archive/pack"
+dir_archive="/path/to/archive/pack"
 
 # Full path to where various packages are located
-galera_dir="/path/to/galera"
-jemalloc_dir="/path/to/jemalloc" # Location of jemalloc pkgs
-nmap_dir="/path/to/nmap" # nmap pkg for sles12
-nmap_ver="6.25" # current nmap ver in sles12 repo
-at_dir="/path/to/advance-toolchain/" # Location of at pkgs
+dir_galera="/path/to/galera"
+dir_jemalloc="/path/to/jemalloc" # Location of jemalloc pkgs
+dir_nmap="/path/to/nmap" # nmap pkg for sles12
+dir_at="/path/to/advance-toolchain" # Location of at pkgs
+dir_rpm_shared="/path/to/shared/rpm/dir"
+dir_judy="/path/to/judy" # Location of judy pkgs
+
+ver_galera="25.3.20"                        # galera version[s] in our repos
+ver_galera_preferred="25.3.20"              # preferred galera version
+ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
-DEBIAN="/path/to/mariadb-tools/release/mkrepo-debian.sh"
-UBUNTU="/path/to/mariadb-tools/release/mkrepo-ubuntu.sh"
-   YUM="/path/to/mariadb-tools/release/mkrepo-yum.sh"
+DEBIAN="/path/to/mariadb.org-tools/release/mkrepo-debian.sh"
+UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
+   YUM="/path/to/mariadb.org-tools/release/mkrepo-yum.sh"
 
 # Full path to the galera-* scripts
 GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
@@ -245,15 +250,17 @@ GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
 winbuilder="http://example.net/builds"
 
 # Default gpg options, including the key to use
+     gpg_key="0xcbcb082a1bb943db"
     gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
+ ent_gpg_key="0xce1a3dd5e3c94f49"
 ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 
 # Full paths to where the script should store releases
-    release_dir="/path/to/mariadb/releases"
-ent_release_dir="/path/to/mariadb-enterprise/releases"
+    dir_release="/path/to/mariadb/releases"
+dir_release_ent="/path/to/mariadb-enterprise/releases"
 
 # Full path to P8 builds (if needed)
-p8_archive_dir="/path/to/p8/archive/builds"
+dir_archive_p8="/path/to/p8/archive/builds"
 
 # Mirrors
 staging_mirror="mirror_name"
@@ -261,6 +268,7 @@ primary_mirror="mirror_name"
 primary_mirror_rsync="rsync_addr_of_primary_mirror"
 corp_mirror="mirror_name"
 corp_mirror_path="/dest/dir/on/corp/mirror"
+yum_primary_mirror="bb01"
 yum_mirrors="mirror names"
 
 # Connectors
@@ -288,7 +296,7 @@ cat >> ${HOME}/.prep.log <<END
 # num="${num}"
 # tarbuildnum="${tarbuildnum}"
 # version="${version}"
-# release_dir/dir_name="${release_dir}/${dir_name}"
+# dir_release/dir_name="${dir_release}/${dir_name}"
 # is_ent="${is_ent}"
 # is_cluster="${is_cluster}"
 # create_bintar="${create_bintar}"
@@ -297,13 +305,13 @@ cat >> ${HOME}/.prep.log <<END
 # create_ubuntu="${create_ubuntu}"
 # create_yum="${create_yum}"
 # incl_galera="${incl_galera}"
-# archive_dir="${archive_dir}"
-# galera_dir="${galera_dir}"
+# dir_archive="${dir_archive}"
+# dir_galera="${dir_galera}"
 # DEBIAN="${DEBIAN}"
 # UBUNTU="${UBUNTU}"
 # YUM="${YUM}"
 # winbuilder="${winbuilder}"
-# p8_archive_dir="${p8_archive_dir}"
+# dir_archive_p8="${dir_archive_p8}"
 # gpg_opts="${gpg_opts}"
 
 END
@@ -405,9 +413,9 @@ line() {
 upload_to_the_staging_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${staging_mirror}:data/
+    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:data/
   else
-    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${staging_mirror}:data/
+    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${staging_mirror}:data/
   fi
   set +x
 }
@@ -420,9 +428,9 @@ upload_to_the_staging_mirror() {
 upload_from_the_staging_mirror_to_the_primary_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${version_nog} ${release_dir}/${dir_name} ${primary_mirror}:data/"
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
   else
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${release_dir}/${dir_name} ${primary_mirror}:data/"
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
   fi
   set +x
 }
@@ -451,13 +459,13 @@ upload_from_the_primary_mirror_to_the_yum_mirrors() {
 activate_the_yum_repos() {
   case ${tree} in
     "5.5-galera")
-      osuosl_dir='5.5'
+      dir_osuosl='5.5'
       ;;
     "10.0-galera")
-      osuosl_dir='10.0'
+      dir_osuosl='10.0'
       ;;
     *)
-      osuosl_dir="${tree}"
+      dir_osuosl="${tree}"
       ;;
   esac
   if [ "${galera_suffix}" = "-galera" ]; then
@@ -468,7 +476,7 @@ activate_the_yum_repos() {
     for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
       ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
     done
-    ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/yum/ data/yum/${osuosl_dir}/";
+    ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/yum/ data/yum/${dir_osuosl}/";
     ssh -t -t ${primary_mirror} "./trigger-mariadb";
     set +x
   fi
@@ -482,16 +490,16 @@ activate_the_deb_repos() {
   set -x
   case ${tree} in
     "5.5-galera")
-      osuosl_dir='5.5'
+      dir_osuosl='5.5'
       ;;
     "10.0-galera")
-      osuosl_dir='10.0'
+      dir_osuosl='10.0'
       ;;
     *)
-      osuosl_dir="${tree}"
+      dir_osuosl="${tree}"
       ;;
   esac
-  ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/repo/ data/repo/${osuosl_dir}/";
+  ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/repo/ data/repo/${dir_osuosl}/";
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
 }
@@ -516,12 +524,12 @@ upload_to_the_corp_mirror() {
 #   DESCRIPTION:  Create the release dir if it doesn't exist
 #===============================================================================
 maybe_create_release_dir() {
-  if [ ! -d ${release_dir}/${dir_name} ]; then
+  if [ ! -d ${dir_release}/${dir_name} ]; then
     echo
     line
     echo "+ creating release dir..."
     line
-    mkdir -v ${release_dir}/${dir_name}
+    mkdir -v ${dir_release}/${dir_name}
     echo
   fi
 }
@@ -537,16 +545,16 @@ maybe_fix_permissions() {
     line
     echo "+ fixing permissions..."
     line
-    for dir in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type d);do
+    for dir in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type d);do
       sudo chmod 755 "${dir}"
     done
-    for file in $(sudo find ${archive_dir}/${tree}/build-${tarbuildnum}/ -type f);do
+    for file in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type f);do
       sudo chmod 644 "${file}"
     done
-    for dir in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type d);do
+    for dir in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type d);do
       sudo chmod 755 "${dir}"
     done
-    for file in $(sudo find ${p8_archive_dir}/${tree}/${rev}/ -type f);do
+    for file in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type f);do
       sudo chmod 644 "${file}"
     done
     fixed="yes" # set fixed to 'yes' so that this function doesn't run again
@@ -672,7 +680,7 @@ if [ "${is_ent}" = "yes" ];then
   # new enterprise key (2014-12-18)
   gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 
-  release_dir="${ent_release_dir}"  # Default location for MariaDB Enterprise
+  dir_release="${dir_release_ent}"  # Default location for MariaDB Enterprise
   build_dirs="${ent_build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
 
   if [ "${galera_suffix}" = "-galera" ]; then
@@ -715,7 +723,7 @@ eval $(gpg-agent --daemon)
 if [ "${create_bintar}" != "no" ]; then
   maybe_create_release_dir
   maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${release_dir}/${dir_name}
+  cd ${dir_release}/${dir_name}
   line
   echo "+ transfering bintar & source packages..."
   line
@@ -725,7 +733,7 @@ if [ "${create_bintar}" != "no" ]; then
       mkdir ${dir_array[1]}
     fi
     if [ "${dir_array[1]}" = "source" ]; then
-      if rsync ${rsync_opts} "${archive_dir}/${tree}/build-${tarbuildnum}/${dir_array[0]}/mariadb-${num}.tar.gz" "./${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+      if rsync ${rsync_opts} "${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}/mariadb-${num}.tar.gz" "./${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
         cd ${dir_array[1]}
         # rename the source tarball for enterprise
         if [ "${is_ent}" = "yes" ];then
@@ -772,7 +780,7 @@ if [ "${create_bintar}" != "no" ]; then
       fi
       echo "+ transfer of ${dir_array[1]} done"
       echo
-    elif rsync ${rsync_opts} "${archive_dir}/${tree}/build-${tarbuildnum}/${dir_array[0]}/" "./${dir_array[1]}/"; then
+    elif rsync ${rsync_opts} "${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}/" "./${dir_array[1]}/"; then
       echo "+ transfer of ${dir_array[1]} done"
       cd ${dir_array[1]}
       if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
@@ -791,10 +799,10 @@ if [ "${create_bintar}" != "no" ]; then
           tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
           mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
           mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
           rm -rf ${version}-linux-glibc_214-${galera_arch}
         else
@@ -843,10 +851,10 @@ if [ "${create_bintar}" != "no" ]; then
           tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
           mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
           mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
           tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
           rm -rf ${version}-linux-systemd-${galera_arch}
         else
@@ -901,12 +909,12 @@ if [ "${create_bintar}" != "no" ]; then
           if [ ! -d ${version}-linux-${galera_arch} ]; then
             mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
           fi
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
-          #cp -avi ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-          rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
-          #if [ -d ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ];then
-          #  rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
+          #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+          rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+          #if [ -d ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib64 ];then
+          #  rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
           #fi
           tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
           rm -rf ${version}-linux-${galera_arch}
@@ -995,13 +1003,13 @@ if [ "${create_bintar}" != "no" ]; then
     line
     echo "+ transfering Galera source and package files..."
     line
-    for galera_version in ${galera_versions}; do
+    for galera_version in ${ver_galera}; do
       mkdir -vp ./galera-${galera_version}
-      if rsync ${rsync_opts} --exclude=repo "${galera_dir}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
-        echo "+ transfer of ${galera_dir}/galera-${galera_version} done"
+      if rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
+        echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
         echo
       else
-        echo "! failed to transfer ${galera_dir}/galera-${galera_version}"
+        echo "! failed to transfer ${dir_galera}/galera-${galera_version}"
         # if the transfer failed, the directory might be empty, if it is we want it
         # removed, so we run rmdir on it
         rmdir "galera-${galera_version}"
@@ -1027,7 +1035,7 @@ fi
 if [ "${create_p8_bintar}" != "no" ]; then
   maybe_create_release_dir
   maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${release_dir}/${dir_name}
+  cd ${dir_release}/${dir_name}
   line
   echo "+ transfering p8 bintar packages..."
   echo ${p8_build_dirs}
@@ -1037,7 +1045,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
     if [ ! -d ${p8_dir_array[1]} ]; then
       mkdir ${p8_dir_array[1]}
     fi
-    if rsync ${rsync_opts} "${p8_archive_dir}/${tree}/${rev}/${p8_dir_array[0]}/" "./${p8_dir_array[1]}/"; then
+    if rsync ${rsync_opts} "${dir_archive_p8}/${tree}/${rev}/${p8_dir_array[0]}/" "./${p8_dir_array[1]}/"; then
       echo "+ transfer of ${p8_dir_array[1]} done"
       cd ${p8_dir_array[1]}
 
@@ -1056,8 +1064,8 @@ if [ "${create_p8_bintar}" != "no" ]; then
             #  mv -vi *-linux-ppc64 ${version}-${BINTAR}-ppc64.tar.gz
             #fi
             ## copy over the bin/ and lib/ dirs
-            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
-            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
+            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
+            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
             ## repack the tarball & cleanup
             #tar -czf ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64
             #rm -rf ${version}-${BINTAR}-ppc64
@@ -1084,8 +1092,8 @@ if [ "${create_p8_bintar}" != "no" ]; then
             #  mv -vi *-linux-ppc64le ${version}-${BINTAR}-ppc64le.tar.gz
             #fi
             ## copy over the bin/ and lib/ dirs
-            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
-            #rsync -av ${galera_dir}/galera-${galera_preferred}/bintar/galera-${galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
+            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
+            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
             ## repack the tarball & cleanup
             #tar -czf ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le
             #rm -rf ${version}-${BINTAR}-ppc64le
@@ -1164,15 +1172,15 @@ if [ "${galera_suffix}" != "-galera" ]; then
   if [ "${create_win}" != "no" ]; then
     maybe_create_release_dir
     maybe_fix_permissions # fix permissions if they haven't already been fixed
-    cd ${release_dir}/${dir_name}
+    cd ${dir_release}/${dir_name}
     line
     echo "+ transfering Windows packages..."
     line
     for arch in win32 winx64; do
-      if [ ! -d ${release_dir}/${dir_name}/${arch}-packages ]; then
-        mkdir ${release_dir}/${dir_name}/${arch}-packages
+      if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
+        mkdir ${dir_release}/${dir_name}/${arch}-packages
       fi
-      cd ${release_dir}/${dir_name}/${arch}-packages
+      cd ${dir_release}/${dir_name}/${arch}-packages
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
         wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
@@ -1184,7 +1192,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
     echo "+ fixing Win md5sums..."
     line
     for arch in win32 winx64; do
-      cd ${release_dir}/${dir_name}/${arch}-packages
+      cd ${dir_release}/${dir_name}/${arch}-packages
       pwd
       dos2unix md5sums.txt
       grep ${arch} md5sums.txt > md5sums.txt.tmp
@@ -1244,23 +1252,23 @@ if [ "${galera_suffix}" = "-galera" ]; then
 else
   maybe_create_release_dir
   maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${release_dir}/${dir_name}
+  cd ${dir_release}/${dir_name}
   # Since this is not a galera release, create repos normally
   echo
   echo
   echo
   # if the dir doesn't exist, create it
-  if [ ! -d ${release_dir}/${dir_name}/repo ]; then
-    mkdir ${release_dir}/${dir_name}/repo
+  if [ ! -d ${dir_release}/${dir_name}/repo ]; then
+    mkdir ${dir_release}/${dir_name}/repo
   fi
 
-  cd ${release_dir}/${dir_name}/repo
+  cd ${dir_release}/${dir_name}/repo
 
   # create directory for the non-mgc version, if ubuntu or debian packages are
   # going to be created and if it doesn't already exist
   if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
-    if [ ! -d ${release_dir}/repo-no-mgc/${num} ]; then
-      mkdir -vp ${release_dir}/repo-no-mgc/${num}
+    if [ ! -d ${dir_release}/repo-no-mgc/${num} ]; then
+      mkdir -vp ${dir_release}/repo-no-mgc/${num}
     fi
   fi
 
@@ -1274,21 +1282,21 @@ else
   #-------------------------------------------------------------------------------
   if [ "${create_debian}" != "no" ]; then
     ## if the debian repo dir exists, delete it
-    #if [ -d ${release_dir}/${dir_name}/repo/debian ]; then
-    #  rm -rf "${release_dir}/${dir_name}/repo/debian"
+    #if [ -d ${dir_release}/${dir_name}/repo/debian ]; then
+    #  rm -rf "${dir_release}/${dir_name}/repo/debian"
     #fi
 
     # trying updating the previous repo instead of creating a new one every time
-    rsync -a --delete ${release_dir}/mariadb-${prev_release}/repo/debian ${release_dir}/${dir_name}/repo/
+    rsync -a --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
 
     line
     echo "+ creating Debian repos..."
     line
-    echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${archive_dir}/${tree}/build-${tarbuildnum}"
-     ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${archive_dir}/${tree}/build-${tarbuildnum}
+    echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
+     ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
 
-    # after creating the repo, copy it to ${release_dir}/repo-no-mgc
-    rsync -a --delete ${release_dir}/${dir_name}/repo/debian ${release_dir}/repo-no-mgc/${num}/
+    # after creating the repo, copy it to ${dir_release}/repo-no-mgc
+    rsync -a --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/
   else
     line
     echo "+ Skipping Debian repo creation, as requested..."
@@ -1300,31 +1308,31 @@ else
   #-------------------------------------------------------------------------------
   if [ "${create_ubuntu}" != "no" ]; then
     ## if the ubuntu repo dir exists, delete it
-    #if [ -d ${release_dir}/${dir_name}/repo/ubuntu ]; then
-    #  rm -rf "${release_dir}/${dir_name}/repo/ubuntu"
+    #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
+    #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
     #fi
 
     # trying updating the previous repo instead of creating a new one every time
-    rsync -a --delete ${release_dir}/mariadb-${prev_release}/repo/ubuntu ${release_dir}/${dir_name}/repo/
+    rsync -a --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
 
     line
     echo "+ creating Ubuntu repos..."
     line
 
     if [ "${is_ent}" = "yes" ];then
-      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     else
-      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     fi
 
-    # after creating the repo, copy it to ${release_dir}/repo-no-mgc
-    rsync -a --delete ${release_dir}/${dir_name}/repo/ubuntu ${release_dir}/repo-no-mgc/${num}/
+    # after creating the repo, copy it to ${dir_release}/repo-no-mgc
+    rsync -a --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/
   else
     line
     echo "+ Skipping Ubuntu repo creation, as requested..."
     line
   fi
-  cd ${release_dir}/${dir_name}
+  cd ${dir_release}/${dir_name}
   echo
 
   #-------------------------------------------------------------------------------
@@ -1334,8 +1342,8 @@ else
     line
     echo "creating Yum repos..."
     line
-    if [ -d ${release_dir}/${dir_name}/yum ]; then
-      rm -rf "${release_dir}/${dir_name}/yum"
+    if [ -d ${dir_release}/${dir_name}/yum ]; then
+      rm -rf "${dir_release}/${dir_name}/yum"
     fi
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
@@ -1343,27 +1351,27 @@ else
     cd ${HOME}/yum
 
     if [ "${is_ent}" = "yes" ];then
-      ${YUM} ${incl_galera} ${is_ent} ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+      ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     else
-      ${YUM} ${incl_galera} ${is_ent} ${archive_dir}/${tree}/build-${tarbuildnum} ${p8_archive_dir}/${tree}/${rev}
+      ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     fi
 
     # move the yum dir to where it needs to go
-    echo "+ mv -i ${HOME}/yum ${release_dir}/${dir_name}/"
-    mv -i ${HOME}/yum ${release_dir}/${dir_name}/
-    cd ${release_dir}/${dir_name}/yum
+    echo "+ mv -i ${HOME}/yum ${dir_release}/${dir_name}/"
+    mv -i ${HOME}/yum ${dir_release}/${dir_name}/
+    cd ${dir_release}/${dir_name}/yum
 
-    # after creating the yum repo, copy it to ${release_dir}/yum-no-mgc (deleting
+    # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
-    if [ ! -d ${release_dir}/yum-no-mgc ]; then
-      mkdir -vp ${release_dir}/yum-no-mgc
+    if [ ! -d ${dir_release}/yum-no-mgc ]; then
+      mkdir -vp ${dir_release}/yum-no-mgc
     fi
-    if [ -d ${release_dir}/yum-no-mgc/${num} ]; then
-      echo "+ rm -rf ${release_dir}/yum-no-mgc/${num}"
-      rm -rf ${release_dir}/yum-no-mgc/${num}
+    if [ -d ${dir_release}/yum-no-mgc/${num} ]; then
+      echo "+ rm -rf ${dir_release}/yum-no-mgc/${num}"
+      rm -rf ${dir_release}/yum-no-mgc/${num}
     fi
-    echo "+ cp -ai ${release_dir}/${dir_name}/yum ${release_dir}/yum-no-mgc/${num}"
-    cp -ai ${release_dir}/${dir_name}/yum ${release_dir}/yum-no-mgc/${num}
+    echo "+ cp -ai ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}"
+    cp -ai ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}
   else
     line
     echo "+ Skipping Yum repo creation, as requested..."
