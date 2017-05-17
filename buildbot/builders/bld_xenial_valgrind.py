@@ -99,11 +99,6 @@ esac
 
 SKIP_TESTS='--skip-test=^tokudb\.|^tokudb_alter_table\.|^tokudb_bugs\.|^rpl-tokudb\.|^tokudb_add_index\.'
 
-# TODO-881: disable main.mdev-504 test until the corresponding commit
-#           reaches all trees
-
-SKIP_TESTS=$SKIP_TESTS'|main.mdev-504'
-
 # Due to MDEV-11686, disabling encryption tests
 
 SKIP_TESTS=$SKIP_TESTS'|encryption\.'
