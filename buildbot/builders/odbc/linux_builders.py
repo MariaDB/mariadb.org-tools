@@ -50,7 +50,7 @@ cmake --build . --config RelWithDebInfo --target package
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*linux*tar.gz`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
@@ -152,7 +152,7 @@ setarch i386 make package
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*linux*tar.gz`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
