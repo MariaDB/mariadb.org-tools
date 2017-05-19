@@ -617,10 +617,18 @@ f_win_rqg_se.addStep(getMTR(
 #));
 
 f_win_rqg_se.addStep(Test(
-        name = "rqg_crash_tests",
+        name = "crash_tests",
 	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests")]
 ));
+
+f_win_rqg_se.addStep(Test(
+        name = "crash_summary",
+        timeout=3600,
+        alwaysRun=True,
+        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+));
+
 
 #f_win_rqg_se.addStep(Test(
 #        name = "rqg_bugfix_tests",
@@ -649,15 +657,35 @@ f_win_rqg_se.addStep(Compile(
 # now the tests just report crashes, but no stack trace or anything in the log
 f_win_rqg_se.addStep(Test(
         name = "enable_app_verifier",
-#        doStepIf=branch_is_10_1_or_later,
-	doStepIf=False,
+        doStepIf=branch_is_5_5_or_later,
+#	doStepIf=False,
         command=["dojob", "appverif", "/verify", "mysqld.exe"]
 ));
 
 f_win_rqg_se.addStep(Test(
-        name = "rqg_opt_comparison",
+        name = "comparison",
 	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison"), '||', "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison")]
+));
+
+f_win_rqg_se.addStep(Test(
+        name = "comparison_summary",
+        timeout=3600,
+        alwaysRun=True,
+        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+));
+
+f_win_rqg_se.addStep(Test(
+        name = "transform",
+        timeout=3600,
+        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build --workdir=%(logdir)s\\optim-transform")]
+));
+
+f_win_rqg_se.addStep(Test(
+        name = "transform_summary",
+        timeout=3600,
+	alwaysRun=True,
+        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
 ));
 
 #f_win_rqg_se.addStep(Test(
@@ -693,9 +721,9 @@ f_win_rqg_se.addStep(ShellCommand(
 # Disabled due to MDEV-10010
 f_win_rqg_se.addStep(Test(
         name = "app_verifier",
-#        doStepIf=branch_is_5_5_or_later,
-	doStepIf=False,
-        command=["dojob", WithProperties("appverif -export log -for mysqld.exe -with to=%(logdir)s\\engine_stress_innodb\\appverif.xml && cat %(logdir)s\\engine_stress_innodb\\appverif.xml")]
+        doStepIf=branch_is_5_5_or_later,
+#	doStepIf=False,
+        command=["dojob", WithProperties("dir %(logdir)s && appverif -export log -for mysqld.exe -with to=%(logdir)s\\appverif.xml && cat %(logdir)s\\appverif.xml")]
 ))
 
 bld_win_rqg_se = {
