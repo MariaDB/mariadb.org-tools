@@ -1,202 +1,3 @@
-#
-# Random Query Generator tests - http://www.launchpad.net/randgen
-#
-
-f_rqg_mariaengine = factory.BuildFactory()
-f_rqg_mariaengine.addStep(maybe_bzr_checkout)
-f_rqg_mariaengine.addStep(maybe_git_checkout)
-f_rqg_mariaengine.addStep(getCompileStep(["BUILD/compile-pentium-debug-max"],
-                               env={"EXTRA_FLAGS": "-O2 -Wuninitialized -DFORCE_INIT_OF_VARS",
-                                    "EXTRA_CONFIGS": "--with-embedded-privilege-control",
-                                    "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"}))
-#f_rqg_mariaengine.addStep(ShellCommand(
-#        description=["patching","MTRv1"], descriptionDone=["patched","MTRv1"],
-#        workdir=".",
-#        command=["sh", "-c", "patch -p 0 --directory=build < mtrv1.patch || true"]))
-
-f_rqg_mariaengine.addStep(ShellCommand(
-        name = "bzr_pull_rqg",
-        command=["sh", "-c", "bzr pull -d $RQG_HOME"],
-        timeout = 3600
-));
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_stress --grammar=$RQG_HOME/conf/engines/engine_stress.yy --gendata=$RQG_HOME/conf/engines/engine_stress.zz --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=240 --queries=1M --engine=Aria --rows=10000 --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--safe-mode"],
-                description=["RQG", "maria_stress"], name = "rqg_maria_stress"
-                ))
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_many_indexes --grammar=$RQG_HOME/conf/engines/many_indexes.yy --gendata=$RQG_HOME/conf/engines/many_indexes.zz  --rows=10000 --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=120 --queries=1M --engine=Aria --rows=10000 --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--safe-mode"],
-                description=["RQG", "rqg_maria_many_indexes"], name = "rqg_maria_many_indexes"
-                ))
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_tiny_inserts --grammar=$RQG_HOME/conf/engines/tiny_inserts.yy --gendata=$RQG_HOME/conf/engines/tiny_inserts.zz --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=240 --queries=1M --engine=Aria --rows=10000 --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--safe-mode"],
-                description=["RQG", "maria_tiny_inserts"], name = "rqg_maria_tiny_inserts"
-                ))
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_varchar --grammar=$RQG_HOME/conf/engines/varchar.yy --gendata=$RQG_HOME/conf/engines/varchar.zz --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=120 --queries=1M --engine=Aria --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--loose-skip-innodb --mysqld=--loose-pbxt=OFF --mysqld=--safe-mode --mysqld=--default-storage-engine=Aria"],
-                description=["RQG", "maria_varchar"], name = "rqg_maria_varchar"
-                ))
-
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_smf2 --grammar=$RQG_HOME/conf/smf/smf2.yy --skip-gendata --mysqld=--init-file=$RQG_HOME/conf/smf/smf2.sql --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=120 --queries=1M --engine=Aria --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--loose-skip-innodb --mysqld=--loose-pbxt=OFF --mysqld=--safe-mode --mysqld=--default-storage-engine=Aria"],
-                description=["RQG", "maria_smf2"], name = "rqg_maria_smf"
-                ))
-
-f_rqg_mariaengine.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=72 --basedir=. --vardir=../../vardir-maria_dbt_dml --grammar=$RQG_HOME/conf/dbt3/dbt3-dml.yy --skip-gendata --mysqld=--init-file=$RQG_HOME/conf/dbt3/dbt3-s0.0001.dump --reporter=Backtrace,ErrorLog,Recovery,Shutdown --duration=120 --queries=1M --engine=Aria --mysqld=--aria-checkpoint-interval=0  --mysqld=--log-output=file --seed=time --mysqld=--loose-skip-innodb --mysqld=--loose-pbxt=OFF --mysqld=--safe-mode --mysqld=--default-storage-engine=Aria"],
-                description=["RQG", "maria_dbt_dml"], name = "rqg_maria_dbt_dml"
-                ))
-
-bld_rqg_mariaengine = {'name': 'rqg-perpush-mariaengine',
-             'slavename': 'centos56-quality2',
-             'builddir': 'rqg-perpush-mariaengine',
-             'factory': f_rqg_mariaengine,
-             "nextBuild": myNextBuild,
-             'category': 'experimental',
-             }
-
-#
-# Regression tests for 5.3 optimizer, to protect against diverging from 5.2 in non-subquery SELECTs
-#
-
-f_rqg_optimizer = factory.BuildFactory()
-f_rqg_optimizer.addStep(maybe_bzr_checkout)
-f_rqg_optimizer.addStep(maybe_git_checkout)
-f_rqg_optimizer.addStep(getCompileStep(["BUILD/compile-pentium-debug-max"]))
-
-# Fails due to bug in maria-5.2, and we would like to regression-test maria-5.3 instead
-# f_rqg_optimizer.addStep(Test(
-#                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=73 --basedir1=. --basedir2=/home/buildbot/static/maria-5.2 --threads=1 --duration=120 --queries=1M --grammar=$RQG_HOME/conf/optimizer/range_access.yy --gendata=$RQG_HOME/conf/optimizer/range_access.zz --validator=ResultsetComparatorSimplify --engine=InnoDB --seed=time --mysqld=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--optimizer_switch=index_merge=off --reporter=QueryTimeout,Backtrace,Shutdown"],
-#                name = "rqg_optimzer_ranges1"
-#                ))
-
-f_rqg_optimizer.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=73 --basedir1=. --basedir2=/home/buildbot/static/maria-5.2 --threads=1 --duration=120 --queries=1M --grammar=$RQG_HOME/conf/optimizer/range_access2.yy --gendata=$RQG_HOME/conf/optimizer/range_access2.zz --validator=ResultsetComparatorSimplify --engine=InnoDB --seed=time --mysqld=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--optimizer_switch=index_merge=off --reporter=QueryTimeout,Backtrace,Shutdown"],
-                name = "rqg_optimzer_ranges2"
-                ))
-
-# Not stable enough for a regression test, server crashes before the end of the test 
-# f_rqg_optimizer.addStep(Test(
-#                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=73 --basedir1=. --basedir2=/home/buildbot/static/maria-5.2 --threads=1 --duration=120 --queries=1M --grammar=$RQG_HOME/conf/optimizer/optimizer_no_subquery.yy --validator=ResultsetComparatorSimplify --engine=InnoDB --seed=time --mysqld=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--optimizer_switch=index_merge=off --reporter=QueryTimeout,Backtrace,Shutdown"],
-#                name = "rqg_optimzer_joins"
-#                ))
-
-bld_rqg_optimizer = {'name': 'rqg-perpush-optimizer',
-             'slavename': 'centos56-quality2',
-             'builddir': 'rqg-perpush-optimizer',
-             'factory': f_rqg_optimizer,
-             "nextBuild": myNextBuild,
-             'category': 'experimental',
-}
-
-#
-# Tests for replication enhancements
-#
-
-f_rqg_replication = factory.BuildFactory()
-f_rqg_replication.addStep(maybe_bzr_checkout)
-f_rqg_replication.addStep(maybe_git_checkout)
-f_rqg_replication.addStep(getCompileStep(["BUILD/compile-pentium-debug-max"],
-                               env={"EXTRA_FLAGS": "-O2 -Wuninitialized -DFORCE_INIT_OF_VARS",
-                                    "EXTRA_CONFIGS": "--with-embedded-privilege-control",
-                                    "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"}))
-
-f_rqg_replication.addStep(ShellCommand(
-        name = "bzr_pull_rqg",
-        command=["sh", "-c", "bzr pull -d $RQG_HOME"],
-        timeout = 3600
-));
-
-# MWL#116 Efficient group commit for binary log
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_groupcommit --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --threads=10 --queries=1M --duration=300 --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --validator=None --reporter=ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_rbr_groupcommit"
-                ))
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_sbr_groupcommit --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=statement --threads=10 --queries=1M --duration=300 --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --validator=None --reporter=ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_sbr_groupcommit"
-                ))
-
-# MWL#136 Cross-engine consistency for START TRANSACTION WITH CONSISTENT SNAPSHOT
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_cloneslave --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --threads=10 --queries=1M --duration=300 --validator=None --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --reporter=CloneSlave,Shutdown"],
-		name = "rqg_rpl_rbr_cloneslave"
-                ))
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_sbr_cloneslave --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=statement --threads=10 --queries=1M --duration=300 --validator=None --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --reporter=CloneSlave,Shutdown"],
-		name = "rqg_rpl_sbr_cloneslave"
-                ))
-
-# Using Xtrabackup + CHANGE MASTER to provision a new slave
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_cloneslave --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --threads=10 --queries=1M --duration=300 --validator=None --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --reporter=CloneSlaveXtrabackup,Shutdown"],
-		name = "rqg_rpl_rbr_xtrabackup"
-                ))
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_sbr_cloneslave --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=statement --threads=10 --queries=1M --duration=300 --validator=None --mysqld=--sync_binlog=1 --mysqld=--innodb-flush_log_at_trx_commit=1 --mysqld=--debug_binlog_fsync_sleep=100000 --reporter=CloneSlaveXtrabackup,Shutdown"],
-		name = "rqg_rpl_sbr_xtrabackup"
-                ))
-
-# MWL#47 Store in binlog text of statements that caused RBR events
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_binlogtext --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --threads=10 --queries=1M --duration=120 --mysqld=--debug=d,slave_crash_if_table_scan --mysqld=--binlog_annotate_row_events=1 --mysqld=--replicate_annotate_row_events=1 --validator=None --reporter=ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_rbr_binlogtext"
-                ))
-
-# Row-based replication with no primary key
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_nopk --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions_nopk.zz --rpl_mode=row --threads=10 --queries=1M --duration=120 --validator=None --reporter=ReplicationAnalyzeTable,ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_rbr_nopk"
-                ))
-
-f_rqg_replication.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=74 --basedir=. --vardir=../../vardir-rpl_rbr_checksum --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --mysqld=--binlog_checksum=CRC32 --mysqld=--master-verify-checksum=1 --mysqld=--slave-sql-verify-checksum=1 --mysqld=--binlog-annotate-row-events --mysqld=--replicate-annotate-row-events --threads=10 --queries=1M --duration=300 --validator=None --reporter=ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_rbr_checksum"
-                ))
-
-bld_rqg_replication = {'name': 'rqg-perpush-replication',
-             'slavename': 'centos56-quality2',
-             'builddir': 'rqg-perpush-replication',
-             'factory': f_rqg_replication,
-             "nextBuild": myNextBuild,
-             'category': 'experimental',
-             }
-
-# WL #180 Binlog event checksums
-
-f_rqg_replication_checksum = factory.BuildFactory()
-f_rqg_replication_checksum.addStep(maybe_bzr_checkout)
-f_rqg_replication_checksum.addStep(maybe_git_checkout)
-f_rqg_replication_checksum.addStep(getCompileStep(["BUILD/compile-pentium64-debug-max"],
-                               env={"EXTRA_FLAGS": "-DFORCE_INIT_OF_VARS",
-                                    "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"}))
-
-f_rqg_replication_checksum.addStep(Test(
-                command=["sh", "-c", "perl $RQG_HOME/runall.pl --mtr-build-thread=75 --basedir=. --vardir=../../vardir-rpl_rbr_checksum --grammar=$RQG_HOME/conf/replication/rpl_transactions.yy --gendata=$RQG_HOME/conf/replication/rpl_transactions.zz --rpl_mode=row --mysqld=--binlog_checksum=CRC32 --mysqld=--master-verify-checksum=1 --mysqld=--slave-sql-verify-checksum=1 --mysqld=--binlog-annotate-row-events --mysqld=--replicate-annotate-row-events --threads=10 --queries=1M --duration=300 --validator=None --reporter=ReplicationConsistency,Shutdown"],
-		name = "rqg_rpl_rbr_checksum"
-                ))
-
-bld_rqg_replication_checksum = {'name': 'rqg-perpush-replication-checksum',
-             'slavename': 'centos56-quality2',
-             'builddir': 'rqg-perpush-replication-checksum',
-             'factory': f_rqg_replication_checksum,
-             "nextBuild": myNextBuild,
-             'category': 'experimental',
-             }
-
-
 ###############################################################################################
 #
 # "QA" tests (as opposed to normal dev builders)
@@ -254,7 +55,6 @@ git pull
 """),
     ]))
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
     doStepIf=False,
     name="gtid_stress",
     description=["GTID-based replication"],
@@ -278,8 +78,7 @@ grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[
     ]))
 
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    doStepIf=(lambda(step): branch_is_10_x(step)),
     name="upgr_10.0",
     description=["Upgrade from 10.0"],
     descriptionDone=["Upgrade from 10.0"],
@@ -313,8 +112,7 @@ exit $res
     ]))
 
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    doStepIf=(lambda(step): branch_is_10_1_or_later(step)),
     name="upgr_5.6",
     description=["Upgrade from MySQL 5.6"],
     descriptionDone=["Upgrade from MySQL 5.6"],
@@ -349,8 +147,7 @@ exit $res
 
 
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-    doStepIf=(lambda(step): step.getProperty("branch") == "bb-10.1-mdev-11623" or step.getProperty("branch") == "bb-10.2-mdev-11623" or step.getProperty("branch") == "10.1" or step.getProperty("branch") == "10.2" or step.getProperty("branch") == "bb-10.2-elenst"),
+    doStepIf=(lambda(step): branch_is_10_1_or_later(step)),
     name="upgr_10_1",
     description=["Upgrade from 10.1"],
     descriptionDone=["Upgrade from 10.1"],
@@ -360,7 +157,7 @@ f_qa_linux.addStep(Test(
     WithProperties("""
 set -ex
 cd rqg
-export BUILD_HOME=/home/buildbot 
+export BUILD_HOME=/home/buildbot
 
 case "%(branch)s" in
 *10.1*)
@@ -384,9 +181,7 @@ exit $res
     ]))
 
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
-#    doStepIf=False,
+    doStepIf=(lambda(step): branch_is_10_2_or_later(step)),
     name="upgr_5.7",
     description=["Upgrade from MySQL 5.7"],
     descriptionDone=["Upgrade from MySQL 5.7"],
@@ -396,7 +191,7 @@ f_qa_linux.addStep(Test(
     WithProperties("""
 set -ex
 cd rqg
-export BUILD_HOME=/home/buildbot 
+export BUILD_HOME=/home/buildbot
 if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-mysql-5.7-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.7
 then
   res=0
@@ -412,9 +207,8 @@ exit $res
 
 
 f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and branch_is_not_10_3(step)),
-#    doStepIf=False,
-    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
+#    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
+    doStepIf=False,
     name="rqg_10.2",
     description=["10.2 features"],
     descriptionDone=["10.2 features"],
@@ -429,9 +223,7 @@ perl ./combinations.pl --new --config=conf/mariadb/10.2-new-features.cc --run-al
     ]))
 
 f_qa_linux.addStep(getMTR(
-#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
-#    doStepIf=False,
-    doStepIf=(lambda(step): step.getProperty("branch") == "10.0" or step.getProperty("branch") == "10.1"),
+    doStepIf=(lambda(step): branch_is_10_x(step)),
     name="engines",
     test_type="engines",
     test_info="MySQL engines/* tests",
@@ -446,9 +238,7 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
     ]))
 
 f_qa_linux.addStep(getMTR(
-#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step) and branch_is_not_10_2(step)),
-    doStepIf=False,
-#    doStepIf=(lambda(step): step.getProperty("branch") == "10.1"),
+    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
     name="stable_tests",
     test_type="nm",
     test_info="Skip unstable tests",
@@ -463,8 +253,8 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
     ]))
 
 bld_kvm_qa_linux = {
-        'name': "kvm-qa-linux",
-        'slavenames': ["bb02","bb03","bb04"],
+        'name': "qa-kvm-linux",
+        'slavenames': ["bb02","bb03","bb04","aidi"],
         'builddir': "kvm-qa-linux",
         'factory': f_qa_linux,
         "nextBuild": myNextBuild,
@@ -473,267 +263,260 @@ bld_kvm_qa_linux = {
 
 ###############################################################################################
 #
-# RQG and storage engine tests on a Windows machine (light for 5.3, extended for 5.5 and 10.x)
-
-
-f_win_rqg_se = factory.BuildFactory()
+# RQG and storage engine tests on a Windows machine
 
 from buildbot.steps.slave import RemoveDirectory
+from buildbot import locks
 
-f_win_rqg_se.addStep(ShellCommand(
-        name= "disable_app_verifier",
+# This is a very strong lock, it will be used if the builder cannot proceed without killing mysqld,
+# and it will require waiting for all tests in other builder to finish
+#kill_mysqld_lock = locks.SlaveLock("mysqld_kill_license")
+#git_rqg_lock = locks.SlaveLock("git_rqg");
+#release_build_lock = locks.SlaveLock("release_build")
+#debug_build_lock = locks.SlaveLock("debug_build")
+
+def rqg_win_factory(mtr_build_thread="130",config="Debug"):
+
+    if config=='Debug':
+        do_debug_steps=True
+        do_release_steps=False
+    else:
+        do_debug_steps=False
+        do_release_steps=True
+
+    f = factory.BuildFactory()
+
+    f.addStep(ShellCommand(
+        name="disable_app_verifier",
         command=["dojob", "appverif", "/n", "mysqld.exe"],
-        alwaysRun=True
-));
+#        doStepIf=do_release_steps
+        doStepIf=False
+    ));
 
-# script_dir is where rqg, mariadb-toolbox etc. are,
-# e.g. E:\buildbot
-f_win_rqg_se.addStep(SetPropertyFromCommand(
-        property="scriptdir",
+    # that's where pre-cloned trees (mariadb-server, rqg, mariadb-toolbox etc.) and local scripts are
+    f.addStep(SetPropertyFromCommand(
+        name="set_shared_dir",
+        property="sharedir",
         command=["dojob", "echo E:\\buildbot"]
-));
+    ));
 
-f_win_rqg_se.addStep(SetPropertyFromCommand(
-        property="build_dir",
-        command=["dojob", "echo D:\\win-rqg-se"]
-));
+    # that's where we will build servers
+    f.addStep(SetPropertyFromCommand(
+        name="set_bb_workdir",
+        property="bb_workdir",
+        command=["dojob", WithProperties("echo D:\\%(buildername)s")]
+    ));
 
-# bbdir is the home dir for the builder, it's where sources and builds are, 
-# e.g. E:\buildbot\bbwin1\win-rqg-se
-f_win_rqg_se.addStep(SetPropertyFromCommand(
-        property="bbdir",
-        command=["dojob", "echo E:\\buildbot\\bbwin1\win-rqg-se"]
-));
+    # that's where the main server (server under test) will be built
+    f.addStep(SetPropertyFromCommand(
+        name="set_builddir",
+        property="builddir",
+        command=["dojob", WithProperties("echo D:\\%(buildername)s\\build")]
+    ));
 
-# logdir is where vardirs are written, e.g.
-# E:\buildbot\vardirs\<name>
-f_win_rqg_se.addStep(SetPropertyFromCommand(
+    # logdir is where vardirs are written
+    f.addStep(SetPropertyFromCommand(
+        name="set_logdir",
         property="logdir",
-        command=["dojob",WithProperties("echo %(scriptdir)s\\vardirs\\%(branch)s-%(buildnumber)s")]
-));
+        command=["dojob",WithProperties("echo %(sharedir)s\\vardirs\\%(buildername)s\\%(branch)s-%(buildnumber)s")]
+    ));
 
-f_win_rqg_se.addStep(ShellCommand(
+    f.addStep(ShellCommand(
         name= "close_open_handles",
-        command=["dojob", WithProperties("cd /d %(build_dir)s && %(scriptdir)s\\mariadb-tools\\buildbot\\unlock_handles.bat")],
+        command=["dojob", WithProperties("cd /d %(bb_workdir)s && %(sharedir)s\\mariadb-tools\\buildbot\\unlock_handles.bat")],
         alwaysRun=True
-));
+    ));
 
-f_win_rqg_se.addStep(ShellCommand(
+#    f.addStep(ShellCommand(
+#        name= "kill_stale_mysqld",
+#        command=["dojob", WithProperties("taskkill /IM mysqld.exe /F || tasklist")],
+#        locks=[kill_mysqld_lock.access('exclusive')]
+#    ));
+
+    f.addStep(ShellCommand(
+        name= "check_for_stale_mysqld",
+#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\%(buildername)s\*' -and $_.ProcessName -eq 'mysqld'}\"")]
+	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
+    ));
+
+    f.addStep(ShellCommand(
         name= "kill_stale_mysqld",
-        command=["dojob", WithProperties("taskkill /IM mysqld.exe /F || tasklist")],
-        alwaysRun=True
-));
+#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\\%(buildername)s\\*' -and $_.ProcessName -eq 'mysqld'} | Select-Object Id | Stop-Process\" && PowerShell -Command \"Get-Process | Where-Object {$_.HasExited}\"")]
+	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Remove-WmiObject\"")]
+    ));
 
-f_win_rqg_se.addStep(SetPropertyFromCommand(
-        property="vs_generator",
-        command=["dojob", WithProperties("cat %(scriptdir)s\\vs_generator.txt")]
-));
+    f.addStep(ShellCommand(
+        name= "check_for_stale_mysqld_again",
+	alwaysRun=True,
+#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\\%(buildername)s\\*' -and $_.ProcessName -eq 'mysqld'}\"")]
+	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
+    ));
 
 
+    f.addStep(RemoveDirectory(name="remove_old_builds",       dir=WithProperties("%(bb_workdir)s")));
+#    f.addStep(RemoveDirectory(name="remove_build",       dir=WithProperties("%(bbdir)s\\build")));
+    f.addStep(RemoveDirectory(name="remove_old_logs",    dir=WithProperties("%(logdir)s")));
 
-f_win_rqg_se.addStep(RemoveDirectory(name="remove_builds",       dir=WithProperties("%(build_dir)s")));
-f_win_rqg_se.addStep(RemoveDirectory(name="remove_build",       dir=WithProperties("%(bbdir)s\\build")));
-#f_win_rqg_se.addStep(RemoveDirectory(name="remove_debug_build", dir=WithProperties("%(bbdir)s\\build-debug")));
-#f_win_rqg_se.addStep(RemoveDirectory(name="remove_last_release",dir=WithProperties("%(bbdir)s\\build-last-release")));
-f_win_rqg_se.addStep(RemoveDirectory(name="remove_old_logs",    dir=WithProperties("%(logdir)s")));
+    # Clones the required revision into c:\buildbot\<slave name>\<builder name>\build
+#    f.addStep(maybe_git_checkout)
 
-# Clones the required revision into c:\buildbot\<slave name>\<builder name>\build
-f_win_rqg_se.addStep(maybe_bzr_checkout)
-f_win_rqg_se.addStep(maybe_git_checkout)
-
-#f_win_rqg_se.addStep(ShellCommand(
-#        name = "bzr_checkout_debug",
-#        command=["dojob", "bzr" ,"checkout", "-r", WithProperties("%(revision)s"), WithProperties("lp:~maria-captains/maria/%(branch)s"), WithProperties("c:\\buildbot\\%(buildername)s\\build-debug")],
-#	doStepIf=not_on_github,
-#        timeout = 4*3600
-#));
-
-# Copies  c:\buildbot\<slave name>\<builder name>\build into  c:\buildbot\<slave name>\<builder name>\build-debug
-
-f_win_rqg_se.addStep(ShellCommand(
-        name = "create_build_dirs",
-        command=["dojob", WithProperties("mkdir %(build_dir)s && mkdir %(build_dir)s\\build && mkdir %(build_dir)s\\build-debug && mkdir %(build_dir)s\\build-last-release")],
+    f.addStep(ShellCommand(
+        name = "create_dirs",
+        command=["dojob", WithProperties("mkdir %(bb_workdir)s && mkdir %(bb_workdir)s\\build-last-release")],
         timeout = 3600
-));
+    ));
 
-#f_win_rqg_se.addStep(ShellCommand(
-#        name = "copy_for_debug",
-#        command=["dojob", "cp", "-r", WithProperties("%(bbdir)s\\build"), WithProperties("%(bbdir)s\\build-debug")],
-#        timeout = 3600
-#));
+    f.addStep(ShellCommand(
+        name = "pull_server",
+        command=["dojob", WithProperties("git clone %(sharedir)s\\mariadb-server %(builddir)s && cd /d %(builddir)s && git remote set-url origin %(repository)s && git pull && git reset --hard %(revision)s")],
+        timeout = 3600
+    ));
 
-#f_win_rqg_se.addStep(ShellCommand(
-#        name = "bzr_checkout_non_debug",
-#        command=["dojob", "bzr" ,"checkout", WithProperties("c:\\buildbot\\%(buildername)s\\build-debug"), WithProperties("c:\\buildbot\\%(buildername)s\\build")],
-#	doStepIf=branch_is_5_5_or_later and not_on_github,
-#        timeout = 4*3600
-#));
-
-f_win_rqg_se.addStep(ShellCommand(
+    f.addStep(ShellCommand(
         name = "pull_rqg",
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && git pull && cd /d %(scriptdir)s\\mariadb-toolbox && git pull")],
+	doStepIf=False,
+#        locks = [git_rqg_lock.access('exclusive')],
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && git pull && cd /d %(sharedir)s\\mariadb-toolbox && git pull")],
         timeout = 3600
-));
+    ));
 
-f_win_rqg_se.addStep(ShellCommand(
-        name = "get_previous_release",
-        command=["dojob", WithProperties("perl %(scriptdir)s\\mariadb-toolbox\\scripts\\last_release_tag.pl --source-tree=%(bbdir)s/build --dest-tree=%(build_dir)s/build-last-release")],
-        timeout = 3600
-));
+    f.addStep(SetPropertyFromCommand(
+        name="get_generator",
+        property="vs_generator",
+        command=["dojob", WithProperties("cat %(sharedir)s\\vs_generator.txt")]
+    ));
 
-#f_win_rqg_se.addStep(ShellCommand(
-#        name = "bzr_version_info",
-#        command=["dojob", WithProperties("bzr version-info %(bbdir)s\\build-debug && bzr version-info %(bbdir)s\\build-last-release && bzr version-info %(bbdir)s\\..\\..\\rqg && cd %(scriptdir)s\\mariadb-toolbox && git log -1")],
-#        doStepIf=not_on_github
-#));
-
-f_win_rqg_se.addStep(ShellCommand(
+    f.addStep(ShellCommand(
         name = "version_info",
-        command=["dojob", WithProperties("cd /d %(bbdir)s\\build && git log -1 && cd /d %(build_dir)s\\build-last-release && git log -1 && cd /d %(scriptdir)s\\rqg && git log -1 && cd /d %(scriptdir)s\\mariadb-toolbox && git log -1")],
-        timeout = 3600,
-        doStepIf=on_github
-));
+        command=["dojob", WithProperties("cd /d %(builddir)s && git log -1 && cd /d %(sharedir)s\\rqg && git log -1 && cd /d %(sharedir)s\\mariadb-toolbox && git log -1")],
+        timeout = 3600
+    ));
 
-f_win_rqg_se.addStep(Compile(
-        name = "build_debug",
-        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-debug && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config Debug")],
+    f.addStep(Compile(
+        name = "build",
+        command=["dojob", WithProperties("cd /d %(builddir)s && cmake . -G %(vs_generator)s && cmake --build . --config "+config)],
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
-));
+    ));
 
-# storage tests are currently broken on 10.2 (MDEV-9705)
-f_win_rqg_se.addStep(getMTR(
-	doStepIf=branch_is_not_10_2,
-        test_type="storage_engine", 
+    f.addStep(Test(
+        name = "enable_app_verifier",
+#        doStepIf=do_release_steps,
+        doStepIf=False,
+        command=["dojob", "appverif", "/verify", "mysqld.exe"]
+    ));
+
+    # storage tests are currently broken on 10.2 (MDEV-9705)
+    f.addStep(getMTR(
+        doStepIf=do_release_steps,
+        name="storage_engine",
+        test_type="storage_engine",
         test_info="Storage engine test suites",
-	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-debug\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
-));
+        timeout=3600,
+        command=["dojob", WithProperties("cd /d %(builddir)s\\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
+    ));
 
-#f_win_rqg_se.addStep(Test(
-#        doStepIf=False, #####
-#        name = "rqg_opt_subquery_myisam",
-#        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl runall.pl --queries=100M --seed=time --threads=4 --duration=300 --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown --mysqld=--log-output=FILE --grammar=%(scriptdir)s\\mariadb-toolbox\\grammars\\optimizer_subquery_simple.yy --views --engine=MyISAM --basedir=%(bbdir)s\\build-debug --vardir=%(logdir)s\\optim_sq_myisam")]
-#));
+    f.addStep(Test(
+        doStepIf=do_release_steps,
+        name = "transform",
+        timeout=3600,
+        env={"MTR_BUILD_THREAD":mtr_build_thread},
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform")]
+    ));
 
-f_win_rqg_se.addStep(Test(
-        name = "crash_tests",
-	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build-debug --workdir=%(logdir)s\\optim-crash-tests")]
-));
-
-f_win_rqg_se.addStep(Test(
-        name = "crash_summary",
+    f.addStep(Test(
+        doStepIf=do_release_steps,
+        name = "transform_summary",
         timeout=3600,
         alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
-));
+        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-transform\\trial*")]
+    ));
 
+    f.addStep(ShellCommand(
+#        doStepIf=do_release_steps,
+        doStepIf=False,
+        name= "disable_app_verifier_again",
+        command=["dojob", "appverif", "/n", "mysqld.exe"]
+ #       alwaysRun=True
+    ));
 
-#f_win_rqg_se.addStep(Test(
-#        name = "rqg_bugfix_tests",
-#	doStepIf=False,
-#        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot_regression_tests.cc --run-all-combinations-once --force --basedir=%(bbdir)s\\build-debug --workdir=%(logdir)s\\bugfix_tests")]
-#));
+    f.addStep(Test(
+        doStepIf=do_debug_steps,
+        name = "crash_tests",
+        timeout=23600,
+        env={"MTR_BUILD_THREAD":mtr_build_thread},
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests")]
+    ));
 
-f_win_rqg_se.addStep(Compile(
-        name = "build_relwithdebinfo",
-        doStepIf=branch_is_5_5_or_later,
-	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(build_dir)s\\build && cmake %(bbdir)s\\build -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
-	warningPattern=vsWarningPattern,
-        warningExtractor=Compile.warnExtractFromRegexpGroups
-));
+    f.addStep(Test(
+        name = "crash_summary",
+        timeout=3600,
+        doStepIf=do_debug_steps,
+        alwaysRun=True,
+        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+    ));
 
-f_win_rqg_se.addStep(Compile(
+    f.addStep(ShellCommand(
+        name = "get_previous_release",
+        command=["dojob", WithProperties("perl %(sharedir)s\\mariadb-toolbox\\scripts\\last_release_tag.pl --source-tree=%(builddir)s --dest-tree=%(bb_workdir)s/build-last-release")],
+        timeout = 3600,
+        doStepIf=do_release_steps
+    ));
+
+    f.addStep(Compile(
+        doStepIf=do_release_steps,
         name = "build_previous_release",
-        command=["dojob", WithProperties("cd /d %(build_dir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
-	timeout=3600,
+        command=["dojob", WithProperties("cd /d %(bb_workdir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
+        timeout=3600,
         warningPattern=vsWarningPattern,
         warningExtractor=Compile.warnExtractFromRegexpGroups
-));
+    ));
 
-# Again problems with appverifier,
-# now the tests just report crashes, but no stack trace or anything in the log
-f_win_rqg_se.addStep(Test(
-        name = "enable_app_verifier",
-        doStepIf=branch_is_5_5_or_later,
-#	doStepIf=False,
-        command=["dojob", "appverif", "/verify", "mysqld.exe"]
-));
-
-f_win_rqg_se.addStep(Test(
+    f.addStep(Test(
+        doStepIf=do_release_steps,
         name = "comparison",
-	timeout=3600,
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(build_dir)s\\build --basedir2=%(build_dir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison")]
-));
+        timeout=3600,
+        env={"MTR_BUILD_THREAD":mtr_build_thread},
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(builddir)s --basedir2=%(bb_workdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison")]
+    ));
 
-f_win_rqg_se.addStep(Test(
+    f.addStep(Test(
+        doStepIf=do_release_steps,
         name = "comparison_summary",
         timeout=3600,
         alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
-));
+        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+    ));
 
-f_win_rqg_se.addStep(Test(
-        name = "transform",
-        timeout=3600,
-        command=["dojob", WithProperties("cd /d %(scriptdir)s\\rqg && perl combinations.pl --config=%(scriptdir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(build_dir)s\\build --workdir=%(logdir)s\\optim-transform")]
-));
+#    f.addStep(Test(
+#        name = "app_verifier",
+#        doStepIf=False,
+#        command=["dojob", WithProperties("dir %(logdir)s && appverif -export log -for mysqld.exe -with to=%(logdir)s\\appverif.xml && cat %(logdir)s\\appverif.xml")]
+#    ));
 
-f_win_rqg_se.addStep(Test(
-        name = "transform_summary",
-        timeout=3600,
-	alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(scriptdir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
-));
+    return f
 
-#f_win_rqg_se.addStep(Test(
-#        name = "rqg_engine_stress_innodb",
-##        doStepIf=branch_is_5_5_or_later,
-#	doStepIf=False,
-#        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl runall.pl --queries=100M --seed=time --threads=16 --duration=600 --reporters=QueryTimeout,Backtrace,ErrorLog,Deadlock,Shutdown --mysqld=--log-output=FILE --grammar=conf/engines/engine_stress.yy --gendata=conf/engines/engine_stress.zz --engine=InnoDB --basedir=%(bbdir)s\\build --vardir=%(logdir)s\\engine_stress_innodb && appverif /n mysqld.exe")]
-#));
-
-#f_win_rqg_se.addStep(Test(
-#        name = "rqg_opt_ranges2",
-#	timeout=3600,
-#        command=["dojob", WithProperties("cd %(scriptdir)s\\rqg && perl runall.pl --basedir1=%(bbdir)s\\build-debug --basedir2=%(scriptdir)s\\5.2.14 --threads=1 --duration=120 --queries=1M --grammar=conf/optimizer/range_access2.yy --gendata=conf/optimizer/range_access2.zz --validator=ResultsetComparatorSimplify --engine=InnoDB --seed=time --mysqld=--sql_mode=ONLY_FULL_GROUP_BY --mysqld2=--optimizer_switch=index_merge=off --reporter=QueryTimeout,Backtrace,Shutdown --vardir1=%(logdir)s\\ranges2-%(branch)s --vardir2=%(logdir)s\\ranges2-5.2")]
-#));
-
-f_win_rqg_se.addStep(ShellCommand(
-        name= "disable_app_verifier_again",
-        command=["dojob", "appverif", "/n", "mysqld.exe"],
-        alwaysRun=True
-));
-
-# The tests are very slow on the current Windows builder, and fail with a timeout often. 
-# In attempt to get rid of the timeouts, run them without appverif, 
-# add innodb-flush-log-at-trx-commit=0 and increase the timeout
-#f_win_rqg_se.addStep(getMTR(
-##	doStepIf=branch_is_10_x,
-#        doStepIf=False, #####
-#        test_type="engines", 
-#        test_info="engines/* test suites",
-#        command=["dojob", WithProperties("cd %(bbdir)s\\build\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=engines/funcs,engines/iuds --parallel=4 --mysqld=--loose-innodb-flush-log-at-trx-commit=0 --testcase-timeout=60")]
-#));
-
-# Disabled due to MDEV-10010
-f_win_rqg_se.addStep(Test(
-        name = "app_verifier",
-        doStepIf=branch_is_5_5_or_later,
-#	doStepIf=False,
-        command=["dojob", WithProperties("dir %(logdir)s && appverif -export log -for mysqld.exe -with to=%(logdir)s\\appverif.xml && cat %(logdir)s\\appverif.xml")]
-))
 
 bld_win_rqg_se = {
-        'name': "win-rqg-se",
+        'name': "qa-win-rel",
         'slavenames': ["bbwin3"],
         'builddir': "win-rqg-se",
 #        'vsconfig': "Debug",
-        'factory': f_win_rqg_se,
+        'factory': rqg_win_factory(mtr_build_thread="140",config='RelWithDebInfo'),
         "nextBuild": myNextBuild,
-        'category': "experimental"
+        'category': "experimental",
+#        'locks' : [release_build_lock.access('exclusive')]
+}
+
+bld_win_rqg_debug = {
+        'name': "qa-win-debug",
+        'slavenames': ["bbwin3"],
+        'builddir': "win-rqg-debug",
+#        'vsconfig': "Debug",
+        'factory': rqg_win_factory(mtr_build_thread="150",config='Debug'),
+        "nextBuild": myNextBuild,
+        'category': "experimental",
+#        'locks' : [debug_build_lock.access('exclusive')]
 }
 
 ###############################################################################################
@@ -788,7 +571,7 @@ cd mariadb-5.5.55
 cmake . -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=YES
 make -j5
 cd mysql-test
-if perl mysql-test-run.pl  --verbose-restart --vardir="$(readlink -f /dev/shm/var)" --valgrind --valgrind-option=--show-reachable=yes --valgrind-option=--gen-suppressions=all --force --max-test-fail=100 --max-save-core=0 --max-save-datadir=1 --skip-test="tokudb\.|tokudb_alter_table\.|tokudb_bugs\.|main.mdev-504|binlog_encryption\.|rpl\." --suite=federated --parallel=2 federated.federatedx 
+if perl mysql-test-run.pl  --verbose-restart --vardir="$(readlink -f /dev/shm/var)" --valgrind --valgrind-option=--show-reachable=yes --valgrind-option=--gen-suppressions=all --force --max-test-fail=100 --max-save-core=0 --max-save-datadir=1 --skip-test="tokudb\.|tokudb_alter_table\.|tokudb_bugs\.|main.mdev-504|binlog_encryption\.|rpl\." --suite=federated --parallel=2 federated.federatedx
 then
   exit 0
 else
