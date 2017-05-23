@@ -14,14 +14,6 @@ c['schedulers'].append(Triggerable(
                       "qa-win-debug"
                      ]))
 
-# A scheduler for RQG and storage engine tests on a Windows machine
-#c['schedulers'].append(Triggerable(
-#    name="windows-rqg-and-SE",
-#    treeStableTimer=60,
-#    change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("5.5","10.0","10.1","10.2","10.3","bb-5.5-elenst*", "bb-10.0-elenst*", "bb-10.1-elenst*", "bb-10.2-elenst*", "bb-10.3-elenst*")}),
-#    builderNames=["qa-win-rel","qa-win-debug"]
-#))
-
 ###########################
 # Buildbot tests
 
@@ -29,7 +21,7 @@ c['schedulers'].append(Triggerable(
 c['schedulers'].append(AnyBranchScheduler(
     name="buildbot-experiments",
     treeStableTimer=60,
-    change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("bb-10.2-elenst")}),
+    change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("bb-non-existing-tree")}),
     builderNames=["qa-buildbot-experiments"]
 ))
 
