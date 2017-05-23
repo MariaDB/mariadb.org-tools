@@ -233,7 +233,8 @@ f_qa_linux.addStep(getMTR(
     WithProperties("""
 set -ex
 cd build/mysql-test
-perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --suite=engines/funcs,engines/iuds --parallel=4 --mysqld=--open-files-limit=0 --mem --verbose-restart
+echo "See TODO-823 for explanation why open-files-limit and log-warnings are here"
+perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --suite=engines/funcs,engines/iuds --parallel=4 --mysqld=--open-files-limit=0 --mysqld=--log-warnings=1 --mem --verbose-restart
 """),
     ]))
 
@@ -266,12 +267,13 @@ bld_kvm_qa_linux = {
 # RQG and storage engine tests on a Windows machine
 
 from buildbot.steps.slave import RemoveDirectory
+
 from buildbot import locks
 
 # This is a very strong lock, it will be used if the builder cannot proceed without killing mysqld,
 # and it will require waiting for all tests in other builder to finish
 #kill_mysqld_lock = locks.SlaveLock("mysqld_kill_license")
-#git_rqg_lock = locks.SlaveLock("git_rqg");
+git_rqg_lock = locks.SlaveLock("git_rqg");
 #release_build_lock = locks.SlaveLock("release_build")
 #debug_build_lock = locks.SlaveLock("debug_build")
 
@@ -286,11 +288,11 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 
     f = factory.BuildFactory()
 
+# We shouldn't need it anymore since we are setting appverif in runall.pl now, but let it be here just in case
     f.addStep(ShellCommand(
         name="disable_app_verifier",
         command=["dojob", "appverif", "/n", "mysqld.exe"],
-#        doStepIf=do_release_steps
-        doStepIf=False
+        doStepIf=do_release_steps
     ));
 
     # that's where pre-cloned trees (mariadb-server, rqg, mariadb-toolbox etc.) and local scripts are
@@ -334,31 +336,12 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 #    ));
 
     f.addStep(ShellCommand(
-        name= "check_for_stale_mysqld",
-#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\%(buildername)s\*' -and $_.ProcessName -eq 'mysqld'}\"")]
-	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
-    ));
-
-    f.addStep(ShellCommand(
         name= "kill_stale_mysqld",
-#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\\%(buildername)s\\*' -and $_.ProcessName -eq 'mysqld'} | Select-Object Id | Stop-Process\" && PowerShell -Command \"Get-Process | Where-Object {$_.HasExited}\"")]
-	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Remove-WmiObject\"")]
+	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Remove-WmiObject\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
     ));
-
-    f.addStep(ShellCommand(
-        name= "check_for_stale_mysqld_again",
-	alwaysRun=True,
-#        command=["dojob", WithProperties("PowerShell -Command \"Get-Process | Where-Object {$_.Path -like '*\\%(buildername)s\\*' -and $_.ProcessName -eq 'mysqld'}\"")]
-	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
-    ));
-
 
     f.addStep(RemoveDirectory(name="remove_old_builds",       dir=WithProperties("%(bb_workdir)s")));
-#    f.addStep(RemoveDirectory(name="remove_build",       dir=WithProperties("%(bbdir)s\\build")));
     f.addStep(RemoveDirectory(name="remove_old_logs",    dir=WithProperties("%(logdir)s")));
-
-    # Clones the required revision into c:\buildbot\<slave name>\<builder name>\build
-#    f.addStep(maybe_git_checkout)
 
     f.addStep(ShellCommand(
         name = "create_dirs",
@@ -373,10 +356,9 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
     ));
 
     f.addStep(ShellCommand(
-        name = "pull_rqg",
-	doStepIf=False,
-#        locks = [git_rqg_lock.access('exclusive')],
+        name = "pull_rqg_and_tools",
         command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && git pull && cd /d %(sharedir)s\\mariadb-toolbox && git pull")],
+        locks=[git_rqg_lock.access('exclusive')],
         timeout = 3600
     ));
 
@@ -399,12 +381,12 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         warningExtractor=Compile.warnExtractFromRegexpGroups
     ));
 
-    f.addStep(Test(
-        name = "enable_app_verifier",
+# We shouldn't need it anymore since we are setting appverif in runall.pl now
+#    f.addStep(Test(
+#        name = "enable_app_verifier",
 #        doStepIf=do_release_steps,
-        doStepIf=False,
-        command=["dojob", "appverif", "/verify", "mysqld.exe"]
-    ));
+#        command=["dojob", "appverif", "/verify", "mysqld.exe"]
+#    ));
 
     # storage tests are currently broken on 10.2 (MDEV-9705)
     f.addStep(getMTR(
@@ -421,39 +403,23 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "transform",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-transform\\trial*")]
     ));
 
-    f.addStep(Test(
-        doStepIf=do_release_steps,
-        name = "transform_summary",
-        timeout=3600,
-        alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-transform\\trial*")]
-    ));
-
-    f.addStep(ShellCommand(
+# We shouldn't need it anymore since we are setting appverif in runall.pl now
+#    f.addStep(ShellCommand(
 #        doStepIf=do_release_steps,
-        doStepIf=False,
-        name= "disable_app_verifier_again",
-        command=["dojob", "appverif", "/n", "mysqld.exe"]
- #       alwaysRun=True
-    ));
+#        name= "disable_app_verifier_again",
+#        command=["dojob", "appverif", "/n", "mysqld.exe"]
+#        alwaysRun=True
+#    ));
 
     f.addStep(Test(
         doStepIf=do_debug_steps,
         name = "crash_tests",
-        timeout=23600,
-        env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests")]
-    ));
-
-    f.addStep(Test(
-        name = "crash_summary",
         timeout=3600,
-        doStepIf=do_debug_steps,
-        alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-crash-tests\\trial*")]
+        env={"MTR_BUILD_THREAD":mtr_build_thread},
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-crash-tests\\trial*")]
     ));
 
     f.addStep(ShellCommand(
@@ -477,15 +443,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "comparison",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(builddir)s --basedir2=%(bb_workdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison")]
-    ));
-
-    f.addStep(Test(
-        doStepIf=do_release_steps,
-        name = "comparison_summary",
-        timeout=3600,
-        alwaysRun=True,
-        command=["dojob", "perl", WithProperties("%(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl"), WithProperties("%(logdir)s\\optim-comparison\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(builddir)s --basedir2=%(bb_workdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-comparison\\trial*")]
     ));
 
 #    f.addStep(Test(
