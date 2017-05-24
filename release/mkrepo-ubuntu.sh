@@ -254,7 +254,7 @@ for dist in ${ubuntu_dists}; do
   # Add in custom libjudy packages for distros that need them
   case ${dist} in
     "trusty")
-      reprepro --basedir=. includedeb ${dist} ${dir_jemalloc}/libjudydebian1_1.0.5-4_ppc64el.deb
+      reprepro --basedir=. includedeb ${dist} ${dir_judy}/libjudydebian1_1.0.5-4_ppc64el.deb
       ;;
     * )
       echo "+ no custom judy packages for ${dist}"
