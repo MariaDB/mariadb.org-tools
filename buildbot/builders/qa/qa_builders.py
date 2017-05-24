@@ -91,7 +91,10 @@ cd rqg
 export BUILD_HOME=/home/buildbot
 
 case "%(branch)s" in
-*10.0*|*10.1*)
+*10.0*)
+  config=bb-upgrade-10.0-to-10.0-small.cc
+  ;;
+*10.1*)
   config=bb-upgrade-10.0-to-10.1-small.cc
   ;;
 *)
