@@ -340,7 +340,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 
     f.addStep(ShellCommand(
         name= "kill_stale_mysqld",
-	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Remove-WmiObject\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\qa-win-debug\*'} | Select-Object\"")]
+	command=["dojob", WithProperties("PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\%(buildername)s\*'} | Select-Object\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\%(buildername)s\*'} | Remove-WmiObject\" && PowerShell -Command \"Get-WmiObject -class Win32_Process | Where-Object { $_.Name -eq 'mysqld.exe' -and $_.Path -like '*\%(buildername)s\*'} | Select-Object\"")]
     ));
 
     f.addStep(RemoveDirectory(name="remove_old_builds",       dir=WithProperties("%(bb_workdir)s")));
