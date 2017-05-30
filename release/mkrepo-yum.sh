@@ -93,7 +93,14 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   archs_sles_12="amd64:x86_64 ppc64le:ppc64le"
 else
   gpg_key="0xcbcb082a1bb943db"                 # mariadb.org signing key
-  p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
+  if [[ "${ARCHDIR}" == *"5.5"* ]]; then
+    p8_dists="rhel7 rhel71 sles12"
+  elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
+    p8_dists="rhel7 rhel71 sles12"
+  else
+    p8_dists="rhel7 rhel71 sles12 rhel73"
+  fi
+  #p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   #p8_dists="rhel6 rhel7 rhel71"
   p8_architectures="ppc64 ppc64le"
   suffix="signed"
@@ -276,6 +283,8 @@ for REPONAME in ${dists}; do
           rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos7-${ARCH}/ ./${REPONAME}-${ARCH}/
           if [[ "${ARCHDIR}" == *"5.5"* ]]; then
             echo "+ skipping rsync of 7.3 packages as they are not available for 5.5 yet"
+          elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
+            echo "+ skipping rsync of 7.3 packages as they are not available for 10.0 yet"
           else
             rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos73-${ARCH}/ ./${REPONAME}3-${ARCH}/
           fi
@@ -477,13 +486,15 @@ done
             rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel6*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
           'rhel7-ppc64')
-            rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            #rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
+            rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
             ;;
           'sles12-ppc64le')
             rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*sles12*ppc64le.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
             ;; 
           'rhel71-ppc64le')
-            rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
+            #rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*ppc64le.rpm ./rhel7-${P8_ARCH}/rpms/ 
             ;; 
           'rhel73-ppc64')
             rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*ppc64.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/ 
