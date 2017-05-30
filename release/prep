@@ -242,6 +242,7 @@ ver_nmap="6.25"                             # current nmap ver in sles12 repo
 DEBIAN="/path/to/mariadb.org-tools/release/mkrepo-debian.sh"
 UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb.org-tools/release/mkrepo-yum.sh"
+   CPT="/path/to/mariadb.org-tools/release/create_package_tarballs"
 
 # Full path to the galera-* scripts
 GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
@@ -270,6 +271,7 @@ corp_mirror="mirror_name"
 corp_mirror_path="/dest/dir/on/corp/mirror"
 yum_primary_mirror="bb01"
 yum_mirrors="mirror names"
+yum_mirror_path="/dest/dir/on/yum/mirror"
 
 # Connectors
 cj_home="/path/to/connector/java/home"
@@ -436,18 +438,22 @@ upload_from_the_staging_mirror_to_the_primary_mirror() {
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  upload_from_the_primary_mirror_to_the_yum_mirrors
+#          NAME:  upload_from_the_staging_mirror_to_the_yum_mirrors
 #   DESCRIPTION:  Transfer files from the primary mirror to the yum repository
 #                 mirrors
 #===============================================================================
-upload_from_the_primary_mirror_to_the_yum_mirrors() {
+upload_from_the_staging_mirror_to_the_yum_mirrors() {
   set -x
-  # After the primary mirror has the files, rsync to the bb boxes:
-  ssh -t -t ${yum_primary_mirror} "mkdir -v /var/www/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ /var/www/${num}/"; 
+  # After the staging mirror has the files, rsync to the bb boxes:
+  #ssh -t -t ${yum_primary_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
+
+  ssh -t -t ${yum_primary_mirror} "if [ ! -d '${yum_mirror_path}/${num}' ];then mkdir -v ${yum_mirror_path}/${num};fi" 
+  ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+
   for yum_mirror in ${yum_mirrors} ;do 
     #echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
-    ssh -t -t ${yum_primary_mirror} "rsync -av --delete-after --delay-updates /var/www/${num} ${yum_mirror}:/var/www/"; 
-    #ssh -t -t ${yum_mirror} "mkdir -v /var/www/${num} ; rsync -av --delete-after --delay-updates ${yum_primary_mirror}:data/${version_nog}/yum/ /var/www/${num}/"; 
+    ssh -t -t ${yum_primary_mirror} "rsync -av --delete-after --delay-updates ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
+    #ssh -t -t ${yum_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${yum_primary_mirror}:data/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
   done
   set +x
 }
@@ -474,7 +480,7 @@ activate_the_yum_repos() {
   else
     set -x
     for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
-      ssh -t -t ${yum_mirror} "cd /var/www/;rm -v ${tree};ln -sv ${num} ${tree}"; 
+      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${tree};ln -sv ${num} ${tree}"; 
     done
     ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/yum/ data/yum/${dir_osuosl}/";
     ssh -t -t ${primary_mirror} "./trigger-mariadb";
@@ -504,18 +510,32 @@ activate_the_deb_repos() {
   set +x
 }
 
+create_package_tarballs() {
+  set -x
+  pushd ${CPT}
+  ./create_package_tarballs ${dir_release}/${dir_name}/
+  popd
+  set +x
+}
+
 #===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_corp_mirror
+#          NAME:  upload_from_the_staging_mirror_to_the_corp_mirror
 #   DESCRIPTION:  Sync the release from the primary public mirror to the corp
 #                 mirror
 #===============================================================================
-upload_to_the_corp_mirror() {
+upload_from_the_staging_mirror_to_the_corp_mirror() {
   set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
   else
-    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
   fi
+
+#  if [ "${galera_suffix}" = "-galera" ]; then
+#    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+#  else
+#    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
+#  fi
   set +x
 }
 
@@ -1171,7 +1191,7 @@ fi
 if [ "${galera_suffix}" != "-galera" ]; then
   if [ "${create_win}" != "no" ]; then
     maybe_create_release_dir
-    maybe_fix_permissions # fix permissions if they haven't already been fixed
+    #maybe_fix_permissions # fix permissions if they haven't already been fixed
     cd ${dir_release}/${dir_name}
     line
     echo "+ transfering Windows packages..."
@@ -1386,6 +1406,8 @@ echo "+ done creating the ${version} release"
 line
 echo
 
+shouldI create_package_tarballs
+
 # now upload
 echo;echo;echo;echo
 
@@ -1397,7 +1419,7 @@ shouldI upload_from_the_staging_mirror_to_the_primary_mirror
 
 echo;echo;echo;echo
 
-shouldI upload_from_the_primary_mirror_to_the_yum_mirrors
+shouldI upload_from_the_staging_mirror_to_the_yum_mirrors
 
 echo;echo;echo;echo
 
@@ -1409,7 +1431,7 @@ shouldI activate_the_deb_repos
 
 echo;echo;echo;echo
 
-shouldI upload_to_the_corp_mirror
+shouldI upload_from_the_staging_mirror_to_the_corp_mirror
 
 echo;echo;echo;echo
 echo "+ all done!"
