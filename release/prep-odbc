@@ -1,0 +1,240 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE:  prep-odbc
+# 
+#         USAGE:  ./prep-odbc <version> <build_dir>
+# 
+#   DESCRIPTION:  This script is used to prepare files for a MariaDB
+#                 Connector/ODBC release
+# 
+#        AUTHOR: Daniel Bartholomew
+#       CREATED: 17/05/23 00:56:37 EST
+#===============================================================================
+
+
+#-------------------------------------------------------------------------------
+#  Variables
+#-------------------------------------------------------------------------------
+version=${1}
+dir_build=${2}
+
+dir_odbc="connector-odbc-${version}"
+
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+
+sumgen() {
+  for sum in md5 sha1 sha256 sha512;do
+	echo;line;echo ${sum};
+	${sum}sum ./mar* >> ${sum}sums.txt
+	${sum}sum -c ${sum}sums.txt
+  done
+  echo;line;echo
+}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
+
+usage() {
+  echo
+  echo "usage: $0 <version> <build_dir>"
+  echo
+  exit 1
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+copy_and_stage_files() {
+  echo;line;echo "Copying and staging files";line;
+  pushd ${co_home}
+    if [[ ! -d "${dir_odbc}" ]];then
+      mkdir -v ${dir_odbc}
+    fi
+    cp -avi ${dir_build}/*.gz ${dir_build}/*/*.gz ${dir_build}/win*/*msi ${dir_odbc}/
+  popd
+  echo;echo;echo
+}
+
+prep_org_files() {
+  # Prep .org files
+  echo;line;echo "Prepping org files";line;
+  if [[ ! -d "${dir_release}/${dir_odbc}" ]];then
+    mkdir -v ${dir_release}/${dir_odbc}
+  fi
+  cp -avi ${co_home}/${dir_odbc}/*src* ${dir_release}/${dir_odbc}/
+  pushd ${dir_release}/${dir_odbc}
+    sumgen
+    for file in *;do
+      echo "+ gpg2 ${gpg_opts} ${file}"
+              gpg2 ${gpg_opts} ${file}
+    done
+  popd
+  echo;echo;echo
+}
+
+prep_com_files() {
+  # Prep .com files
+  echo;line;echo "Prepping com files";line;
+  pushd ${co_home}/${dir_odbc}
+    sumgen
+    for file in *;do
+      echo "+ gpg2 ${ent_gpg_opts} ${file}"
+              gpg2 ${ent_gpg_opts} ${file}
+    done
+  popd
+  echo;echo;echo
+}
+
+upload_to_the_primary_mirror() {
+  local upload
+  upload=""
+  echo;echo;echo;
+  echo;line;echo "Doing a dry-run...";line;
+  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/"
+          rsync --dry-run -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        echo "+ rsync -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/"
+                rsync -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+upload_to_the_corp_mirror() {
+  local upload
+  upload=""
+  echo;echo;echo;
+  echo;line;echo "Doing a dry-run...";line;
+  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/"
+          rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        echo "+ rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/"
+                rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults
+
+if [ "${version}" = "" ]; then
+  usage
+fi
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+echo;echo;echo
+line
+echo "Preparing MariaDB Connector/ODBC ${version} release..."
+line
+echo
+
+shouldI copy_and_stage_files
+echo;echo
+shouldI prep_org_files
+echo;echo
+shouldI prep_com_files
+echo;echo
+shouldI upload_to_the_primary_mirror
+echo;echo
+shouldI upload_to_the_corp_mirror
+echo;echo
+echo "+ All done!"
+line;line;line
+echo;echo;echo
+
