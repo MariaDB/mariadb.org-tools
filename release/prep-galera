@@ -46,8 +46,7 @@ galera_versions="25.3.20"
 galera_preferred="25.3.20"
 
 
-#deb_dists="precise trusty vivid debian6 wheezy jessie sid"
-deb_dists="jessie precise stretch trusty wheezy xenial yakkety zesty"
+deb_dists="jessie stretch trusty wheezy xenial yakkety zesty"
 deb_dists_p8="jessie trusty xenial stretch"
 rpm_dists="centos6 centos7 centos73 fedora24 fedora25"
 rpm_dists_p8="rhel6 rhel7 rhel71 centos73 suse12"

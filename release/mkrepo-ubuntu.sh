@@ -50,13 +50,13 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
   *"5.5"*)
-    ubuntu_dists="precise trusty"
+    ubuntu_dists="trusty"
     ;;
   *"10.0"*)
-    ubuntu_dists="precise trusty xenial yakkety"
+    ubuntu_dists="trusty xenial yakkety"
     ;;
   *)
-    ubuntu_dists="precise trusty xenial yakkety zesty"
+    ubuntu_dists="trusty xenial yakkety zesty"
     ;;
 esac
 
@@ -109,8 +109,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   description="MariaDB Enterprise Repository"
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
-  #ubuntu_dists="precise trusty utopic"
-  ubuntu_dists="precise trusty xenial"                # no utopic for enterprise just yet 
+  ubuntu_dists="trusty xenial"
   architectures="amd64 i386 source"                  # for enterprise, add i386
   architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed-ent"

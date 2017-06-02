@@ -28,26 +28,26 @@ case ${tree} in
   '5.5'|'5.5-galera')
     debian_dists="wheezy"
     yum_dists="rhel5 rhel6 rhel7 sles11 sles12"
-    ubuntu_dists="precise trusty"
+    ubuntu_dists="trusty"
     ;;
   '10.0e'|'10.0e-galera')
     debian_dists="wheezy jessie"
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
-    ubuntu_dists="precise trusty xenial"
+    ubuntu_dists="trusty xenial"
     ;;
   '5.5e'|'5.5e-galera')
     debian_dists="wheezy"
     yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
-    ubuntu_dists="precise trusty"
+    ubuntu_dists="trusty"
     ;;
   '10.0'|'10.0-galera')
     debian_dists="wheezy jessie sid"
     yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse42 sles12"
-    ubuntu_dists="precise trusty xenial yakkety"
+    ubuntu_dists="trusty xenial yakkety"
     ;;
   *) debian_dists="wheezy jessie sid"
      yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse42 sles11 sles12"
-     ubuntu_dists="precise trusty xenial yakkety zesty"
+     ubuntu_dists="trusty xenial yakkety zesty"
     ;;
 esac
 
@@ -103,7 +103,7 @@ if [ "${is_ent}" = "yes" ];then
   gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
   dir_release="${dir_release_ent}" # Default location for mdbe releases
   dir_name="${num}"
-  ubuntu_dists="precise trusty"
+  ubuntu_dists="trusty"
   p8_yum_dists="rhel71 rhel7 rhel6 sles12"
   architectures="amd64"
 else
