@@ -448,7 +448,12 @@ upload_from_the_staging_mirror_to_the_yum_mirrors() {
   #ssh -t -t ${yum_primary_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
 
   ssh -t -t ${yum_primary_mirror} "if [ ! -d '${yum_mirror_path}/${num}' ];then mkdir -v ${yum_mirror_path}/${num};fi" 
-  ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+
+  if [ "${galera_suffix}" = "-galera" ]; then
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+  else
+    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+  fi
 
   for yum_mirror in ${yum_mirrors} ;do 
     #echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
