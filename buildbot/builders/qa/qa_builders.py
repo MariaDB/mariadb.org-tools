@@ -258,7 +258,7 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
 
 bld_kvm_qa_linux = {
         'name': "qa-kvm-linux",
-        'slavenames': ["bb02","bb03","bb04","aidi"],
+        'slavenames': ["bb02","bb03","aidi"],
         'builddir': "kvm-qa-linux",
         'factory': f_qa_linux,
         "nextBuild": myNextBuild,
@@ -549,7 +549,7 @@ fi
 
 bld_qa_bb_experiments = {
         'name': "qa-buildbot-experiments",
-        'slavenames': ["bb03","bb04","bb02"],
+        'slavenames': ["bb03","bb02"],
         'builddir': "qa-buildbot-experiments",
         'factory': f_bb_exp,
         "nextBuild": myNextBuild,
