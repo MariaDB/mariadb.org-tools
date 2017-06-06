@@ -1,0 +1,218 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE: prep-changelog
+# 
+#         USAGE: ./prep-changelog.
+# 
+#   DESCRIPTION: This script is for preparing MariaDB changelogs
+# 
+#        AUTHOR: Daniel Bartholomew (), db@dbart.us
+#       CREATED: 02/16/2017 01:37
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+# Variables to set before we get started
+#-------------------------------------------------------------------------------
+run_script="no"
+pwd=${PWD}
+output="${pwd}/changelog.creole"              # Default output location
+src_dir="${HOME}/src/mariadb/server/"
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+usage() {
+  set +x
+  echo
+  echo
+  echo "usage: $0 -y -p <product> -v <major_version> -m <minor_version> [-x <exclude>] [-o <output-filename>]"
+  echo "  -y : actually run the script"
+  echo "  -p <product> : the product, e.g. mariadb or mariadb-galera"
+  echo "  -v <major_version> : major version of this release, e.g. 10.0"
+  echo "  -m <minor_version> : minor version of *PREVIOUS* release, e.g. 29"
+  echo "  -x <exclude> : [optional] version to exclude, e.g. mariadb-10.0.30"
+  echo "  -o <filename> : [optional] where to write the output, e.g. ~/changelog.creole"
+  echo "  -h : display this usage message"
+  echo
+  echo
+  set -x
+}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+delete_the_output_file() {
+  rm -v ${output}
+}
+
+#-------------------------------------------------------------------------------
+# Parse command-line options
+#-------------------------------------------------------------------------------
+while getopts 'hp:v:m:o:x:y' OPTION
+do
+  case $OPTION in
+    h) # Display a helpful usage message
+      displayusage="yes"
+      ;;
+    o) # Where the output of the script should go, i.e. the filename
+      if [[ ${OPTARG:0:1} == '/' ]];then
+        output="${OPTARG}"
+      else
+        output="${pwd}/${OPTARG}"
+      fi
+      ;;
+    p) # The product, e.g. mariadb or mariadb-galera
+      product="${OPTARG}"
+      product_flag=true
+      ;;
+    v) # the major version of the release, e.g. 10.0
+      major="${OPTARG}"
+      major_flag=true
+      ;;
+    m) # the minor version of the *previous* release, e.g. 29
+      minor="${OPTARG}"
+      minor_flag=true
+      ;;
+    x) # A release to exclude from the changelog, e.g. mariadb-10.0.30
+      exclude="${OPTARG}"
+      ;;
+    y) # Actually run this script (helps prevent accidental runs)
+      run_script="yes"
+      ;;
+    \?)
+      displayusage="yes"
+      ;;
+    :) # Error when an option is used that requires an argument
+      displayusage="yes"
+      echo "Option -$OPTARG requires an argument."
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+if ! ${product_flag} || ! ${major_flag} || ! ${minor_flag} ; then
+  echo
+  line
+  echo "-p -v and -m, along with their appropriate arguments, are mandatory" >&2
+  line
+  usage
+  exit 4
+fi
+
+# Display usage message and quit if necessary
+if [ "${displayusage}" = "yes" ] || [ "${run_script}" != "yes" ]; then
+  usage
+  exit 0
+fi
+
+
+#-------------------------------------------------------------------------------
+# Variables set based on arguments and other pre-script cleanup
+#-------------------------------------------------------------------------------
+
+# Set the tree appropriately based on the product
+if [ "${product}" = "mariadb-galera" ]; then
+  tree="${major}-galera"
+else
+  tree=${major}
+fi
+
+if [ "${exclude}" = "" ]; then
+  exclude_real=""
+else
+  exclude_real="^${exclude}"
+fi
+
+if [ -f ${output} ]; then
+  echo
+  echo
+  echo "The file ${output} already exists. I have to delete it before continuing."
+  shouldI delete_the_output_file
+  # Check again, if the file is still there, the user answered no.
+  if [ -f ${output} ]; then
+    echo "Please remove the file and re-run this script."
+    echo
+    echo
+    exit 0
+  fi
+fi
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+set -x
+
+pushd ${src_dir}
+
+git checkout ${tree}
+git pull
+git fetch --all --tags
+
+# Get a list of all the merges in this changeset
+git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${product}-${major}.${minor}.. > /tmp/merges.creole
+
+
+# Generate the changelog
+for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${product}-${major}.${minor}.. );do
+  shortrev=${rev:0:10}
+  if grep -q ${rev} /tmp/merges.creole;then
+    # If a change exists in merges.creole then we need to format it differently
+    git log --pretty=format:"* <<style class=\"merge\">>Merge gitrev:${shortrev} %ai - %s<</style>>%n" -1 ${rev} >> ${output}
+  else
+    git log --pretty=format:"* gitrev:${shortrev}%n<<style class=\"datetime\">>%ai<</style>>%n** %s%n" -1 ${rev} >> ${output}
+  fi
+done
+
+# Cleanup
+rm -v /tmp/merges.creole
+
+set +x
+
+# done message
+echo
+echo
+line
+echo "Changelog written to ${output}"
+line
+echo
+echo
+
