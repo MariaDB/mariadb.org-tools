@@ -1,4 +1,4 @@
-qaTargetTrees = ["5.5", "10.0", "10.1", "10.2", "10.3", "bb-5.5-elenst*", "bb-10.0-elenst*", "bb-10.1-elenst*", "bb-10.2-elenst*", "bb-10.3-elenst*"]
+qaTargetTrees = ["5.5", "10.0", "10.1", "10.2", "10.3", "bb-5.5-elenst*", "bb-10.0-elenst*", "bb-10.1-elenst*", "bb-10.2-elenst*", "bb-10.3-elenst*", "bb-10.2-marko"]
 
 def isTargetQA(step):
   return step.getProperty("branch") in qaTargetTrees
