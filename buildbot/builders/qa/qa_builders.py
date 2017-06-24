@@ -2,6 +2,47 @@
 #
 # "QA" tests (as opposed to normal dev builders)
 
+def getQAUpgradeStep(action, upgrade_from = "", **kwargs):
+
+    if upgrade_from != "":
+        test_name = "upgr_" + upgrade_from
+        test_description = "Upgrade from " + upgrade_from
+        config = "bb-upgrade-" + upgrade_from + "-to-"
+    elif action == "recovery":
+        test_name = "recovery"
+        test_description = "Crash recovery"
+        config = "bb-recovery-"
+    else:
+        return
+
+    return Test(
+        name=test_name,
+        description=[test_description],
+        descriptionDone=[test_description],
+        timeout=3600,
+        env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
+        command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+        WithProperties("""
+set -ex
+cd rqg
+export BUILD_HOME=/home/buildbot
+
+branch=`echo '%(branch)s' | sed -e "s/.*\\\\(10\\\\.[0-9]\\\\).*/\\\\1/"`
+config="""+config+"""${branch}-small.cc
+echo "Combinations file: $config"
+
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/vardir --discard-logs
+then
+  res=0
+else
+  res=1
+fi
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/vardir/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/vardir/trial*
+exit $res
+"""),
+    ], **kwargs)
+
 f_qa_linux = factory.BuildFactory()
 
 f_qa_linux.addStep(ShellCommand(
@@ -77,168 +118,61 @@ grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[
 """),
     ]))
 
-f_qa_linux.addStep(Test(
-    doStepIf=(lambda(step): branch_is_10_x(step)),
-    name="upgr_10.0",
-    description=["Upgrade from 10.0"],
-    descriptionDone=["Upgrade from 10.0"],
-    timeout=3600,
-    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-export BUILD_HOME=/home/buildbot
 
-case "%(branch)s" in
-*10.0*)
-  config=bb-upgrade-10.0-to-10.0-small.cc
-  ;;
-*10.1*)
-  config=bb-upgrade-10.0-to-10.1-small.cc
-  ;;
-*)
-  config=bb-upgrade-from-10.0-small.cc
-  ;;
-esac
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.0",
+        doStepIf=(lambda(step): branch_is_10_x(step))
+    )
+)
 
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.0 --discard-logs
-then
-  res=0
-else
-  res=1
-fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-10.0/trial*
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-10.0/trial*
-exit $res
-"""),
-    ]))
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.1",
+        doStepIf=(lambda(step): branch_is_10_1_or_later(step))
+    )
+)
 
-f_qa_linux.addStep(Test(
-    doStepIf=(lambda(step): branch_is_10_1_or_later(step)),
-    name="upgr_5.6",
-    description=["Upgrade from MySQL 5.6"],
-    descriptionDone=["Upgrade from MySQL 5.6"],
-    timeout=3600,
-    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-export BUILD_HOME=/home/buildbot
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.2",
+        doStepIf=(lambda(step): branch_is_10_2_or_later(step))
+    )
+)
 
-case "%(branch)s" in
-*10.0*|*10.1*)
-  config=bb-upgrade-mysql-5.6-to-10.1-small.cc
-  ;;
-*)
-  config=bb-upgrade-from-mysql-5.6-small.cc
-  ;;
-esac
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.3",
+        doStepIf=(lambda(step): branch_is_10_3_or_later(step))
+    )
+)
 
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.6 --discard-logs
-then
-  res=0
-else
-  res=1
-fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-mysql-5.6/trial*
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-mysql-5.6/trial*
-exit $res
-"""),
-    ]))
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="5.6",
+        doStepIf=(lambda(step): branch_is_10_x(step))
+    )
+)
 
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="upgrade",
+        upgrade_from="5.7",
+        doStepIf=(lambda(step): branch_is_10_2_or_later(step))
+    )
+)
 
-f_qa_linux.addStep(Test(
-    doStepIf=(lambda(step): branch_is_10_1_or_later(step)),
-    name="upgr_10_1",
-    description=["Upgrade from 10.1"],
-    descriptionDone=["Upgrade from 10.1"],
-    timeout=3600,
-    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-export BUILD_HOME=/home/buildbot
-
-case "%(branch)s" in
-*10.1*)
-  config=bb-upgrade-10.1-to-10.1-small.cc
-  ;;
-*)
-  config=bb-upgrade-from-10.1-small.cc
-  ;;
-esac
-
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.1 --discard-logs
-then
-  res=0
-else
-  res=1
-fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-10.1/trial*
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-10.1/trial*
-exit $res
-"""),
-    ]))
-
-f_qa_linux.addStep(Test(
-    doStepIf=(lambda(step): branch_is_10_2_or_later(step)),
-    name="upgr_10_2",
-    description=["Upgrade from 10.2"],
-    descriptionDone=["Upgrade from 10.2"],
-    timeout=3600,
-    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-export BUILD_HOME=/home/buildbot
-
-case "%(branch)s" in
-*)
-  config=bb-upgrade-from-10.2-small.cc
-  ;;
-esac
-
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-10.2 --discard-logs
-then
-  res=0
-else
-  res=1
-fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-10.2/trial*
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-10.2/trial*
-exit $res
-"""),
-    ]))
-
-
-f_qa_linux.addStep(Test(
-    doStepIf=(lambda(step): branch_is_10_2_or_later(step)),
-    name="upgr_5.7",
-    description=["Upgrade from MySQL 5.7"],
-    descriptionDone=["Upgrade from MySQL 5.7"],
-    timeout=3600,
-    env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-export BUILD_HOME=/home/buildbot
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/bb-upgrade-from-mysql-5.7-small.cc --run-all-combinations-once --force --workdir=/home/buildbot/upgrade-from-mysql-5.7 --discard-logs
-then
-  res=0
-else
-  res=1
-fi
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/upgrade-from-mysql-5.7/trial*
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/upgrade-from-mysql-5.7/trial*
-exit $res
-"""),
-    ]))
-
+f_qa_linux.addStep(
+     getQAUpgradeStep(
+        action="recovery",
+        doStepIf=(lambda(step): branch_is_10_x(step))
+    )
+)
 
 
 f_qa_linux.addStep(Test(
