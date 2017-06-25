@@ -91,8 +91,10 @@ make -j4
 . /home/buildbot/mariadb-toolbox/scripts/create_so_symlinks.sh
 cd /home/buildbot/rqg
 git pull
+git log -1
 cd /home/buildbot/mariadb-toolbox
 git pull
+git log -1
 """),
     ]))
 f_qa_linux.addStep(Test(
