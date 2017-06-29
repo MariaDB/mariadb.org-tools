@@ -19,6 +19,7 @@ def getQAUpgradeStep(action, upgrade_from = "", **kwargs):
         name=test_name,
         description=[test_description],
         descriptionDone=[test_description],
+	warningPattern="^WARNING:.*MDEV",
         timeout=3600,
         env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
         command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
