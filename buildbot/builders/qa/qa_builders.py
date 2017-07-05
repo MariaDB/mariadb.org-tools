@@ -39,6 +39,7 @@ else
   res=1
 fi
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/vardir/trial*
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=kb /home/buildbot/vardir/trial*
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/vardir/trial*
 exit $res
 """),
