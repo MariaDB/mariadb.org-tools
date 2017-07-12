@@ -27,11 +27,9 @@ tarball="mariadb-java-client-${version}.tar.gz"
 
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
-	echo;line;echo ${sum};
 	${sum}sum ./mar* >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
-  echo;line;echo
 }
 
 userResponse() {
@@ -60,6 +58,7 @@ usage() {
   set +x
   echo
   echo "usage: $0 <version>"
+  echo " e.g.: $0 2.0.2"
   echo
   set -x
   exit 1
@@ -67,6 +66,12 @@ usage() {
 
 line() {
   echo "-------------------------------------------------------------------------------"
+}
+
+message() {
+  message="${@}"
+  echo;echo;echo;
+  echo;line;echo "${message}";line;
 }
 
 shouldI() {
@@ -96,40 +101,43 @@ shouldI() {
 
 unzip_and_stage_files() {
   # Unzip and Stage files
-  echo;line;echo "Unzipping and staging files";line;
+  message "Unzipping and staging files..."
   set -x
-  cd ${cj_home}
+  pushd ${cj_home}
   unzip ${version}*.zip
   mv -vi ${version} ${dir_java}
   rm -v ${version}*.zip
+  popd
   set +x
   echo;echo;echo
 }
 
 prep_org_files() {
   # Prep .org files
-  echo;line;echo "Prepping org files";line;
+  message "Prepping org files..."
   set -x
   mkdir ${dir_release}/${dir_java}
   cp -avi ${cj_home}/${dir_java}/${tarball} ${dir_release}/${dir_java}/
-  cd ${dir_release}/${dir_java}
+  pushd ${dir_release}/${dir_java}
   sumgen
   for file in *;do
     gpg2 ${gpg_opts} ${file}
   done
+  popd
   set +x
   echo;echo;echo
 }
 
 prep_com_files() {
   # Prep .com files
-  echo;line;echo "Prepping com files";line;
+  message "Prepping com files..."
   set -x
-  cd ${cj_home}/${dir_java}
+  pushd ${cj_home}/${dir_java}
   sumgen
   for file in *;do
     gpg2 ${ent_gpg_opts} ${file}
   done
+  popd
   set +x
   echo;echo;echo
 }
@@ -137,8 +145,7 @@ prep_com_files() {
 upload_to_the_primary_mirror() {
   local upload
   upload=""
-  echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
+  message "Doing a dry-run..."
   set -x
   rsync --dry-run -av --delete-after ${dir_release}/${dir_java} ${primary_mirror}:data/
   set +x
@@ -147,6 +154,7 @@ upload_to_the_primary_mirror() {
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
+        message "Uploading for real..."
         set -x
         rsync -av --delete-after ${dir_release}/${dir_java} ${primary_mirror}:data/
         set +x
@@ -170,8 +178,7 @@ upload_to_the_primary_mirror() {
 upload_to_the_corp_mirror() {
   local upload
   upload=""
-  echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
+  message "Doing a dry-run..."
   set -x
   rsync --dry-run -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
   set +x
@@ -180,6 +187,7 @@ upload_to_the_corp_mirror() {
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
+        message "Uploading for real..."
         set -x
         rsync -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
         set +x
