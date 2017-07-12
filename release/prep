@@ -341,11 +341,13 @@ shouldI() {
       "y")
         ${@}
         cont="yes"
+        ANSWER=""
         return 0
         ;;
       "n")
         echo "Skipping . . . "
         cont="yes"
+        ANSWER=""
         return 0
         ;;
       *)
@@ -408,19 +410,157 @@ line() {
   echo "-------------------------------------------------------------------------------"
 }
 
+message() {
+  message="${@}"
+  echo;echo;echo;
+  echo;line;echo "${message}";line;
+}
+
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  message "Doing a dry run..."
+  set -x
+  rsync --dry-run ${rsync_body}
+  set +x
+  echo;echo;echo;
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        rsync ${rsync_body}
+        set +x
+        echo;echo;echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        echo "+ Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+rsync_wrapper_staging() {
+  local upload_staging
+  upload_staging=""
+  rsync_body_staging="${@}"
+  message "Doing a dry run..."
+  set -x
+  ssh -t -t ${staging_mirror} "rsync --dry-run ${rsync_body_staging}"
+  set +x
+  echo;echo;echo;
+  while [ -z ${upload_staging} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        ssh -t -t ${staging_mirror} "rsync ${rsync_body_staging}"
+        set +x
+        echo;echo;echo
+        upload_staging="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        echo "+ Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload_staging=""
+        ;;
+    esac
+  done
+}
+
+rsync_wrapper_primary() {
+  local upload_primary
+  upload_primary=""
+  rsync_body_primary="${@}"
+  message "Doing a dry run..."
+  set -x
+  ssh -t -t ${primary_mirror} "rsync --dry-run ${rsync_body_primary}"
+  set +x
+  echo;echo;echo;
+  while [ -z ${upload_primary} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        ssh -t -t ${primary_mirror} "rsync ${rsync_body_primary}"
+        set +x
+        echo;echo;echo
+        upload_primary="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        echo "+ Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload_primary=""
+        ;;
+    esac
+  done
+}
+
 #===  FUNCTION  ================================================================
 #          NAME:  upload_to_the_staging_mirror
 #   DESCRIPTION:  Transfer the release to the staging mirror
 #===============================================================================
 upload_to_the_staging_mirror() {
-  set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:data/
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   else
-    rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${staging_mirror}:data/
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   fi
-  set +x
 }
+
+#===  FUNCTION  ================================================================
+#          NAME:  copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
+#   DESCRIPTION:  corp and org release dirs are similar, so copying from one to
+#                 the other before doing the corp upload saves bandwidth
+#===============================================================================
+copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
+  if [ "${galera_suffix}" = "-galera" ]; then
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
+  else
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${dir_corp}/"
+  fi
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_corp_dir_to_the_staging_mirror
+#   DESCRIPTION:  Transfer the corp release to the staging mirror
+#===============================================================================
+upload_corp_dir_to_the_staging_mirror() {
+  if [ "${galera_suffix}" = "-galera" ]; then
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+  else
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+  fi
+}
+
 
 #===  FUNCTION  ================================================================
 #          NAME:  upload_from_the_staging_mirror_to_the_primary_mirror
@@ -428,13 +568,11 @@ upload_to_the_staging_mirror() {
 #                 mirror
 #===============================================================================
 upload_from_the_staging_mirror_to_the_primary_mirror() {
-  set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
   else
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
   fi
-  set +x
 }
 
 #===  FUNCTION  ================================================================
@@ -443,18 +581,20 @@ upload_from_the_staging_mirror_to_the_primary_mirror() {
 #                 mirrors
 #===============================================================================
 upload_from_the_staging_mirror_to_the_yum_mirrors() {
-  set -x
   # After the staging mirror has the files, rsync to the bb boxes:
   #ssh -t -t ${yum_primary_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
 
+  set -x
   ssh -t -t ${yum_primary_mirror} "if [ ! -d '${yum_mirror_path}/${num}' ];then mkdir -v ${yum_mirror_path}/${num};fi" 
+  set +x
 
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
   else
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
   fi
 
+  set -x
   for yum_mirror in ${yum_mirrors} ;do 
     #echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
     ssh -t -t ${yum_primary_mirror} "rsync -av --delete-after --delay-updates ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
@@ -483,11 +623,14 @@ activate_the_yum_repos() {
     # Do nothing if this is a galera release
     echo "This is a galera release, skipping this step..."
   else
+    echo;echo;
     set -x
     for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
-      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${tree};ln -sv ${num} ${tree}"; 
+      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${tree};ln -sv ${num} ${tree};echo;echo"; 
     done
-    ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/yum/ data/yum/${dir_osuosl}/";
+    set +x
+    rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${dir_osuosl}/";
+    set -x
     ssh -t -t ${primary_mirror} "./trigger-mariadb";
     set +x
   fi
@@ -510,7 +653,9 @@ activate_the_deb_repos() {
       dir_osuosl="${tree}"
       ;;
   esac
-  ssh -t -t ${primary_mirror} "rsync --delete-after -av data/${version_nog}/repo/ data/repo/${dir_osuosl}/";
+  set +x
+  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${dir_osuosl}/";
+  set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
 }
@@ -518,7 +663,7 @@ activate_the_deb_repos() {
 create_package_tarballs() {
   set -x
   pushd ${CPT}
-  ./create_package_tarballs ${dir_release}/${dir_name}/
+  ./create_package_tarballs ${dir_corp}/${dir_name}/
   popd
   set +x
 }
@@ -529,11 +674,10 @@ create_package_tarballs() {
 #                 mirror
 #===============================================================================
 upload_from_the_staging_mirror_to_the_corp_mirror() {
-  set -x
   if [ "${galera_suffix}" = "-galera" ]; then
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
   else
-    ssh -t -t ${staging_mirror} "rsync -av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
   fi
 
 #  if [ "${galera_suffix}" = "-galera" ]; then
@@ -541,7 +685,6 @@ upload_from_the_staging_mirror_to_the_corp_mirror() {
 #  else
 #    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
 #  fi
-  set +x
 }
 
 #===  FUNCTION  ================================================================
@@ -555,6 +698,11 @@ maybe_create_release_dir() {
     echo "+ creating release dir..."
     line
     mkdir -v ${dir_release}/${dir_name}
+    echo
+    line
+    echo "+ creating corp release dir..."
+    line
+    mkdir -v ${dir_corp}/${dir_name}
     echo
   fi
 }
@@ -748,7 +896,7 @@ eval $(gpg-agent --daemon)
 if [ "${create_bintar}" != "no" ]; then
   maybe_create_release_dir
   maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${dir_release}/${dir_name}
+  pushd ${dir_release}/${dir_name}
   line
   echo "+ transfering bintar & source packages..."
   line
@@ -759,7 +907,7 @@ if [ "${create_bintar}" != "no" ]; then
     fi
     if [ "${dir_array[1]}" = "source" ]; then
       if rsync ${rsync_opts} "${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}/mariadb-${num}.tar.gz" "./${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
-        cd ${dir_array[1]}
+        pushd ${dir_array[1]}
         # rename the source tarball for enterprise
         if [ "${is_ent}" = "yes" ];then
           mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
@@ -801,13 +949,13 @@ if [ "${create_bintar}" != "no" ]; then
         gpg2 ${gpg_opts} sha256sums.txt
         gpg2 ${gpg_opts} sha512sums.txt
         
-        cd ..
+        popd
       fi
       echo "+ transfer of ${dir_array[1]} done"
       echo
     elif rsync ${rsync_opts} "${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}/" "./${dir_array[1]}/"; then
       echo "+ transfer of ${dir_array[1]} done"
-      cd ${dir_array[1]}
+      pushd ${dir_array[1]}
       if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
         # for the quantal bintars, we need to rename them before signing
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
@@ -1009,8 +1157,13 @@ if [ "${create_bintar}" != "no" ]; then
       for dir_file in $(find . -type f | grep -v orig); do
         gpg2 ${gpg_opts} ${dir_file}
       done
-      cd ..
+      popd
       echo "+ finished signing files in ${dir_array[1]}"
+      echo
+      echo
+      # copy the dir to the corp dir
+      echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
+      rsync -avP --delete ./${dir_array[1]} ${dir_corp}/${dir_name}/
       echo
       echo
     else
@@ -1031,7 +1184,9 @@ if [ "${create_bintar}" != "no" ]; then
     for galera_version in ${ver_galera}; do
       mkdir -vp ./galera-${galera_version}
       if rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
-        echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
+        if rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
+          echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
+        fi
         echo
       else
         echo "! failed to transfer ${dir_galera}/galera-${galera_version}"
@@ -1060,7 +1215,7 @@ fi
 if [ "${create_p8_bintar}" != "no" ]; then
   maybe_create_release_dir
   maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${dir_release}/${dir_name}
+  pushd ${dir_release}/${dir_name}
   line
   echo "+ transfering p8 bintar packages..."
   echo ${p8_build_dirs}
@@ -1072,7 +1227,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
     fi
     if rsync ${rsync_opts} "${dir_archive_p8}/${tree}/${rev}/${p8_dir_array[0]}/" "./${p8_dir_array[1]}/"; then
       echo "+ transfer of ${p8_dir_array[1]} done"
-      cd ${p8_dir_array[1]}
+      pushd ${p8_dir_array[1]}
 
       case ${p8_dir_array[1]} in
         'bintar-linux-rhel6-ppc64'|'bintar-linux-rhel7-ppc64')
@@ -1168,7 +1323,7 @@ if [ "${create_p8_bintar}" != "no" ]; then
       for dir_file in $(find . -type f | grep -v orig); do
         gpg2 ${gpg_opts} ${dir_file}
       done
-      cd ..
+      popd
       echo "+ finished signing files in ${p8_dir_array[1]}"
       echo
       echo
@@ -1197,7 +1352,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
   if [ "${create_win}" != "no" ]; then
     maybe_create_release_dir
     #maybe_fix_permissions # fix permissions if they haven't already been fixed
-    cd ${dir_release}/${dir_name}
+    pushd ${dir_release}/${dir_name}
     line
     echo "+ transfering Windows packages..."
     line
@@ -1205,7 +1360,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
         mkdir ${dir_release}/${dir_name}/${arch}-packages
       fi
-      cd ${dir_release}/${dir_name}/${arch}-packages
+      pushd ${dir_release}/${dir_name}/${arch}-packages
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
         wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
@@ -1217,7 +1372,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
     echo "+ fixing Win md5sums..."
     line
     for arch in win32 winx64; do
-      cd ${dir_release}/${dir_name}/${arch}-packages
+      pushd ${dir_release}/${dir_name}/${arch}-packages
       pwd
       dos2unix md5sums.txt
       grep ${arch} md5sums.txt > md5sums.txt.tmp
@@ -1250,6 +1405,10 @@ if [ "${galera_suffix}" != "-galera" ]; then
       echo "+ finished signing ${arch} files"
       echo
       echo
+
+      # copy the dir to the corp dir
+      echo "+ copying ${arch}-packages to ${dir_corp}/${dir_name}/"
+      rsync -avP --delete ${dir_release}/${dir_name}/${arch}-packages ${dir_corp}/${dir_name}/
     done
     echo "+ done transfering Windows packages"
   else
@@ -1267,7 +1426,6 @@ if [ "${galera_suffix}" = "-galera" ]; then
   # We don't have separate .deb or .rpm package repos for Galera so if we're
   # doing a Galera release, don't try to create them in the normal way,
   # instead, run the galera-new script to add packages to existing repositories
-  maybe_fix_permissions # fix permissions if they haven't already been fixed
 
   line
   echo "+ adding Galera Cluster files to existing repos..."
@@ -1276,8 +1434,7 @@ if [ "${galera_suffix}" = "-galera" ]; then
 
 else
   maybe_create_release_dir
-  maybe_fix_permissions # fix permissions if they haven't already been fixed
-  cd ${dir_release}/${dir_name}
+  pushd ${dir_release}/${dir_name}
   # Since this is not a galera release, create repos normally
   echo
   echo
@@ -1287,7 +1444,11 @@ else
     mkdir ${dir_release}/${dir_name}/repo
   fi
 
-  cd ${dir_release}/${dir_name}/repo
+  if [ ! -d ${dir_corp}/${dir_name}/repo ]; then
+    mkdir ${dir_corp}/${dir_name}/repo
+  fi
+
+  pushd ${dir_release}/${dir_name}/repo
 
   # create directory for the non-mgc version, if ubuntu or debian packages are
   # going to be created and if it doesn't already exist
@@ -1320,6 +1481,19 @@ else
     echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
      ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
 
+    # copy the repo to the corp release dir
+    rsync -a --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/
+    # remove ppc64el from repo config and update repo
+    sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/debian/conf/distributions
+    pushd ${dir_corp}/${dir_name}/repo/debian/
+      vi conf/distributions
+      reprepro -V --basedir . --delete clearvanished
+      # remove the now missing entries from the sum files
+      for sum in md5 sha1 sha256 sha512;do
+        sed -i '/ppc64el/d' ${sum}sums.txt
+      done
+    popd
+
     # after creating the repo, copy it to ${dir_release}/repo-no-mgc
     rsync -a --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/
   else
@@ -1344,11 +1518,25 @@ else
     echo "+ creating Ubuntu repos..."
     line
 
+    # This is where the repository is actually updated
     if [ "${is_ent}" = "yes" ];then
       ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     else
       ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     fi
+
+    # copy the repo to the corp release dir
+    rsync -a --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_corp}/${dir_name}/repo/
+    # remove ppc64el from repo config and update repo
+    sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
+    pushd ${dir_corp}/${dir_name}/repo/ubuntu/
+      vi conf/distributions
+      reprepro -V --basedir . --delete clearvanished
+      # remove the now missing entries from the sum files
+      for sum in md5 sha1 sha256 sha512;do
+        sed -i '/ppc64el/d' ${sum}sums.txt
+      done
+    popd
 
     # after creating the repo, copy it to ${dir_release}/repo-no-mgc
     rsync -a --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/
@@ -1357,7 +1545,7 @@ else
     echo "+ Skipping Ubuntu repo creation, as requested..."
     line
   fi
-  cd ${dir_release}/${dir_name}
+  pushd ${dir_release}/${dir_name}
   echo
 
   #-------------------------------------------------------------------------------
@@ -1373,7 +1561,7 @@ else
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
     mkdir -v ${HOME}/yum
-    cd ${HOME}/yum
+    pushd ${HOME}/yum
 
     if [ "${is_ent}" = "yes" ];then
       ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
@@ -1384,7 +1572,15 @@ else
     # move the yum dir to where it needs to go
     echo "+ mv -i ${HOME}/yum ${dir_release}/${dir_name}/"
     mv -i ${HOME}/yum ${dir_release}/${dir_name}/
-    cd ${dir_release}/${dir_name}/yum
+    pushd ${dir_release}/${dir_name}/
+
+    # copy the yum dir to the corp release dir
+    rsync -a --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
+
+    # remove ppc versions
+    pushd ${dir_corp}/${dir_name}/yum/
+    rm -v *ppc64*
+    rm -rf */*/ppc64*
 
     # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
@@ -1417,6 +1613,14 @@ shouldI create_package_tarballs
 echo;echo;echo;echo
 
 shouldI upload_to_the_staging_mirror
+
+echo;echo;echo;echo
+
+shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
+
+echo;echo;echo;echo
+
+shouldI upload_corp_dir_to_the_staging_mirror
 
 echo;echo;echo;echo
 
