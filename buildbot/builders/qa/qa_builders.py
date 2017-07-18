@@ -56,6 +56,7 @@ f_qa_linux.addStep(ShellCommand(
     descriptionDone=["rsync", "VMs"],
     doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
     haltOnFailure=True,
+    timeout=3600,
     command=["rsync", "-a", "-v", "-L",
              "bb01.mariadb.net::kvm/vms/vm-jessie-qa.qcow2",
              "/kvm/vms/"]))
