@@ -98,7 +98,34 @@ copy_and_stage_files() {
     if [[ ! -d "${dir_c}" ]];then
       mkdir -v ${dir_c}
     fi
-    cp -avi ${dir_build}/linux_x64-connector_c/*.gz ${dir_build}/linux_x64-connector_c/*.zip ${dir_build}/linux_x86-connector_c/*i686.tar.gz ${dir_build}/win*/*msi ${dir_c}/
+    for dir in ${dir_build}/*;do
+      echo ${dir}
+      case $(basename ${dir}) in 
+        "linux_x86-connector_c")
+          cp -avi ${dir}/*.gz ${dir_c}/
+          cp -avi ${dir}/*.zip ${dir_c}/
+          ;;
+        "centos6_i386-connector_c")
+          cp -avi ${dir}/*i686.tar.gz ${dir_c}/
+          ;;
+        "win-connector_c_3")
+          cp -avi ${dir}/*.msi ${dir_c}/
+          ;;
+        "labrador")
+          cp -avi ${dir}/*.gz ${dir_c}/
+          ;;
+        "freebsd11_x64-connector_c")
+          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          ;;
+        "freebsd11_x86-connector_c")
+          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          ;;
+        *)
+          echo "+fail: ${dir}"
+          ;;
+      esac
+    done
+    tree ${dir_c}/
   popd
   echo;echo;echo
 }
