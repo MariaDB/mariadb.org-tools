@@ -39,8 +39,8 @@ else
   res=1
 fi
 echo "Test run result: $res"
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira /home/buildbot/vardir/trial* || true
-perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=kb /home/buildbot/vardir/trial* || true
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira --nowarnings /home/buildbot/vardir/trial* || true
+perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=kb --nowarnings /home/buildbot/vardir/trial* || true
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/vardir/trial* 
 """),
     ], **kwargs)
