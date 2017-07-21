@@ -1,7 +1,12 @@
-qaTargetTrees = ["5.5", "10.0", "10.1", "10.2", "10.3", "bb-5.5-elenst*", "bb-10.0-elenst*", "bb-10.1-elenst*", "bb-10.2-elenst*", "bb-10.3-elenst*", "bb-10.1-marko", "bb-10.2-marko"]
+qaTargetTrees_10x = [ "10.0", "10.1", "10.2", "10.3", "bb-10.0-elenst*", "bb-10.1-elenst*", "bb-10.2-elenst*", "bb-10.3-elenst*", "bb-10.0-marko", "bb-10.1-marko", "bb-10.2-marko", "bb-10.3-marko", "bb-10.2-ext"]
+
+qaTargetTrees = ["5.5", "bb-5.5-elenst*"] + qaTargetTrees_10x
 
 def isTargetQA(step):
   return step.getProperty("branch") in qaTargetTrees
+
+def isTargetQA_10x(step):
+  return step.getProperty("branch") in qaTargetTrees_10x
 
 ###########################
 # Server tests
@@ -9,10 +14,16 @@ def isTargetQA(step):
 c['schedulers'].append(Triggerable(
         name="kvm-sched-qa-trees",
         builderNames=[
-                      "qa-kvm-linux",
                       "qa-win-rel",
                       "qa-win-debug"
                      ]))
+
+c['schedulers'].append(Triggerable(
+        name="kvm-sched-qa-trees-10x",
+        builderNames=[
+                      "qa-kvm-linux",
+                     ]))
+
 
 ###########################
 # Buildbot tests
