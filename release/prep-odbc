@@ -57,8 +57,11 @@ loadDefaults() {
 }
 
 usage() {
+  echo;line
   echo
   echo "usage: $0 <version> <build_dir>"
+  echo " e.g.: $0 3.0.1 /ds413/archive/builds/odbc-3.0/e5dd7440815d1ca2f2e96c3c305718fc9b4a8502/"
+  echo;line
   echo
   exit 1
 }
@@ -98,7 +101,10 @@ copy_and_stage_files() {
     if [[ ! -d "${dir_odbc}" ]];then
       mkdir -v ${dir_odbc}
     fi
-    cp -avi ${dir_build}/*.gz ${dir_build}/*/*.gz ${dir_build}/win*/*msi ${dir_odbc}/
+    if [[ -f ${dir_build}/*.gz ]];then
+      cp -avi ${dir_build}/*.gz ${dir_odbc}/
+    fi
+    cp -avi ${dir_build}/*/*.gz ${dir_build}/win*/*msi ${dir_odbc}/
   popd
   echo;echo;echo
 }
@@ -201,9 +207,10 @@ upload_to_the_corp_mirror() {
 
 loadDefaults
 
-if [ "${version}" = "" ]; then
-  usage
-fi
+case ${version} in
+  ""|"-h") usage
+    ;;
+esac
 
 set -eu
   # -e  Exit immediately if a simple command exits with a non-zero status,
