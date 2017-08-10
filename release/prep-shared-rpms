@@ -34,8 +34,8 @@ kvm-rpm-centos73-ppc64:centos73-ppc64:rhel/7.3/ppc64
 kvm-rpm-centos73-ppc64le:centos73-ppc64le:rhel/7.3/ppc64le
 kvm-rpm-fedora24-amd64:fedora24-x86_64:fedora/24/x86_64
 kvm-rpm-fedora24-x86:fedora24-i686:fedora/24/i386
-kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64
-kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386
+kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64:fc25.x86_64
+kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386:fc25.i686
 kvm-zyp-sles12-amd64:sles12-x86_64:sles/12/x86_64
 kvm-zyp-opensuse42-amd64:opensuse42-x86_64:opensuse/42/x86_64
 p8-rhel7-rpm-ppc64le:rhel7-ppc64le:rhel/7/ppc64le
@@ -52,7 +52,15 @@ cd ${dir_rpm_shared}
 
 for dist_pair in ${dists}; do
   dist=(${dist_pair//:/ })
-  cp -avi ${dir_release}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-${version}-${dist[1]}-shared.rpm ./
+  case ${dist[2]} in
+    'fedora/25/x86_64'|'fedora/25/i386')
+      cp -avi ${dir_release}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-shared-${version}*${dist[3]}.rpm ./
+      ln -sv MariaDB-shared-${version}*${dist[3]}.rpm MariaDB-${version}-${dist[1]}-shared.rpm
+      ;;
+    *)
+      cp -avi ${dir_release}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-${version}-${dist[1]}-shared.rpm ./
+      ;;
+  esac
   if [ -e "mariadb-shared-10.1-${dist[0]}.rpm" ]; then
     rm -v mariadb-shared-10.1-${dist[0]}.rpm
   fi
