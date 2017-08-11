@@ -1183,8 +1183,10 @@ if [ "${create_bintar}" != "no" ]; then
     line
     for galera_version in ${ver_galera}; do
       mkdir -vp ./galera-${galera_version}
+      # rsync the galera dir to the release dir
       if rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
-        if rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
+        # rsync the galera dir to the corp dir
+        if rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* --exclude=deb/ --exclude=rpm/ "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
           echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
         fi
         echo
@@ -1486,7 +1488,7 @@ else
     # remove ppc64el from repo config and update repo
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/debian/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/debian/
-      vi conf/distributions
+      vi conf/distributions   # delete sid, if necessary
       reprepro -V --basedir . --delete clearvanished
       # remove the now missing entries from the sum files
       for sum in md5 sha1 sha256 sha512;do
@@ -1575,12 +1577,19 @@ else
     pushd ${dir_release}/${dir_name}/
 
     # copy the yum dir to the corp release dir
+    case ${tree} in
+      "5.5"|"10.0")
+        message "Please run the galera-old script..."
+        pressAnyKeyToContinue
+        ;;
+    esac
+    message "copying the yum dir to the corp release dir"
     rsync -a --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
 
     # remove ppc versions
     pushd ${dir_corp}/${dir_name}/yum/
     rm -v *ppc64*
-    rm -rf */*/ppc64*
+    rm -vrf */*/ppc64*
 
     # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
