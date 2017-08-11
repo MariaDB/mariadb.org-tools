@@ -137,38 +137,42 @@ if [ "${create_ubuntu}" != "no" ]; then
   line
   echo "+ Adding files to Ubuntu repo..."
   line
-  cd ${dir_release}/${dir_name}/repo/ubuntu
-  for dist in ${ubuntu_dists} ; do
-    for gv in ${ver_galera}; do
-      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-server*${dist}*.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-      done;
-      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-      done;
-      #if [ "${is_ent}" = "yes" ];then
-        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-          for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
-            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-          done;
-          for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*ppc64el.deb"); do
-            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-          done;
+  for dir_path in ${dir_corp} ${dir_release} ; do
+    cd ${dir_path}/${dir_name}/repo/ubuntu
+    for dist in ${ubuntu_dists} ; do
+      for gv in ${ver_galera}; do
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-server*${dist}*.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-amd64/" -name "*galera-test*${dist}*.deb"); do
+          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+        done;
+        if [ "${dir_path}" = "${dir_release}" ];then
+          if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+            for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
+              runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+            done;
+            for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-test*${dist}*ppc64el.deb"); do
+              runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+            done;
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+          fi
         fi
-      #else
-        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
-          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-        done;
-        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
-          runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
-        done;
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-      #fi
-      #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
-      runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-      if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
-      fi
+        #else
+          for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+          done;
+          for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${dist}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
+          done;
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        #fi
+        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        #if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+        #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+        #fi
+      done
     done
   done
 else
@@ -185,34 +189,35 @@ if [ "${create_debian}" != "no" ]; then
   line
   echo "+ Adding files to Debian repo..."
   line
-  cd ${dir_release}/${dir_name}/repo/debian
-  
-  #for i in "squeeze debian6" "wheezy wheezy"; do
-  #for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
-  for dist in ${debian_dists}; do
-    for gv in ${ver_galera}; do
-      if [ "${dist}" = "squeeze" ];then
-        builder="debian6"
-      else
-        builder="${dist}"
-      fi
-      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-server*${dist}*.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
-      done;
-      for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-test*${dist}*.deb"); do
-        runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
-      done;
-      if [ "${is_ent}" != "yes" ];then
-        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+  for dir_path in ${dir_corp} ${dir_release} ; do
+    cd ${dir_path}/${dir_name}/repo/debian
+    #for i in "squeeze debian6" "wheezy wheezy"; do
+    #for i in "squeeze debian6" "wheezy wheezy" "sid sid"; do
+    for dist in ${debian_dists}; do
+      for gv in ${ver_galera}; do
+        if [ "${dist}" = "squeeze" ];then
+          builder="debian6"
+        else
+          builder="${dist}"
+        fi
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-server*${dist}*.deb"); do
           runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
         done;
-        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+        for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-amd64/" -name "*galera-test*${dist}*.deb"); do
           runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
         done;
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-      fi
-      #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-      runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        if [ "${is_ent}" != "yes" ];then
+          for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-server*${dist}*i386.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
+          done;
+          for file in $(find "${dir_archive}/${tree}/build-${tarbuildnum}/kvm-deb-${builder}-x86/" -name "*galera-test*${dist}*i386.deb"); do
+            runCommand reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ;
+          done;
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        fi
+        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+      done
     done
   done
 else
@@ -438,6 +443,39 @@ if [ "${create_yum}" != "no" ]; then
   # moving the yum dir back to where it belongs
   runCommand mv -i ~/yum ${dir_release}/${dir_name}/
 
+  # sync repo updates to the corp dirs
+  for dir in ${yum_dists}; do
+    case ${dir} in 
+      'rhel6')
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/
+        ;;
+      'rhel7')
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/
+        ;;
+      'rhel73')
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/
+        ;;
+      'sles11') 
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/
+        ;;
+      'sles12') 
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/
+        ;;
+      'opensuse42') 
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/
+        ;;
+      'fedora24') 
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/
+        ;;
+      'fedora25') 
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/
+        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/
+        ;;
+    esac
+  done
 else
   line
   echo "+ Skipping adding files to Yum repo, as requested..."
