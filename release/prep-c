@@ -112,13 +112,22 @@ copy_and_stage_files() {
           cp -avi ${dir}/*.msi ${dir_c}/
           ;;
         "labrador")
-          cp -avi ${dir}/*.gz ${dir_c}/
+          #cp -avi ${dir}/*.gz ${dir_c}/
+          echo
+          echo "skipping ${dir}"
+          echo
           ;;
         "freebsd11_x64-connector_c")
-          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          #cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          echo
+          echo "skipping ${dir}"
+          echo
           ;;
         "freebsd11_x86-connector_c")
-          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          #cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          echo
+          echo "skipping ${dir}"
+          echo
           ;;
         *)
           echo "+fail: ${dir}"
