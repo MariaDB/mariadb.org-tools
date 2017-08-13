@@ -101,10 +101,7 @@ copy_and_stage_files() {
     if [[ ! -d "${dir_odbc}" ]];then
       mkdir -v ${dir_odbc}
     fi
-    if [[ -f ${dir_build}/*.gz ]];then
-      cp -avi ${dir_build}/*.gz ${dir_odbc}/
-    fi
-    cp -avi ${dir_build}/*/*.gz ${dir_build}/win*/*msi ${dir_odbc}/
+    cp -avi ${dir_build}/*.gz ${dir_build}/*/*.gz ${dir_build}/win*/*msi ${dir_odbc}/
   popd
   echo;echo;echo
 }
