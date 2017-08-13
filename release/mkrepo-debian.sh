@@ -211,10 +211,10 @@ case ${TREE} in
     debian_dists="wheezy jessie"
     ;;
   '10.0'|'10.0-galera')
-    debian_dists="wheezy jessie sid"
+    debian_dists="wheezy jessie"
     ;;
   '10.1')
-    debian_dists="wheezy jessie stretch"
+    debian_dists="wheezy jessie stretch sid"
     ;;
   *)
     debian_dists="wheezy jessie stretch sid"
@@ -235,9 +235,14 @@ for dist in ${debian_dists}; do
   # add amd64 files
   case ${builder} in 
     'sid')
-      reprepro --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
-    'jessie'|'stretch')
+    'jessie')
+      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      ;;
+    'stretch')
+      sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
