@@ -10,7 +10,7 @@ open (O, '>', $file) or die "open(>$file): $!";
 while(<I>) {
   s/\e.*\a//;
   s/[\r\n\a]//g;
-  s/^worker\[(\d)\]/w$1/;
-  s/ '(.+?)'( +w\d \[ [-a-z]+ \])/,$1 $2/;
+  s/^worker\[(\d+)\]/w$1/;
+  s/ '(.+?)'( +w\d+ \[ [-a-z]+ \])/,$1 $2/;
   print O "$_\n";
 }
