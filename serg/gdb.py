@@ -56,7 +56,7 @@ def String(val):
 @PrettyPrinter
 def st_bitmap(val):
     s=''
-    for i in range((val['n_bits']+7)//8):
+    for i in range(int(val['n_bits']+7)//8):
         s = format(int(val['bitmap'][i]), '032b') + s
     return "b'" + s[-int(val['n_bits']):] + "'"
 
@@ -95,3 +95,19 @@ def HA_ALTER_FLAGS(val):
         'ALTER_ALL_PARTITION', 'RECREATE_TABLE', 'ALTER_COLUMN_VCOL',
         'ALTER_PARTITIONED', 'ALTER_ADD_CHECK_CONSTRAINT',
         'ALTER_DROP_CHECK_CONSTRAINT'])
+
+def byte(val):
+    return int(val.cast(gdb.lookup_type('unsigned char')))
+
+@PrettyPrinter
+def sockaddr_storage(val):
+    if val['ss_family'] == 1: return 'AF_UNIX ???'
+    if val['ss_family'] == 2:
+        s = val['__ss_padding']
+        return 'AF_INET://{}.{}.{}.{}:{}'.format(
+                byte(s[2]), byte(s[3]), byte(s[4]), byte(s[5]),
+                byte(s[0])*256+byte(s[1])
+                )
+    if val['ss_family'] == 10: return 'AF_INET6 ???'
+    return 'AF_???'
+
