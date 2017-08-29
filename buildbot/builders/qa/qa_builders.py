@@ -2,12 +2,14 @@
 #
 # "QA" tests (as opposed to normal dev builders)
 
-def getQAUpgradeStep(action, upgrade_from = "", **kwargs):
+def getQAInnoDBUpgradeStep(action, upgrade_from = "", variant = "", **kwargs):
 
+    extra_vm=[]
     if upgrade_from != "":
-        test_name = "upgr_" + upgrade_from
-        test_description = "Upgrade from " + upgrade_from
+        test_name = "upgr_" + variant + upgrade_from
+        test_description = "Upgrade from " + variant + upgrade_from
         config = "bb-upgrade-" + upgrade_from + "-to-"
+        extra_vm = ["--kvm=-hdb", "--kvm=/kvm/vms/vm-qa-" + variant + upgrade_from + ".qcow2"]
     elif action == "recovery":
         test_name = "recovery"
         test_description = "Crash recovery"
@@ -19,31 +21,79 @@ def getQAUpgradeStep(action, upgrade_from = "", **kwargs):
         name=test_name,
         description=[test_description],
         descriptionDone=[test_description],
-	warningPattern="^.*WARNING:.*MDEV",
+        logfiles={"stack_traces": "stack_traces", "error_logs" : "error_logs"},
+        warningPattern="^.*WARNING:.*MDEV",
         timeout=3600,
         env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-        command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
+        command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", extra_vm, "vm-tmp-10710.qcow2",
         WithProperties("""
 set -ex
 cd rqg
 export BUILD_HOME=/home/buildbot
 
+if [ -e /dev/sdb ] ; then
+  sudo mount /dev/sdb /mnt
+  basedir1=/mnt
+else
+  basedir1=$BUILD_HOME/build
+fi
+
 branch=`echo '%(branch)s' | sed -e "s/.*\\\\(10\\\\.[0-9]\\\\).*/\\\\1/"`
 config="""+config+"""${branch}-small.cc
 echo "Combinations file: $config"
 
-if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/vardir --discard-logs
+# --run-all-combinations-once
+if perl ./combinations.pl --new --config=/home/buildbot/mariadb-toolbox/configs/$config --run-all-combinations-once --force --workdir=/home/buildbot/vardir --basedir2=/$BUILD_HOME/build --basedir1=$basedir1
 then
   res=0
 else
   res=1
 fi
 echo "Test run result: $res"
+
+touch $BUILD_HOME/error_logs
+
+for fname in $BUILD_HOME/vardir/vardir1*/mysql.err*
+do
+  if [ -e $fname ] ; then
+    echo >> $BUILD_HOME/error_logs
+    echo "========================= $fname =============================" >> $BUILD_HOME/error_logs
+    echo >> $BUILD_HOME/error_logs
+#    newname=`echo $fname | sed -e 's/.*vardir1_\([0-9]*\)\/\(.*\)/\\2\.\\1/'`
+    cat $fname >> $BUILD_HOME/error_logs
+  fi
+done
+
+#tar zcvf $BUILD_HOME/error_logs.tar.gz $BUILD_HOME/error_logs
+
+touch $BUILD_HOME/stack_traces
+
+for coredump in $BUILD_HOME/vardir/vardir1*/data*/core
+do
+  if [ -e $coredump ] ; then
+    echo >> $BUILD_HOME/stack_traces
+    echo "========================= $coredump =============================" >> $BUILD_HOME/stack_traces
+#    stackfile=`echo $coredump | sed -e 's/.*vardir1_\([0-9]*\)\/data\(.*\)\/core/threads\\2\.\\1/'`
+    binary=`file -Pelf_phnum=10000 $coredump | sed -e 's/.*from .\(\/.*\/mysqld\).*/\\1/'`
+    echo "------ Produced by $binary ------" >> $BUILD_HOME/stack_traces
+    echo >> $BUILD_HOME/stack_traces
+    gdb --batch --eval-command="thread apply all bt" $binary $coredump >> $BUILD_HOME/stack_traces
+  fi
+done
+
+#tar zcvf $BUILD_HOME/stack_traces.tar.gz $BUILD_HOME/stack_traces
+
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira --nowarnings /home/buildbot/vardir/trial* || true
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=kb --nowarnings /home/buildbot/vardir/trial* || true
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/vardir/trial* 
 """),
+        "!= rm -rf stack_traces* error_logs*; scp -P 10710 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:stack_traces .; scp -P 10710 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:error_logs ."
     ], **kwargs)
+
+
+###############################################################################################
+#
+# Various linux-based tests
 
 f_qa_linux = factory.BuildFactory()
 
@@ -51,16 +101,20 @@ f_qa_linux.addStep(ShellCommand(
     description=["cleaning", "build", "dir"],
     descriptionDone=["clean", "build", "dir"],
     command=["sh", "-c", "rm -Rf ../build/*"]))
+
 f_qa_linux.addStep(ShellCommand(
+    name="rsync_VM",
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
     doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
-             "bb01.mariadb.net::kvm/vms/vm-jessie-qa.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-qa-jessie-amd64.qcow2",
              "/kvm/vms/"]))
+
 f_qa_linux.addStep(DownloadSourceTarball())
+
 # Extract the compiler warning suppressions file from the source tarball.
 f_qa_linux.addStep(ShellCommand(
     doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
@@ -71,7 +125,156 @@ rm -f compiler_warnings.supp
 tar zxf "/tmp/buildcache/%(tarbuildnum)s:%(distname)s" --strip 2 "$(basename %(distname)s .tar.gz)/support-files/compiler_warnings.supp"
 exit 0  # best-effort, not fatal if no suppression file
 """)]))
+
 f_qa_linux.addStep(Compile(
+    description=["compiling", "and", "updating", "git", "trees"],
+    descriptionDone=["compile", "and", "git", "update"],
+    logfiles={"kernel": "kernel_10712.log"},
+    warningPattern=gccWarningPattern,
+    warningExtractor=Compile.warnExtractFromRegexpGroups,
+    suppressionFile=WithProperties("compiler_warnings.supp"),
+    timeout=3600,
+    env={"TERM": "vt102"},
+    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-build-10712.qcow2",
+    "rm -Rf buildbot && mkdir buildbot",
+    ScpSourceIntoVM("10712"),
+    WithProperties("""
+set -ex
+rm -Rf build
+tar zxf "buildbot/%(distname)s"
+mv "%(distdirname)s" build
+cd build
+cmake . -DCMAKE_BUILD_TYPE=Debug -DPLUGIN_AWS_KEY_MANAGEMENT=NO
+make -j4
+. /home/buildbot/mariadb-toolbox/scripts/create_so_symlinks.sh
+cd /home/buildbot/rqg
+git pull
+git log -1
+cd /home/buildbot/mariadb-toolbox
+git pull
+git log -1
+"""),
+    ]))
+
+#f_qa_linux.addStep(Test(
+#    doStepIf=False,
+#    name="gtid_stress",
+#    description=["GTID-based replication"],
+#    descriptionDone=["GTID-based replication"],
+#    timeout=3600,
+#    env={"TERM": "vt102"},
+#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    WithProperties("""
+#set -ex
+#cd rqg
+#perl ./runall-new.pl --grammar=conf/mariadb/gtid_stress.yy --gendata=conf/mariadb/gtid_stress.zz --duration=600 --threads=8 --queries=100M --rpl_mode=mixed --use_gtid=current_pos --basedir=/home/buildbot/build --vardir=/home/buildbot/vardir_gtid
+#echo "----------------------------------------------"
+#echo "Master log"
+#echo "----------------------------------------------"
+#grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid/mysql.err | grep -v '\[Note\]'
+#echo "----------------------------------------------"
+#echo "Slave log"
+#echo "----------------------------------------------"
+#grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[Note\]'
+#"""),
+#    ]))
+
+
+##f_qa_linux.addStep(Test(
+##    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
+#    doStepIf=False,
+#    name="rqg_10.2",
+#    description=["10.2 features"],
+#    descriptionDone=["10.2 features"],
+#    timeout=3600,
+#    env={"TERM": "vt102"},
+#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    WithProperties("""
+#set -ex
+#cd rqg
+#perl ./combinations.pl --new --config=conf/mariadb/10.2-new-features.cc --run-all-combinations-once --force --basedir=/home/buildbot/build --workdir=/home/buildbot/10.2-features
+#"""),
+#    ]))
+
+## Moved to Fulltest
+#f_qa_linux.addStep(getMTR(
+##    doStepIf=(lambda(step): branch_is_10_x(step)),
+#    doStepIf=False,
+#    name="engines",
+#    test_type="engines",
+#    test_info="MySQL engines/* tests",
+#    timeout=7200,
+#    env={"TERM": "vt102"},
+#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    WithProperties("""
+#set -ex
+#cd build/mysql-test
+#echo "See TODO-823 for explanation why open-files-limit and log-warnings are here"
+#perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --suite=engines/funcs,engines/iuds --parallel=4 --mysqld=--open-files-limit=0 --mysqld=--log-warnings=1 --mem #--verbose-restart
+#"""),
+#    ]))
+
+f_qa_linux.addStep(getMTR(
+#    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step) and isMainTree(step)),
+    doStepIf=False,
+    name="stable_tests",
+    test_type="nm",
+    test_info="Skip unstable tests",
+    timeout=7200,
+    env={"TERM": "vt102"},
+    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+    WithProperties("""
+set -ex
+cd build/mysql-test
+perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --skip-test-list=unstable-tests --parallel=4 --mem --verbose-restart
+"""),
+    ]))
+
+bld_kvm_qa_linux = {
+        'name': "qa-kvm-linux",
+        'slavenames': ["bb02","bb03","aidi"],
+        'builddir': "kvm-qa-linux",
+        'factory': f_qa_linux,
+        "nextBuild": myNextBuild,
+        'category': "experimental"
+}
+
+###############################################################################################
+#
+# InnoDB upgrade tests
+
+f_qa_innodb = factory.BuildFactory()
+
+f_qa_innodb.addStep(ShellCommand(
+    description=["cleaning", "build", "dir"],
+    descriptionDone=["clean", "build", "dir"],
+    command=["sh", "-c", "rm -Rf ../build/*"]))
+
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_VM",
+    description=["rsyncing", "VMs"],
+    descriptionDone=["rsync", "VMs"],
+    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-jessie-amd64.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(DownloadSourceTarball())
+
+# Extract the compiler warning suppressions file from the source tarball.
+f_qa_innodb.addStep(ShellCommand(
+    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step)),
+    description=["getting", ".supp"],
+    descriptionDone=["get", ".supp"],
+    command=["sh", "-c", WithProperties("""
+rm -f compiler_warnings.supp
+tar zxf "/tmp/buildcache/%(tarbuildnum)s:%(distname)s" --strip 2 "$(basename %(distname)s .tar.gz)/support-files/compiler_warnings.supp"
+exit 0  # best-effort, not fatal if no suppression file
+""")]))
+
+f_qa_innodb.addStep(Compile(
     description=["compiling", "and", "updating", "git", "trees"],
     descriptionDone=["compile", "and", "git", "update"],
     logfiles={"kernel": "kernel_10710.log"},
@@ -80,7 +283,7 @@ f_qa_linux.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=/kvm/vms/vm-jessie-qa.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
     "rm -Rf buildbot && mkdir buildbot",
     ScpSourceIntoVM("10710"),
     WithProperties("""
@@ -100,138 +303,162 @@ git pull
 git log -1
 """),
     ]))
-f_qa_linux.addStep(Test(
-    doStepIf=False,
-    name="gtid_stress",
-    description=["GTID-based replication"],
-    descriptionDone=["GTID-based replication"],
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
+        action="recovery",
+        doStepIf=(lambda(step): branch_is_10_x(step))
+    )
+)
+
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_10_0",
+    description=["rsyncing", "10.0", "builds"],
+    descriptionDone=["rsync", "10.0", "builds"],
+    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
     timeout=3600,
-    env={"TERM": "vt102"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-perl ./runall-new.pl --grammar=conf/mariadb/gtid_stress.yy --gendata=conf/mariadb/gtid_stress.zz --duration=600 --threads=8 --queries=100M --rpl_mode=mixed --use_gtid=current_pos --basedir=/home/buildbot/build --vardir=/home/buildbot/vardir_gtid
-echo "----------------------------------------------"
-echo "Master log"
-echo "----------------------------------------------"
-grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid/mysql.err | grep -v '\[Note\]'
-echo "----------------------------------------------"
-echo "Slave log"
-echo "----------------------------------------------"
-grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[Note\]'
-"""),
-    ]))
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-old-10.0.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-qa-10.0.qcow2",
+             "/kvm/vms/"]))
 
-
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="10.0",
         doStepIf=(lambda(step): branch_is_10_x(step))
     )
 )
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.0",
+        variant="old-",
+        doStepIf=(lambda(step): branch_is_10_x(step))
+    )
+)
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_10_1",
+    description=["rsyncing", "10.1", "builds"],
+    descriptionDone=["rsync", "10.1", "builds"],
+    doStepIf=(lambda(step): branch_is_10_1_or_later(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-old-10.1.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-qa-10.1.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="10.1",
         doStepIf=(lambda(step): branch_is_10_1_or_later(step))
     )
 )
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.1",
+        variant="old-",
+        doStepIf=(lambda(step): branch_is_10_1_or_later(step))
+    )
+)
+
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_10_2",
+    description=["rsyncing", "10.2", "builds"],
+    descriptionDone=["rsync", "10.2", "builds"],
+    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-old-10.2.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-qa-10.2.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="10.2",
         doStepIf=(lambda(step): branch_is_10_2_or_later(step))
     )
 )
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
+        action="upgrade",
+        upgrade_from="10.2",
+        variant="old-",
+        doStepIf=(lambda(step): branch_is_10_2_or_later(step))
+    )
+)
+
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_10_3",
+    description=["rsyncing", "10.3", "builds"],
+    descriptionDone=["rsync", "10.3", "builds"],
+    doStepIf=(lambda(step): branch_is_10_3_or_later(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-10.3.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="10.3",
         doStepIf=(lambda(step): branch_is_10_3_or_later(step))
     )
 )
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_5_6",
+    description=["rsyncing", "5.6", "builds"],
+    descriptionDone=["rsync", "5.6", "builds"],
+    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-5.6.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="5.6",
         doStepIf=(lambda(step): branch_is_10_x(step))
     )
 )
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
+f_qa_innodb.addStep(ShellCommand(
+    name="rsync_5_7",
+    description=["rsyncing", "5.7", "builds"],
+    descriptionDone=["rsync", "5.7", "builds"],
+    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("slavename") != "bb01"),
+    haltOnFailure=True,
+    timeout=3600,
+    command=["rsync", "-a", "-v", "-L",
+             "bb01.mariadb.net::kvm/vms/vm-qa-5.7.qcow2",
+             "/kvm/vms/"]))
+
+f_qa_innodb.addStep(
+     getQAInnoDBUpgradeStep(
         action="upgrade",
         upgrade_from="5.7",
         doStepIf=(lambda(step): branch_is_10_2_or_later(step))
     )
 )
 
-f_qa_linux.addStep(
-     getQAUpgradeStep(
-        action="recovery",
-        doStepIf=(lambda(step): branch_is_10_x(step))
-    )
-)
-
-
-f_qa_linux.addStep(Test(
-#    doStepIf=(lambda(step): step.getProperty("branch") == "10.2"),
-    doStepIf=False,
-    name="rqg_10.2",
-    description=["10.2 features"],
-    descriptionDone=["10.2 features"],
-    timeout=3600,
-    env={"TERM": "vt102"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd rqg
-perl ./combinations.pl --new --config=conf/mariadb/10.2-new-features.cc --run-all-combinations-once --force --basedir=/home/buildbot/build --workdir=/home/buildbot/10.2-features
-"""),
-    ]))
-
-f_qa_linux.addStep(getMTR(
-    doStepIf=(lambda(step): branch_is_10_x(step)),
-    name="engines",
-    test_type="engines",
-    test_info="MySQL engines/* tests",
-    timeout=7200,
-    env={"TERM": "vt102"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd build/mysql-test
-echo "See TODO-823 for explanation why open-files-limit and log-warnings are here"
-perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --suite=engines/funcs,engines/iuds --parallel=4 --mysqld=--open-files-limit=0 --mysqld=--log-warnings=1 --mem --verbose-restart
-"""),
-    ]))
-
-f_qa_linux.addStep(getMTR(
-    doStepIf=(lambda(step): branch_is_10_x(step) and branch_is_not_10_3(step) and isMainTree(step)),
-    name="stable_tests",
-    test_type="nm",
-    test_info="Skip unstable tests",
-    timeout=7200,
-    env={"TERM": "vt102"},
-    command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-10710.qcow2",
-    WithProperties("""
-set -ex
-cd build/mysql-test
-perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-datadir=1 --skip-test-list=unstable-tests --parallel=4 --mem --verbose-restart
-"""),
-    ]))
-
-bld_kvm_qa_linux = {
-        'name': "qa-kvm-linux",
+bld_kvm_qa_innodb = {
+        'name': "qa-innodb-upgrade",
         'slavenames': ["bb02","bb03","aidi"],
-        'builddir': "kvm-qa-linux",
-        'factory': f_qa_linux,
+        'builddir': "kvm-qa-innodb",
+        'factory': f_qa_innodb,
         "nextBuild": myNextBuild,
         'category': "experimental"
 }
