@@ -23,26 +23,26 @@ c['schedulers'].append(Triggerable(
                       "qa-win-debug"
                      ]))
 
-c['schedulers'].append(Triggerable(
-        name="kvm-sched-qa-trees-10x",
-        builderNames=[
-                      "qa-kvm-linux",
-                     ]))
+#c['schedulers'].append(Triggerable(
+#        name="kvm-sched-qa-trees-10x",
+#        builderNames=[
+#                      "qa-kvm-linux",
+#                     ]))
 
-c['schedulers'].append(Triggerable(
-        name="kvm-sched-qa-innodb",
-        builderNames=[
-                      "qa-innodb-upgrade",
-                     ]))
+#c['schedulers'].append(Triggerable(
+#        name="kvm-sched-qa-innodb",
+#        builderNames=[
+#                      "qa-innodb-upgrade",
+#                     ]))
 
 
 ###########################
 # Buildbot tests
 
 # A scheduler for experiments with buildbot itself
-c['schedulers'].append(AnyBranchScheduler(
-    name="buildbot-experiments",
-    treeStableTimer=60,
-    change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("bb-non-existing-tree")}),
-    builderNames=["qa-buildbot-experiments"]
-))
+#c['schedulers'].append(AnyBranchScheduler(
+#    name="buildbot-experiments",
+#    treeStableTimer=60,
+#    change_filter=BranchFilter(on_github={"https://github.com/MariaDB/server" : ("bb-non-existing-tree")}),
+#    builderNames=["qa-buildbot-experiments"]
+#))
