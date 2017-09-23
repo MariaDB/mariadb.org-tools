@@ -59,13 +59,13 @@ elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
   distros="sles opensuse rhel"
   vers_maj_sles="12"
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25 fedora26"
-  vers_maj_fedora="24 25 26"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora25 fedora26"
+  vers_maj_fedora="25 26"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 else
-  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25 fedora26"
-  vers_maj_fedora="24 25 26"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora25 fedora26"
+  vers_maj_fedora="25 26"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 fi
@@ -125,7 +125,7 @@ archs_centos_7="amd64:x86_64"
 #archs_fedora_21=${archs_std}
 #archs_fedora_22=${archs_std}
 #archs_fedora_23=${archs_std}
-archs_fedora_24=${archs_std}
+#archs_fedora_24=${archs_std}
 archs_fedora_25=${archs_std}
 archs_fedora_26="amd64:x86_64"
 archs_sles_11=${archs_std}
@@ -371,18 +371,18 @@ for REPONAME in ${dists}; do
               else
                 rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}3-${ARCH}/rpms/
               fi
-            elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora21" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc21*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora22" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc22*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora23" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc23*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora24" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora19" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora20" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc20*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora21" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc21*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora22" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc22*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora23" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc23*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora24" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc25*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora26" ] ; then
@@ -402,18 +402,18 @@ for REPONAME in ${dists}; do
           else
             if [ "${REPONAME}" = "centos5" ] || [ "${REPONAME}" = "rhel5" ]; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel5*i386.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora19" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora20" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora21" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc21*i686.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora22" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc22*i686.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora23" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc23*i686.rpm ./${REPONAME}-${ARCH}/rpms/
-            elif [ "${REPONAME}" = "fedora24" ] ; then
-              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora19" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc19*i386.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora20" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc20*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora21" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc21*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora22" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc22*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora23" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc23*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+#            elif [ "${REPONAME}" = "fedora24" ] ; then
+#              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc25*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora26" ] ; then
