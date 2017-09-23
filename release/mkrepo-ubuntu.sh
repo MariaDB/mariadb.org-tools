@@ -53,10 +53,10 @@ case ${ARCHDIR} in
     ubuntu_dists="trusty"
     ;;
   *"10.0"*)
-    ubuntu_dists="trusty xenial yakkety"
+    ubuntu_dists="trusty xenial"
     ;;
   *)
-    ubuntu_dists="trusty xenial yakkety zesty"
+    ubuntu_dists="trusty xenial zesty"
     ;;
 esac
 
@@ -187,7 +187,7 @@ fi
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
-    'trusty'|'utopic'|'xenial'|'yakkety'|'zesty')
+    'trusty'|'utopic'|'xenial'|'zesty')
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
