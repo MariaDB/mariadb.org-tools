@@ -59,13 +59,13 @@ elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
   distros="sles opensuse rhel"
   vers_maj_sles="12"
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25"
-  vers_maj_fedora="24 25"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25 fedora26"
+  vers_maj_fedora="24 25 26"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 else
-  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25"
-  vers_maj_fedora="24 25"
+  dists="sles12 opensuse42 rhel6 rhel7 fedora24 fedora25 fedora26"
+  vers_maj_fedora="24 25 26"
   distros="sles opensuse rhel fedora"
   vers_maj_sles="12"
 fi
@@ -98,7 +98,7 @@ else
   elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
     p8_dists="rhel7 rhel71 sles12"
   else
-    p8_dists="rhel7 rhel71 sles12 rhel73"
+    p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   fi
   #p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   #p8_dists="rhel6 rhel7 rhel71"
@@ -127,6 +127,7 @@ archs_centos_7="amd64:x86_64"
 #archs_fedora_23=${archs_std}
 archs_fedora_24=${archs_std}
 archs_fedora_25=${archs_std}
+archs_fedora_26="amd64:x86_64"
 archs_sles_11=${archs_std}
 archs_opensuse_13=${archs_std}
 archs_opensuse_42="amd64:x86_64"
@@ -319,6 +320,13 @@ for REPONAME in ${dists}; do
           echo "+ no packages for ${REPONAME}-${ARCH}"
         fi
         ;;
+      'fedora26')
+        if [ "${ARCH}" = "amd64" ]; then
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+        else
+          echo "+ no packages for ${REPONAME}-${ARCH}"
+        fi
+        ;;
       *)
         #mkdir -vp "${REPONAME}-${ARCH}"
         rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
@@ -377,6 +385,9 @@ for REPONAME in ${dists}; do
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc25*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora26" ] ; then
+              #rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc26*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
+              echo "+ no galera for fedora 26 yet"
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] ; then
@@ -405,6 +416,8 @@ for REPONAME in ${dists}; do
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc24*i686.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora25" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc25*i686.rpm ./${REPONAME}-${ARCH}/rpms/
+            elif [ "${REPONAME}" = "fedora26" ] ; then
+              echo "+ no packages for ${REPONAME}-${ARCH}"
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*sles11*i586.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "opensuse42" ] ; then
@@ -510,10 +523,10 @@ done
         # Add in advance-toolchain runtime for distros that need them
         case "${P8_REPONAME}-${P8_ARCH}" in
           'centos6-ppc64'|'rhel6-ppc64'|'centos7-ppc64'|'rhel7-ppc64'|'sles12-ppc64le')
-            rsync -av --keep-dirlinks ${dir_at}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${dir_at}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*.rpm ./${P8_REPONAME}-${P8_ARCH}/rpms/
             ;;
           'centos71-ppc64le'|'rhel71-ppc64le')
-            rsync -av --keep-dirlinks ${dir_at}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*runtime*.rpm ./rhel7-${P8_ARCH}/rpms/
+            rsync -av --keep-dirlinks ${dir_at}/${P8_REPONAME}-${P8_ARCH}-${suffix}/*.rpm ./rhel7-${P8_ARCH}/rpms/
             ;;
           * ) 
             echo "no advance-toolchain packages for ${P8_REPONAME}-${P8_ARCH}"
