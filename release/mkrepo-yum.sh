@@ -49,20 +49,20 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 
 # If we are on 5.5 then no fedora
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  dists="sles12 rhel6 rhel7"
+  dists="sles11 sles12 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 5.5 any more
   distros="sles rhel"
-  vers_maj_sles="12"
+  vers_maj_sles="11 12"
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
-  dists="sles12 opensuse42 rhel6 rhel7"
+  dists="sles11 sles12 opensuse42 rhel6 rhel7"
   vers_maj_fedora=""                            # no Fedora in 10.0 any more
   distros="sles opensuse rhel"
-  vers_maj_sles="12"
+  vers_maj_sles="11 12"
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="sles12 opensuse42 rhel6 rhel7 fedora25 fedora26"
+  dists="sles11 sles12 opensuse42 rhel6 rhel7 fedora25 fedora26"
   vers_maj_fedora="25 26"
   distros="sles opensuse rhel fedora"
-  vers_maj_sles="12"
+  vers_maj_sles="11 12"
 else
   dists="sles12 opensuse42 rhel6 rhel7 fedora25 fedora26"
   vers_maj_fedora="25 26"
@@ -79,7 +79,7 @@ vers_maj_centos="6 7"
 # MariaDB and MariaDB Enterprise differ as to the CPU architectures you can get
 # packages for, and which gpg key is used to sign packages.
 if [ "${ENTERPRISE}" = "yes" ]; then
-  dists="sles12 rhel6 rhel7"
+  dists="sles11 sles12 rhel6 rhel7"
   distros="sles rhel"
   p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   p8_architectures="ppc64 ppc64le"
@@ -138,10 +138,10 @@ archs_opensuse_42="amd64:x86_64"
 # a value of '0 4' will be expanded to '0 1 2 3 4'.
 #vers_min_centos_5="0 11"
 vers_min_centos_6="0 9"
-vers_min_centos_7="0 3"
+vers_min_centos_7="0 4"
 #vers_min_rhel_5="0 11"
 vers_min_rhel_6="0 8"
-vers_min_rhel_7="0 3"
+vers_min_rhel_7="0 4"
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -263,6 +263,11 @@ else
   rm -v rhel/7.3
   mkdir -vp rhel/7.3/x86_64
   ln -sv rhel/7.3/x86_64 rhel73-amd64
+
+  rm -v rhel/7.4
+  mkdir -vp rhel/7.4/x86_64
+  ln -sv rhel/7.4/x86_64 rhel74-amd64
+  
 fi
 
 
@@ -288,6 +293,7 @@ for REPONAME in ${dists}; do
             echo "+ skipping rsync of 7.3 packages as they are not available for 10.0 yet"
           else
             rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos73-${ARCH}/ ./${REPONAME}3-${ARCH}/
+            rsync -av --keep-dirlinks ${ARCHDIR}/kvm-rpm-centos74-${ARCH}/ ./${REPONAME}4-${ARCH}/
           fi
         else
           echo "+ no packages for ${REPONAME}-${ARCH}"
@@ -307,9 +313,10 @@ for REPONAME in ${dists}; do
           #rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}sp1-${ARCH}/ ./${REPONAME}-${ARCH}/
 
           # 2017-01-16 - we no longer pull from sp1 - dbart
-          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          # 2017-09-25 - we now pull from sles114
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}4-${ARCH}/ ./${REPONAME}-${ARCH}/
         else
-          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}-${ARCH}/ ./${REPONAME}-${ARCH}/
+          rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}4-${ARCH}/ ./${REPONAME}-${ARCH}/
         fi
         ;;
       'sles12')
@@ -369,7 +376,8 @@ for REPONAME in ${dists}; do
               if [[ "${ARCHDIR}" == *"5.5"* ]]; then
                 echo "+ No 5.5 packages for CentOS/RHEL 7.3 yet"
               else
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*rhel7*x86_64.rpm ./${REPONAME}3-${ARCH}/rpms/
+                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/centos73/*rhel7*x86_64.rpm ./${REPONAME}3-${ARCH}/rpms/
+                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/centos74/*rhel7*x86_64.rpm ./${REPONAME}4-${ARCH}/rpms/
               fi
 #            elif [ "${REPONAME}" = "fedora19" ] ; then
 #              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc19*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
@@ -386,8 +394,7 @@ for REPONAME in ${dists}; do
             elif [ "${REPONAME}" = "fedora25" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc25*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "fedora26" ] ; then
-              #rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc26*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
-              echo "+ no galera for fedora 26 yet"
+              rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*fc26*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles11" ] ; then
               rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/*sles11*x86_64.rpm ./${REPONAME}-${ARCH}/rpms/
             elif [ "${REPONAME}" = "sles12" ] ; then
@@ -584,9 +591,10 @@ https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
   fi
 done
 
-# create a symlink from the sles11-amd64 dir to a dir named after the sp1
+# create a symlink from the sles11-amd64 dir to a dir named after the sles114
 # builder (this is done so buildbot tests work)
-#ln -sv sles11-amd64 sles11sp1-amd64
+ln -sv sles11-amd64 sles114-amd64
+ln -sv sles11-x86 sles114-x86
 
 # add in links from rhel dirs to equivalent centos dirs
 ln -sv rhel centos
