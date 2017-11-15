@@ -50,11 +50,11 @@ set -eu
 
 # Set ${ver_galera} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-ver_galera="25.3.20"
+ver_galera="25.3.22"
 
 # Set ${ver_galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${ver_galera} but can be different).
-ver_galera_preferred="25.3.20"
+ver_galera_preferred="25.3.22"
 
 # We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
 # Duplicate & edit the appropriate lines below. Old settings are generally
@@ -234,8 +234,8 @@ dir_at="/path/to/advance-toolchain" # Location of at pkgs
 dir_rpm_shared="/path/to/shared/rpm/dir"
 dir_judy="/path/to/judy" # Location of judy pkgs
 
-ver_galera="25.3.20"                        # galera version[s] in our repos
-ver_galera_preferred="25.3.20"              # preferred galera version
+ver_galera="25.3.22"                        # galera version[s] in our repos
+ver_galera_preferred="25.3.22"              # preferred galera version
 ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
@@ -663,7 +663,7 @@ activate_the_deb_repos() {
 create_package_tarballs() {
   set -x
   pushd ${CPT}
-  ./create_package_tarballs ${dir_corp}/${dir_name}/
+  ./create_package_tarballs ${dir_corp}/${version_nog}/
   popd
   set +x
 }
@@ -1432,7 +1432,8 @@ if [ "${galera_suffix}" = "-galera" ]; then
   line
   echo "+ adding Galera Cluster files to existing repos..."
   line
-  ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
+  echo + ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
+         ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
 
 else
   maybe_create_release_dir
@@ -1532,7 +1533,7 @@ else
     # remove ppc64el from repo config and update repo
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/ubuntu/
-      vi conf/distributions
+      vi conf/distributions # remove deprecated distros
       reprepro -V --basedir . --delete clearvanished
       # remove the now missing entries from the sum files
       for sum in md5 sha1 sha256 sha512;do
@@ -1564,16 +1565,13 @@ else
     # dir first
     mkdir -v ${HOME}/yum
     pushd ${HOME}/yum
-
-    if [ "${is_ent}" = "yes" ];then
+      # Run the yum script to create/update yum/dnf/zypp repos
       ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-    else
-      ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-    fi
+    popd
 
     # move the yum dir to where it needs to go
     echo "+ mv -i ${HOME}/yum ${dir_release}/${dir_name}/"
-    mv -i ${HOME}/yum ${dir_release}/${dir_name}/
+            mv -i ${HOME}/yum ${dir_release}/${dir_name}/
     pushd ${dir_release}/${dir_name}/
 
     # copy the yum dir to the corp release dir
@@ -1583,13 +1581,16 @@ else
         pressAnyKeyToContinue
         ;;
     esac
-    message "copying the yum dir to the corp release dir"
-    rsync -a --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
+    #message "copying the yum dir to the corp release dir"
+    echo "+ copying the yum dir to the corp release dir"
+    echo "+ rsync -a --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
+            rsync -a --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
 
     # remove ppc versions
     pushd ${dir_corp}/${dir_name}/yum/
-    rm -v *ppc64*
-    rm -vrf */*/ppc64*
+      rm -v *ppc64*
+      rm -vrf */*/ppc64*
+    popd
 
     # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
@@ -1612,7 +1613,7 @@ fi
 echo
 echo
 line
-echo "+ done creating the ${version} release"
+echo "+ done with repo creation for the ${version} release"
 line
 echo
 
