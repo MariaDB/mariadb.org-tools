@@ -39,16 +39,16 @@ set -eu
 
 # Set ${galera_versions} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-galera_versions="25.3.20"
+galera_versions="25.3.22"
 
 # Set ${galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.20"
+galera_preferred="25.3.22"
 
 
-deb_dists="jessie stretch trusty wheezy xenial yakkety zesty"
-deb_dists_p8="jessie trusty xenial stretch"
-rpm_dists="centos6 centos7 centos73 fedora24 fedora25"
+deb_dists="jessie stretch wheezy trusty xenial zesty artful"
+deb_dists_p8="jessie stretch trusty xenial"
+rpm_dists="centos6 centos7 centos73 centos74 fedora25 fedora26"
 rpm_dists_p8="rhel6 rhel7 rhel71 centos73 suse12"
 zyp_dists="sles11 sles12 opensuse42"
 
@@ -59,8 +59,8 @@ zyp_dists="sles11 sles12 opensuse42"
 # Various miscellaneous options
 rsync_opts="-a -L"
 
-build_dirs_x86="kvm-rpm-centos5-x86-gal:galera-${galera_preferred}-i686 kvm-deb-precise-x86-gal:galera-${galera_preferred}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${galera_preferred}-systemd-i686"
-build_dirs_x86_64="kvm-rpm-centos5-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-precise-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${galera_preferred}-systemd-x86_64"
+build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${galera_preferred}-i686 kvm-deb-wheezy-x86-gal:galera-${galera_preferred}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${galera_preferred}-systemd-i686"
+build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-wheezy-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${galera_preferred}-systemd-x86_64"
 build_dirs_p8="p8-rhel71-rpm-gal:galera-${galera_preferred}-ppc64le p8-rhel6-rpm-gal:galera-${galera_preferred}-ppc64"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
@@ -344,7 +344,7 @@ loadDefaults                                    # Load Default paths and vars
 version="galera-${num}"
 suffix_ent="signed-ent"
 suffix="signed"
-release_dir="${galera_dir}"
+release_dir="${dir_galera}"
 #release_dir="/ds413/tmp"
 dir_name="${version}"
 archive_dir="/ds413/archive/builds"
@@ -634,16 +634,17 @@ if [ "${create_rpm}" != "no" ]; then
   fi
   mkdir -v ${release_dir}/${dir_name}/rpm
   mkdir -v ${release_dir}/${dir_name}/rpm/centos73/
+  mkdir -v ${release_dir}/${dir_name}/rpm/centos74/
   cd ${release_dir}/${dir_name}/rpm/
 
   for dist in ${rpm_dists}; do
     for arch in amd64 x86; do
       case ${dist}-${arch} in
-        'centos7-x86'|'centos73-x86')
+        'centos7-x86'|'centos73-x86'|'centos74-x86'|'fedora26-x86')
           echo "skipping non-existent ${dist}-${arch}..."
           ;;
-        'centos73-amd64')
-          cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
+        'centos73-amd64'|'centos74-amd64')
+          cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
           ;;
         *)
           cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
@@ -787,7 +788,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'artful') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -819,6 +820,13 @@ END
         reprepro --basedir=. include squeeze ${release_dir}/${version}-${suffix}/deb/galera*${num}-squeeze*_amd64.changes
         reprepro --basedir=. include squeeze ${release_dir}/${version}-${suffix}/deb/galera*${num}-squeeze*_i386.changes
         ;;
+      'stretch'|'artful')
+        echo ${dist}
+        vi ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_amd64.changes
+        vi ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_i386.changes
+        reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_amd64.changes
+        reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_i386.changes
+        ;;
       *)
         echo ${dist}
         reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_amd64.changes
@@ -827,9 +835,12 @@ END
     esac
   done
   for dist in ${deb_dists_p8};do
+    if [ ${dist} = "stretch" ]; then
+      vi ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_ppc64el.changes
+    fi
     reprepro --basedir=. include ${dist} ${release_dir}/${version}-${suffix}/deb/galera*${num}-${dist}*_ppc64el.changes
     if [ ${dist} = "trusty" ]; then
-      reprepro --basedir . includedeb ${dist} ${at_dir}/${dist}-ppc64el-${suffix}/*runtime*ppc64el.deb
+      reprepro --basedir . includedeb ${dist} ${dir_at}/${dist}-ppc64el-${suffix}/*runtime*ppc64el.deb
     fi
   done
 else
@@ -881,6 +892,10 @@ if [ "${create_yum}" != "no" ]; then
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
         ;;
+      'fedora26')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
+        ;;
       'centos5')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
@@ -904,6 +919,10 @@ if [ "${create_yum}" != "no" ]; then
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.ppc64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms/
         rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.ppc64le.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
+        ;;
+      'centos74')
+        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos74/*el7.centos.x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         ;;
       'sles11')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
@@ -960,10 +979,10 @@ if [ "${create_yum}" != "no" ]; then
     mv -vi ${DIR} ${release_dir}/${dir_name}/repo/rpm/ && cd ${release_dir}/${dir_name}/repo/rpm/
     gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
-  # one final thing: create symlinks from the sles11-amd64 dir to a dir named
-  # after the sp1 builder and from the centos5 builders to rhel5 dirs
-  # (this is done so buildbot tests work)
+  # one final thing: create symlinks so buildbot tests work
   ln -sv sles11-amd64 sles11sp1-amd64
+  ln -sv sles11-amd64 sles114-amd64
+  ln -sv sles11-x86 sles114-x86
   ln -sv suse12-ppc64le sles12-ppc64le
   #ln -sv centos5-amd64 rhel5-amd64
   #ln -sv centos5-x86 rhel5-x86
@@ -995,7 +1014,7 @@ echo;echo;echo;echo "+ Now upload using commands similar to the following:
 rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera/${num} ; 
 ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${num}/repo ./\" ; 
 line=\"----------------------------------------\"
-for host in bb02 bb03 bb04;do 
+for host in bb02 bb03;do 
   echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};echo;
   ssh -t -t bb01 \"rsync -a --info=progress2 --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done
