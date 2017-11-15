@@ -27,27 +27,27 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="wheezy"
-    yum_dists="rhel5 rhel6 rhel7 sles11 sles12"
+    yum_dists="rhel6 rhel7 sles11 sles12"
     ubuntu_dists="trusty"
     ;;
   '10.0e'|'10.0e-galera')
     debian_dists="wheezy jessie"
-    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
+    yum_dists="centos5 centos6 rhel6 centos7 rhel7 sles11 sles12"
     ubuntu_dists="trusty xenial"
     ;;
   '5.5e'|'5.5e-galera')
     debian_dists="wheezy"
-    yum_dists="centos5 rhel5 centos6 rhel6 centos7 rhel7 sles11 sles12"
+    yum_dists="centos5 centos6 rhel6 centos7 rhel7 sles11 sles12"
     ubuntu_dists="trusty"
     ;;
   '10.0'|'10.0-galera')
-    debian_dists="wheezy jessie sid"
-    yum_dists="rhel5 rhel6 rhel7 fedora23 opensuse42 sles12"
-    ubuntu_dists="trusty xenial yakkety"
+    debian_dists="wheezy jessie"
+    yum_dists="rhel6 rhel7 opensuse42 sles12"
+    ubuntu_dists="trusty xenial"
     ;;
   *) debian_dists="wheezy jessie sid"
-     yum_dists="rhel5 rhel6 rhel7 fedora23 fedora24 opensuse42 sles11 sles12"
-     ubuntu_dists="trusty xenial yakkety zesty"
+     yum_dists="rhel6 rhel7 opensuse42 sles11 sles12"
+     ubuntu_dists="trusty xenial zesty artful"
     ;;
 esac
 
@@ -443,36 +443,54 @@ if [ "${create_yum}" != "no" ]; then
   # moving the yum dir back to where it belongs
   runCommand mv -i ~/yum ${dir_release}/${dir_name}/
 
+  cd ${dir_release}/${dir_name}/
+
   # sync repo updates to the corp dirs
   for dir in ${yum_dists}; do
     case ${dir} in 
       'rhel6')
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/
+
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/
         ;;
       'rhel7')
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/
         ;;
       'rhel73')
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/
         ;;
       'sles11') 
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/
+
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/
         ;;
       'sles12') 
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/
         ;;
       'opensuse42') 
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/
         ;;
       'fedora24') 
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/
+
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/
         ;;
       'fedora25') 
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/
-        rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/
+
+        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/"
+                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/
         ;;
     esac
   done
