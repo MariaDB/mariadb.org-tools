@@ -35,10 +35,26 @@ set -xe
 # This is the "matrix" of support OSs/versions. There's no clean support right now
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
-debian_ver=( jessie wheezy stretch )
-ubuntu_ver=( trusty xenial )
-rhel_ver=( 6 7 )
-sles_ver=( 12 )
+case $1 in
+  *10.0*|*5.5*)
+    debian_ver=( jessie wheezy )
+    ubuntu_ver=( trusty xenial )
+    rhel_ver=( 6 7 )
+    sles_ver=( 11 12 )
+    ;;
+  *10.1*)
+    debian_ver=( jessie wheezy stretch )
+    ubuntu_ver=( trusty xenial )
+    rhel_ver=( 6 7 )
+    sles_ver=( 11 12 )
+    ;;
+  *)
+    debian_ver=( jessie wheezy stretch )
+    ubuntu_ver=( trusty xenial )
+    rhel_ver=( 6 7 )
+    sles_ver=( 12 )
+    ;;
+esac
 
 err() {
   printf "[ERROR] %s\n" "$*" >&2
