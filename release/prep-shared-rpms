@@ -32,6 +32,7 @@ kvm-rpm-centos7-amd64:centos7-x86_64:rhel/7/x86_64
 kvm-rpm-centos73-amd64:centos73-x86_64:rhel/7.3/x86_64
 kvm-rpm-centos73-ppc64:centos73-ppc64:rhel/7.3/ppc64
 kvm-rpm-centos73-ppc64le:centos73-ppc64le:rhel/7.3/ppc64le
+kvm-rpm-centos74-amd64:centos74-x86_64:rhel/7.4/x86_64
 kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64:fc25.x86_64
 kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386:fc25.i686
 kvm-rpm-fedora26-amd64:fedora26-x86_64:fedora/26/x86_64:fc26.x86_64
