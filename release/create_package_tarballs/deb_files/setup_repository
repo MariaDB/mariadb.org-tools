@@ -35,4 +35,8 @@ EoF
   err 'Could not create "%s". Please investigate and re-run this script.' "$file"
 fi
 
+if ! apt-key add MariaDB-C74CD1D8-public.asc;then
+  err 'Could not import signing key.'
+fi
+
 printf 'Repository file successfully created! Please install MariaDB Server with this command:\n\n   %s\n\n' "$install_cmd"
