@@ -56,7 +56,7 @@ case ${ARCHDIR} in
     ubuntu_dists="trusty xenial"
     ;;
   *)
-    ubuntu_dists="trusty xenial zesty"
+    ubuntu_dists="trusty xenial zesty artful"
     ;;
 esac
 
@@ -187,7 +187,13 @@ fi
 for dist in ${ubuntu_dists}; do
   echo ${dist}
   case ${dist} in 
+    #'trusty'|'utopic'|'xenial'|'zesty'|'artful') # no artful yet because of https://bugs.launchpad.net/ubuntu/+source/reprepro/+bug/799889
     'trusty'|'utopic'|'xenial'|'zesty')
+      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      ;;
+    'artful')
+      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
+      sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
@@ -196,6 +202,7 @@ for dist in ${ubuntu_dists}; do
       ;;
   esac
 
+  # Include i386 debs
   if [ "${ENTERPRISE}" != "yes" ]; then
     for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi

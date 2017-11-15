@@ -235,13 +235,17 @@ for dist in ${debian_dists}; do
   # add amd64 files
   case ${builder} in 
     'sid')
+      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
       sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
-      reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      #reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      # use stretch packages for sid, for now - 2017-08-01 dbart
+      reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-stretch-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     'jessie')
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     'stretch')
+      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
       sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
@@ -269,9 +273,15 @@ for dist in ${debian_dists}; do
 
   # add x86 files
   if [ "${ENTERPRISE}" != "yes" ]; then
-    if [ "${builder}" != "stretch" ] || [ "${TREE}" != "10.1" ]; then      # stretch-x86 builder is not working for 10.1
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
-    fi
+    case ${builder} in
+      'sid')
+        # use stretch packages for sid, for now - 2017-08-01 dbart
+        for i in $(find "$ARCHDIR/kvm-deb-stretch-x86/" -name '*_i386.deb'); do reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. includedeb ${dist} $i ; done
+        ;;
+      * )
+        for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+        ;;
+    esac
   fi
 
   # Add in custom jemalloc packages for distros that need them
@@ -314,7 +324,7 @@ for dist in ${debian_dists}; do
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
               "sid")
-                reprepro --basedir=. include ${dist} ${dir_galera}/galera-25.3.19-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+                reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
                 ;;
               *)
                 reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
