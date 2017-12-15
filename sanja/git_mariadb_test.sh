@@ -10,6 +10,7 @@
 # $4 cmake parameters  (default: "-GNinja -DCMAKE_BUILD_TYPE=Debug")
 # $5 make command (default: "ninja")
 # $6 revert test (0 - find what fixed (defualt), 1 - find what broke)
+# $7 pre-build command (default: none)
 #
 # Example of use (what fixed test 'mysql-test/t/test.test' if in
 # mariadb-10.1.19 it failed but in current 10.1 it is ok)
@@ -20,6 +21,9 @@
 # git bisect good mariadb-10.1.19
 # git bisect bad 10.1
 # git bisect run bash ~/bin/git_mariadb_test.sh test ~/tmp/ ~/maria/git/server/
+#
+# Full command line example:
+# git bisect run bash ~/bin/git_mariadb_test.sh test ~/tmp/ ~/maria/git/server/ './ -GNinja -DCMAKE_BUILD_TYPE=Debug -DPLUGIN_MROONGA=NO -DPLUGIN_OQGRAPH=NO -DPLUGIN_ROCKSDB=NO -DPLUGIN_CONNECT=NO' ninja 0 "rm -rf  ~/maria/git/server/storage/tokudb"
 
 
 #set defaults if it is needed
@@ -56,6 +60,15 @@ git reset --hard
 # Bring the test back
 cp "$2/$1.test" "$3/mysql-test/t/$1.test"
 cp "$2/$1.result"  "$3/mysql-test/r/$1.result"
+
+# Pre-build command if exists
+if [ "$7" != "" ] ; then
+  echo '================================================'
+  echo 'Prebuild command:'
+  echo "$7"
+  bash -c "$7"
+  echo '================================================'
+fi
 
 # Check that the current commit is usable and buildable (otherwise skipp it)
 if [ ! -d mysql-test ] ; then
