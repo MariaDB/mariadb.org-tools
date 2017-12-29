@@ -25,7 +25,7 @@ def getQAInnoDBUpgradeStep(action, upgrade_from = "", variant = "", **kwargs):
         warningPattern="^.*WARNING:.*MDEV",
         timeout=3600,
         env={"TERM": "vt102", "BUILD_HOME": "/home/buildbot"},
-        command=["runvm", "--base-image=vm-tmp-build-10710.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", extra_vm, "vm-tmp-10710.qcow2",
+        command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", extra_vm, "vm-tmp-"+getport()+".qcow2",
         WithProperties("""
 set -ex
 cd rqg
@@ -87,7 +87,7 @@ perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=jira --
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=kb --nowarnings /home/buildbot/vardir/trial* || true
 perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /home/buildbot/vardir/trial* 
 """),
-        "!= rm -rf stack_traces* error_logs*; scp -P 10710 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:stack_traces .; scp -P 10710 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:error_logs ."
+        "!= rm -rf stack_traces* error_logs*; scp -P "+getport()+" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:stack_traces .; scp -P "+getport()+" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no buildbot@localhost:error_logs ."
     ], **kwargs)
 
 
@@ -95,7 +95,7 @@ perl /home/buildbot/mariadb-toolbox/scripts/parse_upgrade_logs.pl --mode=text /h
 #
 # Various linux-based tests
 
-f_qa_linux = factory.BuildFactory()
+f_qa_linux = BuildFactory()
 
 f_qa_linux.addStep(ShellCommand(
     description=["cleaning", "build", "dir"],
@@ -135,9 +135,9 @@ f_qa_linux.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-build-10712.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-build-"+getport()+".qcow2",
     "rm -Rf buildbot && mkdir buildbot",
-    ScpSourceIntoVM("10712"),
+    ScpSourceIntoVM(),
     WithProperties("""
 set -ex
 rm -Rf build
@@ -163,7 +163,7 @@ git log -1
 #    descriptionDone=["GTID-based replication"],
 #    timeout=3600,
 #    env={"TERM": "vt102"},
-#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-"+getport()+".qcow2",
 #    WithProperties("""
 #set -ex
 #cd rqg
@@ -188,7 +188,7 @@ git log -1
 #    descriptionDone=["10.2 features"],
 #    timeout=3600,
 #    env={"TERM": "vt102"},
-#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-"+getport()+".qcow2",
 #    WithProperties("""
 #set -ex
 #cd rqg
@@ -205,7 +205,7 @@ git log -1
 #    test_info="MySQL engines/* tests",
 #    timeout=7200,
 #    env={"TERM": "vt102"},
-#    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+#    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-"+getport()+".qcow2",
 #    WithProperties("""
 #set -ex
 #cd build/mysql-test
@@ -222,7 +222,7 @@ f_qa_linux.addStep(getMTR(
     test_info="Skip unstable tests",
     timeout=7200,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=vm-tmp-build-10712.qcow2", "--port=10712", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-10712.qcow2",
+    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10712.log", "vm-tmp-"+getport()+".qcow2",
     WithProperties("""
 set -ex
 cd build/mysql-test
@@ -243,7 +243,7 @@ bld_kvm_qa_linux = {
 #
 # InnoDB upgrade tests
 
-f_qa_innodb = factory.BuildFactory()
+f_qa_innodb = BuildFactory()
 
 f_qa_innodb.addStep(ShellCommand(
     description=["cleaning", "build", "dir"],
@@ -283,9 +283,9 @@ f_qa_innodb.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102"},
-    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port=10710", "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-10710.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-qa-jessie-amd64.qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10710.log", "vm-tmp-build-"+getport()+".qcow2",
     "rm -Rf buildbot && mkdir buildbot",
-    ScpSourceIntoVM("10710"),
+    ScpSourceIntoVM(),
     WithProperties("""
 set -ex
 rm -Rf build
@@ -487,7 +487,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         do_debug_steps=False
         do_release_steps=True
 
-    f = factory.BuildFactory()
+    f = BuildFactory()
 
 # We shouldn't need it anymore since we are setting appverif in runall.pl now, but let it be here just in case
     f.addStep(ShellCommand(
@@ -694,7 +694,7 @@ def getPackageType(step):
   if step.getProperty("buildername") == "rpm-suse12":
     return "-DDEB=sles12"
 
-f_bb_exp = factory.BuildFactory()
+f_bb_exp = BuildFactory()
 
 f_bb_exp.addStep(ShellCommand(command=["echo",
                                             "-DWITH_READLINE=1",
@@ -721,7 +721,7 @@ f_bb_exp.addStep(getMTR(
     timeout=9600,
     mtr_subdir=".",
     env={"TERM": "vt102","MTR_FEEDBACK_PLUGIN": "1"},
-    command=["runvm", "--base-image=/kvm/vms/vm-xenial-amd64-valgrind.qcow2", "--port=10711", "--user=buildbot", "--smp=2", "--mem=2048", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10711.log", "vm-tmp-10711.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-xenial-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=2", "--mem=2048", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_10711.log", "vm-tmp-"+getport()+".qcow2",
     WithProperties("""
 set -ex
 wget http://hasky.askmonty.org/archive/5.5/build-12450/kvm-tarbake-jaunty-x86/mariadb-5.5.55.tar.gz
@@ -740,7 +740,7 @@ else
 fi
 """),
    WithProperties(
-     "!= rm -Rf var/ ; scp -rp -P 10711 " + kvm_scpopt +
+     "!= rm -Rf var/ ; scp -rp -P "+getport()+" " + kvm_scpopt +
      " buildbot@localhost:~buildbot/mariadb-5.5.55/mysql-test/var . || :")
     ],
     parallel=2))

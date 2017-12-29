@@ -1,6 +1,6 @@
 def bld_windows_connector_odbc(name, conc_branch, cmake_params):
 
-  f_win_connector_odbc = factory.BuildFactory()
+  f_win_connector_odbc = BuildFactory()
 
 
   f_win_connector_odbc.addStep(ShellCommand(

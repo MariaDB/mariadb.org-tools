@@ -1,7 +1,7 @@
 def isValgrindTree(step):
   return step.getProperty("branch") in [ "bb-10.0-elenst" ]
 
-f_valgrind = factory.BuildFactory()
+f_valgrind = BuildFactory()
 
 f_valgrind.addStep(ShellCommand(
     description=["cleaning", "build", "dir"],
@@ -38,9 +38,10 @@ f_valgrind.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102", "EXTRA_FLAGS": "-O3 -fno-omit-frame-pointer -Wno-uninitialized -fno-strict-aliasing", "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"},
-    command=["runvm", "--base-image=/kvm/vms/vm-centos7-amd64-valgrind.qcow2", "--port=2331", "--user=buildbot", "--smp=12", "--mem=53248", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-build-2331.qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-centos7-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=12", "--mem=53248",
+    "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-build-"+getport()+".qcow2",
     "rm -Rf buildbot && mkdir buildbot",
-    ScpSourceIntoVM("2331"),
+    ScpSourceIntoVM(),
     WithProperties("""
 set -ex
 rm -Rf build
@@ -60,7 +61,8 @@ f_valgrind.addStep(getMTR(
     timeout=9600,
     mtr_subdir=".",
     env={"TERM": "vt102","MTR_FEEDBACK_PLUGIN": "1"},
-    command=["runvm", "--base-image=vm-tmp-build-2331.qcow2", "--port=2331", "--user=buildbot", "--smp=12", "--mem=53248", "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-2331.qcow2",
+    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=12", "--mem=53248",
+        "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-"+getport()+".qcow2",
     WithProperties("""
 set -ex
 cd build/mysql-test
@@ -141,7 +143,7 @@ else
 fi
 """),
    WithProperties(
-     "!= rm -Rf var/ ; scp -rp -P 2331 " + kvm_scpopt +
+     "!= rm -Rf var/ ; scp -rp -P "+getport()+" " + kvm_scpopt +
      " buildbot@localhost:~buildbot/build/mysql-test/var . || :")
     ],
     parallel=20))
