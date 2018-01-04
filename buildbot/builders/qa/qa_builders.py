@@ -599,12 +599,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         command=["dojob", WithProperties("cd /d %(builddir)s\\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
     ));
 
+# || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-transform\\trial*
     f.addStep(Test(
         doStepIf=do_release_steps,
         name = "transform",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-transform\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform")]
     ));
 
 # We shouldn't need it anymore since we are setting appverif in runall.pl now
@@ -615,12 +616,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 #        alwaysRun=True
 #    ));
 
+# perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-crash-tests\\trial*
     f.addStep(Test(
         doStepIf=do_debug_steps,
         name = "crash_tests",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-crash-tests\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests")]
     ));
 
     f.addStep(ShellCommand(
@@ -639,12 +641,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         warningExtractor=Compile.warnExtractFromRegexpGroups
     ));
 
+# || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-comparison\\trial*
     f.addStep(Test(
         doStepIf=do_release_steps,
         name = "comparison",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(builddir)s --basedir2=%(bb_workdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-comparison\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-comparison.cc --run-all-combinations-once --force --basedir1=%(builddir)s --basedir2=%(bb_workdir)s\\build-last-release --workdir=%(logdir)s\\optim-comparison")]
     ));
 
 #    f.addStep(Test(
