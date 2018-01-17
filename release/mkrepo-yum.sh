@@ -97,6 +97,12 @@ else
     p8_dists="rhel7 rhel71 sles12"
   elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
     p8_dists="rhel7 rhel71 sles12"
+  elif [[ "${ARCHDIR}" == *"10.1"* ]]; then
+    # remove rhel71 temporarily, is not compiling on 10.1 - 2017-12-22 - dbart
+    p8_dists="rhel6 rhel7 sles12 rhel73"
+  elif [[ "${ARCHDIR}" == *"10.2"* ]]; then
+    # remove rhel71 temporarily, is not compiling on 10.2 - 2018-01-03 - dbart
+    p8_dists="rhel6 rhel7 sles12 rhel73"
   else
     p8_dists="rhel6 rhel7 rhel71 sles12 rhel73"
   fi
@@ -614,4 +620,5 @@ if [ -e "rhel73-amd64"   ]; then ln -sv rhel73-amd64   centos73-amd64   ;fi
 if [ -e "rhel73-ppc64"   ]; then ln -sv rhel73-ppc64   centos73-ppc64   ;fi
 if [ -e "rhel73-ppc64le" ]; then ln -sv rhel73-ppc64le centos73-ppc64le ;fi
 
+if [ -e "rhel74-amd64"   ]; then ln -sv rhel74-amd64   centos74-amd64   ;fi
 # vim: filetype=sh
