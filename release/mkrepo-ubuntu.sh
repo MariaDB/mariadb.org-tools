@@ -25,7 +25,8 @@ umask 002
 #killall gpg-agent
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
-set -ex
+#set -ex
+set -e
   # -e  Exit immediately if a simple command exits with a non-zero status,
   #     unless the command that fails is part of an until or  while loop, part
   #     of an if statement, part of a && or || list, or if the command's return
@@ -66,6 +67,23 @@ architectures="amd64 i386 source"
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    echo
+    return 0
+  else
+    echo
+    return 1
+  fi
+}
+
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${HOME}/.prep.conf ]; then
@@ -185,37 +203,43 @@ fi
 
 # Add packages
 for dist in ${ubuntu_dists}; do
-  echo ${dist}
+  echo
+  line
+  echo + ${dist}
+  line
   case ${dist} in 
     #'trusty'|'utopic'|'xenial'|'zesty'|'artful') # no artful yet because of https://bugs.launchpad.net/ubuntu/+source/reprepro/+bug/799889
     'trusty'|'utopic'|'xenial'|'zesty')
-      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     'artful')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
-      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      #reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      # Need to include .deb files manually because of https://bugs.launchpad.net/ubuntu/+source/reprepro/+bug/799889
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
     * )
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
   esac
 
   # Include i386 debs
   if [ "${ENTERPRISE}" != "yes" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
   # Include trusty ppc64le debs
   if [ "${dist}" = "trusty" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-    for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
   # Include xenial ppc64le debs
   if [ "${dist}" = "xenial" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
   #if [ "${ENTERPRISE}" = "yes" ]; then
@@ -234,21 +258,21 @@ for dist in ${ubuntu_dists}; do
   # Add in custom jemalloc packages for distros that need them
   case ${dist} in
     "lucid")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     "precise")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     "quantal")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
     * )
@@ -260,7 +284,7 @@ for dist in ${ubuntu_dists}; do
   # Add in custom libjudy packages for distros that need them
   case ${dist} in
     "trusty")
-      reprepro --basedir=. includedeb ${dist} ${dir_judy}/libjudydebian1_1.0.5-4_ppc64el.deb
+      runCommand reprepro --basedir=. includedeb ${dist} ${dir_judy}/libjudydebian1_1.0.5-4_ppc64el.deb
       ;;
     * )
       echo "+ no custom judy packages for ${dist}"
@@ -273,16 +297,16 @@ for dist in ${ubuntu_dists}; do
     for gv in ${ver_galera}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
         if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       else
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
         if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-          reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       fi
     done
@@ -290,8 +314,12 @@ for dist in ${ubuntu_dists}; do
 done
 
 # Create sums of .deb packages
-md5sum ./pool/main/*/*/*.deb >> md5sums.txt
-sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
-sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
-sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
+echo "+ md5sum ./pool/main/*/*/*.deb >> md5sums.txt"
+        md5sum ./pool/main/*/*/*.deb >> md5sums.txt
+echo "+ sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt"
+        sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
+echo "+ sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt"
+        sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
+echo "+ sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt"
+        sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
 
