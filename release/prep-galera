@@ -894,7 +894,7 @@ if [ "${create_yum}" != "no" ]; then
         ;;
       'fedora26')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
+        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc26*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
         ;;
       'centos5')
         mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
