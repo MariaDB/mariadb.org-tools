@@ -17,9 +17,11 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
+maven="http://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
 
 dir_java="connector-java-${version}"
-tarball="mariadb-java-client-${version}.tar.gz"
+#tarball="mariadb-java-client-${version}.tar.gz"
+tarball="mariadb-java-client-${version}-sources.jar"
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -104,9 +106,15 @@ unzip_and_stage_files() {
   message "Unzipping and staging files..."
   set -x
   pushd ${cj_home}
-  unzip ${version}*.zip
-  mv -vi ${version} ${dir_java}
-  rm -v ${version}*.zip
+    #unzip ${version}*.zip
+    #mv -vi ${version} ${dir_java}
+    #rm -v ${version}*.zip
+    mkdir ${dir_java}
+    pushd ${dir_java}
+      wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
+      wget -N ${maven}/${version}/mariadb-java-client-${version}-sources.jar
+      wget -N ${maven}/${version}/mariadb-java-client-${version}.jar
+    popd
   popd
   set +x
   echo;echo;echo
