@@ -25,7 +25,8 @@ umask 002
 #killall gpg-agent
 # Right off the bat we want to log everything we're doing and exit immediately
 # if there's an error
-set -ex
+#set -ex
+set -e
   # -e  Exit immediately if a simple command exits with a non-zero status,
   #     unless the command that fails is part of an until or  while loop, part
   #     of an if statement, part of a && or || list, or if the command's return
@@ -51,6 +52,23 @@ architectures="amd64 i386 source"
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    echo
+    return 0
+  else
+    echo
+    return 1
+  fi
+}
+
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${HOME}/.prep.conf ]; then
@@ -106,13 +124,13 @@ else
 fi
 
 if [ ! -d ${REPONAME} ]; then
-  mkdir "$REPONAME"
+  mkdir -v "$REPONAME"
 fi
 
 cd "$REPONAME"
 
 if [ ! -d conf ]; then
-  mkdir conf
+  mkdir -v conf
 fi
 
 # Delete the conf/distributions file if it exists
@@ -225,7 +243,10 @@ esac
 for dist in ${debian_dists}; do
   #set $i
   #echo $1
-  echo ${dist}
+  echo
+  line
+  echo + ${dist}
+  line
   if [ "${dist}" = "squeeze" ];then
     builder="debian6"
   else
@@ -234,39 +255,32 @@ for dist in ${debian_dists}; do
 
   # add amd64 files
   case ${builder} in 
-    'sid')
-      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
-      #reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
-      # use stretch packages for sid, for now - 2017-08-01 dbart
-      reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. include ${dist} $ARCHDIR/kvm-deb-stretch-amd64/debs/binary/mariadb-*_amd64.changes
-      ;;
     'jessie')
-      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
-    'stretch')
+    'stretch'|'sid')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
-      reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.dsc'); do reprepro --basedir=. includedsc ${dist} $i ; done
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} $i ; done
       ;;
   esac
 
   # add ppc64el files
   case ${builder} in
     'jessie')
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       # Add Advance Toolkit files
-      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
     'stretch')
       if [[ $TREE == '10.1' ]]; then
         echo "+ no ppc64le for ${TREE}"
       else
-        for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+        for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       fi
       ;;
   esac
@@ -274,12 +288,12 @@ for dist in ${debian_dists}; do
   # add x86 files
   if [ "${ENTERPRISE}" != "yes" ]; then
     case ${builder} in
-      'sid')
-        # use stretch packages for sid, for now - 2017-08-01 dbart
-        for i in $(find "$ARCHDIR/kvm-deb-stretch-x86/" -name '*_i386.deb'); do reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. includedeb ${dist} $i ; done
-        ;;
+      #'sid')
+      #  # use stretch packages for sid, for now - 2017-08-01 dbart
+      #  for i in $(find "$ARCHDIR/kvm-deb-stretch-x86/" -name '*_i386.deb'); do reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. includedeb ${dist} $i ; done
+      #  ;;
       * )
-        for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} $i ; done
+        for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
         ;;
     esac
   fi
@@ -287,9 +301,9 @@ for dist in ${debian_dists}; do
   # Add in custom jemalloc packages for distros that need them
   case  ${builder} in
     "debian6")
-      for i in $(find "${dir_jemalloc}/${builder}-amd64/" -name '*_amd64.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
+      for i in $(find "${dir_jemalloc}/${builder}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${i} ; done
       if [ "${ENTERPRISE}" != "yes" ]; then
-        for i in $(find "${dir_jemalloc}/${builder}-i386/" -name '*_i386.deb'); do reprepro --basedir=. includedeb ${dist} ${i} ; done
+        for i in $(find "${dir_jemalloc}/${builder}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${i} ; done
       fi
       ;;
     * )
@@ -310,24 +324,24 @@ for dist in ${debian_dists}; do
           case ${dist} in
             #"jessie"|"stretch") #stretch is currently not building on ppc64le
             "jessie")
-              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
               ;;
             "sid")
-              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_amd64.changes
               ;;
             *) 
-              reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
               ;;
           esac
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
               "sid")
-                reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
+                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
                 ;;
               *)
-                reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
                 ;;
             esac
           fi
@@ -339,8 +353,12 @@ for dist in ${debian_dists}; do
 done
 
 # Create sums of .deb packages
-md5sum ./pool/main/*/*/*.deb >> md5sums.txt
-sha1sum ./pool/main/*/*/*.deb >> sha1sums.txt
-sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
-sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
+echo "+ md5sum    ./pool/main/*/*/*.deb >> md5sums.txt"
+        md5sum    ./pool/main/*/*/*.deb >> md5sums.txt
+echo "+ sha1sum   ./pool/main/*/*/*.deb >> sha1sums.txt"
+        sha1sum   ./pool/main/*/*/*.deb >> sha1sums.txt
+echo "+ sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt"
+        sha256sum ./pool/main/*/*/*.deb >> sha256sums.txt
+echo "+ sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt"
+        sha512sum ./pool/main/*/*/*.deb >> sha512sums.txt
 
