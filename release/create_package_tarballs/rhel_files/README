@@ -20,6 +20,6 @@ After the repository is set up, you should install the MariaDB-server package.
 
 yum install -y MariaDB-server
 
-For more information about installing MariaDB .rpm files, visit https://mariadb.com/kb/en/mariadb/about-the-mariadb-rpm-files/.
+For more information about installing MariaDB .rpm files, visit https://mariadb.com/kb/en/mariadb/about-the-mariadb-rpm-files/
 
-For more information about MariaDB Enterprise, visit https://mariadb.com/products/mariadb-enterprise and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/about/contact.
+For more information about MariaDB TX, visit https://mariadb.com/products/mariadb-server and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/contact.

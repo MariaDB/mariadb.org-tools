@@ -29,6 +29,6 @@ Version: 10.0.25-0ubuntu0.16.04.1
 Version: 10.0.24-7
 # apt-get install mariadb-server=10.0.27+maria-1~xenial
 
-For more information about installing MariaDB .deb files, visit https://mariadb.com/kb/en/mariadb/installing-mariadb-deb-files/. 
+For more information about installing MariaDB .deb files, visit https://mariadb.com/kb/en/mariadb/installing-mariadb-deb-files/
 
-For more information about MariaDB Enterprise, visit https://mariadb.com/products/mariadb-enterprise and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/about/contact.
+For more information about MariaDB TX, visit https://mariadb.com/products/mariadb-server and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/contact.
