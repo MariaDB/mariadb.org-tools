@@ -1,4 +1,4 @@
-def bld_windows_connector_odbc(name, conc_branch, cmake_params):
+def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
 
   f_win_connector_odbc = BuildFactory()
 
@@ -25,7 +25,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params):
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "connc_git_checkout",
-        command=["dojob", WithProperties("rm -rf connector_c && git clone -b " + conc_branch + " --depth 1 \"https://github.com/MariaDB/mariadb-connector-c.git\" connector_c")],
+        command=["dojob", WithProperties("rm -rf connector_c && git clone -b " + conc_branch + " --depth 1 \"https://github.com/MariaDB/mariadb-connector-c.git\" connector_c && cd connector_c && git fetch --all --tags --prune && git reset --hard "+ tag + " && git log | head -n5")],
         timeout=7200,
 	doStepIf=do_step_win
   ));
@@ -117,5 +117,5 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params):
         'factory': f_win_connector_odbc,
         'category': "connectors" }
 
-bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ")
-bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ")
+bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.5")
+bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ", "v3.0.3")
