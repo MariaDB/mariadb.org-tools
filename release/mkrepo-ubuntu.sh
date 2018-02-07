@@ -57,7 +57,7 @@ case ${ARCHDIR} in
     ubuntu_dists="trusty xenial"
     ;;
   *)
-    ubuntu_dists="trusty xenial zesty artful"
+    ubuntu_dists="trusty xenial artful"
     ;;
 esac
 
