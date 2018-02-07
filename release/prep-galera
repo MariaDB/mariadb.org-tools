@@ -668,12 +668,15 @@ if [ "${create_rpm}" != "no" ]; then
 
 
   for dist in ${rpm_dists_p8}; do
-    if [ "${dist}" = "centos73" ]; then
-      cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
-      cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64le-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
-    else
-      cp -avi ${archive_dir}/${tree}/${rev}/p8-${dist}-rpm-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
-    fi
+    case ${dist} in
+      "centos73")
+        cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
+        cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64le-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
+        ;;
+      *)
+        cp -avi ${archive_dir}/${tree}/${rev}/p8-${dist}-rpm-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
+        ;;
+    esac
   done
 
   #-------------------------------------------------------------------------------
