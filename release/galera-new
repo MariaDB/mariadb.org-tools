@@ -27,26 +27,63 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="wheezy"
-    yum_dists="rhel6 rhel7 sles11 sles12"
-    ubuntu_dists="trusty"
-    ;;
-  '10.0e'|'10.0e-galera')
-    debian_dists="wheezy jessie"
-    yum_dists="centos5 centos6 rhel6 centos7 rhel7 sles11 sles12"
-    ubuntu_dists="trusty xenial"
-    ;;
-  '5.5e'|'5.5e-galera')
-    debian_dists="wheezy"
-    yum_dists="centos5 centos6 rhel6 centos7 rhel7 sles11 sles12"
+    yum_dists="
+      centos6-amd64
+      centos6-x86
+
+      centos73-amd64
+      centos73-ppc64le
+
+      centos74-amd64
+      
+      sles114-amd64
+      sles114-x86
+
+      sles12-amd64
+      sles12-ppc64le
+    "
     ubuntu_dists="trusty"
     ;;
   '10.0'|'10.0-galera')
     debian_dists="wheezy jessie"
-    yum_dists="rhel6 rhel7 opensuse42 sles12"
     ubuntu_dists="trusty xenial"
+    yum_dists="
+      centos6-amd64
+      centos6-x86
+      
+      centos73-amd64
+      centos73-ppc64le
+      
+      centos74-amd64
+      
+      opensuse42-amd64
+      
+      sles114-amd64
+      sles114-x86
+      
+      sles12-amd64
+      sles12-ppc64le
+    "
     ;;
   *) debian_dists="wheezy jessie sid"
-     yum_dists="rhel6 rhel7 opensuse42 sles11 sles12"
+     yum_dists="
+      centos6-amd64
+      centos6-x86
+      
+      centos73-amd64
+      centos73-ppc64
+      centos73-ppc64le
+      
+      centos74-amd64
+      
+      opensuse42-amd64
+      
+      sles114-amd64
+      sles114-x86
+      
+      sles12-amd64
+      sles12-ppc64le
+    "
      ubuntu_dists="trusty xenial zesty artful"
     ;;
 esac
@@ -236,145 +273,33 @@ if [ "${create_yum}" != "no" ]; then
   line
   cd ${dir_release}/${dir_name}/yum
   for REPONAME in ${yum_dists}; do
-    for ARCH in ${architectures}; do
-      # Remove old Galera files
-      runCommand rm -v ./${REPONAME}-${ARCH}/rpms/MariaDB-Galera*
-      runCommand rm -v ./${REPONAME}-${ARCH}/rpms/galera*
+    echo
+    line
+    echo "+ copying ${REPONAME} files"
+    line
+    # Remove old Galera files
+    runCommand rm -v ./${REPONAME}/rpms/MariaDB-Galera*
+    runCommand rm -v ./${REPONAME}/rpms/galera*
 
-      # Copy in the new MariaDB Galera files
-      case ${REPONAME} in 
-        'rhel7'|'centos7')
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos7-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            for gv in ${ver_galera}; do
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel7*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            done
-          fi
-          ;;
-        'rhel6'|'centos6')
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos6-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          for gv in ${ver_galera}; do
-            if [ "${ARCH}" = "amd64" ]; then
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            else
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel6*i686.rpm ${REPONAME}-${ARCH}/rpms/
-            fi
-          done
-          ;;
-        'rhel5'|'centos5')
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-centos5-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          for gv in ${ver_galera}; do
-            if [ "${ARCH}" = "amd64" ]; then
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            else
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*rhel5*i386.rpm ${REPONAME}-${ARCH}/rpms/
-            fi
-          done
-          ;;
-        'opensuse13')
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          for gv in ${ver_galera}; do
-            if [ "${ARCH}" = "amd64" ]; then
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            else
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles13*i586.rpm ${REPONAME}-${ARCH}/rpms/
-            fi
-          done
-          ;;
-        'opensuse42')
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            for gv in ${ver_galera}; do
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles42*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            done
-          fi
-          ;;
-        'sles11')
-          if [ "${REPONAME}-${ARCH}" = "sles11-amd64" ]; then
-            # We pull sles11-amd64 packages from the sles11sp1-amd64 builder
-            #runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            #runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}sp1-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          else
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          fi
-          for gv in ${ver_galera}; do
-            if [ "${ARCH}" = "amd64" ]; then
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            else
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles11*i586.rpm ${REPONAME}-${ARCH}/rpms/
-            fi
-          done
-          ;;
-        'sles12')
-          if [ "${ARCH}" = "amd64" ]; then
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-            runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-            for gv in ${ver_galera}; do
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*sles12*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            done
-          fi
-          ;;
-        'fedora22'|'fedora23'|'fedora24')
-          fcnum="${REPONAME:(-2)}"
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*server.rpm ${REPONAME}-${ARCH}/rpms/
-          runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-rpm-${REPONAME}-${ARCH}/rpms/*test.rpm ${REPONAME}-${ARCH}/rpms/
-          for gv in ${ver_galera}; do
-            if [ "${ARCH}" = "amd64" ]; then
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*x86_64.rpm ${REPONAME}-${ARCH}/rpms/
-            else
-              runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*fc${fcnum}*i686.rpm ${REPONAME}-${ARCH}/rpms/
-            fi
-          done
-          ;;
-      esac
-    done
+    # Copy in the new MariaDB Galera files
+    case ${REPONAME} in
+      'sles12-ppc64le')
+        runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*server.rpm ${REPONAME}/rpms/
+        runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*test.rpm   ${REPONAME}/rpms/
+        for gv in ${ver_galera}; do
+          runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        done
+        ;;
+      *)
+        runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*server.rpm ${REPONAME}/rpms/
+        runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*test.rpm ${REPONAME}/rpms/
+        for gv in ${ver_galera}; do
+          runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        done
+        ;;
+    esac
     echo;echo;
   done
-
-  # we now need to handle MariaDB Enterprise dists
-  #if [ "${is_ent}" = "yes" ];then
-    for P8_REPONAME in ${p8_yum_dists}; do
-      case ${P8_REPONAME} in 
-        'rhel7'|'rhel6')
-          P8_DIR="${P8_REPONAME}"
-          P8_ARCH='ppc64'
-          ;;
-        'sles12')
-          P8_REPONAME='suse12'
-          P8_DIR='sles12'
-          P8_ARCH='ppc64le'
-          ;;
-        'rhel71')
-          P8_DIR='rhel7'
-          P8_ARCH='ppc64le'
-          ;;
-        *)
-          echo "UNKNOWN ERROR: Unable to assign P8_DIR or P8_ARCH variables."
-          echo "Something has gone wrong."
-          exit 1
-          ;;
-      esac
-      # Remove old Galera files
-      runCommand rm -v ${P8_DIR}-${P8_ARCH}/rpms/MariaDB-Galera*
-      runCommand rm -v ${P8_DIR}-${P8_ARCH}/rpms/galera*
-      
-      # copy in new files
-      runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*server.rpm ${P8_DIR}-${P8_ARCH}/rpms/
-      runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-${P8_REPONAME}-rpm/rpms/*test.rpm   ${P8_DIR}-${P8_ARCH}/rpms/
-      for gv in ${ver_galera}; do
-        runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/galera-${gv}*${P8_DIR}*${P8_ARCH}.rpm ${P8_DIR}-${P8_ARCH}/rpms/
-      done
-    done
-    echo;echo;
-  #fi
 
   # all rpm packages are now in place, sign them
   cd ${dir_release}/${dir_name}/yum
@@ -382,118 +307,61 @@ if [ "${create_yum}" != "no" ]; then
   
   # updating the repositories doesn't work over nfs so we need to move the
   # yum dir to $HOME and then move it back when we're done
-  runCommand mv -i ${dir_release}/${dir_name}/yum ~/
+  runCommand rsync -avP --delete-after ${dir_release}/${dir_name}/yum ~/
   cd ~/yum
   
   # update the sums, refresh the repo metadata, & sign the repomd.xml files
-  for DIR in *-* ; do
-    if [ -d "${DIR}" ]; then
-      # test for CentOS
-      if [ "${DIR:0:6}" = "centos" ]; then
-        echo "+ skipping centos dir"
-      else
-        # Not CentOS, so we're good to go
-        cd ~/yum/${DIR}
-        echo
-        pwd
-        if [ -e md5sums.txt ]; then
-          rm -v md5sums.txt
-        fi
-        md5sum $(find . -name '*.rpm') >> md5sums.txt
-        runCommand md5sum -c md5sums.txt
+  for DIR in ${yum_dists}; do
+    echo
+    line
+    echo "+ Processing ${DIR}"
+    line
+    runCommand cd ~/yum/${DIR}
+    pwd
+    # Generate checksums for the rpms in the dir
+    for sum in md5 sha1 sha256 sha512; do
+      if [ -e ${sum}sums.txt ]; then
+        rm -v ${sum}sums.txt
+      fi
+      ${sum}sum $(find . -name '*.rpm') >> ${sum}sums.txt
+      runCommand ${sum}sum -c ${sum}sums.txt
+    done
 
-        if [ -e sha1sums.txt ]; then
-          rm -v sha1sums.txt
-        fi
-        sha1sum $(find . -name '*.rpm') >> sha1sums.txt
-        runCommand sha1sum -c sha1sums.txt
-
-        if [ -e sha256sums.txt ]; then
-          rm -v sha256sums.txt
-        fi
-        sha256sum $(find . -name '*.rpm') >> sha256sums.txt
-        runCommand sha256sum -c sha256sums.txt
-
-        if [ -e sha512sums.txt ]; then
-          rm -v sha512sums.txt
-        fi
-        sha512sum $(find . -name '*.rpm') >> sha512sums.txt
-        runCommand sha512sum -c sha512sums.txt
-
-        cd ~/yum
-        # Create the repository and sign the repomd.xml file
-        case ${DIR} in
-          'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
-            # CentOS & RHEL 5 don't support newer sha256 checksums
-            runCommand createrepo -s sha --database --pretty ${DIR}
-            ;;
-          *)
-            runCommand createrepo --database --pretty ${DIR}
-            ;;
-        esac
-        #runCommand createrepo --update --database --pretty ${DIR}
-        if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
-          runCommand rm -v ${DIR}/repodata/repomd.xml.asc
-        fi
-        runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
-      fi # end of CentOS test
-    fi   # end of -d test
+    cd ~/yum
+    # Create the repository and sign the repomd.xml file
+    case ${DIR} in
+      'sles114-amd64'|'sles114-x86')
+        # sles114 doesn't support newer sha256 checksums
+        runCommand createrepo -s sha --database --pretty ${DIR}
+        ;;
+      *)
+        runCommand createrepo --database --pretty ${DIR}
+        ;;
+    esac
+    #runCommand createrepo --update --database --pretty ${DIR}
+    if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
+      runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+    fi
+    runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
   done
 
-  # moving the yum dir back to where it belongs
-  runCommand mv -i ~/yum ${dir_release}/${dir_name}/
+  echo "+ moving the yum dir back to where it belongs"
+  echo "+ rsync -a --info=progress2 --delete ~/yum ${dir_release}/${dir_name}/"
+          rsync -a --info=progress2 --delete ~/yum ${dir_release}/${dir_name}/
+  runCommand rm -rf ~/yum
 
   cd ${dir_release}/${dir_name}/
 
-  # sync repo updates to the corp dirs
-  for dir in ${yum_dists}; do
-    case ${dir} in 
-      'rhel6')
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/i386    ${dir_corp}/${dir_name}/yum/rhel/6/
+  echo "+ Syncing updates to the yum dir to the corp release dir"
+  echo "+ rsync -a --info=progress2 --delete --exclude=ppc64 --exclude=ppc64le ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
+          rsync -a --info=progress2 --delete --exclude=ppc64 --exclude=ppc64le ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
+  echo
+  # remove ppc versions
+  pushd ${dir_corp}/${dir_name}/yum/
+    rm -v *ppc64*
+    rm -vrf */*/ppc64*
+  popd
 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/6/x86_64  ${dir_corp}/${dir_name}/yum/rhel/6/
-        ;;
-      'rhel7')
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7/
-        ;;
-      'rhel73')
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/rhel/7.3/x86_64  ${dir_corp}/${dir_name}/yum/rhel/7.3/
-        ;;
-      'sles11') 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/x86_64 ${dir_corp}/${dir_name}/yum/sles/11/
-
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/11/i386   ${dir_corp}/${dir_name}/yum/sles/11/
-        ;;
-      'sles12') 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/sles/12/x86_64 ${dir_corp}/${dir_name}/yum/sles/12/
-        ;;
-      'opensuse42') 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/opensuse/42/x86_64 ${dir_corp}/${dir_name}/yum/opensuse/42/
-        ;;
-      'fedora24') 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/x86_64 ${dir_corp}/${dir_name}/yum/fedora/24/
-
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/24/i386   ${dir_corp}/${dir_name}/yum/fedora/24/
-        ;;
-      'fedora25') 
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/x86_64 ${dir_corp}/${dir_name}/yum/fedora/25/
-
-        echo "+ rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/"
-                rsync -avP --delete-after ${dir_release}/${dir_name}/yum/fedora/25/i386   ${dir_corp}/${dir_name}/yum/fedora/25/
-        ;;
-    esac
-  done
 else
   line
   echo "+ Skipping adding files to Yum repo, as requested..."
