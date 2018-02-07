@@ -404,6 +404,9 @@ for REPONAME in ${dists}; do
   esac
 done
 
+# Add centos link to rhel dir
+runCommand ln -sv rhel centos
+
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
 
