@@ -277,11 +277,7 @@ for dist in ${debian_dists}; do
       for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
     'stretch')
-      if [[ $TREE == '10.1' ]]; then
-        echo "+ no ppc64le for ${TREE}"
-      else
-        for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
-      fi
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
 
