@@ -232,7 +232,7 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
 
 bld_kvm_qa_linux = {
         'name': "qa-kvm-linux",
-        'slavenames': ["bb02","bb03","aidi"],
+        'slavenames': ["bbm6"],
         'builddir': "kvm-qa-linux",
         'factory': f_qa_linux,
         "nextBuild": myNextBuild,
@@ -456,7 +456,7 @@ f_qa_innodb.addStep(
 
 bld_kvm_qa_innodb = {
         'name': "qa-innodb-upgrade",
-        'slavenames': ["bb02","bb03","aidi"],
+        'slavenames': ["bbm6"],
         'builddir': "kvm-qa-innodb",
         'factory': f_qa_innodb,
         "nextBuild": myNextBuild,
