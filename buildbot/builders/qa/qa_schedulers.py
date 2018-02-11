@@ -23,11 +23,11 @@ c['schedulers'].append(Triggerable(
                       "qa-win-debug"
                      ]))
 
-#c['schedulers'].append(Triggerable(
-#        name="kvm-sched-qa-trees-10x",
-#        builderNames=[
-#                      "qa-kvm-linux",
-#                     ]))
+c['schedulers'].append(Triggerable(
+        name="kvm-sched-qa-trees-10x",
+        builderNames=[
+                      "qa-kvm-linux",
+                     ]))
 
 #c['schedulers'].append(Triggerable(
 #        name="kvm-sched-qa-innodb",
