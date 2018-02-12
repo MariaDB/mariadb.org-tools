@@ -14,9 +14,17 @@ f_valgrind.addStep(ShellCommand(
     doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
-             "bb01.mariadb.net::kvm/vms/vm-centos7-amd64-build.qcow2",
-             "bb01.mariadb.net::kvm/vms/vm-centos7-amd64-valgrind.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-centos74-amd64-serial.qcow2",
+             "bb01.mariadb.net::kvm/vms/vm-centos74-amd64-valgrind.qcow2",
              "/kvm/vms/"]))
+
+f_valgrind.addStep(ShellCommand(
+    description=["checking", "VMs"],
+    descriptionDone=["check", "VMs"],
+#    haltOnFailure=True,
+    command=["ls", "-la",
+             "/kvm/vms/"]))
+
 f_valgrind.addStep(DownloadSourceTarball())
 # Extract the compiler warning suppressions file from the source tarball.
 f_valgrind.addStep(ShellCommand(
@@ -29,17 +37,16 @@ exit 0  # best-effort, not fatal if no suppression file
 """)]))
 
 f_valgrind.addStep(Compile(
-    doStepIf=False,
     description=["compiling"],
     descriptionDone=["compile"],
-    logfiles={"kernel": "kernel_2331.log"},
+    logfiles={"kernel": "kernel_"+getport()+".log"},
     warningPattern=gccWarningPattern,
     warningExtractor=Compile.warnExtractFromRegexpGroups,
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102", "EXTRA_FLAGS": "-O3 -fno-omit-frame-pointer -Wno-uninitialized -fno-strict-aliasing", "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"},
-    command=["runvm", "--base-image=/kvm/vms/vm-centos7-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=12", "--mem=53248",
-    "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-build-"+getport()+".qcow2",
+    command=["runvm", "--base-image=/kvm/vms/vm-centos74-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=8192",
+    "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_"+getport()+".log", "vm-tmp-build-"+getport()+".qcow2",
     "rm -Rf buildbot && mkdir buildbot",
     ScpSourceIntoVM(),
     WithProperties("""
@@ -55,14 +62,13 @@ make -j12
 
 f_valgrind.addStep(getMTR(
 #    doStepIf=isMainTree,
-    doStepIf=False,
     test_type="default",
     test_info="Valgrind run, no --ps-protocol",
     timeout=9600,
     mtr_subdir=".",
     env={"TERM": "vt102","MTR_FEEDBACK_PLUGIN": "1"},
-    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=12", "--mem=53248",
-        "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_2331.log", "vm-tmp-"+getport()+".qcow2",
+    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=8192",
+        "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_"+getport()+".log", "vm-tmp-"+getport()+".qcow2",
     WithProperties("""
 set -ex
 cd build/mysql-test
@@ -94,6 +100,9 @@ bb-*)
   SUITES=
   ;;
 esac
+
+# TODO: Make it better
+SUITES=main
 
 # Configuring SKIP_TESTS
 
@@ -129,7 +138,7 @@ esac
 # Suite list: $SUITES
 # Skip list: $SKIP_TESTS
 
-if perl mysql-test-run.pl  --verbose-restart --vardir="$(readlink -f /dev/shm/var)" --valgrind --valgrind-option=--show-reachable=yes --force --max-test-fail=100 --max-save-core=0 --max-save-datadir=1 --parallel=20 $SUITES $SKIP_TESTS
+if perl mysql-test-run.pl  --verbose-restart --vardir="$(readlink -f /dev/shm/var)" --valgrind --valgrind-option=--show-reachable=yes --force --max-test-fail=100 --max-save-core=0 --max-save-datadir=1 --parallel=4 $SUITES $SKIP_TESTS
 then
   exit 0
 else
@@ -146,11 +155,11 @@ fi
      "!= rm -Rf var/ ; scp -rp -P "+getport()+" " + kvm_scpopt +
      " buildbot@localhost:~buildbot/build/mysql-test/var . || :")
     ],
-    parallel=20))
+    parallel=4))
 
-bld_xenial_valgrind = {'name': "xenial-amd64-valgrind",
-                'slavenames': [ "bb05" ],
-                'builddir': "xenial-amd64-valgrind",
+bld_vm_valgrind = {'name': "vm-amd64-valgrind",
+                'slavenames': [ "bbm5" ],
+                'builddir': "vm-amd64-valgrind",
                 'factory': f_valgrind,
                 "nextBuild": myNextBuild,
                 "category": "experimental",
