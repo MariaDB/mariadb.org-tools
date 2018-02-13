@@ -45,7 +45,7 @@ f_valgrind.addStep(Compile(
     suppressionFile=WithProperties("compiler_warnings.supp"),
     timeout=3600,
     env={"TERM": "vt102", "EXTRA_FLAGS": "-O3 -fno-omit-frame-pointer -Wno-uninitialized -fno-strict-aliasing", "AM_EXTRA_MAKEFLAGS": "VERBOSE=1"},
-    command=["runvm", "--base-image=/kvm/vms/vm-centos74-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=8192",
+    command=["runvm", "--base-image=/kvm/vms/vm-centos74-amd64-valgrind.qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=6144",
     "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_"+getport()+".log", "vm-tmp-build-"+getport()+".qcow2",
     "rm -Rf buildbot && mkdir buildbot",
     ScpSourceIntoVM(),
@@ -56,7 +56,7 @@ tar zxf "buildbot/%(distname)s"
 mv "%(distdirname)s" build
 cd build
 cmake . -DCMAKE_BUILD_TYPE=Debug -DWITH_VALGRIND=1
-make -j12
+make -j6
 """),
     ]))
 
@@ -67,7 +67,7 @@ f_valgrind.addStep(getMTR(
     timeout=9600,
     mtr_subdir=".",
     env={"TERM": "vt102","MTR_FEEDBACK_PLUGIN": "1"},
-    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=8192",
+    command=["runvm", "--base-image=vm-tmp-build-"+getport()+".qcow2", "--port="+getport(), "--user=buildbot", "--smp=4", "--mem=6144",
         "--cpu=qemu64", "--startup-timeout=600", "--logfile=kernel_"+getport()+".log", "vm-tmp-"+getport()+".qcow2",
     WithProperties("""
 set -ex
