@@ -600,11 +600,19 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
     ));
 
     f.addStep(Test(
-        doStepIf=do_release_steps,
-        name = "transform",
+	doStepIf=(lambda(step): step.getProperty("branch") == "10.2" and do_release_steps),
+        name = "combo-10.2",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-transform.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-transform || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-transform\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.2-combo.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-combo-10.2 || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-combo-10.2\\trial*")]
+    ));
+
+    f.addStep(Test(
+        doStepIf=(lambda(step): step.getProperty("branch") == "10.3" and do_release_steps),
+        name = "combo-10.3",
+        timeout=3600,
+        env={"MTR_BUILD_THREAD":mtr_build_thread},
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.3-combo.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-combo-10.3 || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-combo-10.3\\trial*")]
     ));
 
 # We shouldn't need it anymore since we are setting appverif in runall.pl now
@@ -627,11 +635,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "get_previous_release",
         command=["dojob", WithProperties("perl %(sharedir)s\\mariadb-toolbox\\scripts\\last_release_tag.pl --source-tree=%(builddir)s --dest-tree=%(bb_workdir)s/build-last-release")],
         timeout = 3600,
-        doStepIf=do_release_steps
+#       doStepIf=do_release_steps
+	doStepIf=False
     ));
 
     f.addStep(Compile(
-        doStepIf=do_release_steps,
+#        doStepIf=do_release_steps,
+	doStepIf=False,
         name = "build_previous_release",
         command=["dojob", WithProperties("cd /d %(bb_workdir)s\\build-last-release && cmake . -G %(vs_generator)s && cmake --build . --config RelWithDebInfo")],
         timeout=3600,
@@ -640,7 +650,8 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
     ));
 
     f.addStep(Test(
-        doStepIf=do_release_steps,
+#        doStepIf=do_release_steps,
+	doStepIf=False,
         name = "comparison",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
