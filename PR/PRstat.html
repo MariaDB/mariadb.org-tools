@@ -1,0 +1,135 @@
+<!--
+To cache PR's up to 500 locally use:
+curl -o data1.json "https://api.github.com/repos/MariaDB/server/pulls?state=all&per_page=100"
+curl -o data2.json "https://api.github.com/repos/MariaDB/server/pulls?state=all&per_page=100&page=2"
+curl -o data3.json "https://api.github.com/repos/MariaDB/server/pulls?state=all&per_page=100&page=3"
+curl -o data4.json "https://api.github.com/repos/MariaDB/server/pulls?state=all&per_page=100&page=4"
+curl -o data5.json "https://api.github.com/repos/MariaDB/server/pulls?state=all&per_page=100&page=5"
+-->
+<html>
+<head>
+<script type="text/javascript">
+var PR= [];
+
+
+function load(url)
+{
+  var xmlhttp= new XMLHttpRequest();
+  var link;
+
+  xmlhttp.open("GET", url, false);
+  xmlhttp.send();
+  if (xmlhttp.readyState == 4 && (xmlhttp.status == 0 || xmlhttp.status == 200))
+    Array.prototype.push.apply(PR, JSON.parse(xmlhttp.responseText));
+
+  var r= /<(.*)>; rel="next"/.exec(xmlhttp.getResponseHeader("Link"));
+  return r ? r[1] : null;
+}
+
+
+function stat(period_begin, period_end)
+{
+  var total= 0;
+  var closed= 0;
+  var open= 0;
+  var users= [];
+  var assignees= [];
+  var milestones= [];
+
+  for (var i= 0; i < PR.length; i++)
+  {
+    var created_at= new Date(PR[i].created_at);
+    var closed_at= new Date(PR[i].closed_at);
+
+    if (created_at >= period_begin && created_at < period_end)
+    {
+      total++;
+
+      if (users[PR[i].user.login])
+        users[PR[i].user.login]++;
+      else
+        users[PR[i].user.login]= 1;
+
+      var m= PR[i].milestone ? PR[i].milestone.title : "NO MILESTONE";
+      if (milestones[m])
+        milestones[m]++;
+      else
+        milestones[m]= 1;
+    }
+
+    if (closed_at >= period_begin && closed_at < period_end && PR[i].state == "closed")
+    {
+      closed++;
+
+      var a= PR[i].assignee ? PR[i].assignee.login : "UNASSIGNED";
+      if (assignees[a])
+        assignees[a]++;
+      else
+        assignees[a]= 1;
+    }
+  }
+
+  document.write("Number of PR's opened: " + total + "<br>");
+  document.write("Number of PR's closed: " + closed + "<br>");
+
+  document.write("<br>");
+
+  var i= 0;
+  for (var user in users)
+  {
+    i++;
+    document.write("By " + user + ": " + users[user] + "<br>");
+  }
+  document.write("<strong>Total contributors: " + i + "</strong><br>");
+
+  document.write("<br>");
+
+  i= 0;
+  for (var assignee in assignees)
+  {
+    i++;
+    document.write("For " + assignee + ": " + assignees[assignee] + "<br>");
+  }
+
+  document.write("<strong>Total reviewers: " + i + "</strong><br>");
+
+  document.write("<br>");
+
+  for (var k in milestones)
+    document.write("For " + k + ": " + milestones[k] + "<br>");
+}
+
+
+function generate(url)
+{
+  var period_begin= document.getElementById("period_begin").value;
+  var period_end= document.getElementById("period_end").value;
+
+  PR= [];
+  while ((url= load(url)));
+  stat(new Date(period_begin), new Date(period_end));
+}
+
+
+/*
+Load cached files
+load("data1.json");
+load("data2.json");
+load("data3.json");
+load("data4.json");
+load("data5.json");
+*/
+
+stat(new Date("2017-01-01"), new Date("2018-01-01"));
+</script>
+</head>
+<body>
+<form>
+<input type="text" id="period_begin" value="2017-01-01">
+<input type="text" id="period_end" value="2018-01-01">
+<button type="button" onclick="generate('https://api.github.com/repos/MariaDB/server/pulls?state=all&amp;per_page=100');">MariaDB</button>
+<button type="button" onclick="generate('https://api.github.com/repos/mysql/mysql-server/pulls?state=all&amp;per_page=100');">MySQL</button>
+<button type="button" onclick="generate('https://api.github.com/repos/percona/percona-server/pulls?state=all&amp;per_page=100');">Percona</button>
+</form>
+</body>
+</html>
