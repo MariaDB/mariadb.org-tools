@@ -517,6 +517,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         command=["dojob", WithProperties("echo D:\\%(buildername)s\\build")]
     ));
 
+    # that's where the main server (server under test) will be installed 
+    f.addStep(SetPropertyFromCommand(
+        name="set_installdir",
+        property="installdir",
+        command=["dojob", WithProperties("echo D:\\%(buildername)s\\install")]
+    ));
+
     # logdir is where vardirs are written
     f.addStep(SetPropertyFromCommand(
         name="set_logdir",
@@ -582,6 +589,13 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         warningExtractor=Compile.warnExtractFromRegexpGroups
     ));
 
+    f.addStep(Compile(
+        name = "install",
+        command=["dojob", WithProperties("cd /d %(builddir)s && cmake -DCMAKE_INSTALL_PREFIX=%(installdir)s -DCMAKE_INSTALL_CONFIG_NAME="+config+" -P cmake_install.cmake")],
+        warningPattern=vsWarningPattern,
+        warningExtractor=Compile.warnExtractFromRegexpGroups
+    ));
+
 # We shouldn't need it anymore since we are setting appverif in runall.pl now
 #    f.addStep(Test(
 #        name = "enable_app_verifier",
@@ -596,7 +610,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         test_type="storage_engine",
         test_info="Storage engine test suites",
         timeout=3600,
-        command=["dojob", WithProperties("cd /d %(builddir)s\\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
+        command=["dojob", WithProperties("cd /d %(installdir)s\\mysql-test && perl mysql-test-run.pl  --verbose-restart --force --suite=storage_engine-,storage_engine/*- --max-test-fail=0 --parallel=4")]
     ));
 
     f.addStep(Test(
@@ -604,7 +618,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "combo-10.2",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.2-combo.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-combo-10.2 || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-combo-10.2\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.2-combo.cc --run-all-combinations-once --force --basedir=%(installdir)s --workdir=%(logdir)s\\optim-combo")]
     ));
 
     f.addStep(Test(
@@ -612,8 +626,15 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "combo-10.3",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.3-combo.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-combo-10.3 || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-combo-10.3\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --new --config=conf\\mariadb\\10.3-combo.cc --run-all-combinations-once --force --basedir=%(installdir)s --workdir=%(logdir)s\\optim-combo")]
     ));
+
+    f.addStep(ShellCommand(
+        name = "result_summary",
+        command=["dojob", WithProperties("perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-combo\\trial*")],
+        timeout = 600
+    ));
+
 
 # We shouldn't need it anymore since we are setting appverif in runall.pl now
 #    f.addStep(ShellCommand(
@@ -628,7 +649,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
         name = "crash_tests",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
-        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(builddir)s --workdir=%(logdir)s\\optim-crash-tests || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-crash-tests\\trial*")]
+        command=["dojob", WithProperties("cd /d %(sharedir)s\\rqg && perl combinations.pl --config=%(sharedir)s\\mariadb-toolbox\\configs\\buildbot-no-comparison.cc --run-all-combinations-once --force --basedir=%(installdir)s --workdir=%(logdir)s\\optim-crash-tests || perl %(sharedir)s\\mariadb-toolbox\\scripts\\result_summary.pl %(logdir)s\\optim-crash-tests\\trial*")]
     ));
 
     f.addStep(ShellCommand(
