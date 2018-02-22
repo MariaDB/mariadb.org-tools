@@ -78,6 +78,7 @@ bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-
 bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "vm-centos6-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.3");
 bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "vm-centos6-i386", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.3");
 bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "vm-centos7-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.0.3");
+bld_opensuse42_x64_connector_odbc_new= bld_linux_connector_odbc("opensuse42_x64-connector-odbc-new", "vm-opensuse42-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=suse", "v3.0.3");
 
 bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "vm-jessie-i386", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.3");
 bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "vm-jessie-amd64", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.3");
