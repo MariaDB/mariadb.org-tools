@@ -622,7 +622,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
     ));
 
     f.addStep(Test(
-        doStepIf=(lambda(step): step.getProperty("branch") == "10.3" and do_release_steps),
+        doStepIf=(lambda(step): (step.getProperty("branch") == "10.3" or step.getProperty("branch") == "bb-10.3-release") and do_release_steps),
         name = "combo-10.3",
         timeout=3600,
         env={"MTR_BUILD_THREAD":mtr_build_thread},
