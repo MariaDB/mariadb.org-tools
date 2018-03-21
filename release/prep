@@ -616,13 +616,16 @@ upload_from_the_staging_mirror_to_the_yum_mirrors() {
 activate_the_yum_repos() {
   case ${tree} in
     "5.5-galera")
-      dir_osuosl='5.5'
+      dir_real='5.5'
       ;;
     "10.0-galera")
-      dir_osuosl='10.0'
+      dir_real='10.0'
+      ;;
+    "bb-10.3-release")
+      dir_real='10.3'
       ;;
     *)
-      dir_osuosl="${tree}"
+      dir_real="${tree}"
       ;;
   esac
   if [ "${galera_suffix}" = "-galera" ]; then
@@ -632,11 +635,11 @@ activate_the_yum_repos() {
     echo;echo;
     set -x
     for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
-      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${tree};ln -sv ${num} ${tree};echo;echo"; 
+      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${dir_real};ln -sv ${num} ${dir_real};echo;echo"; 
     done
     set +x
   fi
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${dir_osuosl}/";
+  rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${dir_real}/";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
@@ -650,17 +653,20 @@ activate_the_deb_repos() {
   set -x
   case ${tree} in
     "5.5-galera")
-      dir_osuosl='5.5'
+      dir_real='5.5'
       ;;
     "10.0-galera")
-      dir_osuosl='10.0'
+      dir_real='10.0'
+      ;;
+    "bb-10.3-release")
+      dir_real='10.3'
       ;;
     *)
-      dir_osuosl="${tree}"
+      dir_real="${tree}"
       ;;
   esac
   set +x
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${dir_osuosl}/";
+  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${dir_real}/";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
