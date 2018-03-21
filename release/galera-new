@@ -113,7 +113,7 @@ loadDefaults() {
 
 function runCommand() {
   echo "+ ${@}"
-  sleep 1
+  #sleep 1
   if ${@} ; then
     return 0
   else
@@ -286,18 +286,15 @@ if [ "${create_yum}" != "no" ]; then
       'sles12-ppc64le')
         runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*server.rpm ${REPONAME}/rpms/
         runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*test.rpm   ${REPONAME}/rpms/
-        for gv in ${ver_galera}; do
-          runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
-        done
         ;;
       *)
         runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*server.rpm ${REPONAME}/rpms/
         runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*test.rpm ${REPONAME}/rpms/
-        for gv in ${ver_galera}; do
-          runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
-        done
         ;;
     esac
+    for gv in ${ver_galera}; do
+      runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+    done
     echo;echo;
   done
 
