@@ -93,6 +93,15 @@ shouldI() {
 }
 
 copy_and_stage_files() {
+  echo;line;echo "fixing permissions";line;
+
+  for dir in $(sudo find ${dir_build} -type d);do
+    sudo chmod -c 755 "${dir}"
+  done
+  for file in $(sudo find ${dir_build} -type f);do
+    sudo chmod -c 644 "${file}"
+  done
+
   echo;line;echo "Copying and staging files";line;
   pushd ${cc_home}
     if [[ ! -d "${dir_c}" ]];then
@@ -102,13 +111,24 @@ copy_and_stage_files() {
       echo ${dir}
       case $(basename ${dir}) in 
         "linux_x86-connector_c")
+          echo
           cp -avi ${dir}/*.gz ${dir_c}/
           cp -avi ${dir}/*.zip ${dir_c}/
           ;;
+        "linux_x64-connector_c")
+          echo
+          cp -avi ${dir}/*x86_64.tar.gz ${dir_c}/
+          ;;
         "centos6_i386-connector_c")
-          cp -avi ${dir}/*i686.tar.gz ${dir_c}/
+          echo
+          #cp -avi ${dir}/*i686.tar.gz ${dir_c}/
+          ;;
+        "win-connector_c")
+          echo
+          cp -avi ${dir}/*.msi ${dir_c}/
           ;;
         "win-connector_c_3")
+          echo
           cp -avi ${dir}/*.msi ${dir_c}/
           ;;
         "labrador")
@@ -118,19 +138,21 @@ copy_and_stage_files() {
           echo
           ;;
         "freebsd11_x64-connector_c")
-          #cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
-          echo
-          echo "skipping ${dir}"
-          echo
+          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          #echo
+          #echo "skipping ${dir}"
+          #echo
           ;;
         "freebsd11_x86-connector_c")
-          #cp -avi ${dir}/*i386.tar.gz ${dir_c}/
-          echo
-          echo "skipping ${dir}"
-          echo
+          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          #echo
+          #echo "skipping ${dir}"
+          #echo
           ;;
         *)
+          echo;line
           echo "+fail: ${dir}"
+          line;echo
           ;;
       esac
     done
