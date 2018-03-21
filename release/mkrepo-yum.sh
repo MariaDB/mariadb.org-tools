@@ -128,9 +128,6 @@ else
 
     opensuse42-amd64
 
-    sles114-amd64
-    sles114-x86
-
     sles12-amd64
     sles12-ppc64le
   "
@@ -158,7 +155,7 @@ runCommand() {
   # This function emulates the behavior of "set -x", while giving us greater
   # control over the output
   echo "+ ${@}"
-  sleep 1
+  #sleep 1
   if ${@} ; then
     return 0
   else
