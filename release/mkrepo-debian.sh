@@ -59,7 +59,7 @@ line() {
 
 runCommand() {
   echo "+ ${@}"
-  sleep 1
+  #sleep 1
   if ${@} ; then
     echo
     return 0
@@ -318,13 +318,9 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            #"jessie"|"stretch") #stretch is currently not building on ppc64le
-            "jessie")
+            "jessie"|"stretch")
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
-              ;;
-            "sid")
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_amd64.changes
               ;;
             *) 
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
@@ -333,9 +329,9 @@ for dist in ${debian_dists}; do
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
-              "sid")
-                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
-                ;;
+              #"sid")
+              #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
+              #  ;;
               *)
                 runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
                 ;;

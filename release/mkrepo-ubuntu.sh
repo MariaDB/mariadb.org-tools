@@ -74,7 +74,7 @@ line() {
 
 runCommand() {
   echo "+ ${@}"
-  sleep 1
+  #sleep 1
   if ${@} ; then
     echo
     return 0
