@@ -50,11 +50,11 @@ set -eu
 
 # Set ${ver_galera} to the currently supported Galera versions,
 # multiple versions are separated with spaces.
-ver_galera="25.3.22"
+ver_galera="25.3.23"
 
 # Set ${ver_galera_preferred} to the version we include in the bintars and
 # repositories (often the same as ${ver_galera} but can be different).
-ver_galera_preferred="25.3.22"
+ver_galera_preferred="25.3.23"
 
 # We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
 # Duplicate & edit the appropriate lines below. Old settings are generally
@@ -240,8 +240,8 @@ dir_at="/path/to/advance-toolchain" # Location of at pkgs
 dir_rpm_shared="/path/to/shared/rpm/dir"
 dir_judy="/path/to/judy" # Location of judy pkgs
 
-ver_galera="25.3.22"                        # galera version[s] in our repos
-ver_galera_preferred="25.3.22"              # preferred galera version
+ver_galera="25.3.23"                        # galera version[s] in our repos
+ver_galera_preferred="25.3.23"              # preferred galera version
 ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
