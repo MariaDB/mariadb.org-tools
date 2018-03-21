@@ -3,7 +3,7 @@
 #
 #          FILE: prep-galera
 # 
-#         USAGE: ./prep-galera
+#         USAGE: ./prep-galera <version>
 # 
 #   DESCRIPTION: This script exists so that I don't need to remember or look up
 #                where things are when it is time to prepare new galera files.
@@ -37,20 +37,31 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-# Set ${galera_versions} to the currently supported Galera versions,
-# multiple versions are separated with spaces.
-galera_versions="25.3.22"
-
-# Set ${galera_preferred} to the version we include in the bintars and
-# repositories (often the same as ${galera_versions} but can be different).
-galera_preferred="25.3.22"
-
-
-deb_dists="jessie stretch wheezy trusty xenial zesty artful"
+deb_dists="jessie stretch wheezy sid trusty xenial artful"
 deb_dists_p8="jessie stretch trusty xenial"
-rpm_dists="centos6 centos7 centos73 centos74 fedora25 fedora26"
-rpm_dists_p8="rhel6 rhel7 rhel71 centos73 suse12"
-zyp_dists="sles11 sles12 opensuse42"
+rpm_dists="
+  centos6-x86
+  centos6-amd64
+
+  centos73-amd64
+  centos73-ppc64
+  centos73-ppc64le
+
+  centos74-amd64
+
+  fedora25-x86
+  fedora25-amd64
+  fedora26-amd64
+  fedora27-amd64
+
+  opensuse42-amd64
+
+  sles11-x86
+  sles11-amd64
+
+  sles12-amd64
+  sles12-ppc64le
+"
 
 #-------------------------------------------------------------------------------
 # Options below this point you probably don't need to change
@@ -59,11 +70,6 @@ zyp_dists="sles11 sles12 opensuse42"
 # Various miscellaneous options
 rsync_opts="-a -L"
 
-build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${galera_preferred}-i686 kvm-deb-wheezy-x86-gal:galera-${galera_preferred}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${galera_preferred}-systemd-i686"
-build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${galera_preferred}-x86_64 kvm-deb-wheezy-amd64-gal:galera-${galera_preferred}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${galera_preferred}-systemd-x86_64"
-build_dirs_p8="p8-rhel71-rpm-gal:galera-${galera_preferred}-ppc64le p8-rhel6-rpm-gal:galera-${galera_preferred}-ppc64"
-
-build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
 
 # defaults (to prevent errors)
     displayusage="no"
@@ -274,6 +280,7 @@ line() {
 # Main Script
 #-------------------------------------------------------------------------------
 
+
 # The first thing we need to do is parse the options
 while getopts 'dhlr:t:v:y' OPTION
 do
@@ -348,6 +355,12 @@ release_dir="${dir_galera}"
 #release_dir="/ds413/tmp"
 dir_name="${version}"
 archive_dir="/ds413/archive/builds"
+
+build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-wheezy-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-wheezy-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
+build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64"
+
+build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
 
 shouldI prepare_source_package
 shouldI prepare_bintar_packages
@@ -488,7 +501,7 @@ if [ "${create_bintar}" != "no" ]; then
     # This is where we actually extract the binary files
     cd ${release_dir}/${dir_name}/bintar/${dir_array[1]}
     case ${dir_array[1]} in
-      "galera-${galera_preferred}-x86_64"|"galera-${galera_preferred}-i686"|"galera-${galera_preferred}-ppc64le"|"galera-${galera_preferred}-ppc64")
+      "galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64")
           # we are dealing with an .rpm file
           rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
           cd usr
@@ -633,48 +646,19 @@ if [ "${create_rpm}" != "no" ]; then
     rm -rf "${release_dir}/${dir_name}-signed-ent/rpm"
   fi
   mkdir -v ${release_dir}/${dir_name}/rpm
-  mkdir -v ${release_dir}/${dir_name}/rpm/centos73/
-  mkdir -v ${release_dir}/${dir_name}/rpm/centos74/
   cd ${release_dir}/${dir_name}/rpm/
 
   for dist in ${rpm_dists}; do
-    for arch in amd64 x86; do
-      case ${dist}-${arch} in
-        'centos7-x86'|'centos73-x86'|'centos74-x86'|'fedora26-x86')
-          echo "skipping non-existent ${dist}-${arch}..."
-          ;;
-        'centos73-amd64'|'centos74-amd64')
-          cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
-          ;;
-        *)
-          cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
-          ;;
-      esac
-    done
-  done
-
-  for dist in ${zyp_dists}; do
-    for arch in amd64 x86; do
-      case ${dist}-${arch} in
-        'opensuse42-x86'|'sles12-x86'|'sles11sp1-x86')
-          echo "skipping ${dist}-${arch}..."
-          ;;
-        *)
-          cp -avi ${archive_dir}/${tree}/${rev}/kvm-zyp-${dist}-${arch}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
-          ;;
-      esac
-    done
-  done
-
-
-  for dist in ${rpm_dists_p8}; do
+    mkdir -v ${release_dir}/${dir_name}/rpm/${dist}
     case ${dist} in
-      "centos73")
-        cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
-        cp -avi ${archive_dir}/${tree}/${rev}/kvm-rpm-${dist}-ppc64le-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/centos73/
+      'sles11-amd64')
+        cp -avi ${archive_dir}/${tree}/${rev}/kvm-zyp-sles11sp1-amd64-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
+        ;;
+      'sles12-ppc64le')
+        cp -avi ${archive_dir}/${tree}/${rev}/p8-suse12-rpm-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
         ;;
       *)
-        cp -avi ${archive_dir}/${tree}/${rev}/p8-${dist}-rpm-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/
+        cp -avi ${archive_dir}/${tree}/${rev}/kvm-*-${dist}-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
         ;;
     esac
   done
@@ -686,9 +670,9 @@ if [ "${create_rpm}" != "no" ]; then
   cp -avi ${release_dir}/${dir_name}/rpm ${release_dir}/${dir_name}-signed-ent/
 
   cd ${release_dir}/${dir_name}/rpm/
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
+  for file in ./*/*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
   
@@ -697,15 +681,15 @@ if [ "${create_rpm}" != "no" ]; then
   #-------------------------------------------------------------------------------
   cd ${HOME}
   echo
-  echo "Switching ~/.rpmmacros file to std version..."
+  echo "+ Switching ~/.rpmmacros file to std version..."
   echo 
   rm -v .rpmmacros
   ln -sv .rpmmacros-std .rpmmacros
   cd ${release_dir}/${dir_name}-signed/rpm/
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm ./centos73/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm centos73/galera*.rpm ; do gpg2 ${gpg_opts} ${file};done
+  for file in ./*/*.rpm ; do gpg2 ${gpg_opts} ${file};done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
 
@@ -715,22 +699,22 @@ if [ "${create_rpm}" != "no" ]; then
   #-------------------------------------------------------------------------------
   cd ${HOME}
   echo
-  echo "Switching ~/.rpmmacros file to ent version..."
+  echo "+ Switching ~/.rpmmacros file to ent version..."
   echo 
   rm -v .rpmmacros
   ln -sv .rpmmacros-ent-v3 .rpmmacros
 
   cd ${release_dir}/${dir_name}-signed-ent/rpm/
   rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*.rpm ./centos73/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in galera*.rpm centos73/galera*.rpm ; do gpg2 ${ent_gpg_opts} ${file};done
+  for file in ./*/*.rpm ; do gpg2 ${ent_gpg_opts} ${file};done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
   
   cd ${HOME}
   echo
-  echo "Switching ~/.rpmmacros file back to standard version..."
+  echo "+ Switching ~/.rpmmacros file back to standard version..."
   echo 
   rm -v .rpmmacros
   ln -sv .rpmmacros-std .rpmmacros
@@ -823,7 +807,7 @@ END
         reprepro --basedir=. include squeeze ${release_dir}/${version}-${suffix}/deb/galera*${num}-squeeze*_amd64.changes
         reprepro --basedir=. include squeeze ${release_dir}/${version}-${suffix}/deb/galera*${num}-squeeze*_i386.changes
         ;;
-      'stretch'|'artful')
+      'stretch'|'artful'|'sid')
         echo ${dist}
         vi ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_amd64.changes
         vi ${release_dir}/${version}-${suffix}/deb/galera*${dist}*_i386.changes
@@ -869,130 +853,41 @@ if [ "${create_yum}" != "no" ]; then
   # Here we are going to iterate through the various distros and:
   #   1. create the needed directories
   #   2. copy the correct rpm packages into those directories
-  for dist in ${rpm_dists} ${zyp_dists} ${rpm_dists_p8};do
-    case ${dist} in
-      'fedora22')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc22*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc22*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'fedora23')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc23*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc23*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'fedora24')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc24*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'fedora25')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc25*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'fedora26')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*fc26*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        ;;
-      'centos5')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel5*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel5*i386.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'centos6')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel6*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel6*i686.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'centos7')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel7*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        ;;
-      'centos73')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.ppc64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos73/*el7.centos.ppc64le.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
-        ;;
-      'centos74')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/centos74/*el7.centos.x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        ;;
-      'sles11')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles11*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles11*i586.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'sles12')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles12*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        ;;
-      'suse12')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles12*ppc64le.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
-        ;;
-      'opensuse13')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles13*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles13*i586.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-x86/rpms/
-        ;;
-      'opensuse42')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*sles42*x86_64.rpm ${release_dir}/${dir_name}/repo/rpm/${dist}-amd64/rpms/
-        ;;
-      'rhel6')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*${dist}*el6.ppc64.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms/
-        ;;
-      'rhel7')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*${dist}*el7.ppc64.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64/rpms/
-        ;;
-      'rhel71')
-        mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms
-        rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/*rhel7*ppc64le.rpm   ${release_dir}/${dir_name}/repo/rpm/${dist}-ppc64le/rpms/
-        ;;
-    esac
+  for dist in ${rpm_dists};do
+    mkdir -vp ${release_dir}/${dir_name}/repo/rpm/${dist}/rpms
+    rsync -avP --keep-dirlinks ${release_dir}/${version}-${suffix}/rpm/${dist}/ ${release_dir}/${dir_name}/repo/rpm/${dist}/rpms/
   done
   # At this point the files are in place
   # All that's left is to generate the repo metadata  and sign the repomd.xml file
   cd ${release_dir}/${dir_name}/repo/rpm/
-  for DIR in *-*; do
-    mv -vi ${DIR} ~/ && cd ~/
-    case ${DIR} in
-      'centos5-amd64'|'centos5-x86'|'rhel5-amd64'|'rhel5-x86'|'sles11-amd64'|'sles11-x86')
-        # CentOS & RHEL 5 don't support newer sha256 checksums
-        createrepo -s sha --database --pretty ${DIR}
+  for dist in ${rpm_dists}; do
+    mv -vi ${dist} ~/ && cd ~/
+    case ${dist} in
+      'sles114-amd64'|'sles114-x86')
+        # SLES 11 doesn't support newer sha256 checksums
+        createrepo -s sha --database --pretty ${dist}
         ;;
       *)
-        createrepo --database --pretty ${DIR}
+        createrepo --database --pretty ${dist}
         ;;
     esac
-    mv -vi ${DIR} ${release_dir}/${dir_name}/repo/rpm/ && cd ${release_dir}/${dir_name}/repo/rpm/
-    gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml
+    mv -vi ${dist} ${release_dir}/${dir_name}/repo/rpm/ && cd ${release_dir}/${dir_name}/repo/rpm/
+    gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
   done
   # one final thing: create symlinks so buildbot tests work
   ln -sv sles11-amd64 sles11sp1-amd64
   ln -sv sles11-amd64 sles114-amd64
   ln -sv sles11-x86 sles114-x86
-  ln -sv suse12-ppc64le sles12-ppc64le
-  #ln -sv centos5-amd64 rhel5-amd64
-  #ln -sv centos5-x86 rhel5-x86
+  ln -sv sles12-ppc64le suse12-ppc64le 
   ln -sv centos6-amd64 rhel6-amd64
   ln -sv centos6-x86 rhel6-x86
-  ln -sv centos7-amd64 rhel7-amd64
-  ln -sv rhel71-ppc64le rhel7-ppc64le
+  ln -sv centos73-amd64 centos7-amd64
+  ln -sv centos73-amd64 rhel7-amd64
+  ln -sv centos73-ppc64 centos7-ppc64
+  ln -sv centos73-ppc64le centos7-ppc64le
+  ln -sv centos73-ppc64 rhel7-ppc64
+  ln -sv centos73-ppc64le rhel7-ppc64le
+  ln -sv centos73-ppc64le rhel71-ppc64le
 else
   line
   echo "+ Skipping yum repository creation, as requested..."
