@@ -74,7 +74,8 @@ if [ -n "$SKIP_COMMIT_EMAIL" ] ; then
 	exit 0
 fi
 
-if [ -d `git rev-parse --show-toplevel`/.git/rebase-merge ] ; then
+if [ -d `git rev-parse --absolute-git-dir`/rebase-merge -o               \
+     -d `git rev-parse --absolute-git-dir`/rebase-apply ] ; then
 	echo "post-commit hook: rebase-merge folder was found, assuming ongoing rebase or merge, not sending the commit notification." 1>&2 
 	echo "Run the script manually if/when needed" 1>&1
 	exit 0
