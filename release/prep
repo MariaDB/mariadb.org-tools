@@ -1518,7 +1518,7 @@ else
     fi
   fi
 
-  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ]; then
+  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ]; then
     userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
     prev_release="${INPUT}"
   fi
@@ -1630,9 +1630,15 @@ else
     if [ -d ${dir_release}/${dir_name}/yum ]; then
       rm -rf "${dir_release}/${dir_name}/yum"
     fi
+
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
-    mkdir -v ${HOME}/yum
+    # mkdir -v ${HOME}/yum
+    # Rsync a copy of the previous release to ${HOME}
+    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
+    echo
+
     pushd ${HOME}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
       ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
@@ -1646,7 +1652,7 @@ else
     # copy the yum dir to the corp release dir
     case ${tree} in
       "5.5"|"10.0")
-        message "Please run the galera-old script..."
+        message "Please run the galera-old script before continuing..."
         pressAnyKeyToContinue
         ;;
     esac
@@ -1709,6 +1715,10 @@ shouldI upload_from_the_staging_mirror_to_the_primary_mirror
 
 echo;echo;echo;echo
 
+shouldI upload_from_the_staging_mirror_to_the_corp_mirror
+
+echo;echo;echo;echo
+
 shouldI upload_from_the_staging_mirror_to_the_yum_mirrors
 
 echo;echo;echo;echo
@@ -1718,10 +1728,6 @@ shouldI activate_the_yum_repos
 echo;echo;echo;echo
 
 shouldI activate_the_deb_repos
-
-echo;echo;echo;echo
-
-shouldI upload_from_the_staging_mirror_to_the_corp_mirror
 
 echo;echo;echo;echo
 echo "+ all done!"
