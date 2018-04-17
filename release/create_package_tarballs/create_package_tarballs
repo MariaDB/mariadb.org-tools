@@ -95,6 +95,28 @@ do_pkgs() {
     then
       continue
     fi
+
+
+case $rel in
+  xenial)
+    for altarch in amd64 arm64;do
+      arch=$altarch
+      newdir="mariadb-$version-$os-$rel-$arch-$type"
+      mkdir "/tmp/$newdir"
+      chown "$USER" "/tmp/$newdir"
+
+      # Call the function (defined below) to actually do the work of creating the
+      # repository metadata.
+      "do_$type"
+
+      mv -i "/tmp/$newdir" ./
+      tar cvf "$newdir.tar" "$newdir"
+      rm -rf "$newdir"
+      arch=amd64
+    done
+
+    ;;
+  *)
     newdir="mariadb-$version-$os-$rel-$arch-$type"
     mkdir "/tmp/$newdir"
     chown "$USER" "/tmp/$newdir"
@@ -106,6 +128,8 @@ do_pkgs() {
     mv -i "/tmp/$newdir" ./
     tar cvf "$newdir.tar" "$newdir"
     rm -rf "$newdir"
+esac
+
   done
   popd
 }
@@ -146,6 +170,15 @@ do_rpms() {
 
   # Hop into the work directory and generate the package metadata.
   pushd "/tmp/$newdir"
+
+  # RPM repos now contains multiple versions, remove all MariaDB files except
+  # the current version
+  find . -name 'MariaDB-*' -a '!' -name "MariaDB-${version}-*" -exec rm -v {} +
+
+  # Also remove old galera versions
+  find . -name 'galera-*' -a '!' -name "galera-25.3.23-*" -exec rm -v {} +
+  
+  # Create the repository
   createrepo .
 
   # Copy support files for this repository type.
