@@ -61,9 +61,6 @@ case ${ARCHDIR} in
     ;;
 esac
 
-# Standard Architectures
-architectures="amd64 i386 source"
-
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
@@ -128,8 +125,6 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
   ubuntu_dists="trusty xenial"
-  architectures="amd64 i386 source"                  # for enterprise, add i386
-  architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed-ent"
 else
   origin="MariaDB"
@@ -138,8 +133,6 @@ else
   gpg_key="0xcbcb082a1bb943db"                  # mariadb.org signing key
   gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
-  #architectures_ppc64el="${architectures}"       # same if not enterprise
-  architectures_ppc64el="amd64 i386 ppc64el source"   # for trusty and xenial, add ppc64el
   suffix="signed"
 fi
 
@@ -153,66 +146,19 @@ if [ ! -d conf ]; then
   mkdir conf
 fi
 
-# Delete the conf/distributions file if it exists
-#if [ -f conf/distributions ]; then
-#  rm -f "conf/distributions"
-#fi
-
-# Removing conf/distributions file creation step - 2016-09-12
-## Create the conf/distributions file
-#for dist in ${ubuntu_dists}; do
-#  case ${dist} in 
-#    'trusty') cat >>conf/distributions <<END
-#Origin: ${origin}
-#Label: MariaDB
-#Codename: trusty
-#Architectures: ${architectures_ppc64el}
-#Components: main
-#Description: ${description}
-#SignWith: ${gpg_key}
-#
-#END
-#      ;;
-#    'xenial') cat >>conf/distributions <<END
-#Origin: ${origin}
-#Label: MariaDB
-#Codename: ${dist}
-#Architectures: ${architectures_ppc64el}
-#Components: main
-#Description: ${description}
-#SignWith: ${gpg_key_2016}
-#
-#END
-#      ;;
-#    *) cat >>conf/distributions <<END
-#Origin: ${origin}
-#Label: MariaDB
-#Codename: ${dist}
-#Architectures: ${architectures}
-#Components: main
-#Description: ${description}
-#SignWith: ${gpg_key}
-#
-#END
-#      ;;
-#  esac
-#done
-
-# Remove packages from deprecated distros (if they are present)
-#reprepro --basedir=. --delete clearvanished
-
 # Add packages
 for dist in ${ubuntu_dists}; do
   echo
   line
   echo + ${dist}
   line
+
+  # First we import the amd64 files
   case ${dist} in 
-    #'trusty'|'utopic'|'xenial'|'zesty'|'artful') # no artful yet because of https://bugs.launchpad.net/ubuntu/+source/reprepro/+bug/799889
-    'trusty'|'utopic'|'xenial'|'zesty')
+    'trusty'|'xenial'|'zesty')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
-    'artful')
+    'artful'|'bionic')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
       runCommand sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       #reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
@@ -237,9 +183,10 @@ for dist in ${ubuntu_dists}; do
     for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
-  # Include xenial ppc64le debs
+  # Include xenial ppc64le and aarch64 debs
   if [ "${dist}" = "xenial" ]; then
     for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+    for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
   fi
 
   #if [ "${ENTERPRISE}" = "yes" ]; then
@@ -305,8 +252,13 @@ for dist in ${ubuntu_dists}; do
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+        # ppc64le
         if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
           runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+        fi
+        # arm64 (aarch64)
+        if [ "${dist}" = "xenial" ]; then
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_arm64.changes
         fi
       fi
     done
