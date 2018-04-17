@@ -95,9 +95,6 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
 
     centos74-amd64
 
-    fedora25-x86
-    fedora25-amd64
-
     fedora26-amd64
 
     opensuse42-amd64
@@ -118,9 +115,6 @@ else
     centos73-ppc64le
 
     centos74-amd64
-
-    fedora25-x86
-    fedora25-amd64
 
     fedora26-amd64
 
@@ -171,6 +165,39 @@ thickline() {
   echo "==============================================================================="
 }
 
+maybe_make_symlink() {
+  # This function takes two arguments, a link_target (${1}) and a link_name (${2})
+
+  # Fail if either of them are empty
+  if [ -z "${2}" ]; then
+    thickline
+    echo "+ Failure: the maybe_make_symlink function requires two arguments"
+    thickline
+    exit
+  fi
+
+  # Check to see if ${1} and ${2} are the same
+  if [ "${2}" -ef "${2}" ]; then
+    # if they are the same, show the link and where it points
+    ls -ld ${2}
+  else
+    # if they are not the same, create the link, overwriting whatever is there
+    runCommand ln -svf ${1} ${2}
+    # show the link and where it points
+    ls -ld ${2}
+  fi
+}
+
+copy_files() {
+  # This function takes as an argument, the file portion of an rsync command
+
+  # copy the files from the source to the destination
+  echo "+ rsync -a --info=progress2 --keep-dirlinks ${@}"
+          rsync -a --info=progress2 --keep-dirlinks ${@}
+
+}
+
+
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -201,127 +228,197 @@ for REPONAME in ${dists}; do
   case "${REPONAME}" in
     'centos6-x86')
       runCommand mkdir -vp rhel/6/i386
-      runCommand ln -sv rhel/6/i386 rhel6-x86
-      runCommand ln -sv rhel6-x86 centos6-x86
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink rhel/6/i386 rhel6-x86
+      maybe_make_symlink rhel6-x86 centos6-x86
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in Galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+
       ;;
     'centos6-amd64')
       runCommand mkdir -vp rhel/6/x86_64
       pushd rhel/
         for i in $(seq 0 9); do
-          runCommand ln -sv 6 6.${i}
+          maybe_make_symlink 6 6.${i}
         done
-        runCommand ln -sv 6 6Server
-        runCommand ln -sv 6 6Client
+        maybe_make_symlink 6 6Server
+        maybe_make_symlink 6 6Client
       popd
-      runCommand ln -sv rhel/6/x86_64 rhel6-amd64
-      runCommand ln -sv rhel6-amd64 centos6-amd64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink rhel/6/x86_64 rhel6-amd64
+      maybe_make_symlink rhel6-amd64 centos6-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
       ;;
     'centos73-amd64')
       runCommand mkdir -vp rhel/7/x86_64
       pushd rhel/
         for i in $(seq 0 3); do
-          runCommand ln -sv 7 7.${i}
+          maybe_make_symlink 7 7.${i}
         done
-        runCommand ln -sv 7 7Server
-        runCommand ln -sv 7 7Client
+        maybe_make_symlink 7 7Server
+        maybe_make_symlink 7 7Client
       popd
-      runCommand ln -sv rhel/7/x86_64 rhel7-amd64
-      runCommand ln -sv rhel7-amd64 rhel73-amd64
-      runCommand ln -sv rhel7-amd64 centos7-amd64
-      runCommand ln -sv centos7-amd64 centos73-amd64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink rhel/7/x86_64 rhel7-amd64
+      maybe_make_symlink rhel7-amd64 rhel73-amd64
+      maybe_make_symlink rhel7-amd64 centos7-amd64
+      maybe_make_symlink centos7-amd64 centos73-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
       ;;
     'centos73-ppc64')
       runCommand mkdir -vp rhel/7/ppc64
-      runCommand ln -sv rhel/7/ppc64 rhel7-ppc64
-      runCommand ln -sv rhel7-ppc64 rhel73-ppc64
-      runCommand ln -sv rhel7-ppc64 centos7-ppc64
-      runCommand ln -sv centos7-ppc64 centos73-ppc64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink rhel/7/ppc64 rhel7-ppc64
+      maybe_make_symlink rhel7-ppc64 rhel73-ppc64
+      maybe_make_symlink rhel7-ppc64 centos7-ppc64
+      maybe_make_symlink centos7-ppc64 centos73-ppc64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
       ;;
     'centos73-ppc64le')
       runCommand mkdir -vp rhel/7/ppc64le
-      runCommand ln -sv rhel/7/ppc64le rhel7-ppc64le
-      runCommand ln -sv rhel7-ppc64le rhel73-ppc64le
-      runCommand ln -sv rhel7-ppc64le centos7-ppc64le
-      runCommand ln -sv centos7-ppc64le centos73-ppc64le
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink rhel/7/ppc64le rhel7-ppc64le
+      maybe_make_symlink rhel7-ppc64le rhel73-ppc64le
+      maybe_make_symlink rhel7-ppc64le centos7-ppc64le
+      maybe_make_symlink centos7-ppc64le centos73-ppc64le
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
+      for gv in ${ver_galera}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+      done
+      
+      # Copy in other files
       #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
-      for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
-      done
       ;;
     'centos74-amd64')
       runCommand mkdir -vp rhel/7.4/x86_64
-      runCommand ln -sv rhel/7.4/x86_64 rhel74-amd64
-      runCommand ln -sv rhel74-amd64 centos74-amd64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink rhel/7.4/x86_64 rhel74-amd64
+      maybe_make_symlink rhel74-amd64 centos74-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
       ;;
     'fedora25-x86')
       runCommand mkdir -vp fedora/25/i386
-      runCommand ln -sv fedora/25/i386 fedora25-x86
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink fedora/25/i386 fedora25-x86
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'fedora25-amd64')
       runCommand mkdir -vp fedora/25/x86_64
-      runCommand ln -sv fedora/25/x86_64 fedora25-amd64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink fedora/25/x86_64 fedora25-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'fedora26-amd64')
       runCommand mkdir -vp fedora/26/x86_64
-      runCommand ln -sv fedora/26/x86_64 fedora26-amd64
+      maybe_make_symlink fedora/26/x86_64 fedora26-amd64
+
+      # Copy in MariaDB files
       echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
               rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
         echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
                 rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
@@ -329,66 +426,104 @@ for REPONAME in ${dists}; do
       ;;
     'fedora27-amd64')
       runCommand mkdir -vp fedora/27/x86_64
-      runCommand ln -sv fedora/27/x86_64 fedora27-amd64
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink fedora/27/x86_64 fedora27-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'opensuse42-amd64')
       runCommand mkdir -vp opensuse/42/x86_64
-      runCommand ln -sv opensuse/42/x86_64 opensuse42-amd64
-      echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
-              rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink opensuse/42/x86_64 opensuse42-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'sles114-x86')
       runCommand mkdir -vp sles/11/i386
-      runCommand ln -sv sles/11/i386 sles11-x86
-      runCommand ln -sv sles11-x86 sles114-x86
+      maybe_make_symlink sles/11/i386 sles11-x86
+      maybe_make_symlink sles11-x86 sles114-x86
+
+      # Copy in MariaDB files
       echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
               rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-x86/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'sles114-amd64')
       runCommand mkdir -vp sles/11/x86_64
-      runCommand ln -sv sles/11/x86_64 sles11-amd64
-      runCommand ln -sv sles11-amd64 sles114-amd64
-      echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
-              rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+      maybe_make_symlink sles/11/x86_64 sles11-amd64
+      maybe_make_symlink sles11-amd64 sles114-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-amd64/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     'sles12-amd64')
       runCommand mkdir -vp sles/12/x86_64
-      runCommand ln -sv sles/12/x86_64 sles12-amd64
-      echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
-              rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
-      echo "+ rsync -av --keep-dirlinks ${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/"
-              rsync -av --keep-dirlinks ${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/
+      maybe_make_symlink sles/12/x86_64 sles12-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      #        rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      
+      # Copy in other files
+      copy_files "${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/"
+      #echo "+ rsync -av --keep-dirlinks ${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/"
+      #        rsync -av --keep-dirlinks ${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/
       ;;
     'sles12-ppc64le')
       runCommand mkdir -vp sles/12/ppc64le
-      runCommand ln -sv sles/12/ppc64le sles12-ppc64le
-      echo "+ rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${REPONAME}/"
-              rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${REPONAME}/
+      maybe_make_symlink sles/12/ppc64le sles12-ppc64le
+
+      # Copy in MariaDB files
+      copy_files "${P8_ARCHDIR}/p8-suse12-rpm/ ./${REPONAME}/"
+      #echo "+ rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${REPONAME}/"
+      #        rsync -av --keep-dirlinks ${P8_ARCHDIR}/p8-suse12-rpm/ ./${REPONAME}/
+
+      # Copy in galera files
       for gv in ${ver_galera}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
       ;;
     *)
@@ -402,7 +537,7 @@ for REPONAME in ${dists}; do
 done
 
 # Add centos link to rhel dir
-runCommand ln -sv rhel centos
+maybe_make_symlink rhel centos
 
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
@@ -439,6 +574,12 @@ for DIR in ${dists}; do
   
   echo 
 
+  # if the signature file exists, remove it
+  if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
+    runCommand rm -v ${DIR}/repodata/repomd.xml.asc
+  fi
+
+  # sign the repomod.xml file
   runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${DIR}/repodata/repomd.xml 
 
   echo 
