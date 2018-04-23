@@ -49,21 +49,29 @@ perfect. Please take time to report any issues you encounter at:
 
  - http://jira.mariadb.org
 
+Note that the bug tracker is not a support channel. If you are
+running MariaDB in a enterprise environment, please consider paying
+for support and related services from a commercial company:
 
-- - Support MariaDB  - - - - - - - - - - - - - - - - - - - - - - - - -
+- https://mariadb.org/about/service-providers/
 
-If you would like to contribute to the MariaDB Foundation, please see
-the "contributing" and "donations" pages.
 
- - https://mariadb.com/kb/en/contributing
+- - Get involved  - - - - - - - - - - - - - - - - - - - - - - - - -
 
- - https://mariadb.org/donate/
+MariaDB is a true open source project. We welcome everybody to
+contribute, be it by testing, submitting good bug reports,
+debugging and writing code, writing documentation or in any other
+way by contributing to making the MariaDB server and related
+software ever better.
+
+ - https://mariadb.org/get-involved/
 
 
 We hope you enjoy MariaDB!
 
 --
-MariaDB
+MariaDB Foundation
+
         Website - http://mariadb.org
         Twitter - http://twitter.com/mariadbfdn
  Knowledge Base - http://mariadb.com/kb
