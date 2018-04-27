@@ -27,11 +27,12 @@ usage() {
   set +x
   echo
   echo
-  echo "usage: $0 -y -p <product> -v <major_version> -m <minor_version> [-x <exclude>] [-o <output-filename>]"
+  echo "usage: $0 -y -p <product> -v <major_version> -m <minor_version> [-t <tree> ] [-x <exclude>] [-o <output-filename>]"
   echo "  -y : actually run the script"
   echo "  -p <product> : the product, e.g. mariadb or mariadb-galera"
   echo "  -v <major_version> : major version of this release, e.g. 10.0"
   echo "  -m <minor_version> : minor version of *PREVIOUS* release, e.g. 29"
+  echo "  -t <tree> : [optional] tree of the release (used if tree is different from -v)"
   echo "  -x <exclude> : [optional] version to exclude, e.g. mariadb-10.0.30"
   echo "  -o <filename> : [optional] where to write the output, e.g. ~/changelog.creole"
   echo "  -h : display this usage message"
@@ -85,7 +86,7 @@ delete_the_output_file() {
 #-------------------------------------------------------------------------------
 # Parse command-line options
 #-------------------------------------------------------------------------------
-while getopts 'hp:v:m:o:x:y' OPTION
+while getopts 'hp:t:v:m:o:x:y' OPTION
 do
   case $OPTION in
     h) # Display a helpful usage message
@@ -101,6 +102,10 @@ do
     p) # The product, e.g. mariadb or mariadb-galera
       product="${OPTARG}"
       product_flag=true
+      ;;
+    t) # The tree of the release, e.g. bb-10.3-release
+      tree="${OPTARG}"
+      tree_flag=true
       ;;
     v) # the major version of the release, e.g. 10.0
       major="${OPTARG}"
@@ -148,11 +153,14 @@ fi
 # Variables set based on arguments and other pre-script cleanup
 #-------------------------------------------------------------------------------
 
-# Set the tree appropriately based on the product
-if [ "${product}" = "mariadb-galera" ]; then
-  tree="${major}-galera"
-else
-  tree=${major}
+# if the tree has not been set
+if [ ! ${tree_flag} ]; then
+  # Set the tree appropriately based on the product
+  if [ "${product}" = "mariadb-galera" ]; then
+    tree="${major}-galera"
+  else
+    tree=${major}
+  fi
 fi
 
 if [ "${exclude}" = "" ]; then
