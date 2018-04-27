@@ -1,0 +1,77 @@
+Approved: **PASSWORD** 
+The MariaDB Foundation is pleased to announce the availability
+of MariaDB 10.3.6, the second release candidate in the 
+MariaDB 10.3 series.
+
+See the Release Notes and Changelogs for details.
+
+
+- - Links  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MariaDB 10.3.6
+ - Release Notes: https://mariadb.com/kb/en/mdb-1036-rn/
+ - Changelog:     https://mariadb.com/kb/en/mdb-1036-cl/
+ - Downloads:     https://downloads.mariadb.org/mariadb/10.3.6
+
+ About MariaDB 10.3:
+  - https://mariadb.com/kb/en/what-is-mariadb-103/
+
+ APT and YUM Repository Configuration Generator:
+  - https://downloads.mariadb.org/mariadb/repositories/
+
+- - MariaDB Books  - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+There is an ever-growing library of MariaDB books available to help
+you get the most out of MariaDB. See the MariaDB Books page for
+details and links:
+
+ - https://mariadb.com/kb/en/mariadb/books/
+
+
+- - User Feedback plugin - - - - - - - - - - - - - - - - - - - - - - -
+
+MariaDB includes a User Feedback plugin. This plugin is disabled by
+default. If enabled, it submits basic, completely anonymous MariaDB
+usage information. This information is used by the developers to
+track trends in MariaDB usage to better guide development efforts.
+
+If you would like to help make MariaDB better, please add
+"feedback=ON" to your my.cnf or my.ini file!
+
+See http://mariadb.com/kb/en/user-feedback-plugin for more
+information.
+
+
+- - Quality  - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The project always strives for quality, but in reality, nothing is
+perfect. Please take time to report any issues you encounter at:
+
+ - http://jira.mariadb.org
+
+Note that the bug tracker is not a support channel. If you are
+running MariaDB in an enterprise environment, please consider paying
+for support and related services from a commercial company:
+
+- https://mariadb.org/about/service-providers/
+
+
+- - Get involved  - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MariaDB is a true open source project. We welcome everyone's
+contributions, be it by testing, submitting good bug reports,
+debugging and writing code, writing documentation or in any other
+way that helps to make the MariaDB server and related
+software ever better.
+
+ - https://mariadb.org/get-involved/
+
+
+We hope you enjoy MariaDB!
+
+--
+MariaDB Foundation
+
+        Website - http://mariadb.org
+        Twitter - http://twitter.com/mariadbfdn
+ Knowledge Base - http://mariadb.com/kb
