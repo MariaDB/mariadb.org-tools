@@ -44,13 +44,13 @@ case $1 in
     ;;
   *10.1*)
     debian_ver=( jessie wheezy stretch )
-    ubuntu_ver=( trusty xenial )
+    ubuntu_ver=( trusty xenial bionic )
     rhel_ver=( 6 7 )
     sles_ver=( 11 12 )
     ;;
   *)
     debian_ver=( jessie wheezy stretch )
-    ubuntu_ver=( trusty xenial )
+    ubuntu_ver=( trusty xenial bionic )
     rhel_ver=( 6 7 )
     sles_ver=( 12 )
     ;;
@@ -98,8 +98,13 @@ do_pkgs() {
 
 
 case $rel in
-  xenial)
-    for altarch in amd64 arm64;do
+  'xenial'|'7')
+    if [[ "${rel}" == "xenial" ]]; then
+      altarchs="amd64 arm64"
+    else
+      altarchs="x86_64 aarch64"
+    fi
+    for altarch in ${altarchs};do
       arch=$altarch
       newdir="mariadb-$version-$os-$rel-$arch-$type"
       mkdir "/tmp/$newdir"
