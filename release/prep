@@ -1506,12 +1506,6 @@ else
     pushd ${dir_release}/${dir_name}/
 
     # copy the yum dir to the corp release dir
-    case ${tree} in
-      "5.5"|"10.0")
-        message "Please run the galera-old script before continuing..."
-        pressAnyKeyToContinue
-        ;;
-    esac
     echo "+ copying the yum dir to the corp release dir"
     echo "+ rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
             rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
