@@ -195,10 +195,6 @@ prepare_bintar_and_source_packages() {
   create_bintar="yes"
 }
 
-prepare_p8_bintar_packages() {
-  create_p8_bintar="yes"
-}
-
 prepare_Windows_packages() {
   create_win="yes"
 }
@@ -850,7 +846,6 @@ else
 fi
 
 shouldI prepare_bintar_and_source_packages
-shouldI prepare_p8_bintar_packages
 if [ "${galera_suffix}" != "-galera" ]; then
   shouldI prepare_Windows_packages
 fi
@@ -1256,145 +1251,6 @@ else
   echo
   line
   echo "+ skipping transfering bintar & source packages, as requested..."
-  line
-  echo
-fi
-
-
-
-#-------------------------------------------------------------------------------
-#  P8 Bintar packages
-#-------------------------------------------------------------------------------
-if [ "${create_p8_bintar}" != "no" ]; then
-  maybe_create_release_dir
-  maybe_fix_permissions # fix permissions if they haven't already been fixed
-  pushd ${dir_release}/${dir_name}
-  line
-  echo "+ transfering p8 bintar packages..."
-  echo ${p8_build_dirs}
-  line
-  for p8_dir_pair in ${p8_build_dirs}; do
-    p8_dir_array=(${p8_dir_pair//:/ })
-    if [ ! -d /run/shm/${p8_dir_array[1]} ]; then
-      mkdir /run/shm/${p8_dir_array[1]}
-    fi
-    if rsync ${rsync_opts} "${dir_archive_p8}/${tree}/${rev}/${p8_dir_array[0]}/" "/run/shm/${p8_dir_array[1]}/"; then
-      echo "+ transfer of ${p8_dir_array[1]} done"
-      pushd /run/shm/${p8_dir_array[1]}
-
-      case ${p8_dir_array[1]} in
-        'bintar-linux-rhel6-ppc64'|'bintar-linux-rhel7-ppc64')
-          # for the rhel6/rhel7 ppc64 bintars, we need to rename them before
-          # signing (refer ME-159)
-          BINTAR=$(echo ${p8_dir_array[1]} | awk -F "-" '{print $3}')
-          echo "Value of BINTAR is ${BINTAR}"
-          if [ "${galera_suffix}" = "-galera" ]; then 
-            mv -vi mariadb*${num}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz 
-            #tar -zxf ${version}-${BINTAR}-ppc64.tar.gz 
-            #mv -vi ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz.orig
-            ## if the directory isn't named like we want, rename it
-            #if [ ! -d ${version}-${BINTAR}-ppc64 ]; then
-            #  mv -vi *-linux-ppc64 ${version}-${BINTAR}-ppc64.tar.gz
-            #fi
-            ## copy over the bin/ and lib/ dirs
-            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64/usr/bin/ ${version}-${BINTAR}-ppc64/bin/
-            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64/usr/lib/ ${version}-${BINTAR}-ppc64/lib/
-            ## repack the tarball & cleanup
-            #tar -czf ${version}-${BINTAR}-ppc64.tar.gz ${version}-${BINTAR}-ppc64
-            #rm -rf ${version}-${BINTAR}-ppc64
-          else 
-            mv -vi ${version}-linux-ppc64.tar.gz ${version}-${BINTAR}-ppc64.tar.gz
-          fi 
-          echo "creating sums now......"
-          md5sum ${version}-${BINTAR}-ppc64.tar.gz > md5sums.txt  
-          sha1sum ${version}-${BINTAR}-ppc64.tar.gz > sha1sums.txt  
-          sha256sum ${version}-${BINTAR}-ppc64.tar.gz > sha256sums.txt  
-          sha512sum ${version}-${BINTAR}-ppc64.tar.gz > sha512sums.txt  
-          ;;
-        'bintar-linux-rhel71-ppc64le')
-          # For rhel71 ppc64le bintars, we need to rename them before signing  
-          BINTAR=rhel7 
-          echo "Value of BINTAR is ${BINTAR}"
-          if [ "${galera_suffix}" = "-galera" ]; then 
-            # cluster release for enterprise should have cluster in their names
-            mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
-            #tar -zxf ${version}-${BINTAR}-ppc64le.tar.gz 
-            #mv -vi ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz.orig
-            ## if the directory isn't named like we want, rename it
-            #if [ ! -d ${version}-${BINTAR}-ppc64le ]; then
-            #  mv -vi *-linux-ppc64le ${version}-${BINTAR}-ppc64le.tar.gz
-            #fi
-            ## copy over the bin/ and lib/ dirs
-            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64le/usr/bin/ ${version}-${BINTAR}-ppc64le/bin/
-            #rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-ppc64le/usr/lib/ ${version}-${BINTAR}-ppc64le/lib/
-            ## repack the tarball & cleanup
-            #tar -czf ${version}-${BINTAR}-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le
-            #rm -rf ${version}-${BINTAR}-ppc64le
-          else
-            mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-ppc64le.tar.gz
-          fi
-          echo "creating sums now...." 
-          md5sum ${version}-${BINTAR}-ppc64le.tar.gz > md5sums.txt
-          sha1sum ${version}-${BINTAR}-ppc64le.tar.gz > sha1sums.txt
-          sha256sum ${version}-${BINTAR}-ppc64le.tar.gz > sha256sums.txt
-          sha512sum ${version}-${BINTAR}-ppc64le.tar.gz > sha512sums.txt
-          ;;
-        'bintar-linux-trusty-ppc64le')
-          BINTAR=trusty
-          if [ "${galera_suffix}" = "-galera" ]; then   
-              mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
-          else
-              mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
-          fi 
-          echo "creating sums now....."
-          md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
-          sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
-          sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
-          sha512sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha512sums.txt
-          ;;
-        'bintar-linux-xenial-ppc64le')
-          BINTAR=xenial
-          if [ "${galera_suffix}" = "-galera" ]; then   
-              mv -vi mariadb*${num}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
-          else
-              mv -vi ${version}-linux-ppc64le.tar.gz ${version}-${BINTAR}-linux-ppc64le.tar.gz
-          fi 
-          echo "creating sums now....."
-          md5sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > md5sums.txt
-          sha1sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha1sums.txt
-          sha256sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha256sums.txt
-          sha512sum ${version}-${BINTAR}-linux-ppc64le.tar.gz > sha512sums.txt
-          ;;
-      esac
-
-      echo "+ signing files in ${p8_dir_array[1]}..."
-      # remove any signature files before signing, if they exist
-      for sig_file in $(ls ./*.asc); do
-        rm "${sig_file}"
-      done
-      # now that old signatures are gone, sign all files that remain
-      for dir_file in $(find . -type f | grep -v orig); do
-        gpg2 ${gpg_opts} ${dir_file}
-      done
-      popd
-      mv -vi /run/shm/${p8_dir_array[1]} ${dir_release}/${dir_name}/
-      echo "+ finished signing files in ${p8_dir_array[1]}"
-      echo
-      echo
-    else
-      echo "! failed to transfer ${p8_dir_array[1]}"
-      # if the transfer failed, the directory might be empty, if it is we want it
-      # removed, so we run rmdir on it
-      rmdir -v /run/shm/${p8_dir_array[1]}
-      echo
-    fi
-  done
-  popd
-  echo "+ done transfering p8 bintar packages"
-else
-  echo
-  line
-  echo "+ skipping transfering p8 bintar packages, as requested..."
   line
   echo
 fi
