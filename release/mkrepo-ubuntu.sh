@@ -57,7 +57,7 @@ case ${ARCHDIR} in
     ubuntu_dists="trusty xenial"
     ;;
   *)
-    ubuntu_dists="trusty xenial artful"
+    ubuntu_dists="trusty xenial artful bionic"
     ;;
 esac
 
@@ -173,34 +173,30 @@ for dist in ${ubuntu_dists}; do
   esac
 
   # Include i386 debs
-  if [ "${ENTERPRISE}" != "yes" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-  fi
+  case ${dist} in
+    'trusty'|'xenial'|'artful')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+  esac
 
-  # Include trusty ppc64le debs
-  if [ "${dist}" = "trusty" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-    for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-  fi
+  # Include ppc64le debs
+  case ${dist} in
+    'trusty')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+    'xenial')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+  esac
 
-  # Include xenial ppc64le and aarch64 debs
-  if [ "${dist}" = "xenial" ]; then
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-    for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-  fi
 
-  #if [ "${ENTERPRISE}" = "yes" ]; then
-    #if [ "${dist}" = "xenial" ]; then
-    #  if [ ! -d "${P8_ARCHDIR}" ] ; then
-    #    echo 1>&2 "! I can't find the directory for Power 8 debs! '${P8_ARCHDIR}'"
-    #    exit 1
-    #  else
-    #    for file in $(find "${P8_ARCHDIR}/p8-${dist}-deb/" -name '*_ppc64el.deb'); do reprepro --basedir=. includedeb ${dist} ${file} ; done
-    #    # Add xtrabackup files
-    #    #reprepro --basedir=. include ${dist} ${dir_xtrabackup}/ppc64el/${ver_xtrabackup}-${suffix}/${dist}/percona-xtrabackup_${ver_xtrabackup}*_ppc64el.changes
-    #  fi
-    #fi
-  #fi
+  # Include aarch64 debs
+  case ${dist} in
+    'xenial')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+  esac
 
   # Add in custom jemalloc packages for distros that need them
   case ${dist} in
@@ -222,9 +218,6 @@ for dist in ${ubuntu_dists}; do
         for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       fi
       ;;
-    * )
-      echo "+ no custom jemalloc packages for ${dist}"
-      ;;
   esac
 
 
@@ -232,9 +225,6 @@ for dist in ${ubuntu_dists}; do
   case ${dist} in
     "trusty")
       runCommand reprepro --basedir=. includedeb ${dist} ${dir_judy}/libjudydebian1_1.0.5-4_ppc64el.deb
-      ;;
-    * )
-      echo "+ no custom judy packages for ${dist}"
       ;;
   esac
 
@@ -249,17 +239,32 @@ for dist in ${ubuntu_dists}; do
           runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         fi
       else
+
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
+
+        # include amd64
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
-        # ppc64le
-        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
-        fi
-        # arm64 (aarch64)
-        if [ "${dist}" = "xenial" ]; then
-          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_arm64.changes
-        fi
+
+        # include i386
+        case ${dist} in
+          'trusty'|'xenial'|'artful')
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+            ;;
+        esac
+
+        # include ppc64le
+        case ${dist} in
+          'trusty'|'xenial')
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+            ;;
+        esac
+
+        # include arm64 (aarch64)
+        case ${dist} in
+          'xenial')
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_arm64.changes
+            ;;
+        esac
       fi
     done
   fi
