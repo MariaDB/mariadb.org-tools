@@ -57,7 +57,7 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
     centos73-ppc64
     centos73-ppc64le
 
-    centos74-amd64
+    centos74-aarch64
 
     sles114-x86
     sles114-amd64
@@ -74,7 +74,7 @@ elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
     centos73-ppc64
     centos73-ppc64le
 
-    centos74-amd64
+    centos74-aarch64
 
     opensuse42-amd64
 
@@ -93,7 +93,7 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
     centos73-ppc64
     centos73-ppc64le
 
-    centos74-amd64
+    centos74-aarch64
 
     fedora26-amd64
 
@@ -114,7 +114,7 @@ else
     centos73-ppc64
     centos73-ppc64le
 
-    centos74-amd64
+    centos74-aarch64
 
     fedora26-amd64
 
@@ -355,6 +355,24 @@ for REPONAME in ${dists}; do
       # Copy in other files
       #echo "+ rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       #        rsync -av --keep-dirlinks ${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/
+      ;;
+    'centos74-aarch64')
+      runCommand mkdir -vp rhel/7/aarch64
+      maybe_make_symlink rhel/7/aarch64 rhel7-aarch64
+      maybe_make_symlink rhel7-aarch64 rhel74-aarch64
+      maybe_make_symlink rhel7-aarch64 centos7-aarch64
+      maybe_make_symlink centos7-aarch64 centos74-aarch64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos74-amd64')
       runCommand mkdir -vp rhel/7.4/x86_64
