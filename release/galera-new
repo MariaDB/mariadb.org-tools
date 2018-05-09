@@ -27,14 +27,16 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists="wheezy"
+    ubuntu_dists="trusty"
     yum_dists="
       centos6-amd64
       centos6-x86
 
       centos73-amd64
+      centos73-ppc64
       centos73-ppc64le
 
-      centos74-amd64
+      centos74-aarch64
       
       sles114-amd64
       sles114-x86
@@ -42,7 +44,6 @@ case ${tree} in
       sles12-amd64
       sles12-ppc64le
     "
-    ubuntu_dists="trusty"
     ;;
   '10.0'|'10.0-galera')
     debian_dists="wheezy jessie"
@@ -52,9 +53,10 @@ case ${tree} in
       centos6-x86
       
       centos73-amd64
+      centos73-ppc64
       centos73-ppc64le
       
-      centos74-amd64
+      centos74-aarch64
       
       opensuse42-amd64
       
@@ -66,6 +68,7 @@ case ${tree} in
     "
     ;;
   *) debian_dists="wheezy jessie sid"
+     ubuntu_dists="trusty xenial artful"
      yum_dists="
       centos6-amd64
       centos6-x86
@@ -74,7 +77,7 @@ case ${tree} in
       centos73-ppc64
       centos73-ppc64le
       
-      centos74-amd64
+      centos74-aarch64
       
       opensuse42-amd64
       
@@ -84,7 +87,6 @@ case ${tree} in
       sles12-amd64
       sles12-ppc64le
     "
-     ubuntu_dists="trusty xenial zesty artful"
     ;;
 esac
 
@@ -141,14 +143,10 @@ if [ "${is_ent}" = "yes" ];then
   dir_release="${dir_release_ent}" # Default location for mdbe releases
   dir_name="${num}"
   ubuntu_dists="trusty"
-  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
-  architectures="amd64"
 else
   suffix="signed"
   gpg_key="0xcbcb082a1bb943db"
   dir_name="${release}"
-  architectures="amd64 x86"
-  p8_yum_dists="rhel71 rhel7 rhel6 sles12"
 fi
 
 # At this point, all variables should be set. Print a usage message if the
@@ -277,23 +275,20 @@ if [ "${create_yum}" != "no" ]; then
     line
     echo "+ copying ${REPONAME} files"
     line
-    # Remove old Galera files
-    runCommand rm -v ./${REPONAME}/rpms/MariaDB-Galera*
-    runCommand rm -v ./${REPONAME}/rpms/galera*
 
     # Copy in the new MariaDB Galera files
     case ${REPONAME} in
       'sles12-ppc64le')
-        runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*server.rpm ${REPONAME}/rpms/
-        runCommand cp -avi ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*test.rpm   ${REPONAME}/rpms/
+        runCommand rsync -avP ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*server.rpm ${REPONAME}/rpms/
+        runCommand rsync -avP ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*test.rpm   ${REPONAME}/rpms/
         ;;
       *)
-        runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*server.rpm ${REPONAME}/rpms/
-        runCommand cp -avi ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*test.rpm ${REPONAME}/rpms/
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*server.rpm ${REPONAME}/rpms/
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*test.rpm ${REPONAME}/rpms/
         ;;
     esac
     for gv in ${ver_galera}; do
-      runCommand cp -avi ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
+      runCommand rsync -avP ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
     done
     echo;echo;
   done
