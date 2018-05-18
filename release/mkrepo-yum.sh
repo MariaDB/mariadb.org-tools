@@ -117,8 +117,8 @@ else
     centos74-aarch64
 
     fedora26-amd64
-
     fedora27-amd64
+    fedora28-amd64
 
     opensuse42-amd64
 
@@ -457,6 +457,18 @@ for REPONAME in ${dists}; do
         #echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
         #        rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
       done
+      ;;
+    'fedora28-amd64')
+      runCommand mkdir -vp fedora/28/x86_64
+      maybe_make_symlink fedora/28/x86_64 fedora28-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      #for gv in ${ver_galera}; do
+      #  copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      #done
       ;;
     'opensuse42-amd64')
       runCommand mkdir -vp opensuse/42/x86_64
