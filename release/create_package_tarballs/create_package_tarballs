@@ -98,11 +98,11 @@ do_pkgs() {
 
 
 case $rel in
-  'xenial'|'7')
-    if [[ "${rel}" == "xenial" ]]; then
-      altarchs="amd64 arm64"
-    else
+  'bionic'|'xenial'|'7')
+    if [[ "${rel}" == "7" ]]; then
       altarchs="x86_64 aarch64"
+    else
+      altarchs="amd64 arm64"
     fi
     for altarch in ${altarchs};do
       arch=$altarch
