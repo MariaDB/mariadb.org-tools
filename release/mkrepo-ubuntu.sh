@@ -185,7 +185,7 @@ for dist in ${ubuntu_dists}; do
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
-    'xenial')
+    'xenial'|'bionic')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
@@ -193,7 +193,7 @@ for dist in ${ubuntu_dists}; do
 
   # Include aarch64 debs
   case ${dist} in
-    'xenial')
+    'xenial'|'bionic')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
@@ -254,14 +254,14 @@ for dist in ${ubuntu_dists}; do
 
         # include ppc64le
         case ${dist} in
-          'trusty'|'xenial')
+          'trusty'|'xenial'|'bionic')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'xenial')
+          'xenial'|'bionic')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_arm64.changes
             ;;
         esac
