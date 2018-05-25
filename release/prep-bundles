@@ -1,0 +1,243 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE: prep-bundles
+# 
+#         USAGE: ./prep-bundles <version_number>
+# 
+#   DESCRIPTION: This script exists so that I don't need to remember or look up
+#                where things are when it is time to prepare new bundle files.
+#                It also ensures no steps are forgotten, and prevents many
+#                errors.
+# 
+#        AUTHOR: Daniel Bartholomew (db), dbart@mariadb.org
+#  ORGANIZATION: 
+#       CREATED: 2018-05-24 15:43 EDT
+#      REVISION:  ---
+#===============================================================================
+
+umask 002
+
+set -eux
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+#------------------------------------------------------------------------------
+# Options (set these before running the script)
+#------------------------------------------------------------------------------
+
+bundles="
+ubuntu-trusty-amd64
+ubuntu-xenial-amd64
+ubuntu-bionic-amd64
+
+debian-wheezy-amd64
+debian-stretch-amd64
+debian-jessie-amd64
+
+rhel-6-x86_64
+rhel-7-x86_64
+sles-12-x86_64
+
+win
+"
+
+# bundle members versions
+cj17='1.7.3'
+cj22='2.2.4'
+cc30='3.0.4'
+co30='3.0.3'
+maxscale='2.2.6'
+
+
+#-------------------------------------------------------------------------------
+# Options below this point you probably don't need to change
+#-------------------------------------------------------------------------------
+
+num=$1
+
+# Various miscellaneous options
+rsync_opts="-av -L"
+
+# defaults (to prevent errors)
+    displayusage="no"
+log_displayusage=""
+            demo="no"
+        log_demo=""
+      run_script="no"
+  log_run_script=""
+          is_ent="no"
+      log_is_ent=""
+   create_bintar="no"
+   create_source="no"
+      create_win="no"
+      create_deb="no"
+      create_rpm="no"
+     create_repo="no"
+      create_yum="no"
+     incl_galera="no"
+      is_cluster="no"
+  log_is_cluster=""
+             log="no"
+         log_log=""
+galera_suffix=""
+     treeflag=false
+      revflag=false
+      numflag=false
+      tarflag=false
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults                                    # Load Default paths and vars
+
+pushd ${dir_bundles}
+
+
+for bundle in ${bundles}; do
+  case ${bundle} in
+    ubuntu-trusty-amd64)
+      dir="mariadb-tx-3.0-${num}-ubuntu-14.04"
+      dist="ubuntu"
+      ver="trusty"
+      ;;
+    ubuntu-xenial-amd64)
+      dir="mariadb-tx-3.0-${num}-ubuntu-16.04"
+      dist="ubuntu"
+      ver="xenial"
+      ;;
+    ubuntu-bionic-amd64)
+      dir="mariadb-tx-3.0-${num}-ubuntu-18.04"
+      dist="ubuntu"
+      ver="bionic"
+      ;;
+    debian-wheezy-amd64)
+      dir="mariadb-tx-3.0-${num}-debian-7"
+      dist="debian"
+      ver="wheezy"
+      ;;
+    debian-jessie-amd64)
+      dir="mariadb-tx-3.0-${num}-debian-8"
+      dist="debian"
+      ver="jessie"
+      ;;
+    debian-stretch-amd64)
+      dir="mariadb-tx-3.0-${num}-debian-9"
+      dist="debian"
+      ver="stretch"
+      ;;
+    rhel-6-x86_64)
+      dir="mariadb-tx-3.0-${num}-rhel-6"
+      dist="rhel"
+      ver="6"
+      ;;
+    rhel-7-x86_64)
+      dir="mariadb-tx-3.0-${num}-rhel-7"
+      dist="rhel"
+      ver="7"
+      ;;
+    sles-12-x86_64)
+      dir="mariadb-tx-3.0-${num}-sles-12"
+      dist="sles"
+      ver="12"
+      ;;
+    win)
+      dir="mariadb-tx-3.0-${num}-windows"
+      dist="win"
+      ver="win"
+  esac
+
+  mkdir -v ${dir}
+  pushd ${dir}
+    rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
+    rsync ${rsync_opts} ${cj_home}/connector-java-${cj22}/mariadb-java-client-${cj22}.jar ./
+
+    case ${dist} in
+      ubuntu|debian)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*debian-x86_64*gz ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/dists/${ver}/main/binary-amd64/maxscale-${maxscale}*deb ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/dists/${ver}/main/binary-amd64/maxscale-cdc-connector-${maxscale}*deb ./
+        rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/repo/${dist}/mariadb-${num}-${bundle}-debs.tar ./
+        ;;
+      rhel)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*${dist}${ver}-x86_64*gz ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/yum/${dist}/mariadb-${num}-${bundle}-rpms.tar ./
+        ;;
+      sles)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*rhel6-x86_64*gz ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/yum/${dist}/mariadb-${num}-${bundle}-rpms.tar ./
+        ;;
+      win)
+        rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/winx64-packages/*msi ./
+        ;;
+    esac
+
+    for file in *; do
+      for sum in md5 sha1 sha256 sha512;do
+        ${sum}sum ${file} >> ${sum}sums.txt
+      done
+      gpg2 ${gpg_opts_2016} ${file}
+    done
+
+    for sum in md5 sha1 sha256 sha512;do
+      gpg2 ${gpg_opts_2016} ${sum}sums.txt
+    done
+
+  popd
+  tar -czvf ${dir}.tar.gz ${dir}
+  rm -rf ${dir}
+
+done
+
+popd
+
+#-------------------------------------------------------------------------------
+#  All done
+#-------------------------------------------------------------------------------
+
+tree ${dir_bundles}
+
