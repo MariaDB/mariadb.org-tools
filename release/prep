@@ -527,6 +527,23 @@ rsync_wrapper_primary() {
 }
 
 #===  FUNCTION  ================================================================
+#          NAME:  upload_the_bundles_to_the_staging_mirror
+#   DESCRIPTION:  Transfer bundles to the staging mirror
+#===============================================================================
+upload_the_bundles_to_the_staging_mirror() {
+  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${staging_mirror}:${dir_bundles}/"
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_bundles_from_the_staging_mirror_to_the_corp_mirror
+#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
+#                 mirror
+#===============================================================================
+upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
+  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${corp_mirror}:${corp_bundles_path}/"
+}
+
+#===  FUNCTION  ================================================================
 #          NAME:  upload_to_the_staging_mirror
 #   DESCRIPTION:  Transfer the release to the staging mirror
 #===============================================================================
@@ -680,6 +697,12 @@ create_package_tarballs() {
   ./create_package_tarballs ${dir_corp}/${version_nog}/
   popd
   set +x
+}
+
+create_bundles() {
+  message "Creating the ${num} bundles"
+  ${BNDLS} ${num}
+  message "Done creating the ${num} bundles!"
 }
 
 #===  FUNCTION  ================================================================
@@ -1002,7 +1025,7 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-9] ]]; then
+          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
             echo "+ tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz"
@@ -1552,9 +1575,13 @@ echo
 
 shouldI create_package_tarballs
 
-# now upload
 echo;echo;echo;echo
 
+shouldI create_bundles
+
+echo;echo;echo;echo
+
+# now upload
 shouldI upload_to_the_staging_mirror
 
 echo;echo;echo;echo
@@ -1567,11 +1594,19 @@ shouldI upload_corp_dir_to_the_staging_mirror
 
 echo;echo;echo;echo
 
+shouldI upload_the_bundles_to_the_staging_mirror
+
+echo;echo;echo;echo
+
 shouldI upload_from_the_staging_mirror_to_the_primary_mirror
 
 echo;echo;echo;echo
 
 shouldI upload_from_the_staging_mirror_to_the_corp_mirror
+
+echo;echo;echo;echo
+
+shouldI upload_bundles_from_the_staging_mirror_to_the_corp_mirror
 
 echo;echo;echo;echo
 
