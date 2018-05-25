@@ -1,0 +1,343 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE:  prep-tools
+# 
+#         USAGE:  ./prep-tools
+# 
+#   DESCRIPTION:  This script is for updating the tools repositories at
+#                 https://downloads.mariadb.com/Tools/
+# 
+#        AUTHOR: Daniel Bartholomew (dbart), dbart@mariadb.com
+#       COMPANY: MariaDB
+#       CREATED: 2018/04/18 18:28:53 EEST
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+#------------------------------------------------------------------------------
+# Options (set these before running the script)
+#------------------------------------------------------------------------------
+
+dists_apt="jessie wheezy stretch trusty xenial bionic"
+dists_rhel="6 7"
+dists_sles="12"
+url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
+url_xtrabackup_24="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup-24"
+url_rpm="http://repo.percona.com/release"
+
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
+secureUserInput() {
+  question="${@}"
+  SECUREINPUT="false"
+  REPLY="alsofalse"
+  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
+    read -s -p "${question} "
+    echo
+    SECUREINPUT="${REPLY}"
+    read -s -p "Please enter it again: "
+    echo
+    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
+      echo
+      echo "The two entries do not match."
+      echo
+    else
+      echo
+      echo "The two entries match. Continuing."
+      echo
+      return 0
+    fi
+  done
+}
+
+skip_it() {
+  skipit="yes"
+}
+
+runCommand() {
+  # This function emulates the behavior of "set -x", while giving us greater
+  # control over the output
+  echo "+ ${@}"
+  #sleep 1
+  if ${@} ; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+pressAnyKeyToContinue() {
+  echo
+  read -p "Press any key to continue." -n 1
+  echo
+  return 0
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        ANSWER=""
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist."
+    echo "I cannot continue."
+    exit 3
+  fi
+}
+
+thickline() {
+  echo "==============================================================================="
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+message() {
+  message="${@}"
+  echo;echo;echo;
+  echo;line;echo "${message}";line;
+}
+
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  message "Doing a dry run..."
+  set -x
+  rsync --dry-run ${rsync_body}
+  set +x
+  echo;echo;echo;
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        rsync ${rsync_body}
+        set +x
+        echo;echo;echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        echo "+ Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+upload_to_the_corp_mirror() {
+  rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_tools}/ ${corp_mirror}:${corp_tools_path}/"
+}
+
+
+update_xtrabackup_23() {
+  userInput "Which version of XtraBackup 2.3 should I fetch and add? (e.g. 2.3.10)"
+  xtrabackup_23_ver="${INPUT}"
+  if [ ! -d /run/shm/xtrabackup-${xtrabackup_23_ver} ]; then
+    runCommand mkdir -v /run/shm/xtrabackup-${xtrabackup_23_ver}
+  fi
+  pushd /run/shm/xtrabackup-${xtrabackup_23_ver}/
+
+    # Download .deb files and add them to the repository
+    for dist in ${dists_apt}; do
+      file="percona-xtrabackup_${xtrabackup_23_ver}-1.${dist}_amd64.deb"
+      runCommand wget ${url_xtrabackup_23}/${file}
+      runCommand reprepro --basedir=${dir_tools}/apt/ --keepunreferencedfiles includedeb ${dist} ${file}
+    done
+
+    # Download RHEL .rpm files and add them to the repository
+    for dist in ${dists_rhel}; do
+      file="percona-xtrabackup-${xtrabackup_23_ver}-1.el${dist}.x86_64.rpm"
+
+      # Download the file and sign it
+      pushd ${dir_tools}/rhel/${dist}/x86_64/rpms/
+        runCommand wget -N ${url_rpm}/${dist}/RPMS/x86_64/${file}
+        runCommand rpmsign --addsign --key-id=${ent_gpg_key} ${file}
+      popd
+
+      # Update the rpm repository
+      pushd ${dir_tools}/rhel/${dist}/
+        runCommand createrepo --database --pretty x86_64
+        runCommand rm -v x86_64/repodata/repomd.xml.asc
+        runCommand gpg2 --detach-sign --armor -u ${ent_gpg_key} x86_64/repodata/repomd.xml
+      popd
+    done
+
+  popd
+}
+
+update_xtrabackup_24() {
+  userInput "Which version of XtraBackup 2.4 should I fetch and add? (e.g. 2.4.10)"
+  xtrabackup_24_ver="${INPUT}"
+  if [ ! -d /run/shm/xtrabackup-${xtrabackup_24_ver} ]; then
+    runCommand mkdir -v /run/shm/xtrabackup-${xtrabackup_24_ver}
+  fi
+  pushd /run/shm/xtrabackup-${xtrabackup_24_ver}/
+
+    # Download .deb files and add them to the repository
+    for dist in ${dists_apt}; do
+      file="percona-xtrabackup-24_${xtrabackup_24_ver}-1.${dist}_amd64.deb"
+      runCommand wget -N ${url_xtrabackup_24}/${file}
+      runCommand reprepro --basedir=${dir_tools}/apt/ --keepunreferencedfiles includedeb ${dist} ${file}
+    done
+
+    # Download RHEL .rpm files and add them to the repository
+    for dist in ${dists_rhel}; do
+      file="percona-xtrabackup-24-${xtrabackup_24_ver}-1.el${dist}.x86_64.rpm"
+
+      # Download the file and sign it
+      pushd ${dir_tools}/rhel/${dist}/x86_64/rpms/
+        runCommand wget -N ${url_rpm}/${dist}/RPMS/x86_64/${file}
+        runCommand rpmsign --addsign --key-id=${ent_gpg_key} ${file}
+      popd
+
+      # Update the rpm repository
+      pushd ${dir_tools}/rhel/${dist}/
+        runCommand createrepo --database --pretty x86_64
+        runCommand rm -v x86_64/repodata/repomd.xml.asc
+        runCommand gpg2 --detach-sign --armor -u ${ent_gpg_key} x86_64/repodata/repomd.xml
+      popd
+    done
+
+  popd
+}
+
+div() {
+  echo;echo;thickline;echo;echo
+}
+
+update_qpress() {
+  echo "unimplemented"
+}
+
+update_libev() {
+  echo "unimplemented"
+}
+
+update_socat() {
+  echo "unimplemented"
+}
+
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults                                    # Load Default paths and vars
+
+pushd ${HOME}
+  echo
+  echo "+ Switching ~/.rpmmacros file to ent version..."
+  echo 
+  runCommand rm -v  .rpmmacros
+  runCommand ln -sv .rpmmacros-ent-v3 .rpmmacros
+popd
+
+div
+
+shouldI update_xtrabackup_23
+
+div
+
+shouldI update_xtrabackup_24
+
+div
+
+shouldI update_qpress
+
+div
+
+shouldI update_libev
+
+div
+
+shouldI update_socat
+
+div
+
+shouldI upload_to_the_corp_mirror
+
+pushd ${HOME}
+  echo
+  echo "+ Switching ~/.rpmmacros file to back to standard version..."
+  echo 
+  runCommand rm -v  .rpmmacros
+  runCommand ln -sv .rpmmacros-std .rpmmacros
+popd
+
+echo;echo;echo;echo
+echo "+ all done!"
+echo;echo;echo;echo
+
+# vim: filetype=sh
