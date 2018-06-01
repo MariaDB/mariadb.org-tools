@@ -32,21 +32,16 @@ sudo yum -y install unixODBC-devel
 """ if yum else """sudo apt-get update
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
-""") + """time git clone -b """ + conc_branch + """ --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
-cd build
-git fetch --all --tags --prune
-git reset --hard """+ tag + """
-git log | head -n5
-export CFLAGS="${CFLAGS}"""+ cflags + """"
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c .
-make
-sudo make install
-cd ..
-rm build -rf
+""") + """export CFLAGS="${CFLAGS}"""+ cflags + """"
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DMARIADB_DIR=../connector_c .
+cd libmariadb
+git fetch
+git checkout """+ tag + """
+git log | head -n5
+cd ..
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """ .
 cmake --build . --config RelWithDebInfo --target package
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
@@ -63,28 +58,28 @@ cmake --build . --config RelWithDebInfo --target package
 ######################## bld_linux_connector_oddbc - END #####################
 
 ######################## Current GA/stable version builders ######################
-bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.5");
-bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.5");
-bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.5");
+bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.6");
+bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.6");
+bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.6");
 
-bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "vm-jessie-i386", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF  -DSYSTEM_NAME=debian ", "v_2.3.5");
-bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "vm-jessie-amd64", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=debian ", "v_2.3.5");
+bld_jessie_x86_connector_odbc= bld_linux_connector_odbc("jessie_x86-connector-odbc", "vm-jessie-i386", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF  -DSYSTEM_NAME=debian ", "v_2.3.6");
+bld_jessie_x64_connector_odbc= bld_linux_connector_odbc("jessie_x64-connector-odbc", "vm-jessie-amd64", "", False, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=debian ", "v_2.3.6");
 
-bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.5");
-bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.5");
+bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.6");
+bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.6");
 #################$### Current GA/stable version builders - END ###################
 
 ######################## New (unstable) version builders ######################
-bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "vm-centos6-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.3");
-bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "vm-centos6-i386", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.3");
-bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "vm-centos7-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.0.3");
-bld_opensuse42_x64_connector_odbc_new= bld_linux_connector_odbc("opensuse42_x64-connector-odbc-new", "vm-opensuse42-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=suse", "v3.0.3");
+bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "vm-centos6-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.5");
+bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "vm-centos6-i386", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.0.5");
+bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "vm-centos7-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.0.5");
+bld_opensuse42_x64_connector_odbc_new= bld_linux_connector_odbc("opensuse42_x64-connector-odbc-new", "vm-opensuse42-amd64", "", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=suse", "v3.0.5");
 
-bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "vm-jessie-i386", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.3");
-bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "vm-jessie-amd64", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.3");
+bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "vm-jessie-i386", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.5");
+bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "vm-jessie-amd64", "", False, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.0.5");
 
-bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "vm-centos5-i386", " -D_GNU_SOURCE", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.0.3");
-bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.0.3");
+bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "vm-centos5-i386", " -D_GNU_SOURCE", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.0.5");
+bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.0.5");
 ##################### New (unstable) version builders - END ###################
 
 
@@ -123,38 +118,18 @@ sudo yum -y install unixODBC-devel.i686
 sudo yum -y install zlib.x86_64
 sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
 sudo yum -y install openssl-devel.i686
-time git clone -b """ + conc_branch + """ --depth 1 "https://github.com/MariaDB/mariadb-connector-c.git" build
-cd build
-git fetch --all --tags --prune
-git reset --hard """+ tag + """ 
-git log | head -n5
-setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
-setarch i386 make
-setarch i386 sudo make install
-rm CMakeCache.txt CMakeFiles -rf
-cd ..
-rm build -rf
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
-setarch i386 cmake -DCMAKE_BUILD_TYPE=Debug """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
-setarch i386 cmake --build . --config Debug --target package
+cd libmariadb
+git fetch
+git checkout """+ tag + """
+git log | head -n5
+cd ..
+setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake .
+setarch i386 cmake --build . --config RelWithDebInfo --target package
 setarch i386 make package
-
-#### Another way to go. For some reasons we used to go both
-#make clean
-#rm CMakeCache.txt CMakeFiles -rf
-#export CFLAGS=-m32
-#cmake . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_DIR=../connector_c_32
-#cmake --build . --config RelWithDebInfo --target package
-#make package
-
 """),
-###
-#RelWithDebInfo
-#setarch i386 cmake -DGSSAPI_FOUND=0 -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo""" + cmake_params + """-DCMAKE_INSTALL_PREFIX= ../connector_c_32 .
-#setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake -DMARIADB_DIR=../connector_c_32 .
-#setarch i386 cmake --build . --config RelWithDebInfo --target package
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
@@ -167,6 +142,6 @@ setarch i386 make package
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.5");
-bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "vm-centos7-amd64", "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.0.3");
+bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.6");
+bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "vm-centos7-amd64", "master", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.0.5");
 
