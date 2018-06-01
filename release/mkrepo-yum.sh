@@ -241,6 +241,7 @@ for REPONAME in ${dists}; do
 
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
 
       ;;
     'centos6-amd64')
@@ -265,6 +266,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-amd64')
       runCommand mkdir -vp rhel/7/x86_64
@@ -290,6 +292,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64')
       runCommand mkdir -vp rhel/7/ppc64
@@ -308,6 +311,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64le')
       runCommand mkdir -vp rhel/7/ppc64le
@@ -325,6 +329,7 @@ for REPONAME in ${dists}; do
       done
       
       # Copy in other files
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos74-aarch64')
       runCommand mkdir -vp rhel/7/aarch64
@@ -343,6 +348,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos74-amd64')
       runCommand mkdir -vp rhel/7.4/x86_64
@@ -359,6 +365,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'fedora25-x86')
       runCommand mkdir -vp fedora/25/i386
