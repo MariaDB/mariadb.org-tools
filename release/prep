@@ -237,6 +237,11 @@ dir_nmap="/path/to/nmap" # nmap pkg for sles12
 dir_at="/path/to/advance-toolchain" # Location of at pkgs
 dir_rpm_shared="/path/to/shared/rpm/dir"
 dir_judy="/path/to/judy" # Location of judy pkgs
+dir_libzstd="/path/to/libzstd" # Location of libzstd pkgs
+
+dir_maxscale="/path/to/maxscale" # Location of maxscale pkgs
+
+dir_bundles="/path/to/bundles/TX" # where bundle tarballs should be saved
 
 ver_galera="25.3.23"                        # galera version[s] in our repos
 ver_galera_preferred="25.3.23"              # preferred galera version
@@ -247,9 +252,10 @@ DEBIAN="/path/to/mariadb.org-tools/release/mkrepo-debian.sh"
 UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb.org-tools/release/mkrepo-yum.sh"
    CPT="/path/to/mariadb.org-tools/release/create_package_tarballs"
+ BNDLS="/path/to/mariadb.org-tools/release/prep-bundles"
 
 # Full path to the galera-* scripts
-GALERA_NEW="/path/to/mariadb-tools/release/galera-new"
+GALERA_NEW="/path/to/mariadb.org-tools/release/galera-new"
 
 # URL where Windows Builds are located
 winbuilder="http://example.net/builds"
@@ -257,11 +263,17 @@ winbuilder="http://example.net/builds"
 # Default gpg options, including the key to use
      gpg_key="0xcbcb082a1bb943db"
     gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
+
+ gpg_key_2016="0xF1656F24C74CD1D8" # 2016-03-30 mariadb.org signing key
+gpg_opts_2016="--quiet -u 0xF1656F24C74CD1D8 --detach-sign --armor"
+
  ent_gpg_key="0xce1a3dd5e3c94f49"
 ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 
 # Full paths to where the script should store releases
     dir_release="/path/to/mariadb/releases"
+       dir_corp="/path/to/corp/releases"
+      dir_tools="/path/to/tools/releases"
 dir_release_ent="/path/to/mariadb-enterprise/releases"
 
 # Full path to P8 builds (if needed)
@@ -273,6 +285,8 @@ primary_mirror="mirror_name"
 primary_mirror_rsync="rsync_addr_of_primary_mirror"
 corp_mirror="mirror_name"
 corp_mirror_path="/dest/dir/on/corp/mirror"
+corp_bundles_path="/home/mariadb-repos/bundles/TX"
+corp_tools_path="/home/mariadb-repos/mariadb-enterprise-tools"
 yum_primary_mirror="bb01"
 yum_mirrors="mirror names"
 yum_mirror_path="/dest/dir/on/yum/mirror"
