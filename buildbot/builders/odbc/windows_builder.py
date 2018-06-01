@@ -24,35 +24,16 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
   ));
 
   f_win_connector_odbc.addStep(ShellCommand(
-        name= "connc_git_checkout",
-        command=["dojob", WithProperties("rm -rf connector_c && git clone -b " + conc_branch + " --depth 1 \"https://github.com/MariaDB/mariadb-connector-c.git\" connector_c && cd connector_c && git fetch --all --tags --prune && git reset --hard "+ tag + " && git log | head -n5")],
+        name= "git_conc_tag_checkout",
+        command=["dojob", WithProperties("pwd && cd libmariadb && git fetch && git checkout "+ tag + " && cd ..")],
         timeout=7200,
-	doStepIf=do_step_win
+        doStepIf=do_step_win
   ));
-
-  f_win_connector_odbc.addStep(ShellCommand(
-        name= "build_connc_32",
-        command=["dojob",
-        WithProperties("pwd && cd connector_c && del CMakeCache.txt && cmake " + cmake_params + " . -G \"Visual Studio 14 2015\" && cmake --build . --config RelWithDebInfo")
-#        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
-        ],
-        haltOnFailure = True
-	));
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_INCLUDE_DIR=%(buildrootdir)s/connector_c/include -DMARIADB_LIBRARY_DIR=%(buildrootdir)s/connector_c/libmariadb/RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
-#        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
-        ],
-        haltOnFailure = True
-	));
-
-  f_win_connector_odbc.addStep(ShellCommand(
-        name= "build_connc_64",
-        command=["dojob",
-#        WithProperties("pwd && cd .. && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../build -G \"Visual Studio 10\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("pwd && cd connector_c && git clean -fxd && cmake . -G \"Visual Studio 14 2015 Win64\" " + cmake_params + " && cmake --build . --clean-first --config RelWithDebInfo && cd ..")
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
 #        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
         ],
         haltOnFailure = True
@@ -62,7 +43,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
         name= "build_package_64",
         command=["dojob",
 #        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 14 Win64\" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_INCLUDE_DIR=%(buildrootdir)s/connector_c/include -DMARIADB_LIBRARY_DIR=%(buildrootdir)s/connector_c/libmariadb/RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 14 Win64\" -DCMAKE_BUILD_TYPE=RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -117,5 +98,5 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
         'factory': f_win_connector_odbc,
         'category': "connectors" }
 
-bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.5")
-bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ", "v3.0.3")
+bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.6")
+bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ", "v3.0.5")
