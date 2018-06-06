@@ -24,20 +24,21 @@ def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_pa
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
 set -ex
+git --version
 rm -Rf build
 mkdir connector_c
-""" + ("""sudo yum --disablerepo=epel -y install git
-sudo yum --disablerepo=epel -y install unixODBC
+""" + (""" sudo yum --disablerepo=epel -y install unixODBC
 sudo yum -y install unixODBC-devel
 """ if yum else """sudo apt-get update
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
 """) + """export CFLAGS="${CFLAGS}"""+ cflags + """"
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
+git submodule init
+git submodule update
 cd libmariadb
-git fetch
+git fetch --all --tags --prune
 git checkout """+ tag + """
 git log | head -n5
 cd ..
@@ -56,6 +57,8 @@ cmake --build . --config RelWithDebInfo --target package
             "slavenames": connector_slaves,
             "category": "connectors"}
 ######################## bld_linux_connector_oddbc - END #####################
+#sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
+#sudo yum --disablerepo=epel -y install git
 
 ######################## Current GA/stable version builders ######################
 bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.6");
@@ -121,8 +124,10 @@ sudo yum -y install openssl-devel.i686
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
+git submodule init
+git submodule update
 cd libmariadb
-git fetch
+git fetch --all --tags --prune
 git checkout """+ tag + """
 git log | head -n5
 cd ..
