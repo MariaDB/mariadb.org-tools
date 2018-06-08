@@ -23,10 +23,9 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
         doStepIf=do_step_win
   ));
 
-# cp -r win - dirty hack for 2.0
   f_win_connector_odbc.addStep(ShellCommand(
         name= "git_conc_tag_checkout",
-        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune && git checkout "+ tag + " && cp -r win ../")],
+        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune && git checkout "+ tag)],
         timeout=7200,
         doStepIf=do_step_win
   ));
@@ -34,7 +33,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" " + cmake_params + " && cmake --build . --config RelWithDebInfo")
 #        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
         ],
         haltOnFailure = True
@@ -44,7 +43,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
         name= "build_package_64",
         command=["dojob",
 #        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 14 Win64\" -DCMAKE_BUILD_TYPE=RelWithDebInfo " + cmake_params + " && cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 14 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" " + cmake_params + " && cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
