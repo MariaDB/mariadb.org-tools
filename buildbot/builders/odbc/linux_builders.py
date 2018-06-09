@@ -111,7 +111,6 @@ def bld_xcomp_linux_connector_odbc(name, kvm_image, conc_branch, cmake_params, t
         WithProperties("""
 set -ex
 rm -Rf build
-mkdir connector_c_32
 #sudo yum -y install git
 sudo yum --disablerepo=epel -y install git
 sudo yum -y install unixODBC.x86_64
@@ -121,6 +120,8 @@ sudo yum -y install unixODBC-devel.i686
 sudo yum -y install zlib.x86_64
 sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
 sudo yum -y install openssl-devel.i686
+sudo yum -y install libcom_err.i686
+sudo ldconfig
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
 rm -rf ./test
