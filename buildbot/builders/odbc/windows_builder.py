@@ -47,18 +47,18 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
           ],
         haltOnFailure = True
 	));
+#### Commenting signing steps, as signing is done as build process now(due do wthese steps do not work atm)
+#  f_win_connector_odbc.addStep(ShellCommand(
+#        name= "sign_packages32",
+#        command=["dojob",
+#        WithProperties("cd win32 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
+#  ))
 
-  f_win_connector_odbc.addStep(ShellCommand(
-        name= "sign_packages32",
-        command=["dojob",
-        WithProperties("cd win32 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
-  ))
-
-  f_win_connector_odbc.addStep(ShellCommand(
-        name= "sign_packages64",
-        command=["dojob",
-        WithProperties("cd win64 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
-  ))
+#  f_win_connector_odbc.addStep(ShellCommand(
+#        name= "sign_packages64",
+#        command=["dojob",
+#        WithProperties("cd win64 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
+#  ))
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_publish_dir",
@@ -83,13 +83,26 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
 #        command=["dojob",
 #        WithProperties("mkdir c:\\bzr\\bb-win32\\connector_odbc\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* c:\\bzr\\bb-win32\\connector_odbc\\build\\%(revision)s")]
 #        ))
+### Copying also to the location where buildbot will really look for file to upload, and them rm -rf it
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_upload_dir",
         command=["dojob",
         WithProperties("if not exist \"d:\\buildbot\\win-connector_odbc\\build\\%(revision)s\" mkdir d:\\buildbot\\win-connector_odbc\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* d:\\buildbot\\win-connector_odbc\\build\\%(revision)s")]
   ))
 
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "create_tmp_upload_dir",
+        command=["dojob",
+        WithProperties("if not exist \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\bb\\%(buildername)s\\build\\%(revision)s")]
+  ))
+
   addPackageUploadStepWin(f_win_connector_odbc, 'win')
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "rm_tmp__upload_dir",
+        command=["dojob",
+        WithProperties("rm -rf \"C:\\bb\\%(buildername)s\\build\\%(revision)s\"")]
+  ))
 
   return { 'name': name,
 #        'slavename': "bb-win32",
