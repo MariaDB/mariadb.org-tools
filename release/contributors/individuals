@@ -2,6 +2,7 @@ Alexander Barkov (MariaDB Corporation) <bar@mariadb.com> Alexander Barkov <bar@m
 Alexander Barkov (MariaDB Corporation) <bar@mariadb.com> Alexander Barkov <bar@mariadb.com>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> Alexey Botchkov <holyfoot@askmonty.org>
 Andrei Elkin (MariaDB Corporation) <andrei.elkin@mariadb.com> Andrei Elkin <andrei.elkin@mariadb.com>
+Chris Calender (MariaDB Corporation) <chris@mariadb.com> Chris Calender <chris@mariadb.com>
 Daniel Bartholomew (MariaDB Corporation) <dbart@mariadb.com> Daniel Bartholomew <db@dbart.us>
 Elena Stepanova (MariaDB Corporation) <elenst@mariadb.com> Elena Stepanova <elenst@montyprogram.com>
 Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.com> Galina Shalygina <galina.shalygina@mariadb.com>
@@ -13,8 +14,10 @@ Jan Lindström (MariaDB Corporation) <jan.lindstrom@mariadb.com> Jan Lindström 
 Marko Mäkelä (MariaDB Corporation) <marko.makela@mariadb.com> Marko Mäkelä <marko.makela@mariadb.com>
 Oleksandr Byelkin (MariaDB Corporation) <sanja@mariadb.com> Oleksandr Byelkin <sanja@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@maridb.com>
+Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> sachin <sachin.setiya@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> Sachin Setiya <sachinsetia1001@gmail.com>
+SachinSetiya (MariaDB Corporation) <sachinsetia1001@gmail.com> SachinSetiya <sachinsetia1001@gmail.com>
 Sergei Golubchik (MariaDB Corporation) <serg@mariadb.com> Sergei Golubchik <serg@mariadb.org>
 Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <psergey@askmonty.org>
 Thirunarayanan Balathandayuthapani (MariaDB Corporation) <thiru@mariadb.com>
@@ -24,16 +27,19 @@ Vladislav Vaintroub (MariaDB Corporation) <wlad@mariadb.com> Vladislav Vaintroub
 Ian Gilfillan (MariaDB Foundation) <ian@mariadb.org> Ian Gilfillan <github@greenman.co.za>
 Michael Widenius (MariaDB Corporation and MariaDB Foundation) <monty@mariadb.org> Monty <monty@mariadb.org>
 Michael Widenius (MariaDB Corporation and MariaDB Foundation) <monty@mariadb.org> Michael Widenius <monty@mariadb.org>
+Otto Kekäläinen (MariaDB Foundation) <otto@mariadb.org> Otto Kekäläinen <otto@mariadb.org>
+Rutuja Surve (MariaDB Foundation) <rutuja.r.surve@gmail.com> Rutuja Surve <rutuja.r.surve@gmail.com>
+Sergey Vojtovich (MariaDB Foundation) <svoj@mariadb.org> Sergey Vojtovich <svoj@mariadb.org>
+Teodor Mircea Ionita (MariaDB Foundation) <teodor@mariadb.org> Teodor Mircea Ionita <teodor@mariadb.org>
 Vicențiu Ciorbaru (MariaDB Foundation) <vicentiu@mariadb.org> Vicentiu Ciorbaru <vicentiu@mariadb.org>
 Vicențiu Ciorbaru (MariaDB Foundation) <vicentiu@mariadb.org> Vicențiu Ciorbaru (MariaDB Foundation)
-Sergey Vojtovich (MariaDB Foundation) <svoj@mariadb.org> Sergey Vojtovich <svoj@mariadb.org>
-Otto Kekäläinen (MariaDB Foundation) <otto@mariadb.org> Otto Kekäläinen <otto@mariadb.org>
 
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <daniel.black@au1.ibm.com>
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <daniel@linux.vnet.ibm.com>
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <danielgb@au.ibm.com>
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <grooverdan@users.sourceforge.net>
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <daniel.black@au.ibm.com>
+Daniel Black (IBM) <daniel@linux.ibm.com> Daniel Black <daniel@linux.ibm.com>
 
 Aakanksha Verma (Oracle) <aakanksha.verma@oracle.com> Aakanksha Verma <aakanksha.verma@oracle.com>
 Aditya A (Oracle) <aditya.a@oracle.com> Aditya A <aditya.a@oracle.com>
@@ -53,6 +59,7 @@ Shaohua Wang (Oracle) <shaohua.wang@oracle.com> Shaohua Wang <shaohua.wang@oracl
 Sachin Agarwal (Oracle) <sachin.z.agarwal@oracle.com> Sachin Agarwal <sachin.z.agarwal@oracle.com>
 Shishir Jaiswal (Oracle) <shishir.j.jaiswal@oracle.com> Shishir Jaiswal <shishir.j.jaiswal@oracle.com>
 Sreeharsha Ramanavarapu (Oracle) <sreeharsha.ramanavarapu@oracle.com> Sreeharsha Ramanavarapu <sreeharsha.ramanavarapu@oracle.com>
+Thirunarayanan Balathandayuthapani (Oracle) <thirunarayanan.balathandayuth@oracle.com> Thirunarayanan Balathandayuthapani <thirunarayanan.balathandayuth@oracle.com>
 Tor Didriksen (Oracle) <tor.didriksen@oracle.com> Tor Didriksen <tor.didriksen@oracle.com>
 
 Aleksey Midenkov (Tempesta) <midenok@gmail.com> Aleksey Midenkov <midenok@gmail.com>
