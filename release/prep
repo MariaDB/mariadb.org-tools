@@ -377,6 +377,8 @@ shouldI() {
   done
 }
 
+
+
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${HOME}/.prep.conf ]; then
@@ -720,6 +722,45 @@ create_bundles() {
   ${BNDLS} ${num}
   message "Done creating the ${num} bundles!"
 }
+
+bundles() {
+  local bundle
+  bundle=""
+   while [ -z ${bundle} ]; do
+     userResponse "Does this release have bundles? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        bundle="yes"
+        ANSWER=""
+
+        shouldI create_bundles
+
+        echo;echo;echo;echo
+
+        shouldI upload_the_bundles_to_the_staging_mirror
+
+        echo;echo;echo;echo
+
+        shouldI upload_bundles_from_the_staging_mirror_to_the_corp_mirror
+
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        bundle="yes"
+        ANSWER=""
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        bundle=""
+        ;;
+    esac
+  done
+}
+
 
 #===  FUNCTION  ================================================================
 #          NAME:  upload_from_the_staging_mirror_to_the_corp_mirror
@@ -1593,7 +1634,7 @@ shouldI create_package_tarballs
 
 echo;echo;echo;echo
 
-shouldI create_bundles
+bundles
 
 echo;echo;echo;echo
 
@@ -1610,19 +1651,11 @@ shouldI upload_corp_dir_to_the_staging_mirror
 
 echo;echo;echo;echo
 
-shouldI upload_the_bundles_to_the_staging_mirror
-
-echo;echo;echo;echo
-
 shouldI upload_from_the_staging_mirror_to_the_primary_mirror
 
 echo;echo;echo;echo
 
 shouldI upload_from_the_staging_mirror_to_the_corp_mirror
-
-echo;echo;echo;echo
-
-shouldI upload_bundles_from_the_staging_mirror_to_the_corp_mirror
 
 echo;echo;echo;echo
 
