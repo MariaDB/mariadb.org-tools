@@ -1138,7 +1138,7 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-9] ]]; then
+          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
             echo "+ tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz"
@@ -1185,7 +1185,7 @@ if [ "${create_bintar}" != "no" ]; then
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
         elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-9] ]]; then
+          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar, but first we need to set ${galera_arch} to the
             # correct value
@@ -1306,7 +1306,7 @@ if [ "${create_bintar}" != "no" ]; then
 
   # if we are creating a Galera release we need to copy in the galera source and
   # packages (for those not using the repositories)
-  if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = 10.[1-9] ]]; then
+  if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
     line
     echo "+ transfering Galera source and package files..."
     line
