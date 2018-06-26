@@ -95,8 +95,6 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
 
     centos74-aarch64
 
-    fedora26-amd64
-
     opensuse42-amd64
 
     sles114-amd64
@@ -116,7 +114,6 @@ else
 
     centos74-aarch64
 
-    fedora26-amd64
     fedora27-amd64
     fedora28-amd64
 
