@@ -652,11 +652,17 @@ activate_the_yum_repos() {
     "10.0-galera")
       dir_real='10.0'
       ;;
+    "bb-10.1-release")
+      dir_real='10.1'
+      ;;
     "bb-10.2-release")
       dir_real='10.2'
       ;;
     "bb-10.3-release")
       dir_real='10.3'
+      ;;
+    "bb-10.4-release")
+      dir_real='10.4'
       ;;
     *)
       dir_real="${tree}"
@@ -692,11 +698,17 @@ activate_the_deb_repos() {
     "10.0-galera")
       dir_real='10.0'
       ;;
+    "bb-10.1-release")
+      dir_real='10.1'
+      ;;
     "bb-10.2-release")
       dir_real='10.2'
       ;;
     "bb-10.3-release")
       dir_real='10.3'
+      ;;
+    "bb-10.4-release")
+      dir_real='10.4'
       ;;
     *)
       dir_real="${tree}"
