@@ -56,6 +56,7 @@ cj17='1.7.4'
 cj22='2.2.5'
 cc30='3.0.5'
 co30='3.0.5'
+cn07='0.7.0'
 maxscale='2.2.9'
 
 
@@ -188,6 +189,8 @@ for bundle in ${bundles}; do
   pushd ${dir}
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj22}/mariadb-java-client-${cj22}.jar ./
+
+    rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn07}/mariadb-connector-nodejs-${cn07}.tar.gz ./
 
     case ${dist} in
       ubuntu|debian)
