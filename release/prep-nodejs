@@ -1,0 +1,246 @@
+#!/bin/bash - 
+#===============================================================================
+#
+#          FILE:  prep-nodejs
+# 
+#         USAGE:  ./prep-nodejs <tarball>
+# 
+#   DESCRIPTION:  This script is used to prepare files for a MariaDB
+#                 Connector/Node.js release
+# 
+#        AUTHOR: Daniel Bartholomew
+#       CREATED: 15/02/17 04:30:32 EET
+#===============================================================================
+
+
+#-------------------------------------------------------------------------------
+#  Variables
+#-------------------------------------------------------------------------------
+version=${1}
+tarball=${2}
+
+dir_nodejs="connector-nodejs-${version}"
+
+#-------------------------------------------------------------------------------
+#  Functions
+#-------------------------------------------------------------------------------
+
+sumgen() {
+  for sum in md5 sha1 sha256 sha512;do
+	${sum}sum ./mar* >> ${sum}sums.txt
+	${sum}sum -c ${sum}sums.txt
+  done
+}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${HOME}/.prep.conf ]; then
+      . ${HOME}/.prep.conf
+  else
+    echo
+    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The prep script creates a default template of this file when run."
+    echo "Exiting..."
+    exit 1
+  fi
+}
+
+usage() {
+  set +x
+  echo
+  echo "usage: $0 <version> <tarball>"
+  echo " e.g.: $0 0.7.0 ${HOME}/mariadb-connector-nodejs-0.7.0.tar.gz"
+  echo
+  set -x
+  exit 1
+}
+
+line() {
+  echo "-------------------------------------------------------------------------------"
+}
+
+message() {
+  message="${@}"
+  echo;echo;echo;
+  echo;line;echo "${message}";line;
+}
+
+shouldI() {
+  local cont
+  cont=""
+   while [ -z ${cont} ]; do
+     userResponse "Should I ${@//_/ }? [y/n]"
+     case ${ANSWER} in
+      "y")
+        ${@}
+        cont="yes"
+        return 0
+        ;;
+      "n")
+        echo "Skipping . . . "
+        cont="yes"
+        return 0
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+}
+
+stage_files() {
+  # Stage files
+  message "Staging files..."
+  set -x
+  pushd ${cn_home}
+    mkdir -v ${dir_nodejs}
+    pushd ${dir_nodejs}
+      #wget -N ${url}
+      cp -avi ${tarball} ./
+    popd
+  popd
+  set +x
+  echo;echo;echo
+}
+
+prep_org_files() {
+  # Prep .org files
+  message "Prepping org files..."
+  set -x
+  cp -avi ${cn_home}/${dir_nodejs} ${dir_release}/
+  pushd ${dir_release}/${dir_nodejs}
+  sumgen
+  for file in *;do
+    gpg2 ${gpg_opts} ${file}
+  done
+  popd
+  set +x
+  echo;echo;echo
+}
+
+prep_com_files() {
+  # Prep .com files
+  message "Prepping com files..."
+  set -x
+  pushd ${cn_home}/${dir_nodejs}
+  sumgen
+  for file in *;do
+    gpg2 ${ent_gpg_opts} ${file}
+  done
+  popd
+  set +x
+  echo;echo;echo
+}
+
+upload_to_the_primary_mirror() {
+  local upload
+  upload=""
+  message "Doing a dry-run..."
+  set -x
+  rsync --dry-run -av --delete-after ${dir_release}/${dir_nodejs} ${primary_mirror}:data/
+  set +x
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        rsync -av --delete-after ${dir_release}/${dir_nodejs} ${primary_mirror}:data/
+        set +x
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+upload_to_the_corp_mirror() {
+  local upload
+  upload=""
+  message "Doing a dry-run..."
+  set -x
+  rsync --dry-run -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp}/
+  set +x
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        rsync -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp}/
+        set +x
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults
+
+if [ "${version}" = "" ]; then
+  usage
+fi
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+shouldI stage_files
+
+shouldI prep_org_files
+
+shouldI prep_com_files
+
+shouldI upload_to_the_primary_mirror
+
+shouldI upload_to_the_corp_mirror
+
+echo "+ All done!"
+echo;echo;echo
