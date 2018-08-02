@@ -470,7 +470,7 @@ for REPONAME in ${dists}; do
       maybe_make_symlink sles/12/x86_64 sles12-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/kvm-zyp-sles123-amd64/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera}; do
