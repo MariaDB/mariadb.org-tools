@@ -263,6 +263,10 @@ if [ "${version}" = "" ]; then
   usage
 fi
 
+if [ "${dir_build}" = "" ]; then
+  usage
+fi
+
 set -eu
   # -e  Exit immediately if a simple command exits with a non-zero status,
   #     unless the command that fails is part of an until or  while loop, part
