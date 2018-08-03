@@ -57,7 +57,7 @@ case ${ARCHDIR} in
     ubuntu_dists="trusty xenial"
     ;;
   *)
-    ubuntu_dists="trusty xenial artful bionic"
+    ubuntu_dists="trusty xenial bionic"
     ;;
 esac
 
@@ -155,10 +155,10 @@ for dist in ${ubuntu_dists}; do
 
   # First we import the amd64 files
   case ${dist} in 
-    'trusty'|'xenial'|'zesty')
+    'trusty'|'xenial')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
-    'artful'|'bionic')
+    'bionic')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
       runCommand sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       #reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
@@ -174,7 +174,7 @@ for dist in ${ubuntu_dists}; do
 
   # Include i386 debs
   case ${dist} in
-    'trusty'|'xenial'|'artful')
+    'trusty'|'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
@@ -247,7 +247,7 @@ for dist in ${ubuntu_dists}; do
 
         # include i386
         case ${dist} in
-          'trusty'|'xenial'|'artful')
+          'trusty'|'xenial')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
             ;;
         esac
