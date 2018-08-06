@@ -6,12 +6,14 @@ Chris Calender (MariaDB Corporation) <chris@mariadb.com> Chris Calender <chris@m
 Daniel Bartholomew (MariaDB Corporation) <dbart@mariadb.com> Daniel Bartholomew <db@dbart.us>
 Elena Stepanova (MariaDB Corporation) <elenst@mariadb.com> Elena Stepanova <elenst@montyprogram.com>
 Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.com> Galina Shalygina <galina.shalygina@mariadb.com>
+Georg Richter (MariaDB Corporation) <georg@mariadb.com> Georg Richter <georg@mariadb.com>
 Hartmut Holzgraefe (MariaDB Corporation) <hartmut@mariadb.com> Hartmut Holzgraefe <hartmut@php.net>
 Hartmut Holzgraefe (MariaDB Corporation) <hartmut@mariadb.com> Hartmut Holzgraefe <hartmut@mariadb.com>
 Igor Babaev (MariaDB Corporation) <igor@mariadb.com> Igor Babaev <igor@askmonty.org>
 Jacob Mathew (MariaDB Corporation) <jacob.mathew@mariadb.com> Jacob Mathew <jacob.mathew@mariadb.com>
 Jan Lindström (MariaDB Corporation) <jan.lindstrom@mariadb.com> Jan Lindström <jan.lindstrom@mariadb.com>
 Marko Mäkelä (MariaDB Corporation) <marko.makela@mariadb.com> Marko Mäkelä <marko.makela@mariadb.com>
+Nirbhay Choubey (MariaDB Corporation) <nirbhay@mariadb.com> Nirbhay Choubey <nirbhay@mariadb.com>
 Oleksandr Byelkin (MariaDB Corporation) <sanja@mariadb.com> Oleksandr Byelkin <sanja@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@maridb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> sachin <sachin.setiya@mariadb.com>
@@ -22,6 +24,7 @@ Sergei Golubchik (MariaDB Corporation) <serg@mariadb.com> Sergei Golubchik <serg
 Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <psergey@askmonty.org>
 Thirunarayanan Balathandayuthapani (MariaDB Corporation) <thiru@mariadb.com>
 Varun Gupta (MariaDB Corporation) <varun@mariadb.com> Varun Gupta <varunraiko1803@gmail.com>
+Varun Gupta (MariaDB Corporation) <varun.gupta@mariadb.com> Varun Gupta <varun.gupta@mariadb.com>
 Vladislav Vaintroub (MariaDB Corporation) <wlad@mariadb.com> Vladislav Vaintroub <wlad@mariadb.com>
 
 Ian Gilfillan (MariaDB Foundation) <ian@mariadb.org> Ian Gilfillan <github@greenman.co.za>
@@ -43,11 +46,13 @@ Daniel Black (IBM) <daniel@linux.ibm.com> Daniel Black <daniel@linux.ibm.com>
 
 Aakanksha Verma (Oracle) <aakanksha.verma@oracle.com> Aakanksha Verma <aakanksha.verma@oracle.com>
 Aditya A (Oracle) <aditya.a@oracle.com> Aditya A <aditya.a@oracle.com>
+Ajo Robert (Oracle) <ajo.robert@oracle.com> Ajo Robert <ajo.robert@oracle.com>
 Annamalai Gurusami (Oracle) <annamalai.gurusami@oracle.com> Annamalai Gurusami <annamalai.gurusami@oracle.com>
 Anushree Prakash B (Oracle) <anushree.prakash.b@oracle.com> Anushree Prakash B <anushree.prakash.b@oracle.com>
 Arun Kuruvila (Oracle) <arun.kuruvila@oracle.com> Arun Kuruvila <arun.kuruvila@oracle.com>
 Balasubramanian Kandasamy (Oracle) <balasubramanian.kandasamy@oracle.com> Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
 Bjorn Munch (Oracle) <bjorn.munch@oracle.com> Bjorn Munch <bjorn.munch@oracle.com>
+Ivo Roylev (Oracle) <ivo.roylev@oracle.com> Ivo Roylev <ivo.roylev@oracle.com>
 Jimmy Yang (Oracle) <jimmy.yang@oracle.com> Jimmy Yang <jimmy.yang@oracle.com>
 Joao Gamacho (Oracle) <joao.gramacho@oracle.com> Joao Gramacho <joao.gramacho@oracle.com>
 Karthik Kamath (Oracle) <karthik.kamath@oracle.com> Karthik Kamath <karthik.kamath@oracle.com>
@@ -68,6 +73,8 @@ Eugene Kosov (Tempesta) <claprix@yandex.ru> Eugene Kosov <claprix@yandex.ru>
 Jakub Dorňák (Red Hat) <jdornak@redhat.com> Jakub Dorňák <jdornak@redhat.com>
 Michal Schorm (Red Hat) <mschorm@redhat.com> Michal Schorm <mschorm@redhat.com>
 
+Ashutosh Parida (Qualcomm) <aparida.qdt@qualcommdatacenter.com> Ashutosh Parida <aparida.qdt@qualcommdatacenter.com>
+
 Howard Su (Microsoft) <howard0su@gmail.com> Howard Su <howard0su@gmail.com>
 
 Alexey Yurchenko (Codership) <ayurchen@galeracluster.com>
@@ -77,6 +84,12 @@ Teemu Ollakka (Codership) <teemu.ollakka@galeracluster.com>
 Vasil Dimov (Codership) <vasil.dimov@galeracluster.com>
 Seppo Jaakola (Codership) <seppo.jaakola@iki.fi> sjaakola <seppo.jaakola@iki.fi>
 Timo Teräs (Codership) <timo.teras@iki.fi>
+
+Adrian Bunk (Debian) <bunk@debian.org> Adrian Bunk <bunk@debian.org>
+Christian Hammers (Debian) <ch@debian.org> Christian Hammers <ch@debian.org>
+James Clarke (Debian) <jrtc27@debian.org> James Clarke <jrtc27@debian.org>
+
+Yuqi Gu (Arm) <yuqi.gu@arm.com> Yuqi <yuqi.gu@arm.com>
 
 Karim Geiger (TYVR) <karim@tyvr.net> Karim Geiger <karim@tyvr.net>
 
