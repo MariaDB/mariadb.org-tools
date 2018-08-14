@@ -118,6 +118,7 @@ else
     fedora28-amd64
 
     opensuse42-amd64
+    opensuse150-amd64
 
     sles12-amd64
     sles12-ppc64le
@@ -429,6 +430,18 @@ for REPONAME in ${dists}; do
     'opensuse42-amd64')
       runCommand mkdir -vp opensuse/42/x86_64
       maybe_make_symlink opensuse/42/x86_64 opensuse42-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'opensuse150-amd64')
+      runCommand mkdir -vp opensuse/15.0/x86_64
+      maybe_make_symlink opensuse/15.0/x86_64 opensuse150-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
