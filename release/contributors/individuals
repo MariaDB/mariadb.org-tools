@@ -13,8 +13,10 @@ Igor Babaev (MariaDB Corporation) <igor@mariadb.com> Igor Babaev <igor@askmonty.
 Jacob Mathew (MariaDB Corporation) <jacob.mathew@mariadb.com> Jacob Mathew <jacob.mathew@mariadb.com>
 Jan Lindström (MariaDB Corporation) <jan.lindstrom@mariadb.com> Jan Lindström <jan.lindstrom@mariadb.com>
 Marko Mäkelä (MariaDB Corporation) <marko.makela@mariadb.com> Marko Mäkelä <marko.makela@mariadb.com>
+Matthias Leich (MariaDB Corporation) <Matthias.Leich@mariadb.com> mleich1 <Matthias.Leich@mariadb.com>
 Nirbhay Choubey (MariaDB Corporation) <nirbhay@mariadb.com> Nirbhay Choubey <nirbhay@mariadb.com>
 Oleksandr Byelkin (MariaDB Corporation) <sanja@mariadb.com> Oleksandr Byelkin <sanja@mariadb.com>
+Rasmus Johansson (MariaDB Corporation) <rasmus@mariadb.com> Rasmus Johansson <rasmus@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@maridb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> sachin <sachin.setiya@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@mariadb.com>
@@ -27,6 +29,7 @@ Varun Gupta (MariaDB Corporation) <varun@mariadb.com> Varun Gupta <varunraiko180
 Varun Gupta (MariaDB Corporation) <varun.gupta@mariadb.com> Varun Gupta <varun.gupta@mariadb.com>
 Vladislav Vaintroub (MariaDB Corporation) <wlad@mariadb.com> Vladislav Vaintroub <wlad@mariadb.com>
 
+Anel Husakovic (MariaDB Foundation) <anelhusakovic88@gmail.com> Anel Husakovic <anelhusakovic88@gmail.com>
 Ian Gilfillan (MariaDB Foundation) <ian@mariadb.org> Ian Gilfillan <github@greenman.co.za>
 Michael Widenius (MariaDB Corporation and MariaDB Foundation) <monty@mariadb.org> Monty <monty@mariadb.org>
 Michael Widenius (MariaDB Corporation and MariaDB Foundation) <monty@mariadb.org> Michael Widenius <monty@mariadb.org>
@@ -47,6 +50,7 @@ Daniel Black (IBM) <daniel@linux.ibm.com> Daniel Black <daniel@linux.ibm.com>
 Aakanksha Verma (Oracle) <aakanksha.verma@oracle.com> Aakanksha Verma <aakanksha.verma@oracle.com>
 Aditya A (Oracle) <aditya.a@oracle.com> Aditya A <aditya.a@oracle.com>
 Ajo Robert (Oracle) <ajo.robert@oracle.com> Ajo Robert <ajo.robert@oracle.com>
+Allen Lai (Oracle) <zheng.lai@oracle.com> Allen Lai <zheng.lai@oracle.com>
 Annamalai Gurusami (Oracle) <annamalai.gurusami@oracle.com> Annamalai Gurusami <annamalai.gurusami@oracle.com>
 Anushree Prakash B (Oracle) <anushree.prakash.b@oracle.com> Anushree Prakash B <anushree.prakash.b@oracle.com>
 Arun Kuruvila (Oracle) <arun.kuruvila@oracle.com> Arun Kuruvila <arun.kuruvila@oracle.com>
