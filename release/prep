@@ -128,11 +128,12 @@ create_p8_bintar="no"
              log="no"
           skipit="no"
          log_log=""
-galera_suffix=""
-     treeflag=false
-      revflag=false
-      numflag=false
-      tarflag=false
+   galera_suffix=""
+ exclude_release=""
+        treeflag=false
+         revflag=false
+         numflag=false
+         tarflag=false
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -847,6 +848,25 @@ maybe_fix_permissions() {
 }
 
 
+#===  FUNCTION  ================================================================
+#          NAME:  display_the_previous_yum_directory
+#   DESCRIPTION:  A simple function to list (using tree) the contents of the
+#                 previous release's yum directory. Useful for seeing what
+#                 releases are in it.
+#===============================================================================
+display_the_previous_yum_directory() {
+  echo; line;
+  echo "Here is the previous yum directory:"
+  line; echo
+  tree ${dir_release}/mariadb-${prev_release}/yum
+  echo;echo;echo;
+  pressAnyKeyToContinue
+}
+
+exclude_an_old_release_from_the_yum_dir() {
+  userInput "What release should I exclude? (e.g. 10.2.13)"
+  exclude_release="${INPUT}"
+}
 #-------------------------------------------------------------------------------
 # Main Script
 #-------------------------------------------------------------------------------
@@ -1588,9 +1608,21 @@ else
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
     # mkdir -v ${HOME}/yum
+
+    echo "Before rsyncing the yum release..."
+
+    shouldI display_the_previous_yum_directory
+
+    shouldI exclude_an_old_release_from_the_yum_dir
+
     # Rsync a copy of the previous release to ${HOME}
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
-            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
+    if [ "${exclude_release}" = "" ]; then
+      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+    else
+      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+    fi
+    #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+    #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
     echo
 
     pushd ${HOME}/yum
