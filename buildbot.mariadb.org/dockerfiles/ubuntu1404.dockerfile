@@ -30,7 +30,7 @@ RUN apt-get update && \
 RUN useradd -ms /bin/bash buildbot && \
     mkdir /buildbot && \
     chown -R buildbot /buildbot && \
-    curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/shinnok/buildbot/mariadb/worker/docker/buildbot.tac
+    curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 WORKDIR /buildbot
 
 # autobake-deb will need sudo rights
