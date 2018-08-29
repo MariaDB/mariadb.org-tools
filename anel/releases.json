@@ -1,0 +1,1943 @@
+{
+  "5.5": [
+    {
+      "source": {
+        "filename": "mariadb-5.5.60.tar.gz",
+        "sha256:": "sha256sum: 4d3d444555416028ce39d3fb4cdc9cf6a658fcd4b0d2d0c45a73f9bf01d07929",
+        "file size": "45.8 MB"
+      },
+      "release date": "2018-04-23",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.60/",
+      "release status": "Stable",
+      "name": "5.5.60"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.59.tar.gz",
+        "sha256:": "sha256sum: c3269ce20b45b177239fd1e3d6d9428a94131711f12758ebf5f65222278bb110",
+        "file size": "45.8 MB"
+      },
+      "release date": "2018-01-19",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.59/",
+      "release status": "Stable",
+      "name": "5.5.59"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.58.tar.gz",
+        "sha256:": "sha256sum: 26fdf8784a51e5d6f7624c0f4528433a6188065dd1bf92ef69e27db6b0a41002",
+        "file size": "45.8 MB"
+      },
+      "release date": "2017-10-18",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.58/",
+      "release status": "Stable",
+      "name": "5.5.58"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.57.tar.gz",
+        "sha256:": "sha256sum: 5dbde98d7e4a5a1721b6cbed7898b2549a88866247951cf586057975c6cea641",
+        "file size": "45.8 MB"
+      },
+      "release date": "2017-07-19",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.57/",
+      "release status": "Stable",
+      "name": "5.5.57"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.56.tar.gz",
+        "sha256:": "sha256sum: 950c3422cb262b16ce133caadbc342219f50f9b45dcc71b8db78fc376a971726",
+        "file size": "45.8 MB"
+      },
+      "release date": "2017-05-03",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.56/",
+      "release status": "Stable",
+      "name": "5.5.56"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.55.tar.gz",
+        "sha256:": "sha256sum: cb94e315d0fc90c62db5a6c7829c9966f674285d99b3ba3ffa575fb4a26edc86",
+        "file size": "45.8 MB"
+      },
+      "release date": "2017-04-13",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.55/",
+      "release status": "Stable",
+      "name": "5.5.55"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.54.tar.gz",
+        "sha256:": "sha256sum: 54405ad9beff02339819eb73c59b4bf25f58a2c5abffbf17e81c4940a893538c",
+        "file size": "45.8 MB"
+      },
+      "release date": "2016-12-24",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.54/",
+      "release status": "Stable",
+      "name": "5.5.54"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.53.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-10-17",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.53/",
+      "release status": "Stable",
+      "name": "5.5.53"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.52.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-09-13",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.52/",
+      "release status": "Stable",
+      "name": "5.5.52"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.51.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-08-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.51/",
+      "release status": "Stable",
+      "name": "5.5.51"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.50.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-06-17",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.50/",
+      "release status": "Stable",
+      "name": "5.5.50"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.49.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-04-22",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.49/",
+      "release status": "Stable",
+      "name": "5.5.49"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.48.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2016-02-11",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.48/",
+      "release status": "Stable",
+      "name": "5.5.48"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.47.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2015-12-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.47/",
+      "release status": "Stable",
+      "name": "5.5.47"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.46.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2015-10-12",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.46/",
+      "release status": "Stable",
+      "name": "5.5.46"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.45.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2015-08-06",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.45/",
+      "release status": "Stable",
+      "name": "5.5.45"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.44.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2015-06-11",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.44/",
+      "release status": "Stable",
+      "name": "5.5.44"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.43.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2015-05-01",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.43/",
+      "release status": "Stable",
+      "name": "5.5.43"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.42.tar.gz",
+        "sha256:": "",
+        "file size": "45.6 MB"
+      },
+      "release date": "2015-02-19",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.42/",
+      "release status": "Stable",
+      "name": "5.5.42"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.41.tar.gz",
+        "sha256:": "",
+        "file size": "45.5 MB"
+      },
+      "release date": "2014-12-21",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.41/",
+      "release status": "Stable",
+      "name": "5.5.41"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.40.tar.gz",
+        "sha256:": "",
+        "file size": "44.7 MB"
+      },
+      "release date": "2014-10-09",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.40/",
+      "release status": "Stable",
+      "name": "5.5.40"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.39.tar.gz",
+        "sha256:": "",
+        "file size": "45.1 MB"
+      },
+      "release date": "2014-08-05",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.39/",
+      "release status": "Stable",
+      "name": "5.5.39"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.38.tar.gz",
+        "sha256:": "",
+        "file size": "45.1 MB"
+      },
+      "release date": "2014-06-09",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.38/",
+      "release status": "Stable",
+      "name": "5.5.38"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.37.tar.gz",
+        "sha256:": "",
+        "file size": "46.1 MB"
+      },
+      "release date": "2014-04-17",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.37/",
+      "release status": "Stable",
+      "name": "5.5.37"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.36.tar.gz",
+        "sha256:": "",
+        "file size": "45.8 MB"
+      },
+      "release date": "2014-02-25",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.36/",
+      "release status": "Stable",
+      "name": "5.5.36"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.35.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2014-01-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.35/",
+      "release status": "Stable",
+      "name": "5.5.35"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.34.tar.gz",
+        "sha256:": "",
+        "file size": "45.7 MB"
+      },
+      "release date": "2013-11-21",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.34/",
+      "release status": "Stable",
+      "name": "5.5.34"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.33a.tar.gz",
+        "sha256:": "",
+        "file size": "45.2 MB"
+      },
+      "release date": "2013-09-20",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.33a/",
+      "release status": "Stable",
+      "name": "5.5.33a"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.33.tar.gz",
+        "sha256:": "",
+        "file size": "45.2 MB"
+      },
+      "release date": "2013-09-17",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.33/",
+      "release status": "Stable",
+      "name": "5.5.33"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.32.tar.gz",
+        "sha256:": "",
+        "file size": "27.9 MB"
+      },
+      "release date": "2013-07-18",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.32/",
+      "release status": "Stable",
+      "name": "5.5.32"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.31.tar.gz",
+        "sha256:": "",
+        "file size": "27.9 MB"
+      },
+      "release date": "2013-05-23",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.31/",
+      "release status": "Stable",
+      "name": "5.5.31"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.30.tar.gz",
+        "sha256:": "",
+        "file size": "27.9 MB"
+      },
+      "release date": "2013-03-12",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.30/",
+      "release status": "Stable",
+      "name": "5.5.30"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.29.tar.gz",
+        "sha256:": "",
+        "file size": "27.9 MB"
+      },
+      "release date": "2013-01-30",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.29/",
+      "release status": "Stable",
+      "name": "5.5.29"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.28a.tar.gz",
+        "sha256:": "",
+        "file size": "27.8 MB"
+      },
+      "release date": "2012-11-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.28a/",
+      "release status": "Stable",
+      "name": "5.5.28a"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.28.tar.gz",
+        "sha256:": "",
+        "file size": "27.8 MB"
+      },
+      "release date": "2012-10-22",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.28/",
+      "release status": "Stable",
+      "name": "5.5.28"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.27.tar.gz",
+        "sha256:": "",
+        "file size": "27.7 MB"
+      },
+      "release date": "2012-09-07",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.27/",
+      "release status": "Stable",
+      "name": "5.5.27"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.25.tar.gz",
+        "sha256:": "",
+        "file size": "27.5 MB"
+      },
+      "release date": "2012-06-22",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.25/",
+      "release status": "Stable",
+      "name": "5.5.25"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.24.tar.gz",
+        "sha256:": "",
+        "file size": "27.4 MB"
+      },
+      "release date": "2012-05-31",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.24/",
+      "release status": "Stable",
+      "name": "5.5.24"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.23.tar.gz",
+        "sha256:": "",
+        "file size": "27.4 MB"
+      },
+      "release date": "2012-04-11",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.23/",
+      "release status": "Stable",
+      "name": "5.5.23"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.22.tar.gz",
+        "sha256:": "",
+        "file size": "27.4 MB"
+      },
+      "release date": "2012-03-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.22/",
+      "release status": "Release Candidate",
+      "name": "5.5.22"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.21.tar.gz",
+        "sha256:": "",
+        "file size": "27.3 MB"
+      },
+      "release date": "2012-03-16",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.21/",
+      "release status": "Beta",
+      "name": "5.5.21"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.5.20.tar.gz",
+        "sha256:": "",
+        "file size": "27.6 MB"
+      },
+      "release date": "2012-02-25",
+      "link": "https://downloads.mariadb.org//mariadb/5.5.20/",
+      "release status": "Alpha",
+      "name": "5.5.20"
+    }
+  ],
+  "5.1": [
+    {
+      "source": {
+        "filename": "mariadb-5.1.67.tar.gz",
+        "sha256:": "",
+        "file size": "25.0 MB"
+      },
+      "release date": "2013-01-30",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.67/",
+      "release status": "Stable",
+      "name": "5.1.67"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.66.tar.gz",
+        "sha256:": "",
+        "file size": "25.0 MB"
+      },
+      "release date": "2012-11-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.66/",
+      "release status": "Stable",
+      "name": "5.1.66"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.62.tar.gz",
+        "sha256:": "",
+        "file size": "24.9 MB"
+      },
+      "release date": "2012-04-06",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.62/",
+      "release status": "Stable",
+      "name": "5.1.62"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.61.tar.gz",
+        "sha256:": "",
+        "file size": "24.9 MB"
+      },
+      "release date": "2012-04-02",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.61/",
+      "release status": "Stable",
+      "name": "5.1.61"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.60.tar.gz",
+        "sha256:": "",
+        "file size": "24.8 MB"
+      },
+      "release date": "2011-12-05",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.60/",
+      "release status": "Stable",
+      "name": "5.1.60"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.55.tar.gz",
+        "sha256:": "",
+        "file size": "24.6 MB"
+      },
+      "release date": "2011-03-01",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.55/",
+      "release status": "Stable",
+      "name": "5.1.55"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.53.tar.gz",
+        "sha256:": "",
+        "file size": "24.7 MB"
+      },
+      "release date": "2010-12-06",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.53/",
+      "release status": "Stable",
+      "name": "5.1.53"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.51.tar.gz",
+        "sha256:": "",
+        "file size": "24.6 MB"
+      },
+      "release date": "2010-11-19",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.51/",
+      "release status": "Stable",
+      "name": "5.1.51"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.50.tar.gz",
+        "sha256:": "",
+        "file size": "24.6 MB"
+      },
+      "release date": "2010-09-09",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.50/",
+      "release status": "Stable",
+      "name": "5.1.50"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.49.tar.gz",
+        "sha256:": "",
+        "file size": "24.5 MB"
+      },
+      "release date": "2010-08-09",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.49/",
+      "release status": "Stable",
+      "name": "5.1.49"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.47.tar.gz",
+        "sha256:": "",
+        "file size": "22.9 MB"
+      },
+      "release date": "2010-06-01",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.47/",
+      "release status": "Stable",
+      "name": "5.1.47"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.44b.tar.gz",
+        "sha256:": "",
+        "file size": "21.7 MB"
+      },
+      "release date": "2010-05-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.44/",
+      "release status": "Stable",
+      "name": "5.1.44"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.42.tar.gz",
+        "sha256:": "",
+        "file size": "21.6 MB"
+      },
+      "release date": "2010-02-01",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.42/",
+      "release status": "Stable",
+      "name": "5.1.42"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.1.41-rc.tar.gz",
+        "sha256:": "",
+        "file size": "21.6 MB"
+      },
+      "release date": "2010-01-13",
+      "link": "https://downloads.mariadb.org//mariadb/5.1.41/",
+      "release status": "Release Candidate",
+      "name": "5.1.41"
+    }
+  ],
+  "10.1": [
+    {
+      "source": {
+        "filename": "mariadb-10.1.33.tar.gz",
+        "sha256:": "sha256sum: 94312c519f2c0c25e1964c64e22aff0036fb22dfb2685638f43a6b2211395d2d",
+        "file size": "65.3 MB"
+      },
+      "release date": "2018-05-09",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.33/",
+      "release status": "Stable",
+      "name": "10.1.33"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.32.tar.gz",
+        "sha256:": "sha256sum: 0e2aae6a6a190d07c8e36e87dd43377057fa82651ca3c583462563f3e9369096",
+        "file size": "68.0 MB"
+      },
+      "release date": "2018-03-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.32/",
+      "release status": "Stable",
+      "name": "10.1.32"
+    },
+    {
+      "source": {
+        "filename": "Galera 25.3.22 source and packages",
+        "sha256:": "",
+        "file size": ""
+      },
+      "release date": "2018-02-06",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.31/",
+      "release status": "Stable",
+      "name": "10.1.31"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.30.tar.gz",
+        "sha256:": "sha256sum: 173a5e5a24819e0a469c3bd09b5c98491676c37c6095882a2ea34c5af0996c88",
+        "file size": "67.9 MB"
+      },
+      "release date": "2017-12-22",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.30/",
+      "release status": "Stable",
+      "name": "10.1.30"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.29.tar.gz",
+        "sha256:": "sha256sum: 73bbd5602f52ab5aa4d83f465134871b6c87bda25371d098f6da5a3d98517ed4",
+        "file size": "67.9 MB"
+      },
+      "release date": "2017-11-14",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.29/",
+      "release status": "Stable",
+      "name": "10.1.29"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.28.tar.gz",
+        "sha256:": "sha256sum: 292dc8fff420c4bdaf3a2c3381ec3c99292965db2b09de0d7fec414c00032bbd",
+        "file size": "67.6 MB"
+      },
+      "release date": "2017-09-28",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.28/",
+      "release status": "Stable",
+      "name": "10.1.28"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.26.tar.gz",
+        "sha256:": "sha256sum: ba88b1cb9967dea2909938a34ba89373b162b0d83e5c98a0f1c94540156bf73d",
+        "file size": "61.9 MB"
+      },
+      "release date": "2017-08-10",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.26/",
+      "release status": "Stable",
+      "name": "10.1.26"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.25.tar.gz",
+        "sha256:": "sha256sum: 7205ecaa6f1bc16335ad88faa5c46be52b3ac628a5e795cb942a3f4335b2a0d6",
+        "file size": "61.8 MB"
+      },
+      "release date": "2017-07-04",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.25/",
+      "release status": "Stable",
+      "name": "10.1.25"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.24.tar.gz",
+        "sha256:": "sha256sum: b3df99ae5b1ec8cf6cede4cbc4ae3f54ce66464549cba6d56d9ff4d24e4d551e",
+        "file size": "61.8 MB"
+      },
+      "release date": "2017-05-31",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.24/",
+      "release status": "Stable",
+      "name": "10.1.24"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.23.tar.gz",
+        "sha256:": "sha256sum: 54d8114e24bfa5e3ebdc7d69e071ad1471912847ea481b227d204f9d644300bf",
+        "file size": "61.8 MB"
+      },
+      "release date": "2017-05-03",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.23/",
+      "release status": "Stable",
+      "name": "10.1.23"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.22.tar.gz",
+        "sha256:": "sha256sum: bcb0572e7ad32cea9740a21e9255f733bdf60a5561ffbda317c22dd12b3966ce",
+        "file size": "61.5 MB"
+      },
+      "release date": "2017-03-14",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.22/",
+      "release status": "Stable",
+      "name": "10.1.22"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.21.tar.gz",
+        "sha256:": "sha256sum: 5a816355781ea22a6c65a436d8162f19bd292ec90e2b7d9499c031ae4a659490",
+        "file size": "61.4 MB"
+      },
+      "release date": "2017-01-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.21/",
+      "release status": "Stable",
+      "name": "10.1.21"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.20.tar.gz",
+        "sha256:": "",
+        "file size": "61.3 MB"
+      },
+      "release date": "2016-12-15",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.20/",
+      "release status": "Stable",
+      "name": "10.1.20"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.19.tar.gz",
+        "sha256:": "",
+        "file size": "61.2 MB"
+      },
+      "release date": "2016-11-07",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.19/",
+      "release status": "Stable",
+      "name": "10.1.19"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.18.tar.gz",
+        "sha256:": "",
+        "file size": "61.2 MB"
+      },
+      "release date": "2016-09-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.18/",
+      "release status": "Stable",
+      "name": "10.1.18"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.17.tar.gz",
+        "sha256:": "",
+        "file size": "61.2 MB"
+      },
+      "release date": "2016-08-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.17/",
+      "release status": "Stable",
+      "name": "10.1.17"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.16.tar.gz",
+        "sha256:": "",
+        "file size": "55.5 MB"
+      },
+      "release date": "2016-07-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.16/",
+      "release status": "Stable",
+      "name": "10.1.16"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.14.tar.gz",
+        "sha256:": "",
+        "file size": "55.3 MB"
+      },
+      "release date": "2016-05-10",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.14/",
+      "release status": "Stable",
+      "name": "10.1.14"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.13.tar.gz",
+        "sha256:": "",
+        "file size": "55.3 MB"
+      },
+      "release date": "2016-03-25",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.13/",
+      "release status": "Stable",
+      "name": "10.1.13"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.12.tar.gz",
+        "sha256:": "",
+        "file size": "55.3 MB"
+      },
+      "release date": "2016-02-25",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.12/",
+      "release status": "Stable",
+      "name": "10.1.12"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.11.tar.gz",
+        "sha256:": "",
+        "file size": "55.2 MB"
+      },
+      "release date": "2016-01-29",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.11/",
+      "release status": "Stable",
+      "name": "10.1.11"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.10.tar.gz",
+        "sha256:": "",
+        "file size": "55.2 MB"
+      },
+      "release date": "2015-12-24",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.10/",
+      "release status": "Stable",
+      "name": "10.1.10"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.9.tar.gz",
+        "sha256:": "",
+        "file size": "54.0 MB"
+      },
+      "release date": "2015-11-23",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.9/",
+      "release status": "Stable",
+      "name": "10.1.9"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.8.tar.gz",
+        "sha256:": "",
+        "file size": "53.9 MB"
+      },
+      "release date": "2015-10-17",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.8/",
+      "release status": "Stable",
+      "name": "10.1.8"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.7.tar.gz",
+        "sha256:": "",
+        "file size": "53.8 MB"
+      },
+      "release date": "2015-09-09",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.7/",
+      "release status": "Release Candidate",
+      "name": "10.1.7"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.6.tar.gz",
+        "sha256:": "",
+        "file size": "53.8 MB"
+      },
+      "release date": "2015-07-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.6/",
+      "release status": "Beta",
+      "name": "10.1.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.5.tar.gz",
+        "sha256:": "",
+        "file size": "53.6 MB"
+      },
+      "release date": "2015-06-04",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.5/",
+      "release status": "Beta",
+      "name": "10.1.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.4.tar.gz",
+        "sha256:": "",
+        "file size": "53.4 MB"
+      },
+      "release date": "2015-04-13",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.4/",
+      "release status": "Beta",
+      "name": "10.1.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.3.tar.gz",
+        "sha256:": "",
+        "file size": "52.9 MB"
+      },
+      "release date": "2015-03-02",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.3/",
+      "release status": "Beta",
+      "name": "10.1.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.2.tar.gz",
+        "sha256:": "",
+        "file size": "52.6 MB"
+      },
+      "release date": "2014-12-07",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.2/",
+      "release status": "Alpha",
+      "name": "10.1.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.1.tar.gz",
+        "sha256:": "",
+        "file size": "48.1 MB"
+      },
+      "release date": "2014-10-17",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.1/",
+      "release status": "Alpha",
+      "name": "10.1.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.1.0.tar.gz",
+        "sha256:": "",
+        "file size": "51.2 MB"
+      },
+      "release date": "2014-06-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.1.0/",
+      "release status": "Alpha",
+      "name": "10.1.0"
+    }
+  ],
+  "5.3": [
+    {
+      "source": {
+        "filename": "mariadb-5.3.12.tar.gz",
+        "sha256:": "",
+        "file size": "26.9 MB"
+      },
+      "release date": "2013-01-30",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.12/",
+      "release status": "Stable",
+      "name": "5.3.12"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.11.tar.gz",
+        "sha256:": "",
+        "file size": "26.9 MB"
+      },
+      "release date": "2012-11-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.11/",
+      "release status": "Stable",
+      "name": "5.3.11"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.10.tar.gz",
+        "sha256:": "",
+        "file size": "26.9 MB"
+      },
+      "release date": "2012-11-13",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.10/",
+      "release status": "Stable",
+      "name": "5.3.10"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.9.tar.gz",
+        "sha256:": "",
+        "file size": "26.8 MB"
+      },
+      "release date": "2012-10-02",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.9/",
+      "release status": "Stable",
+      "name": "5.3.9"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.8.tar.gz",
+        "sha256:": "",
+        "file size": "26.8 MB"
+      },
+      "release date": "2012-08-28",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.8/",
+      "release status": "Stable",
+      "name": "5.3.8"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.7.tar.gz",
+        "sha256:": "",
+        "file size": "26.7 MB"
+      },
+      "release date": "2012-05-04",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.7/",
+      "release status": "Stable",
+      "name": "5.3.7"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.6.tar.gz",
+        "sha256:": "",
+        "file size": "26.7 MB"
+      },
+      "release date": "2012-04-09",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.6/",
+      "release status": "Stable",
+      "name": "5.3.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.5-ga.tar.gz",
+        "sha256:": "",
+        "file size": "26.6 MB"
+      },
+      "release date": "2012-02-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.5/",
+      "release status": "Stable",
+      "name": "5.3.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.4-rc.tar.gz",
+        "sha256:": "",
+        "file size": "26.6 MB"
+      },
+      "release date": "2012-02-15",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.4/",
+      "release status": "Release Candidate",
+      "name": "5.3.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.3-rc.tar.gz",
+        "sha256:": "",
+        "file size": "26.6 MB"
+      },
+      "release date": "2011-12-21",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.3/",
+      "release status": "Release Candidate",
+      "name": "5.3.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.2-beta.tar.gz",
+        "sha256:": "",
+        "file size": "26.3 MB"
+      },
+      "release date": "2011-10-14",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.2/",
+      "release status": "Beta",
+      "name": "5.3.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.1-beta.tar.gz",
+        "sha256:": "",
+        "file size": "26.3 MB"
+      },
+      "release date": "2011-09-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.1/",
+      "release status": "Beta",
+      "name": "5.3.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.3.0-beta.tar.gz",
+        "sha256:": "",
+        "file size": "26.2 MB"
+      },
+      "release date": "2011-07-26",
+      "link": "https://downloads.mariadb.org//mariadb/5.3.0/",
+      "release status": "Beta",
+      "name": "5.3.0"
+    }
+  ],
+  "10.0": [
+    {
+      "source": {
+        "filename": "mariadb-10.0.35.tar.gz",
+        "sha256:": "sha256sum: 1b8368e9653570ccb555a07db3de3a8b7277e7587a916d176d2ec70d3c05c00e",
+        "file size": "66.6 MB"
+      },
+      "release date": "2018-05-03",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.35/",
+      "release status": "Stable",
+      "name": "10.0.35"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.34.tar.gz",
+        "sha256:": "sha256sum: c5bb2a67dcce84ef39b59a63728a3d2a0196226041416491f0bc22d3388173ac",
+        "file size": "69.3 MB"
+      },
+      "release date": "2018-01-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.34/",
+      "release status": "Stable",
+      "name": "10.0.34"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.33.tar.gz",
+        "sha256:": "sha256sum: e3e3d583c51761aee2fcd0e51bfa7d592c1299cf5eb977e61ea9dc72932e8870",
+        "file size": "69.2 MB"
+      },
+      "release date": "2017-10-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.33/",
+      "release status": "Stable",
+      "name": "10.0.33"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.32.tar.gz",
+        "sha256:": "sha256sum: f7a8d9ba88b01d426f5d69e5044e505e444a5ce73e22c9c50913dade43725936",
+        "file size": "63.6 MB"
+      },
+      "release date": "2017-08-07",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.32/",
+      "release status": "Stable",
+      "name": "10.0.32"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.31.tar.gz",
+        "sha256:": "sha256sum: 371f2dae0b9e1a92939fba1efca77ac83ba15b6b6dcfd389ca5cbf79eb8b842a",
+        "file size": "63.5 MB"
+      },
+      "release date": "2017-05-23",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.31/",
+      "release status": "Stable",
+      "name": "10.0.31"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.30.tar.gz",
+        "sha256:": "sha256sum: 9a2cb7f06ecce1bb64dddc70c484e36507b50b756c110c1d37fa145a13a796bb",
+        "file size": "63.4 MB"
+      },
+      "release date": "2017-03-08",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.30/",
+      "release status": "Stable",
+      "name": "10.0.30"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.29.tar.gz",
+        "sha256:": "sha256sum: f5f8da646f7df4b1fb21adb8d2b15e6dfbe1964ceb8cea53207d580a464350f4",
+        "file size": "63.4 MB"
+      },
+      "release date": "2017-01-13",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.29/",
+      "release status": "Stable",
+      "name": "10.0.29"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.28.tar.gz",
+        "sha256:": "",
+        "file size": "63.3 MB"
+      },
+      "release date": "2016-10-28",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.28/",
+      "release status": "Stable",
+      "name": "10.0.28"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.27.tar.gz",
+        "sha256:": "",
+        "file size": "63.3 MB"
+      },
+      "release date": "2016-08-25",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.27/",
+      "release status": "Stable",
+      "name": "10.0.27"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.26.tar.gz",
+        "sha256:": "",
+        "file size": "57.6 MB"
+      },
+      "release date": "2016-06-24",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.26/",
+      "release status": "Stable",
+      "name": "10.0.26"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.25.tar.gz",
+        "sha256:": "",
+        "file size": "57.5 MB"
+      },
+      "release date": "2016-04-30",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.25/",
+      "release status": "Stable",
+      "name": "10.0.25"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.24.tar.gz",
+        "sha256:": "",
+        "file size": "57.4 MB"
+      },
+      "release date": "2016-02-19",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.24/",
+      "release status": "Stable",
+      "name": "10.0.24"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.23.tar.gz",
+        "sha256:": "",
+        "file size": "57.4 MB"
+      },
+      "release date": "2015-12-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.23/",
+      "release status": "Stable",
+      "name": "10.0.23"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.22.tar.gz",
+        "sha256:": "",
+        "file size": "56.3 MB"
+      },
+      "release date": "2015-10-29",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.22/",
+      "release status": "Stable",
+      "name": "10.0.22"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.21.tar.gz",
+        "sha256:": "",
+        "file size": "56.2 MB"
+      },
+      "release date": "2015-08-06",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.21/",
+      "release status": "Stable",
+      "name": "10.0.21"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.20.tar.gz",
+        "sha256:": "",
+        "file size": "56.2 MB"
+      },
+      "release date": "2015-06-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.20/",
+      "release status": "Stable",
+      "name": "10.0.20"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.19.tar.gz",
+        "sha256:": "",
+        "file size": "56.2 MB"
+      },
+      "release date": "2015-05-09",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.19/",
+      "release status": "Stable",
+      "name": "10.0.19"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.18.tar.gz",
+        "sha256:": "",
+        "file size": "56.2 MB"
+      },
+      "release date": "2015-05-07",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.18/",
+      "release status": "Stable",
+      "name": "10.0.18"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.17.tar.gz",
+        "sha256:": "",
+        "file size": "56.0 MB"
+      },
+      "release date": "2015-02-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.17/",
+      "release status": "Stable",
+      "name": "10.0.17"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.16.tar.gz",
+        "sha256:": "",
+        "file size": "55.7 MB"
+      },
+      "release date": "2015-01-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.16/",
+      "release status": "Stable",
+      "name": "10.0.16"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.15.tar.gz",
+        "sha256:": "",
+        "file size": "55.5 MB"
+      },
+      "release date": "2014-11-25",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.15/",
+      "release status": "Stable",
+      "name": "10.0.15"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.14.tar.gz",
+        "sha256:": "",
+        "file size": "51.2 MB"
+      },
+      "release date": "2014-09-23",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.14/",
+      "release status": "Stable",
+      "name": "10.0.14"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.13.tar.gz",
+        "sha256:": "",
+        "file size": "51.3 MB"
+      },
+      "release date": "2014-08-11",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.13/",
+      "release status": "Stable",
+      "name": "10.0.13"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.12.tar.gz",
+        "sha256:": "",
+        "file size": "51.1 MB"
+      },
+      "release date": "2014-06-16",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.12/",
+      "release status": "Stable",
+      "name": "10.0.12"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.11.tar.gz",
+        "sha256:": "",
+        "file size": "51.1 MB"
+      },
+      "release date": "2014-05-12",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.11/",
+      "release status": "Stable",
+      "name": "10.0.11"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.10.tar.gz",
+        "sha256:": "",
+        "file size": "51.9 MB"
+      },
+      "release date": "2014-03-31",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.10/",
+      "release status": "Stable",
+      "name": "10.0.10"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.9.tar.gz",
+        "sha256:": "",
+        "file size": "51.6 MB"
+      },
+      "release date": "2014-03-10",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.9/",
+      "release status": "Release Candidate",
+      "name": "10.0.9"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.8.tar.gz",
+        "sha256:": "",
+        "file size": "51.5 MB"
+      },
+      "release date": "2014-02-10",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.8/",
+      "release status": "Release Candidate",
+      "name": "10.0.8"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.7.tar.gz",
+        "sha256:": "",
+        "file size": "51.4 MB"
+      },
+      "release date": "2013-12-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.7/",
+      "release status": "Beta",
+      "name": "10.0.7"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.6.tar.gz",
+        "sha256:": "",
+        "file size": "50.4 MB"
+      },
+      "release date": "2013-11-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.6/",
+      "release status": "Beta",
+      "name": "10.0.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.5.tar.gz",
+        "sha256:": "",
+        "file size": "50.2 MB"
+      },
+      "release date": "2013-11-07",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.5/",
+      "release status": "Beta",
+      "name": "10.0.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.4.tar.gz",
+        "sha256:": "",
+        "file size": "31.1 MB"
+      },
+      "release date": "2013-08-16",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.4/",
+      "release status": "Alpha",
+      "name": "10.0.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.3.tar.gz",
+        "sha256:": "",
+        "file size": "30.0 MB"
+      },
+      "release date": "2013-06-11",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.3/",
+      "release status": "Alpha",
+      "name": "10.0.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.2.tar.gz",
+        "sha256:": "",
+        "file size": "29.9 MB"
+      },
+      "release date": "2013-04-24",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.2/",
+      "release status": "Alpha",
+      "name": "10.0.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.1.tar.gz",
+        "sha256:": "",
+        "file size": "29.1 MB"
+      },
+      "release date": "2013-02-06",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.1/",
+      "release status": "Alpha",
+      "name": "10.0.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.0.0.tar.gz",
+        "sha256:": "",
+        "file size": "28.8 MB"
+      },
+      "release date": "2012-11-12",
+      "link": "https://downloads.mariadb.org//mariadb/10.0.0/",
+      "release status": "Alpha",
+      "name": "10.0.0"
+    }
+  ],
+  "10.2": [
+    {
+      "source": {
+        "filename": "mariadb-10.2.15.tar.gz",
+        "sha256:": "sha256sum: 33de205158fc22fd8eb4e5770cc5ffa1cb4029f9c398dfd8c554ccb3e636ba11",
+        "file size": "73.3 MB"
+      },
+      "release date": "2018-05-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.15/",
+      "release status": "Stable",
+      "name": "10.2.15"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.14.tar.gz",
+        "sha256:": "sha256sum: 3443ec2d6e8af1eba49d097f6b2f6741c8d94b75abf19b8dd5753608f0703f7e",
+        "file size": "72.6 MB"
+      },
+      "release date": "2018-03-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.14/",
+      "release status": "Stable",
+      "name": "10.2.14"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.13.tar.gz",
+        "sha256:": "sha256sum: 272e7ed9300a05da9e02f8217a01ed3447c4f5a36a12e5233d62cc7c586fc753",
+        "file size": "72.6 MB"
+      },
+      "release date": "2018-02-13",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.13/",
+      "release status": "Stable",
+      "name": "10.2.13"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.12.tar.gz",
+        "sha256:": "sha256sum: 2ab22d7fbacfabc30fe18f71a8afb173250074502d889457e3cde2e203d341ec",
+        "file size": "72.8 MB"
+      },
+      "release date": "2018-01-04",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.12/",
+      "release status": "Stable",
+      "name": "10.2.12"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.11.tar.gz",
+        "sha256:": "sha256sum: 63555a810db905175a8bd714f6ec77d1b1a11fcfa6d4b97b448cf5bcb6caa3e8",
+        "file size": "72.8 MB"
+      },
+      "release date": "2017-11-28",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.11/",
+      "release status": "Stable",
+      "name": "10.2.11"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.10.tar.gz",
+        "sha256:": "sha256sum: 5c7b83c4d2f7501ef9f187d8c97688a24fd3e53dc43bb388f8e1cead61a92fc2",
+        "file size": "72.4 MB"
+      },
+      "release date": "2017-11-01",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.10/",
+      "release status": "Stable",
+      "name": "10.2.10"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.9.tar.gz",
+        "sha256:": "sha256sum: 12e0a01c52591ee77cf0f940fe65df024457fa16c70f08c6116048d576096124",
+        "file size": "70.9 MB"
+      },
+      "release date": "2017-09-28",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.9/",
+      "release status": "Stable",
+      "name": "10.2.9"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.8.tar.gz",
+        "sha256:": "sha256sum: 8dd250fe79f085e26f52ac448fbdb7af2a161f735fae3aed210680b9f2492393",
+        "file size": "73.5 MB"
+      },
+      "release date": "2017-08-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.8/",
+      "release status": "Stable",
+      "name": "10.2.8"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.7.tar.gz",
+        "sha256:": "sha256sum: 225ba1bbc48325ad38a9f433ff99da4641028f42404a29591cc370e4a676c0bc",
+        "file size": "67.7 MB"
+      },
+      "release date": "2017-07-12",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.7/",
+      "release status": "Stable",
+      "name": "10.2.7"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.6.tar.gz",
+        "sha256:": "sha256sum: c385c76e40d6e5f0577eba021805da5f494a30c9ef51884baefe206d5658a2e5",
+        "file size": "67.6 MB"
+      },
+      "release date": "2017-05-23",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.6/",
+      "release status": "Stable",
+      "name": "10.2.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.5.tar.gz",
+        "sha256:": "sha256sum: 6629bd2392ccba2fb30ce3a27efddba1f695ac739538007ad1d15caeed19ff50",
+        "file size": "67.2 MB"
+      },
+      "release date": "2017-04-05",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.5/",
+      "release status": "Release Candidate",
+      "name": "10.2.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.4.tar.gz",
+        "sha256:": "sha256sum: b73e353c29a0171d1057f14191c83d1f17e6f58ca09a79dda4b12c0e12b7f975",
+        "file size": "63.2 MB"
+      },
+      "release date": "2017-02-17",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.4/",
+      "release status": "Release Candidate",
+      "name": "10.2.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.3.tar.gz",
+        "sha256:": "",
+        "file size": "63.0 MB"
+      },
+      "release date": "2016-12-24",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.3/",
+      "release status": "Beta",
+      "name": "10.2.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.2.tar.gz",
+        "sha256:": "",
+        "file size": "62.7 MB"
+      },
+      "release date": "2016-09-27",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.2/",
+      "release status": "Beta",
+      "name": "10.2.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.1.tar.gz",
+        "sha256:": "",
+        "file size": "55.7 MB"
+      },
+      "release date": "2016-07-04",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.1/",
+      "release status": "Alpha",
+      "name": "10.2.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.2.0.tar.gz",
+        "sha256:": "",
+        "file size": "55.4 MB"
+      },
+      "release date": "2016-04-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.2.0/",
+      "release status": "Alpha",
+      "name": "10.2.0"
+    }
+  ],
+  "10.3": [
+    {
+      "source": {
+        "filename": "mariadb-10.3.6.tar.gz",
+        "sha256:": "sha256sum: 4957dff3514ae715ef7db3d8324924afbb11a1760bd6ab679e217915969c0f37",
+        "file size": "71.1 MB"
+      },
+      "release date": "2018-04-16",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.6/",
+      "release status": "Release Candidate",
+      "name": "10.3.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.5.tar.gz",
+        "sha256:": "sha256sum: cbb81f5f7e25c822db6683bbb43b3aad328622fa86da81c1ddeee8005523b203",
+        "file size": "70.9 MB"
+      },
+      "release date": "2018-02-26",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.5/",
+      "release status": "Release Candidate",
+      "name": "10.3.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.4.tar.gz",
+        "sha256:": "sha256sum: 5b7146c528e53083c36141cff6a1d24cae77285acceeb84fd446956c52e5ba5b",
+        "file size": "70.9 MB"
+      },
+      "release date": "2018-01-18",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.4/",
+      "release status": "Beta",
+      "name": "10.3.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.3.tar.gz",
+        "sha256:": "sha256sum: ad80edacbf3cb39fbeb3a022803362e0da78dadb4aae611a126a7c8cd2c0c24b",
+        "file size": "70.9 MB"
+      },
+      "release date": "2017-12-23",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.3/",
+      "release status": "Beta",
+      "name": "10.3.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.2.tar.gz",
+        "sha256:": "sha256sum: c859aa48cb444ecb7a76ee16103521239f7b9031d4ebf532d6cb73cc4f685ea8",
+        "file size": "69.0 MB"
+      },
+      "release date": "2017-10-09",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.2/",
+      "release status": "Alpha",
+      "name": "10.3.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.1.tar.gz",
+        "sha256:": "sha256sum: 3f6d45c7067033f161e505b6d8db6c559fa9c4c16459903f393d555e76e1d507",
+        "file size": "71.5 MB"
+      },
+      "release date": "2017-08-29",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.1/",
+      "release status": "Alpha",
+      "name": "10.3.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-10.3.0.tar.gz",
+        "sha256:": "sha256sum: e533ee825582d9876ab3984664e0b343a8ae4f66eab58b8a9d64a4dfa4271031",
+        "file size": "67.5 MB"
+      },
+      "release date": "2017-04-16",
+      "link": "https://downloads.mariadb.org//mariadb/10.3.0/",
+      "release status": "Alpha",
+      "name": "10.3.0"
+    }
+  ],
+  "5.2": [
+    {
+      "source": {
+        "filename": "mariadb-5.2.14.tar.gz",
+        "sha256:": "",
+        "file size": "25.5 MB"
+      },
+      "release date": "2013-01-30",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.14/",
+      "release status": "Stable",
+      "name": "5.2.14"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.13.tar.gz",
+        "sha256:": "",
+        "file size": "25.5 MB"
+      },
+      "release date": "2012-11-29",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.13/",
+      "release status": "Stable",
+      "name": "5.2.13"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.12.tar.gz",
+        "sha256:": "",
+        "file size": "25.4 MB"
+      },
+      "release date": "2012-04-06",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.12/",
+      "release status": "Stable",
+      "name": "5.2.12"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.11.tar.gz",
+        "sha256:": "",
+        "file size": "25.3 MB"
+      },
+      "release date": "2012-04-02",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.11/",
+      "release status": "Stable",
+      "name": "5.2.11"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.10.tar.gz",
+        "sha256:": "",
+        "file size": "25.2 MB"
+      },
+      "release date": "2011-12-05",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.10/",
+      "release status": "Stable",
+      "name": "5.2.10"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.9.tar.gz",
+        "sha256:": "",
+        "file size": "25.1 MB"
+      },
+      "release date": "2011-09-22",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.9/",
+      "release status": "Stable",
+      "name": "5.2.9"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.8.tar.gz",
+        "sha256:": "",
+        "file size": "25.1 MB"
+      },
+      "release date": "2011-08-18",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.8/",
+      "release status": "Stable",
+      "name": "5.2.8"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.7.tar.gz",
+        "sha256:": "",
+        "file size": "25.1 MB"
+      },
+      "release date": "2011-06-14",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.7/",
+      "release status": "Stable",
+      "name": "5.2.7"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.6.tar.gz",
+        "sha256:": "",
+        "file size": "25.1 MB"
+      },
+      "release date": "2011-05-12",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.6/",
+      "release status": "Stable",
+      "name": "5.2.6"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.5.tar.gz",
+        "sha256:": "",
+        "file size": "24.9 MB"
+      },
+      "release date": "2011-03-03",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.5/",
+      "release status": "Stable",
+      "name": "5.2.5"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.4.tar.gz",
+        "sha256:": "",
+        "file size": "25.0 MB"
+      },
+      "release date": "2010-12-06",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.4/",
+      "release status": "Stable",
+      "name": "5.2.4"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.3.tar.gz",
+        "sha256:": "",
+        "file size": "24.9 MB"
+      },
+      "release date": "2010-11-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.3/",
+      "release status": "Stable",
+      "name": "5.2.3"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.2-gamma.tar.gz",
+        "sha256:": "",
+        "file size": "24.9 MB"
+      },
+      "release date": "2010-09-28",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.2/",
+      "release status": "Gamma",
+      "name": "5.2.2"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.1-beta.tar.gz",
+        "sha256:": "",
+        "file size": "24.5 MB"
+      },
+      "release date": "2010-06-18",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.1/",
+      "release status": "Beta",
+      "name": "5.2.1"
+    },
+    {
+      "source": {
+        "filename": "mariadb-5.2.0-beta.tar.gz",
+        "sha256:": "",
+        "file size": "21.9 MB"
+      },
+      "release date": "2010-04-10",
+      "link": "https://downloads.mariadb.org//mariadb/5.2.0/",
+      "release status": "Beta",
+      "name": "5.2.0"
+    }
+  ]
+}
