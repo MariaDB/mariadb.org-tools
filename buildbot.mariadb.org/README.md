@@ -43,13 +43,13 @@ buildbot.mariadb.org/
 4 directories, 14 files
 ```
 
-__buildbot.tac__: the only application configuration file Buildbot needs to get up and running in master mode, this one can remain largely unchanged
-__dockerfiles/buildbot.tac__: worker application configuration file, being sent by the master to the Docker workers
-__dockerfiles/*.dockerfile__: docker image files, also sent from the master to the docker based worker machines
-__master.cfg__: the master configuration file, describes the build scheme and all other site site specific configuration
-__sponsor.py__: custom Buildbot dashboard plugin that adds a menu item named *Sponsors*, used to list all the donated servers that are being used by this instance
-__static__: image logos for the donors HTML presentation of the dashboard plugin
-__templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin.
+* __buildbot.tac__: the only application configuration file Buildbot needs to get up and running in master mode, this one can remain largely unchanged
+* __dockerfiles/buildbot.tac__: worker application configuration file, being sent by the master to the Docker workers
+* __dockerfiles/*.dockerfile__: docker image files, also sent from the master to the docker based worker machines
+* __master.cfg__: the master configuration file, describes the build scheme and all other site site specific configuration
+* __sponsor.py__: custom Buildbot dashboard plugin that adds a menu item named *Sponsors*, used to list all the donated servers that are being used by this instance
+* __static__: image logos for the donors HTML presentation of the dashboard plugin
+* __templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin.
               
 ## A word on Docker
 ===================
