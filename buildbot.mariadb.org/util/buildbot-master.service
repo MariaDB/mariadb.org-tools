@@ -1,0 +1,15 @@
+[Unit]
+Description=BuildBot master service
+After=network.target
+Documentation=man:buildbot(1) https://docs.buildbot.net/
+
+[Service]
+User=buildmaster
+Group=buildmaster
+WorkingDirectory=/srv/buildbot/master
+ExecStart=/usr/local/bin/buildbot start --nodaemon
+ExecStop=/usr/local/bin/buildbot stop
+ExecReload=/usr/local/bin/buildbot reconfig
+
+[Install]
+WantedBy=multi-user.target
