@@ -33,9 +33,7 @@ buildbot.mariadb.org/
 ├── readme.md
 ├── sponsor.py
 ├── static
-│   ├── bytemark.png
-│   ├── digital-ocean.png
-│   └── hetzner.jpg
+│   └── (sponsor logos)
 ├── templates
 │   └── sponsor.html
 └── util
@@ -50,7 +48,7 @@ buildbot.mariadb.org/
 * __sponsor.py__: custom Buildbot dashboard plugin that adds a menu item named *Sponsors*, used to list all the donated servers that are being used by this instance
 * __static__: image logos for the donors HTML presentation of the dashboard plugin
 * __templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin.
-              
+
 ## A word on Docker
 ===================
 
@@ -71,26 +69,25 @@ One notable change is that, by default, new Buildbot does not load massive build
 # Debugging build failures
 ==========================  
 
-Debugging build failures with Docker is facilitated by the ease of replicating the actual build environment where a particular builder failed. First step is to identify on which platform the failure occurred and what's the associated Dockerfile for that target. Installing Docker on your development machine is the next step:
-https://docs.docker.com/install/
-If you're not familiar with Docker, container workflow this is a good place:
-https://docs.docker.com/get-started/
-After you identified the platform, look for the associated dockerfile in the dockerfiles/ directory and download that to your machine. To create a container for Ubuntu 18.04 for e.g. you would use the *docker build* command:
-`docker build -t ubuntu-1804 ubuntu1804.dockerfile`
+Debugging build failures with Docker is facilitated by the ease of replicating the actual build environment where a particular builder failed. First step is to identify on which platform the failure occurred and what's the associated Dockerfile for tha target. If you're not familiar with Docker, start by reading up the [Docker getting started documentation](https://docs.docker.com/get-started/) and [install Docker](https://docs.docker.com/install/) on your local machine.:
+
+To repeat a build on buildbot, first identify the platform and look for the associated dockerfile in the dockerfiles/ directory. To create a container for Ubuntu 18.04 for e.g. you would use the *docker build* command like this:
+`docker build -t ubuntu-1804 --file ubuntu1804.dockerfile .`
+
 After a successful image build, you can run a container and execute bash using that image with *docker run*:
 `docker run -it ubuntu-1804 bash`
 
-After this step you would follow the usual MariaDB development setup instructions, i.e. clone the repo and start a build.
+After this step you can follow the usual MariaDB development setup instructions, i.e. clone the repo and start a build. To specifically reproduce what a particular Buildbot worker did, look into the master.cfg configuration file what addStep() has been defined for that worker, and copy paste the contents of those into the session you are running in the Docker image.
 
 # Deployment
 ============
 
 Deploying a new master (since Buildbot > 1.0 supports multi-master configuration):
 
-1. Setup your server. This configuration has been tested on buildbot 1.3.0 and Ubuntu so far.
+1. Setup your server. This configuration has been tested on Buildbot 1.3.0 and Ubuntu so far.
 2. Install Buildbot, you have two options here:
-   a) install from the official distribution repositories or
-   b) install from the PyPi repository which should have the latest stable release
+   a) install from the official distribution repositories (1.1 in Ubuntu 18.04)
+   b) install from the PyPi repository which should have the latest stable release (1.3 in August 2018)
    Follow the official install instructions here:
    http://docs.buildbot.net/latest/manual/installation/installation.html
 3. Clone this directory to your desired master destination. A good choice on Ubuntu would be:
@@ -112,28 +109,24 @@ Master.cfg is a Python script and defines the behavior of Buildbot. These are th
 * PROJECT IDENTITY - various site specific definitions
 * WORKERS - defines the list of recognized workers by this instance
 * CHANGESOURCES - defines list of repositories to watch for changes
-* SCHEDULERS - defines what changes we are interested in and triggers appropriate builders based on that 
+* SCHEDULERS - defines what changes we are interested in and triggers appropriate builders based on that
 * BUILDERS & FACTORY CODE - defines the steps for any individual builder
 
 Also, master.cfg sources a private config file that is not included in this repo, namely *master-private.cfg*. This file should include a Python dictionary with private information like Worker passwords, Database url and anything else not deemed for public disclosure.
 
 ## Adding workers
 
-There's currently two types of workers that we use. Normal Buildbot workers, running bare-bones builds and can be added using:
-`c['workers'].append(mkWorker("bm-bbw1-ubuntu1804"))`
+There's currently two types of workers that we use. Normal Buildbot workers, running bare-bones builds and can be added using `c['workers'].append(mkWorker("bm-bbw1-ubuntu1804"))`.
 
-For instructions on setting up a Buildbot Worker see:
-http://docs.buildbot.net/latest/manual/installation/worker.html
+For instructions on setting up a Buildbot Worker see http://docs.buildbot.net/latest/manual/installation/worker.html.
 
-The other type of worker we use is DockerLatentWorker. It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
-
-http://docs.buildbot.net/latest/manual/cfg-workers-docker.html
+The other type of worker we use is [DockerLatentWorker](http://docs.buildbot.net/latest/manual/cfg-workers-docker.html). It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
 
 Adding a Docker based worker is as simple as providing the IP address to the Docker server and everything else can be handled on the master side.
 
 We currently have 2 Docker instances:
-do-ubuntu-1804-bbw1-docker: DigitalOcean worker 1 running Debian/Ubuntu (including main tarbake) builds
-do-ubuntu-1804-bbw2-docker: DigitalOcean worker 2 running Fedora, CentOS, OpenSuSe docker builds
+* `do-ubuntu-1804-bbw1-docker`: DigitalOcean worker 1 running Debian/Ubuntu (including main tarbake) builds
+* `do-ubuntu-1804-bbw2-docker`: DigitalOcean worker 2 running Fedora, CentOS, OpenSuSe docker builds
 
 This separation is purely conventional and can be arbitrarily implemented subject to available resources on each Docker host.
 
@@ -150,16 +143,14 @@ c['workers'].append(worker.DockerLatentWorker("do-bbw1-docker-tarball", None,
 
 ## Current build matrix
 
-We currently define a build matrix via *supportedPlatforms* which specified which builders should we run for a particular change after figuring out which branch it is based on. For this particular reason, all branch names should follow this particular format if it should be picked up by Buildbot:
-`10.0-suffix`
-`prefix-5.5-suffix`
+We currently define a build matrix via _supportedPlatforms_ which specified which builders should we run for a particular change after figuring out which branch it is based on. For this particular reason, all branch names should follow the following naming scheme: `<version>-<suffix>` or `<prefix>-<version>-<suffix>`.
 
-The main MariaDB branch name should be either prefix or included in the middle so that Buildbot picks that up. A couple example valid branch names:
-* `10.4` - current main active development branch
-* `bb-10.3-feature` - buildbot feature branch
-* `hf-5.5-fixbug` - hotfix branch
-* `staging-10.1`  - staging branch
-* `otto-10.2-ok`  - personal development/merge tree branch
+Examples
+* `10.4` - main development branch that becomes the next 10.4.x release
+* `10.0-galera` - main development branch that becomes the next 10.0.x Galera release
+* `bb-10.3-feature` - feature branch targetting next 10.3.x release, tested by Buildbot normally
+* `hf-5.5-fixbug` - hotfix branch targetting next 5.5.x release, **not** tested by Buildbot as it lacks bb-*
+
 
 ## Adding builders
 
@@ -167,4 +158,3 @@ http://docs.buildbot.net/latest/manual/cfg-builders.html
 http://docs.buildbot.net/latest/manual/cfg-buildsteps.html
 
 -TBD-
-
