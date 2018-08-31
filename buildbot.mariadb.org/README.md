@@ -54,7 +54,7 @@ buildbot.mariadb.org/
 
 We are using Docker for targeting Linux builds. This makes it easy (and cheap) to add new distribution flavored builders with just a Dockerfile, while also facilitating environment replication locally, without much effort, making it easy to inspect, reproduce the build environment and debug failures.
 
-Using Buildbot's DockerLatentWorker to connect to docker instances, the worker runs inside the Docker image, and on a build trigger, master connects to Docker first via docker-py , instantiates the image and then connects using Buildbot usual Worker API to do the heavy lifting. Upon build completion, the image is stopped and no left-overs are left behind.
+Using Buildbot's DockerLatentWorker to connect to docker instances, the worker runs inside the Docker image, and on a build trigger, master connects to Docker first via docker-py , instantiates the image and then connects using Buildbot usual worker API to do the heavy lifting. Upon build completion, the image is stopped and no left-overs are left behind.
 
 
 ## Navigating the new interface
@@ -62,7 +62,7 @@ Using Buildbot's DockerLatentWorker to connect to docker instances, the worker r
 
 Starting with version 1.0, Buildbot interface changed in a significant and positive manner. The new UI is a fresh rewrite with responsive, lazy loading and modern web conveniences that makes it easy to follow running builds as well as convenient to browse build history.
 
-Grid View and MTRLogObserver plugin are usable out of the box and behave in a similar fashion as in the current Buildbot instance.
+Grid View and MTRLogObserver plugins are usable out of the box and behave in a similar fashion as in the current Buildbot instance.
 
 One notable change is that, by default, new Buildbot does not load massive build/revision/branch/change historical data unless you increase the default numbers in _Settings_ -> _Grid related settings_ in your current browser session. 40 revisions, 1000 for changes & builds are good for a start. Play around with the values you see in Settings pane, they enable some of the behavior from current Buildbot, that you might be used to.
 
@@ -71,7 +71,7 @@ One notable change is that, by default, new Buildbot does not load massive build
 
 Debugging build failures with Docker is facilitated by the ease of replicating the actual build environment where a particular builder failed. First step is to identify on which platform the failure occurred and what's the associated Dockerfile for tha target. If you're not familiar with Docker, start by reading up the [Docker getting started documentation](https://docs.docker.com/get-started/) and [install Docker](https://docs.docker.com/install/) on your local machine.:
 
-To repeat a build on buildbot, first identify the platform and look for the associated dockerfile in the dockerfiles/ directory. To create a container for Ubuntu 18.04 for e.g. you would use the *docker build* command like this:
+To reproduce a build, first identify the platform and look for the associated dockerfile in the dockerfiles/ directory. To create a container for Ubuntu 18.04 for e.g. you would use the *docker build* command like this:
 `docker build -t ubuntu-1804 --file ubuntu1804.dockerfile .`
 
 After a successful image build, you can run a container and execute bash using that image with *docker run*:
@@ -112,17 +112,17 @@ Master.cfg is a Python script and defines the behavior of Buildbot. These are th
 * SCHEDULERS - defines what changes we are interested in and triggers appropriate builders based on that
 * BUILDERS & FACTORY CODE - defines the steps for any individual builder
 
-Also, master.cfg sources a private config file that is not included in this repo, namely *master-private.cfg*. This file should include a Python dictionary with private information like Worker passwords, Database url and anything else not deemed for public disclosure.
+Also, master.cfg sources a private config file that is not included in this repo, namely *master-private.cfg*. This file should include a Python dictionary with private information like worker passwords, Database url and anything else not deemed for public disclosure.
 
 ### Reloading the master
 
-For changes to the master.cfg to take effect, the server needs to be reloaded. While doing this, please keep an eye on the logs with `tail -f /srv/buildbot/master/twistd.log`. The Buildbot master is managed by our own rolled systemd file. To invoke a reload run `sudo systemctl reload buildbot-master`. The other usual systemctl are also available (`status`, `restart`).
+For changes to the master.cfg to take effect, the server needs to be reloaded. While doing this, please keep an eye on the logs with `tail -f /srv/buildbot/master/twistd.log`. The Buildbot master is managed by our own rolled systemd file. To invoke a reload run `sudo systemctl reload buildbot-master`. The other usual systemctl are also available (`status`, `restart`). It is also considered good practice to check the changes you make for syntax or other problems with the `buildbot checkconfig master.cfg` command before restarting or reconfiguring the server.
 
 ## Adding workers
 
 There's currently two types of workers that we use. Normal Buildbot workers, running bare-bones builds and can be added using `c['workers'].append(mkWorker("bm-bbw1-ubuntu1804"))`.
 
-For instructions on setting up a Buildbot Worker see http://docs.buildbot.net/latest/manual/installation/worker.html.
+For instructions on setting up a Buildbot worker see http://docs.buildbot.net/latest/manual/installation/worker.html.
 
 The other type of worker we use is [DockerLatentWorker](http://docs.buildbot.net/latest/manual/cfg-workers-docker.html). It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
 
