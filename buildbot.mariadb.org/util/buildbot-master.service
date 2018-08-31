@@ -9,7 +9,7 @@ Group=buildmaster
 WorkingDirectory=/srv/buildbot/master
 ExecStart=/usr/local/bin/buildbot start --nodaemon
 ExecStop=/usr/local/bin/buildbot stop
-ExecReload=/usr/local/bin/buildbot reconfig
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target
