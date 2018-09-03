@@ -43,7 +43,7 @@ buildbot.mariadb.org/
 
 * __buildbot.tac__: the only application configuration file Buildbot needs to get up and running in master mode, this one can remain largely unchanged
 * __dockerfiles/buildbot.tac__: worker application configuration file, being sent by the master to the Docker workers
-* __dockerfiles/*.dockerfile__: docker image files, also sent from the master to the docker based worker machines
+* __dockerfiles/*.dockerfile__: [docker image files](https://docs.docker.com/engine/reference/builder/), also sent from the master to the docker based worker machines
 * __master.cfg__: the master configuration file, describes the build scheme and all other site site specific configuration
 * __sponsor.py__: custom Buildbot dashboard plugin that adds a menu item named *Sponsors*, used to list all the donated servers that are being used by this instance
 * __static__: image logos for the donors HTML presentation of the dashboard plugin
@@ -69,7 +69,7 @@ One notable change is that, by default, new Buildbot does not load massive build
 # Debugging build failures
 ==========================  
 
-Debugging build failures with Docker is facilitated by the ease of replicating the actual build environment where a particular builder failed. First step is to identify on which platform the failure occurred and what's the associated Dockerfile for tha target. If you're not familiar with Docker, start by reading up the [Docker getting started documentation](https://docs.docker.com/get-started/) and [install Docker](https://docs.docker.com/install/) on your local machine.:
+Debugging build failures with Docker is facilitated by the ease of replicating the actual build environment where a particular builder failed. First step is to identify on which platform the failure occurred and what's the associated Dockerfile. If you're not familiar with Docker, start by reading the [Docker overview](https://docs.docker.com/engine/docker-overview/) and [Docker getting started documentation](https://docs.docker.com/get-started/).
 
 To reproduce a build, first identify the platform and look for the associated dockerfile in the dockerfiles/ directory. To create a container for Ubuntu 18.04 for e.g. you would use the *docker build* command like this:
 `docker build -t ubuntu-1804 --file ubuntu1804.dockerfile .`
@@ -112,7 +112,7 @@ Master.cfg is a Python script and defines the behavior of Buildbot. These are th
 * SCHEDULERS - defines what changes we are interested in and triggers appropriate builders based on that
 * BUILDERS & FACTORY CODE - defines the steps for any individual builder
 
-Also, master.cfg sources a private config file that is not included in this repo, namely *master-private.cfg*. This file should include a Python dictionary with private information like worker passwords, Database url and anything else not deemed for public disclosure.
+Also, master.cfg sources a private config file that is not included in this repo, namely *master-private.cfg*. This file should include a Python dictionary with private information like worker passwords, database url and anything else not deemed for public disclosure.
 
 ### Reloading the master
 
@@ -152,8 +152,8 @@ We currently define a build matrix via _supportedPlatforms_ which specified whic
 Examples
 * `10.4` - main development branch that becomes the next 10.4.x release
 * `10.0-galera` - main development branch that becomes the next 10.0.x Galera release
-* `bb-10.3-feature` - feature branch targetting next 10.3.x release, tested by Buildbot normally
-* `hf-5.5-fixbug` - hotfix branch targetting next 5.5.x release, **not** tested by Buildbot as it lacks bb-*
+* `bb-10.3-feature` - feature branch targeting next 10.3.x release, tested by Buildbot normally
+* `hf-5.5-fixbug` - hotfix branch targeting next 5.5.x release, **not** tested by Buildbot as it lacks bb-*
 
 
 ## Adding builders
