@@ -54,6 +54,8 @@ win
 # bundle members versions
 cj17='1.7.4'
 cj22='2.2.6'
+cj23='2.3.0'
+cc23='2.3.7'
 cc30='3.0.6'
 co30='3.0.6'
 cn07='0.7.0'
@@ -189,11 +191,13 @@ for bundle in ${bundles}; do
   pushd ${dir}
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj22}/mariadb-java-client-${cj22}.jar ./
+    rsync ${rsync_opts} ${cj_home}/connector-java-${cj23}/mariadb-java-client-${cj23}.jar ./
 
     rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn07}/mariadb-connector-nodejs-${cn07}.tar.gz ./
 
     case ${dist} in
       ubuntu|debian)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*debian-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/dists/${ver}/main/binary-amd64/maxscale-${maxscale}*deb ./
@@ -201,6 +205,7 @@ for bundle in ${bundles}; do
         rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/repo/${dist}/mariadb-${num}-${bundle}-debs.tar ./
         ;;
       rhel)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*${dist}${ver}-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
@@ -208,6 +213,7 @@ for bundle in ${bundles}; do
         rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/yum/${dist}/mariadb-${num}-${bundle}-rpms.tar ./
         ;;
       sles)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*rhel6-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
