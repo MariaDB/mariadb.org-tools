@@ -32,13 +32,13 @@ kvm-rpm-centos73-amd64:centos73-x86_64:rhel/7/x86_64
 kvm-rpm-centos73-ppc64:centos73-ppc64:rhel/7/ppc64
 kvm-rpm-centos73-ppc64le:centos73-ppc64le:rhel/7/ppc64le
 kvm-rpm-centos74-aarch64:centos74-aarch64:rhel/7/aarch64
-kvm-rpm-fedora26-amd64:fedora26-x86_64:fedora/26/x86_64:fc26.x86_64
 kvm-zyp-sles114-amd64:sles114-x86_64:sles/11/x86_64
 kvm-zyp-sles114-x86:sles114-i686:sles/11/i386
-kvm-zyp-sles12-amd64:sles12-x86_64:sles/12/x86_64
+kvm-zyp-sles123-amd64:sles123-x86_64:sles/12/x86_64
 kvm-zyp-opensuse42-amd64:opensuse42-x86_64:opensuse/42/x86_64
 p8-suse12-rpm-ppc64le:suse12-ppc64le:sles/12/ppc64le
 " 
+
 old_dists="
 p8-rhel6-rpm-ppc64:rhel6-ppc64:rhel/6/ppc64
 p8-rhel7-rpm-ppc64le:rhel7-ppc64le:rhel/7/ppc64le
@@ -51,6 +51,7 @@ kvm-rpm-centos74-amd64:centos74-x86_64:rhel/7.4/x86_64
 kvm-rpm-centos7-amd64:centos7-x86_64:rhel/7/x86_64
 kvm-rpm-fedora25-amd64:fedora25-x86_64:fedora/25/x86_64:fc25.x86_64
 kvm-rpm-fedora25-x86:fedora25-i686:fedora/25/i386:fc25.i686
+kvm-rpm-fedora26-amd64:fedora26-x86_64:fedora/26/x86_64:fc26.x86_64
 "
 
 cd ${dir_rpm_shared}
@@ -70,8 +71,10 @@ for dist_pair in ${dists}; do
       cp -avi ${dir_release}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-${version}-${dist[1]}-shared.rpm ./
       ;;
   esac
-  if [ -e "mariadb-shared-10.1-${dist[0]}.rpm" ]; then
+  if [ -L "mariadb-shared-10.1-${dist[0]}.rpm" ]; then
     rm -v mariadb-shared-10.1-${dist[0]}.rpm
+  else
+    echo "not removing mariadb-shared-10.1-${dist[0]}.rpm because it doesn't exist"
   fi
   ln -sv MariaDB-${version}-${dist[1]}-shared.rpm mariadb-shared-10.1-${dist[0]}.rpm
   echo;echo
