@@ -106,7 +106,7 @@ copy_and_stage_files() {
     # Windows files
     cp -avi ${dir_build}/win*/*msi ${dir_odbc}/
     # Src file
-    cp -avi ${dir_build}/*.gz ${dir_odbc}/
+    cp -avi ${dir_build}/*/*.zip ${dir_odbc}/
   popd
   echo;echo;echo
 }
