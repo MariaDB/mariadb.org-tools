@@ -57,6 +57,7 @@ cj23='2.3.0'
 cc23='2.3.7'
 cc30='3.0.6'
 co30='3.0.6'
+co20='2.0.18'
 cn07='0.7.0'
 maxscale='2.2.13'
 
@@ -197,6 +198,7 @@ for bundle in ${bundles}; do
       ubuntu|debian)
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co20}/*debian-x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*debian-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/dists/${ver}/main/binary-amd64/maxscale-${maxscale}*deb ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/dists/${ver}/main/binary-amd64/maxscale-cdc-connector-${maxscale}*deb ./
@@ -205,6 +207,7 @@ for bundle in ${bundles}; do
       rhel)
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co20}/*${dist}${ver}-x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*${dist}${ver}-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
@@ -213,6 +216,7 @@ for bundle in ${bundles}; do
       sles)
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*x86_64*gz ./
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co20}/*rhel6-x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*rhel6-x86_64*gz ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
         rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
