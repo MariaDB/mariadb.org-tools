@@ -1395,6 +1395,20 @@ if [ "${galera_suffix}" != "-galera" ]; then
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
         wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
+
+        # Download debugsymbols package for 10.2+ releases
+        if [ "${pkgtype}" = "zip" ]; then
+          case ${tree} in
+            '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release')
+              echo "+ tree=${tree}, so not downloading debugsymbols package..."
+              ;;
+            *)
+              echo "+ tree=${tree}, so downloading debugsymbols package..."
+              wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
+              ;;
+          esac
+        fi
+
       done
       #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
       wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
