@@ -61,9 +61,6 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
 
     sles114-x86
     sles114-amd64
-
-    sles12-amd64
-    sles12-ppc64le
   "
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
   dists="
@@ -122,6 +119,7 @@ else
 
     sles12-amd64
     sles12-ppc64le
+    sles150-amd64
   "
 fi
 
