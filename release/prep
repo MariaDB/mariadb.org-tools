@@ -36,31 +36,6 @@ set -eu
   # -x  Print a trace of simple commands and their arguments after they are
   #     expanded and before they are executed.
 
-#------------------------------------------------------------------------------
-# Options (set these before running the script)
-#------------------------------------------------------------------------------
-
-
-# The ${galera_suffix} var contains text added to the end of the directory
-# name, and to certain file names when this script is processing a release of
-# MariaDB Galera Cluster. When not processing a galera release, it is empty.
-# Simply uncomment the appropriate of the two lines below:
-#galera_suffix="-galera"
-#galera_suffix=""
-
-# Set ${ver_galera} to the currently supported Galera versions,
-# multiple versions are separated with spaces.
-ver_galera="25.3.23"
-
-# Set ${ver_galera_preferred} to the version we include in the bintars and
-# repositories (often the same as ${ver_galera} but can be different).
-ver_galera_preferred="25.3.23"
-
-# We will now set the ${tree}, ${rev}, ${num}, and ${tarbuildnum} variables.
-# Duplicate & edit the appropriate lines below. Old settings are generally
-# commented out & saved for future reference. Make doubly sure all are set to
-# the correct values for the release.
-
 #-------------------------------------------------------------------------------
 # Options below this point you probably don't need to change
 #-------------------------------------------------------------------------------
@@ -244,8 +219,8 @@ dir_maxscale="/path/to/maxscale" # Location of maxscale pkgs
 
 dir_bundles="/path/to/bundles/TX" # where bundle tarballs should be saved
 
-ver_galera="25.3.23"                        # galera version[s] in our repos
-ver_galera_preferred="25.3.23"              # preferred galera version
+ver_galera="25.3.24"                        # galera version[s] in our repos
+ver_galera_preferred="25.3.24"              # preferred galera version
 ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
