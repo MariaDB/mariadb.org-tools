@@ -40,13 +40,13 @@ ubuntu-trusty-amd64
 ubuntu-xenial-amd64
 ubuntu-bionic-amd64
 
-debian-wheezy-amd64
 debian-stretch-amd64
 debian-jessie-amd64
 
 rhel-6-x86_64
 rhel-7-x86_64
 sles-12-x86_64
+sles-15-x86_64
 
 win
 "
@@ -58,7 +58,7 @@ cc23='2.3.7'
 cc30='3.0.6'
 co30='3.0.6'
 co20='2.0.18'
-cn07='0.7.0'
+cn20='2.0.0'
 maxscale='2.2.13'
 
 
@@ -151,11 +151,6 @@ for bundle in ${bundles}; do
       dist="ubuntu"
       ver="bionic"
       ;;
-    debian-wheezy-amd64)
-      dir="mariadb-tx-3.0-${num}-debian-7"
-      dist="debian"
-      ver="wheezy"
-      ;;
     debian-jessie-amd64)
       dir="mariadb-tx-3.0-${num}-debian-8"
       dist="debian"
@@ -181,6 +176,11 @@ for bundle in ${bundles}; do
       dist="sles"
       ver="12"
       ;;
+    sles-15-x86_64)
+      dir="mariadb-tx-3.0-${num}-sles-15"
+      dist="sles"
+      ver="15"
+      ;;
     win)
       dir="mariadb-tx-3.0-${num}-windows"
       dist="win"
@@ -192,7 +192,7 @@ for bundle in ${bundles}; do
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj23}/mariadb-java-client-${cj23}.jar ./
 
-    rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn07}/mariadb-connector-nodejs-${cn07}.tar.gz ./
+    rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn20}/mariadb-connector-nodejs-${cn20}.tar.gz ./
 
     case ${dist} in
       ubuntu|debian)
