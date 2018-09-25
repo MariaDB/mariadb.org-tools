@@ -65,6 +65,7 @@ deb_dists_full="
   trusty-ppc64le
   trusty-x86
 
+  xenial-aarch64
   xenial-amd64
   xenial-ppc64le
   xenial-x86
