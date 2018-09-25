@@ -503,6 +503,18 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
+    'sles150-amd64')
+      runCommand mkdir -vp sles/15.0/x86_64
+      maybe_make_symlink sles/15.0/x86_64 sles150-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-zyp-sles150-amd64/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
     *)
       # We should not ever reach this, error
       thickline
