@@ -223,19 +223,20 @@ case ${TREE} in
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
     #debian_dists='"squeeze debian6" "wheezy wheezy"'
     #debian_dists="${squeeze} wheezy"
-    debian_dists="wheezy"
+    #debian_dists="wheezy"
+    echo "+ No Packages for Debian for MariaDB ${TREE}"
     ;;
   '10.0e'|'10.0e-galera')
-    debian_dists="wheezy jessie"
+    debian_dists="jessie"
     ;;
   '10.0'|'10.0-galera')
-    debian_dists="wheezy jessie"
+    debian_dists="jessie"
     ;;
   '10.1')
-    debian_dists="wheezy jessie stretch sid"
+    debian_dists="jessie stretch sid"
     ;;
   *)
-    debian_dists="wheezy jessie stretch sid"
+    debian_dists="jessie stretch sid"
     ;;
 esac
 
@@ -260,7 +261,7 @@ for dist in ${debian_dists}; do
       ;;
     'stretch'|'sid')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      runCommand sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      #runCommand sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
