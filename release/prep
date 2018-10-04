@@ -878,6 +878,12 @@ display_the_previous_yum_directory() {
   pressAnyKeyToContinue
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  exclude_an_old_release_from_the_yum_dir
+#   DESCRIPTION:  This function sets the exclude_release variable. If this
+#                 variable is set to something non-zero then the rsync that
+#                 handles the yum repo will exclude it.
+#===============================================================================
 exclude_an_old_release_from_the_yum_dir() {
   userInput "What release should I exclude? (e.g. 10.2.13)"
   exclude_release="${INPUT}"
