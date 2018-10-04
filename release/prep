@@ -698,6 +698,45 @@ activate_the_deb_repos() {
   set +x
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  activate_the_corp_repos
+#   DESCRIPTION:  Run the commands necessary to make the repository files public
+#===============================================================================
+activate_the_corp_repos() {
+  case ${tree} in
+    "5.5-galera")
+      dir_real='5.5'
+      ;;
+    "10.0-galera")
+      dir_real='10.0'
+      ;;
+    "bb-10.1-release")
+      dir_real='10.1'
+      ;;
+    "bb-10.2-release")
+      dir_real='10.2'
+      ;;
+    "bb-10.3-release")
+      dir_real='10.3'
+      ;;
+    "bb-10.4-release")
+      dir_real='10.4'
+      ;;
+    *)
+      dir_real="${tree}"
+      ;;
+  esac
+  if [ "${galera_suffix}" = "-galera" ]; then
+    # Do nothing if this is a galera release
+    echo "This is a galera release, skipping this step..."
+  else
+    echo;echo;
+    set -x
+    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path}/;rm -v mariadb-${dir_real};ln -sv ${dir_name} mariadb-${dir_real};echo;echo";
+    set +x
+  fi
+}
+
 create_package_tarballs() {
   set -x
   pushd ${CPT}
@@ -1732,6 +1771,10 @@ shouldI activate_the_yum_repos
 echo;echo;echo;echo
 
 shouldI activate_the_deb_repos
+
+echo;echo;echo;echo
+
+shouldI activate_the_corp_repos
 
 echo;echo;echo;echo
 
