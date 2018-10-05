@@ -28,7 +28,7 @@ buildbot.mariadb.org/
 │   ├── debian.dockerfile
 │   ├── ubuntu1404.dockerfile
 │   ├── ubuntu1604.dockerfile
-│   └── ubuntu1804.dockerfile
+│   └── ...
 ├── master.cfg
 ├── readme.md
 ├── sponsor.py
@@ -37,7 +37,8 @@ buildbot.mariadb.org/
 ├── templates
 │   └── sponsor.html
 └── util
-    └── buildbot-master.service
+    ├── buildbot-master.service
+    └── nginx.conf
 4 directories, 14 files
 ```
 
@@ -47,7 +48,8 @@ buildbot.mariadb.org/
 * __master.cfg__: the master configuration file, describes the build scheme and all other site site specific configuration
 * __sponsor.py__: custom Buildbot dashboard plugin that adds a menu item named *Sponsors*, used to list all the donated servers that are being used by this instance
 * __static__: image logos for the donors HTML presentation of the dashboard plugin
-* __templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin.
+* __templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin
+* __util__: various associated config files and tools, like the systemd service file and nginx configuration
 
 ## A word on Docker
 ===================
@@ -98,7 +100,8 @@ Deploying a new master (since Buildbot > 1.0 supports multi-master configuration
 5. Start the master using:
    `buildbot start /srv/buildbot/master`
    Stop, restart and reconfig are the other most relevant commands.
-6. For service persistence and convenience, consider using the Systemd service file *util/buildbot-master.service*.
+6. For service persistence and convenience, consider using the systemd service file *util/buildbot-master.service*.
+7. For https support and better HTTP performance overall, consider setting up nginx as a reverse proxy, see *util/nginx.conf*.
 
 ## Master configuration
 
