@@ -2,6 +2,7 @@
 # Builbot worker for building MariaDB
 #
 # Provides a base Debian image with latest buildbot worker installed
+# and MariaDB build dependencies
 
 FROM       debian:9
 MAINTAINER MariaDB Buildbot maintainers

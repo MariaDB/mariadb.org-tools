@@ -2,6 +2,7 @@
 # Builbot worker for building MariaDB
 #
 # Provides a base Fedora image with latest buildbot worker installed
+# and MariaDB build dependencies
 
 FROM       fedora:28
 MAINTAINER MariaDB Buildbot maintainers

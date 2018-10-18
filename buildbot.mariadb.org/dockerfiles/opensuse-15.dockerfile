@@ -2,6 +2,7 @@
 # Builbot worker for building MariaDB
 #
 # Provides a base OpenSUSE image with latest buildbot worker installed
+# and MariaDB build dependencies
 
 FROM       opensuse:leap
 MAINTAINER MariaDB Buildbot maintainers

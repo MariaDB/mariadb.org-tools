@@ -2,6 +2,7 @@
 # Builbot worker for building MariaDB
 #
 # Provides a base CentOS image with latest buildbot worker installed
+# and MariaDB build dependencies
 
 FROM       centos:7
 MAINTAINER MariaDB Buildbot maintainers

@@ -2,6 +2,7 @@
 # Builbot worker for building MariaDB
 #
 # Provides a base Ubuntu image with latest buildbot worker installed
+# and MariaDB build dependencies
 
 FROM       ubuntu:16.04
 MAINTAINER MariaDB Buildbot maintainers
