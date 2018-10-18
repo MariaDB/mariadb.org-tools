@@ -4,7 +4,7 @@
 # Provides a base OpenSUSE image with latest buildbot worker installed
 # and MariaDB build dependencies
 
-FROM       opensuse/leap
+FROM       opensuse/leap:42.3
 MAINTAINER MariaDB Buildbot maintainers
 
 USER root
