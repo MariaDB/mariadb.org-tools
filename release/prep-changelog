@@ -15,8 +15,8 @@
 # Variables to set before we get started
 #-------------------------------------------------------------------------------
 run_script="no"
-pwd=${PWD}
-output="${pwd}/changelog.creole"              # Default output location
+out_dir=${PWD}
+output="${out_dir}/changelog.creole"              # Default output location
 src_dir="${HOME}/src/mariadb/server/"
 
 #-------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ do
       if [[ ${OPTARG:0:1} == '/' ]];then
         output="${OPTARG}"
       else
-        output="${pwd}/${OPTARG}"
+        output="${out_dir}/${OPTARG}"
       fi
       ;;
     p) # The product, e.g. mariadb or mariadb-galera
