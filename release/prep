@@ -526,7 +526,7 @@ rsync_wrapper_primary() {
 #   DESCRIPTION:  Transfer bundles to the staging mirror
 #===============================================================================
 upload_the_bundles_to_the_staging_mirror() {
-  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${staging_mirror}:${dir_bundles}/"
+  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}* ${staging_mirror}:${dir_bundles}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -535,7 +535,7 @@ upload_the_bundles_to_the_staging_mirror() {
 #                 mirror
 #===============================================================================
 upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
-  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${corp_mirror}:${corp_bundles_path}/"
+  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}* ${corp_mirror}:${corp_bundles_path}/"
 }
 
 #===  FUNCTION  ================================================================
