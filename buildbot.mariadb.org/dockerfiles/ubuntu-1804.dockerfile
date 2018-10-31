@@ -29,7 +29,8 @@ RUN apt-get update && \
 RUN useradd -ms /bin/bash buildbot && \
     mkdir /buildbot && \
     chown -R buildbot /buildbot && \
-    curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
+    curl -o /buildbot/buildbot.tac \
+    https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 
 # autobake-deb will need sudo rights
 RUN usermod -a -G sudo buildbot
@@ -43,7 +44,8 @@ RUN pip3 install -U pip virtualenv && \
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
-RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb && \
+RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb \
+    -Lo /tmp/init.deb && dpkg -i /tmp/init.deb && \
     rm -rf /var/lib/apt/lists*
 
 USER buildbot
