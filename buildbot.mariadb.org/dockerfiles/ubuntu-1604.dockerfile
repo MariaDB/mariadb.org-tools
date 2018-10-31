@@ -7,8 +7,6 @@
 FROM       ubuntu:16.04
 MAINTAINER MariaDB Buildbot maintainers
 
-USER root
-
 # This will make apt-get install without question
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -32,21 +30,21 @@ RUN useradd -ms /bin/bash buildbot && \
     mkdir /buildbot && \
     chown -R buildbot /buildbot && \
     curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
-WORKDIR /buildbot
 
 # autobake-deb will need sudo rights
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Upgrade pip and install packages
-RUN pip3 install -U pip virtualenv
-RUN pip3 install buildbot-worker
-RUN pip3 --no-cache-dir install 'twisted[tls]'
+RUN pip3 install -U pip virtualenv && \
+    pip3 install buildbot-worker && \
+    pip3 --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
-RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
+RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb && \
+    rm -rf /var/lib/apt/lists*
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
