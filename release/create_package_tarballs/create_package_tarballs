@@ -35,7 +35,13 @@ set -xe
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
 case $1 in
-  *10.0*|*5.5*)
+  *5.5*)
+    debian_ver=""
+    ubuntu_ver=( trusty xenial )
+    rhel_ver=( 6 7 )
+    sles_ver=( 11 12 )
+    ;;
+  *10.0*)
     debian_ver=( jessie )
     ubuntu_ver=( trusty xenial )
     rhel_ver=( 6 7 )
@@ -196,8 +202,12 @@ cd "$dir"
 
 # .deb files are kept in the "repo" subdirectory of a release directory.
 pushd repo
-do_pkgs debs debian "${debian_ver[@]}"
-do_pkgs debs ubuntu "${ubuntu_ver[@]}"
+if [ "${debian_ver}" != "" ];then
+  do_pkgs debs debian "${debian_ver[@]}"
+fi
+if [ "${ubuntu_ver}" != "" ];then
+  do_pkgs debs ubuntu "${ubuntu_ver[@]}"
+fi
 popd
 
 # .rpm files are kept in the "yum" subdirectory of a release directory. Yes, even for SLES,
