@@ -5,7 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       debian:9
-MAINTAINER MariaDB Buildbot maintainers
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 # This will make apt-get install without question
 ARG DEBIAN_FRONTEND=noninteractive

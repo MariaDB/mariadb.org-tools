@@ -5,7 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       opensuse/leap
-MAINTAINER MariaDB Buildbot maintainers
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 USER root
 
