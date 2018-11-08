@@ -916,7 +916,15 @@ update_the_docker_mariadb_version() {
 }
 
 
-
+#===  FUNCTION  ================================================================
+#          NAME:  generate_the_file_list_pickle_for_org_downloads
+#   DESCRIPTION:  This function logs in to the primary mirror and runs the
+#                 command to generate the pickle that is then imported into the
+#                 mariadb.org downloads system.
+#===============================================================================
+generate_the_file_list_pickle_for_org_downloads() {
+  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_name}";
+}
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -1787,6 +1795,11 @@ echo;echo;echo;echo
 shouldI update_the_docker_mariadb_version
 
 echo;echo;echo;echo
+
+shouldI generate_the_file_list_pickle_for_org_downloads
+
+echo;echo;echo;echo
+
 echo "+ all done!"
 echo;echo;echo;echo
 
