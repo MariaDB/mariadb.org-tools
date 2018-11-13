@@ -112,4 +112,4 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag):
         'category': "connectors" }
 
 bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7")
-bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ", "v3.0.6")
+bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "master", " -DWITH_SSL=SCHANNEL ", "v3.0.7")
