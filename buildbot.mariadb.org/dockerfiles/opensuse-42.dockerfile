@@ -5,9 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       opensuse/leap:42.3
-MAINTAINER MariaDB Buildbot maintainers
-
-USER root
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
 RUN zypper update -y && \
