@@ -526,7 +526,7 @@ rsync_wrapper_primary() {
 #   DESCRIPTION:  Transfer bundles to the staging mirror
 #===============================================================================
 upload_the_bundles_to_the_staging_mirror() {
-  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${staging_mirror}:${dir_bundles}/"
+  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}* ${staging_mirror}:${dir_bundles}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -535,7 +535,7 @@ upload_the_bundles_to_the_staging_mirror() {
 #                 mirror
 #===============================================================================
 upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
-  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}*.tar.gz ${corp_mirror}:${corp_bundles_path}/"
+  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}* ${corp_mirror}:${corp_bundles_path}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -891,7 +891,7 @@ exclude_an_old_release_from_the_yum_dir() {
 
 #===  FUNCTION  ================================================================
 #          NAME:  update_the_docker_mariadb_version
-#   DESCRIPTION:  This function updates the version file for 10.1, 10.2, & 10.3
+#   DESCRIPTION:  This function updates the version file for 10.1+
 #                 Docker scripts
 #===============================================================================
 update_the_docker_mariadb_version() {
@@ -916,7 +916,15 @@ update_the_docker_mariadb_version() {
 }
 
 
-
+#===  FUNCTION  ================================================================
+#          NAME:  generate_the_file_list_pickle_for_org_downloads
+#   DESCRIPTION:  This function logs in to the primary mirror and runs the
+#                 command to generate the pickle that is then imported into the
+#                 mariadb.org downloads system.
+#===============================================================================
+generate_the_file_list_pickle_for_org_downloads() {
+  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_name}";
+}
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -1787,6 +1795,11 @@ echo;echo;echo;echo
 shouldI update_the_docker_mariadb_version
 
 echo;echo;echo;echo
+
+shouldI generate_the_file_list_pickle_for_org_downloads
+
+echo;echo;echo;echo
+
 echo "+ all done!"
 echo;echo;echo;echo
 

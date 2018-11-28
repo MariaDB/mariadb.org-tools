@@ -100,6 +100,26 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
     sles12-amd64
     sles12-ppc64le
   "
+elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
+  dists="
+    centos6-amd64
+
+    centos73-amd64
+    centos73-ppc64
+    centos73-ppc64le
+
+    centos74-aarch64
+
+    fedora28-amd64
+    fedora29-amd64
+
+    opensuse42-amd64
+    opensuse150-amd64
+
+    sles12-amd64
+    sles12-ppc64le
+    sles150-amd64
+  "
 else
   dists="
     centos6-amd64
@@ -424,6 +444,13 @@ for REPONAME in ${dists}; do
       #for gv in ${ver_galera}; do
       #  copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       #done
+      ;;
+    'fedora29-amd64')
+      runCommand mkdir -vp fedora/29/x86_64
+      maybe_make_symlink fedora/29/x86_64 fedora29-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
       ;;
     'opensuse42-amd64')
       runCommand mkdir -vp opensuse/42/x86_64

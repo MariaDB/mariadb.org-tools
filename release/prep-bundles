@@ -55,10 +55,10 @@ win
 cj17='1.7.4'
 cj23='2.3.0'
 cc23='2.3.7'
-cc30='3.0.6'
-co30='3.0.6'
+cc30='3.0.7'
+co30='3.0.7'
 co20='2.0.18'
-cn20='2.0.0'
+cn20='2.0.1'
 maxscale='2.2.15'
 
 
@@ -192,7 +192,11 @@ for bundle in ${bundles}; do
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj23}/mariadb-java-client-${cj23}.jar ./
 
-    rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn20}/mariadb-connector-nodejs-${cn20}*.tar.gz ./
+    if [ "${dist}" = "win" ]; then
+      rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn20}/mariadb-connector-nodejs-${cn20}*.zip ./
+    else
+      rsync ${rsync_opts} ${cn_home}/connector-nodejs-${cn20}/mariadb-connector-nodejs-${cn20}*.tar.gz ./
+    fi
 
     case ${dist} in
       ubuntu|debian)
@@ -209,8 +213,8 @@ for bundle in ${bundles}; do
         rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co20}/*${dist}${ver}-x86_64*gz ./
         rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*${dist}${ver}-x86_64*gz ./
-        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-${maxscale}*rpm ./
-        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/${dist}/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/centos/${ver}/x86_64/maxscale-${maxscale}*rpm ./
+        rsync ${rsync_opts} ${dir_maxscale}/${maxscale}/centos/${ver}/x86_64/maxscale-cdc-connector-${maxscale}*rpm ./
         rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/yum/${dist}/mariadb-${num}-${bundle}-rpms.tar ./
         ;;
       sles)
@@ -227,6 +231,10 @@ for bundle in ${bundles}; do
         rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/yum/${dist}/mariadb-${num}-${bundle}-rpms.tar ./
         ;;
       win)
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc23}/*win64.msi ./
+        rsync ${rsync_opts} ${cc_home}/connector-c-${cc30}/*win64.msi ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co20}/*win64.msi ./
+        rsync ${rsync_opts} ${co_home}/connector-odbc-${co30}/*win64.msi ./
         rsync ${rsync_opts} ${dir_corp}/mariadb-${num}/winx64-packages/*msi ./
         ;;
     esac
@@ -243,7 +251,11 @@ for bundle in ${bundles}; do
     done
 
   popd
-  tar -czvf ${dir}.tar.gz ${dir}
+  if [ "${dist}" = "win" ]; then
+    zip -r ${dir}.zip ${dir}
+  else
+    tar -czvf ${dir}.tar.gz ${dir}
+  fi
   rm -rf ${dir}
 
 done

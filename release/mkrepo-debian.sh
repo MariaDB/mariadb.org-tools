@@ -224,6 +224,7 @@ case ${TREE} in
     #debian_dists='"squeeze debian6" "wheezy wheezy"'
     #debian_dists="${squeeze} wheezy"
     #debian_dists="wheezy"
+    debian_dists=""
     echo "+ No Packages for Debian for MariaDB ${TREE}"
     ;;
   '10.0e'|'10.0e-galera')
