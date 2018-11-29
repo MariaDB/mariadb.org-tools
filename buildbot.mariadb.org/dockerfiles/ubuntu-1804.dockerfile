@@ -5,9 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       ubuntu:18.04
-MAINTAINER MariaDB Buildbot maintainers
-
-USER root
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 # This will make apt-get install without question
 ARG DEBIAN_FRONTEND=noninteractive
@@ -39,9 +37,9 @@ RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Upgrade pip and install packages
-RUN pip3 install -U pip virtualenv
-RUN pip3 install buildbot-worker
-RUN pip3 --no-cache-dir install 'twisted[tls]'
+RUN pip3 install -U pip virtualenv && \
+    pip3 install buildbot-worker && \
+    pip3 --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),

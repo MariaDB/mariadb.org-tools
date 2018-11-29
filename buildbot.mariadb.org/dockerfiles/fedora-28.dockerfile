@@ -5,9 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       fedora:28
-MAINTAINER MariaDB Buildbot maintainers
-
-USER root
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
 RUN dnf -y upgrade && \

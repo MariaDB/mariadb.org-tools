@@ -5,9 +5,7 @@
 # and MariaDB build dependencies
 
 FROM       centos:7
-MAINTAINER MariaDB Buildbot maintainers
-
-USER root
+LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
 RUN yum -y --enablerepo=extras install epel-release && \
