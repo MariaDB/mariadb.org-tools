@@ -37,8 +37,8 @@ RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Upgrade pip and install packages
-RUN pip3 install -U pip virtualenv && \
-    pip3 install buildbot-worker && \
+RUN pip3 install -U pip virtualenv
+RUN pip3 install buildbot-worker && \
     pip3 --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
