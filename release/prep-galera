@@ -37,72 +37,6 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-deb_dists="
-bionic
-jessie
-sid
-stretch
-trusty
-xenial
-"
-deb_dists_full="
-  bionic-aarch64
-  bionic-amd64
-  bionic-ppc64le
-
-  jessie-amd64
-  jessie-ppc64le
-  jessie-x86
-
-  sid-amd64
-  sid-x86
-  
-  stretch-amd64
-  stretch-ppc64le
-  stretch-x86
-
-  trusty-amd64
-  trusty-ppc64le
-  trusty-x86
-
-  xenial-aarch64
-  xenial-amd64
-  xenial-ppc64le
-  xenial-x86
-"
-
-rpm_dists="
-  centos6-x86
-  centos6-amd64
-
-  centos73-amd64
-  centos73-ppc64
-  centos73-ppc64le
-  centos74-aarch64
-
-  centos74-amd64
-
-  fedora27-amd64
-  fedora28-amd64
-
-  opensuse42-amd64
-  opensuse423-amd64
-  opensuse150-amd64
-
-  sles12-amd64
-  sles123-amd64
-  sles12-ppc64le
-  sles150-amd64
-"
-
-#-------------------------------------------------------------------------------
-# Options below this point you probably don't need to change
-#-------------------------------------------------------------------------------
-
-# Various miscellaneous options
-rsync_opts="-a -L"
-
-
 # defaults (to prevent errors)
     displayusage="no"
 log_displayusage=""
@@ -130,19 +64,159 @@ galera_suffix=""
       numflag=false
       tarflag=false
 
+
+# The first thing we need to do is parse the command-line options
+while getopts 'dhlr:t:v:y' OPTION
+do
+  case $OPTION in
+    d)  # Not implemented yet
+      demo="yes"
+      log_demo="d"
+      ;;
+    h)  # Display a helpful usage message
+      displayusage="yes"
+      log_displayusage="h"
+      ;;
+    l)  # Log the release to ~/.prep.log
+      log="yes"
+      log_log="l"
+      ;;
+    r)  # The release revision
+      rev="${OPTARG}"
+      revflag=true
+      ;;
+    t)  # The release tree
+      tree="${OPTARG}"
+      treeflag=true
+      ;;
+    v)  # The version number of this release
+      num="${OPTARG}"
+      numflag=true
+      ;;
+    y)  # Actually run this script (helps prevent accidental runs)
+      run_script="yes"
+      log_run_script="y"
+      ;;
+    \?) # Display a helpful usage message
+      displayusage="yes"
+      ;;
+    :)  # Error when an option is used that requires an argument
+      displayusage="yes"
+      echo "Option -$OPTARG requires an argument."
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+deb_dists="
+  bionic
+  cosmic
+  jessie
+  sid
+  stretch
+  trusty
+  xenial
+"
+deb_dists_full="
+  bionic-aarch64
+  bionic-amd64
+  bionic-ppc64le
+
+  cosmic-amd64
+
+  jessie-amd64
+  jessie-ppc64le
+  jessie-x86
+
+  sid-amd64
+  sid-x86
+  
+  stretch-amd64
+  stretch-ppc64le
+  stretch-x86
+
+  trusty-amd64
+  trusty-ppc64le
+  trusty-x86
+
+  xenial-aarch64
+  xenial-amd64
+  xenial-ppc64le
+  xenial-x86
+"
+
+case ${tree} in
+  "mariadb-4.x")
+    rpm_dists="
+      centos6-amd64
+
+      centos73-amd64
+      centos73-ppc64
+      centos73-ppc64le
+      centos74-aarch64
+
+      centos74-amd64
+
+      fedora28-amd64
+      fedora29-amd64
+
+      opensuse42-amd64
+      opensuse423-amd64
+      opensuse150-amd64
+
+      sles12-amd64
+      sles123-amd64
+      sles150-amd64
+    "
+    ;;
+  *)
+    rpm_dists="
+      centos6-x86
+      centos6-amd64
+
+      centos73-amd64
+      centos73-ppc64
+      centos73-ppc64le
+      centos74-aarch64
+
+      centos74-amd64
+
+      fedora28-amd64
+      fedora29-amd64
+
+      opensuse42-amd64
+      opensuse423-amd64
+      opensuse150-amd64
+
+      sles12-amd64
+      sles123-amd64
+      sles12-ppc64le
+      sles150-amd64
+    "
+    ;;
+esac
+
+#-------------------------------------------------------------------------------
+# Options below this point you probably don't need to change
+#-------------------------------------------------------------------------------
+
+# Various miscellaneous options
+rsync_opts="-a -L"
+
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
 
-#function runCommand() {
-#  echo "+ ${@}"
-#  sleep 1
-#  if ${@} ; then
-#    return 0
-#  else
-#    return 1
-#  fi
-#}
+function runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    return 0
+  else
+    return 1
+  fi
+}
 
 userResponse() {
   question="${@}"
@@ -312,51 +386,6 @@ line() {
 # Main Script
 #-------------------------------------------------------------------------------
 
-
-# The first thing we need to do is parse the options
-while getopts 'dhlr:t:v:y' OPTION
-do
-  case $OPTION in
-    d)  # Not implemented yet
-      demo="yes"
-      log_demo="d"
-      ;;
-    h)  # Display a helpful usage message
-      displayusage="yes"
-      log_displayusage="h"
-      ;;
-    l)  # Log the release to ~/.prep.log
-      log="yes"
-      log_log="l"
-      ;;
-    r)  # The release revision
-      rev="${OPTARG}"
-      revflag=true
-      ;;
-    t)  # The release tree
-      tree="${OPTARG}"
-      treeflag=true
-      ;;
-    v)  # The version number of this release
-      num="${OPTARG}"
-      numflag=true
-      ;;
-    y)  # Actually run this script (helps prevent accidental runs)
-      run_script="yes"
-      log_run_script="y"
-      ;;
-    \?) # Display a helpful usage message
-      displayusage="yes"
-      ;;
-    :)  # Error when an option is used that requires an argument
-      displayusage="yes"
-      echo "Option -$OPTARG requires an argument."
-      ;;
-  esac
-done
-
-shift $(($OPTIND - 1))
-
 if ! ${revflag} || ! ${numflag} || ! ${treeflag} ; then
   #if [[ -d $1 ]]; then
     echo
@@ -368,7 +397,6 @@ if ! ${revflag} || ! ${numflag} || ! ${treeflag} ; then
   #fi
 fi
 
-# make sure we are running as root
 #if (( `id -u` != 0 )); then { echo "Sorry, ${0} must be run using sudo. Exiting..."; exit; } fi
 
 # Display usage message and quit if necessary
@@ -388,7 +416,14 @@ release_dir="${dir_galera}"
 dir_name="${version}"
 archive_dir="/ds413/archive/builds"
 
-build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+case ${tree} in
+  "mariadb-3.x")
+    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    ;;
+  "mariadb-4.x")
+    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    ;;
+esac
 build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
 build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64 kvm-rpm-centos74-aarch64-gal:galera-${num}-aarch64"
 
@@ -432,6 +467,7 @@ cd ${release_dir}/${dir_name}
 echo
 line
 echo "+ fixing permissions..."
+pressAnyKeyToContinue
 line
 for dir in $(sudo find ${archive_dir}/${tree}/${rev}/ -type d);do sudo chmod 755 "${dir}";done
 for file in $(sudo find ${archive_dir}/${tree}/${rev}/ -type f);do sudo chmod 644 "${file}";done
@@ -456,10 +492,15 @@ if [ "${create_source}" != "no" ]; then
   fi
   git clone https://github.com/MariaDB/galera.git
   cd galera
-  git checkout mariadb-3.x
+  git checkout ${tree}
+  git reset --hard ${rev}
   git submodule init
   git submodule update
   scripts/build.sh -a
+  git submodule foreach 'cp -vi * ../../galera-*/${path}/'
+  gunzip ${version}.tar.gz
+  tar --update -vf ${version}.tar ${version}/
+  gzip ${version}.tar
   mv -vi ${version}.tar.gz ${release_dir}/${dir_name}/src/
   rm -rf ~/src/galera
 
@@ -478,9 +519,11 @@ if [ "${create_source}" != "no" ]; then
       rm -v "${sig_file}"
     done
     # sign the source tarball
-    gpg2 ${gpg_opts} ${version}.tar.gz
+    echo "About to sign the source tarball..."
+    pressAnyKeyToContinue
+    runCommand gpg2 ${gpg_opts} ${version}.tar.gz
     # sign the sum files as well
-    for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+    for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
     
     # Copy to the -signed folder
     cp -avi ${release_dir}/${dir_name}/src ${release_dir}/${dir_name}-signed/
@@ -493,9 +536,11 @@ if [ "${create_source}" != "no" ]; then
       rm "${sig_file}"
     done
     # sign the source tarball
-    gpg2 ${ent_gpg_opts} ${version}.tar.gz
+    echo "About to sign the ent source tarball..."
+    pressAnyKeyToContinue
+    runCommand gpg2 ${ent_gpg_opts} ${version}.tar.gz
     # sign the sum files as well
-    for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+    for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
   #fi # removing src rsync if statement (db:2017-01-06)
   echo "+ transfer of src done"
   echo
@@ -557,8 +602,16 @@ if [ "${create_bintar}" != "no" ]; then
           ;;
       *)
           # we are dealing with .deb files
-          dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
-          dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
+          case ${tree} in
+            "mariadb-4.x")
+              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-4_*.deb ./
+              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-4_*.deb ./
+              ;;
+            *)
+              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
+              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
+              ;;
+          esac
           ;;
     esac
 
@@ -582,15 +635,19 @@ if [ "${create_bintar}" != "no" ]; then
 
   # sign the bintars
   cd ${release_dir}/${dir_name}-signed/bintar/
-  for file in galera*.tar.gz ; do gpg2 ${gpg_opts} ${file};done
+  echo "About to sign the bintars..."
+  pressAnyKeyToContinue
+  for file in galera*.tar.gz ; do runCommand "gpg2 ${gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
   # sign the ent-bintars
   cd ${release_dir}/${dir_name}-signed-ent/bintar/
-  for file in galera*.tar.gz ; do gpg2 ${ent_gpg_opts} ${file};done
+  echo "About to sign the ent bintars..."
+  pressAnyKeyToContinue
+  for file in galera*.tar.gz ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${release_dir}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
 
   echo "+ done transfering bintar & source packages"
   line
@@ -637,17 +694,21 @@ if [ "${create_deb}" != "no" ]; then
   # sign the deb files for mariadb.org
   cd ${release_dir}/${dir_name}-signed/deb/
   # sign the deb files
-  for file in galera* ; do gpg2 ${gpg_opts} ${file};done
+  echo "About to sign the debs..."
+  pressAnyKeyToContinue
+  for file in galera* ; do runCommand "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
 
   # sign the deb files for mariadb.com (aka MariaDB Enterprise)
   cd ${release_dir}/${dir_name}-signed-ent/deb/
   # sign the deb files
-  for file in galera* ; do gpg2 ${ent_gpg_opts} ${file};done
+  echo "About to sign the ent debs..."
+  pressAnyKeyToContinue
+  for file in galera* ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
 
 
 
@@ -700,9 +761,11 @@ if [ "${create_rpm}" != "no" ]; then
   cd ${release_dir}/${dir_name}/rpm/
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in ./*/*.rpm ; do gpg2 ${gpg_opts} ${file};done
+  echo "About to sign the rpms..."
+  pressAnyKeyToContinue
+  for file in ./*/*.rpm ; do runCommand "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
   
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.org
@@ -717,9 +780,11 @@ if [ "${create_rpm}" != "no" ]; then
   rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in ./*/*.rpm ; do gpg2 ${gpg_opts} ${file};done
+  echo "About to sign the rpms..."
+  pressAnyKeyToContinue
+  for file in ./*/*.rpm ; do runCommand "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do gpg2 ${gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
 
   #-------------------------------------------------------------------------------
@@ -733,12 +798,14 @@ if [ "${create_rpm}" != "no" ]; then
   ln -sv .rpmmacros-ent-v3 .rpmmacros
 
   cd ${release_dir}/${dir_name}-signed-ent/rpm/
+  echo "About to sign the ent rpms..."
+  pressAnyKeyToContinue
   rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in ./*/*.rpm ; do gpg2 ${ent_gpg_opts} ${file};done
+  for file in ./*/*.rpm ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do gpg2 ${ent_gpg_opts} ${sum}sums.txt;done
+  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
   
   cd ${HOME}
   echo
@@ -815,7 +882,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'artful') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'artful'|'cosmic') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -856,6 +923,12 @@ END
         echo ${dist}
         vi ${release_dir}/${version}-${suffix}/deb/galera*${num}-bionic*_ppc64el.changes
         reprepro --basedir=. include bionic ${release_dir}/${version}-${suffix}/deb/galera*bionic*_ppc64el.changes
+        ;;
+
+      'cosmic-amd64')
+        echo ${dist}
+        vi ${release_dir}/${version}-${suffix}/deb/galera*cosmic*_amd64.changes
+        reprepro --basedir=. include cosmic ${release_dir}/${version}-${suffix}/deb/galera*cosmic*_amd64.changes
         ;;
 
       'jessie-amd64')
@@ -977,17 +1050,23 @@ if [ "${create_yum}" != "no" ]; then
         ;;
     esac
     mv -vi ${dist} ${release_dir}/${dir_name}/repo/rpm/ && cd ${release_dir}/${dir_name}/repo/rpm/
-    gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
+    echo "About to sign the repomd.xml file for ${dist}..."
+    pressAnyKeyToContinue
+    runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
   done
   # one final thing: create symlinks so buildbot tests work
-  ln -sv sles11-amd64 sles11sp1-amd64
-  ln -sv sles11-amd64 sles114-amd64
-  ln -sv sles11-x86 sles114-x86
-  ln -sv sles12-ppc64le suse12-ppc64le 
   ln -sv sles150-amd64 sles15-amd64
   ln -sv opensuse150-amd64 opensuse15-amd64
   ln -sv centos6-amd64 rhel6-amd64
-  ln -sv centos6-x86 rhel6-x86
+  case ${tree} in
+    "mariadb-3.x")
+      ln -sv sles11-amd64 sles11sp1-amd64
+      ln -sv sles11-amd64 sles114-amd64
+      ln -sv sles11-x86 sles114-x86
+      ln -sv sles12-ppc64le suse12-ppc64le 
+      ln -sv centos6-x86 rhel6-x86
+      ;;
+  esac
   ln -sv centos73-amd64 centos7-amd64
   ln -sv centos73-amd64 rhel7-amd64
   ln -sv centos73-ppc64 centos7-ppc64
@@ -1016,6 +1095,8 @@ echo
 
 # now upload to mirrors
 
+case $tree in
+  'mariadb-3.x')
 echo;echo;echo;echo "+ Now upload using commands similar to the following: 
 
 rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera/${num} ; 
@@ -1026,6 +1107,20 @@ for host in bb02 bb03;do
   ssh -t -t bb01 \"rsync -a --info=progress2 --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done;echo;echo;echo
 "
+    ;;
+  'mariadb-4.x')
+echo;echo;echo;echo "+ Now upload using commands similar to the following: 
+
+rsync -avP --delete-after ${release_dir}/${dir_name}/repo bb01:/var/www/galera4/${num} ; 
+ssh bb01 \"cd /var/www/galera4/;rm -v repo; ln -sv ${num}/repo ./\" ; 
+line=\"----------------------------------------\"
+for host in bb02 bb03;do 
+  echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};
+  ssh -t -t bb01 \"rsync -a --info=progress2 --delete-after /var/www/galera4/ \${host}:/var/www/galera4/\"; 
+done;echo;echo;echo
+"
+    ;;
+esac
 
 
 
