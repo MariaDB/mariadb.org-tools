@@ -120,6 +120,28 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
     sles12-ppc64le
     sles150-amd64
   "
+elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
+  dists="
+    centos6-amd64
+    centos6-x86
+
+    centos73-amd64
+    centos73-ppc64
+    centos73-ppc64le
+
+    centos74-aarch64
+
+    fedora27-amd64
+    fedora28-amd64
+    fedora29-amd64
+
+    opensuse42-amd64
+    opensuse150-amd64
+
+    sles12-amd64
+    sles12-ppc64le
+    sles150-amd64
+  "
 else
   dists="
     centos6-amd64
