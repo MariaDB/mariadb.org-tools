@@ -220,8 +220,8 @@ dir_maxscale="/path/to/maxscale" # Location of maxscale pkgs
 
 dir_bundles="/path/to/bundles/TX" # where bundle tarballs should be saved
 
-ver_galera="25.3.24"                        # galera version[s] in our repos
-ver_galera_preferred="25.3.24"              # preferred galera version
+ver_galera="25.3.25"                        # galera version[s] in our repos
+ver_galera_preferred="25.3.25"              # preferred galera version
 ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
