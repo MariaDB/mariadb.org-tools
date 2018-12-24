@@ -131,7 +131,6 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
 
     centos74-aarch64
 
-    fedora27-amd64
     fedora28-amd64
     fedora29-amd64
 
@@ -142,7 +141,7 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
     sles12-ppc64le
     sles150-amd64
   "
-else
+elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
   dists="
     centos6-amd64
     centos6-x86
@@ -153,7 +152,6 @@ else
 
     centos74-aarch64
 
-    fedora27-amd64
     fedora28-amd64
 
     opensuse42-amd64
@@ -441,18 +439,6 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera}; do
         echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
                 rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
-      done
-      ;;
-    'fedora27-amd64')
-      runCommand mkdir -vp fedora/27/x86_64
-      maybe_make_symlink fedora/27/x86_64 fedora27-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'fedora28-amd64')
