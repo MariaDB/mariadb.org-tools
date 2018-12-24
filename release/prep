@@ -622,29 +622,6 @@ upload_from_the_staging_mirror_to_the_yum_mirrors() {
 #   DESCRIPTION:  Run the commands necessary to make the repository files public
 #===============================================================================
 activate_the_yum_repos() {
-  case ${tree} in
-    "5.5-galera")
-      dir_real='5.5'
-      ;;
-    "10.0-galera")
-      dir_real='10.0'
-      ;;
-    "bb-10.1-release")
-      dir_real='10.1'
-      ;;
-    "bb-10.2-release")
-      dir_real='10.2'
-      ;;
-    "bb-10.3-release")
-      dir_real='10.3'
-      ;;
-    "bb-10.4-release")
-      dir_real='10.4'
-      ;;
-    *)
-      dir_real="${tree}"
-      ;;
-  esac
   if [ "${galera_suffix}" = "-galera" ]; then
     # Do nothing if this is a galera release
     echo "This is a galera release, skipping this step..."
@@ -652,11 +629,11 @@ activate_the_yum_repos() {
     echo;echo;
     set -x
     for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
-      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${dir_real};ln -sv ${num} ${dir_real};echo;echo"; 
+      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${major};ln -sv ${num} ${major};echo;echo"; 
     done
     set +x
   fi
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${dir_real}/";
+  rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${major}/";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
@@ -668,31 +645,8 @@ activate_the_yum_repos() {
 #===============================================================================
 activate_the_deb_repos() {
   set -x
-  case ${tree} in
-    "5.5-galera")
-      dir_real='5.5'
-      ;;
-    "10.0-galera")
-      dir_real='10.0'
-      ;;
-    "bb-10.1-release")
-      dir_real='10.1'
-      ;;
-    "bb-10.2-release")
-      dir_real='10.2'
-      ;;
-    "bb-10.3-release")
-      dir_real='10.3'
-      ;;
-    "bb-10.4-release")
-      dir_real='10.4'
-      ;;
-    *)
-      dir_real="${tree}"
-      ;;
-  esac
   set +x
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${dir_real}/";
+  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${major}/";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
@@ -703,36 +657,13 @@ activate_the_deb_repos() {
 #   DESCRIPTION:  Run the commands necessary to make the repository files public
 #===============================================================================
 activate_the_corp_repos() {
-  case ${tree} in
-    "5.5-galera")
-      dir_real='5.5'
-      ;;
-    "10.0-galera")
-      dir_real='10.0'
-      ;;
-    "bb-10.1-release")
-      dir_real='10.1'
-      ;;
-    "bb-10.2-release")
-      dir_real='10.2'
-      ;;
-    "bb-10.3-release")
-      dir_real='10.3'
-      ;;
-    "bb-10.4-release")
-      dir_real='10.4'
-      ;;
-    *)
-      dir_real="${tree}"
-      ;;
-  esac
   if [ "${galera_suffix}" = "-galera" ]; then
     # Do nothing if this is a galera release
     echo "This is a galera release, skipping this step..."
   else
     echo;echo;
     set -x
-    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path}/;rm -v mariadb-${dir_real};ln -sv ${dir_name} mariadb-${dir_real};echo;echo";
+    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
     set +x
   fi
 }
@@ -895,13 +826,13 @@ exclude_an_old_release_from_the_yum_dir() {
 #                 Docker scripts
 #===============================================================================
 update_the_docker_mariadb_version() {
-  major=${num%.*}
   if [ ! -d ${dir_docker} ]; then
     set -x
     git clone git@github.com:mariadb-corporation/mariadb-server-docker ${dir_docker}
     set +x
   fi
   pushd ${dir_docker}
+    git checkout ${major}
     git pull
     if test -d ${major}; then       # only update version if the dir exists
       set -x
@@ -1009,6 +940,9 @@ if [ "${displayusage}" = "yes" ] || [ "${run_script}" != "yes" ]; then
 fi
 
 loadDefaults                                    # Load Default paths and vars
+
+# create major variable that has the base major version of mariadb (e.g. 10.3)
+major=${num%.*}
 
 # Put ${galera_suffix} and ${num} together to form the base version string
 if [ "${is_ent}" = "yes" ];then
