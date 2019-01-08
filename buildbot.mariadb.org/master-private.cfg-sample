@@ -1,0 +1,23 @@
+private["db_url"] = ""
+private["gh_secret"] = ""
+private["user_pass"]= {
+    "admin":"",
+}
+private["worker_pass"]= {
+    "bm-bbw1-ubuntu1804":"",
+    "shinnok-bbw1-macos":"",
+}
+private["docker_workers"]= {
+    "do-bbw1-docker":"",
+    "hz-bbw1-docker":"",
+    "bm-bbw1-docker":""
+}
+# github.com/mariadbci access token
+private["gh_mdbci"]= {
+    "access_token":""
+}
+# github.com/mariadb/ auth app
+private["gh_mdbauth"]= {
+    "client":"",
+    "secret":""
+}
