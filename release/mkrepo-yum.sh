@@ -110,6 +110,8 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
 
     centos74-aarch64
 
+    rhel8-amd64
+
     fedora28-amd64
     fedora29-amd64
 
@@ -130,6 +132,8 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
     centos73-ppc64le
 
     centos74-aarch64
+
+    rhel8-amd64
 
     fedora28-amd64
     fedora29-amd64
@@ -399,6 +403,23 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      ;;
+    'rhel8-amd64')
+      runCommand mkdir -vp rhel/8/x86_64
+      maybe_make_symlink rhel/8/x86_64 rhel8-amd64
+      maybe_make_symlink rhel8-amd64 centos8-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+
       # Copy in other files
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
