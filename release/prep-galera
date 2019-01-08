@@ -149,21 +149,22 @@ deb_dists_full="
 case ${tree} in
   "mariadb-4.x")
     rpm_dists="
+      centos6-x86
       centos6-amd64
 
       centos73-amd64
       centos73-ppc64
       centos73-ppc64le
-      centos74-aarch64
 
+      centos74-aarch64
       centos74-amd64
 
       fedora28-amd64
       fedora29-amd64
 
+      opensuse150-amd64
       opensuse42-amd64
       opensuse423-amd64
-      opensuse150-amd64
 
       sles12-amd64
       sles123-amd64
