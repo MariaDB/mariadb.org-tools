@@ -1540,8 +1540,12 @@ else
     popd
 
     # after creating the repo, copy it to ${dir_release}/repo-no-mgc
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/"
-            rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/
+    case ${tree} in
+      '5.5'|'10.0'|'bb-5.5-release'|'bb-10.0-release')
+        echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/"
+                rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/
+        ;;
+    esac
     echo
   else
     line
@@ -1590,8 +1594,12 @@ else
     popd
 
     # after creating the repo, copy it to ${dir_release}/repo-no-mgc
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/"
-            rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/
+    case ${tree} in
+      '5.5'|'10.0'|'bb-5.5-release'|'bb-10.0-release')
+        echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/"
+                rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/
+        ;;
+    esac
     echo
   else
     line
@@ -1664,8 +1672,12 @@ else
     fi
     #echo "+ cp -ai ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}"
     #        cp -ai ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}"
-            rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}
+    case ${tree} in
+      '5.5'|'10.0'|'bb-5.5-release'|'bb-10.0-release')
+        echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}"
+                rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/yum ${dir_release}/yum-no-mgc/${num}
+        ;;
+    esac
     echo
   else
     line
