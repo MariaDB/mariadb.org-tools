@@ -112,6 +112,7 @@ shift $(($OPTIND - 1))
 deb_dists="
   bionic
   cosmic
+  buster
   jessie
   sid
   stretch
@@ -122,6 +123,8 @@ deb_dists_full="
   bionic-aarch64
   bionic-amd64
   bionic-ppc64le
+
+  buster-amd64
 
   cosmic-amd64
 
@@ -158,6 +161,8 @@ case ${tree} in
 
       centos74-aarch64
       centos74-amd64
+
+      rhel8-amd64
 
       fedora28-amd64
       fedora29-amd64
@@ -883,7 +888,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'artful'|'cosmic') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'artful'|'cosmic'|'buster') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -924,6 +929,11 @@ END
         echo ${dist}
         vi ${release_dir}/${version}-${suffix}/deb/galera*${num}-bionic*_ppc64el.changes
         reprepro --basedir=. include bionic ${release_dir}/${version}-${suffix}/deb/galera*bionic*_ppc64el.changes
+        ;;
+      'buster-amd64')
+        echo ${dist}
+        vi ${release_dir}/${version}-${suffix}/deb/galera*buster*_amd64.changes
+        reprepro --basedir=. include buster ${release_dir}/${version}-${suffix}/deb/galera*buster*_amd64.changes
         ;;
 
       'cosmic-amd64')
