@@ -236,6 +236,9 @@ case ${TREE} in
   '10.1'|'bb-10.1-release')
     debian_dists="jessie stretch sid"
     ;;
+  '10.4'|'bb-10.4-release')
+    debian_dists="jessie stretch buster"
+    ;;
   *)
     debian_dists="jessie stretch buster sid"
     ;;
@@ -314,7 +317,17 @@ for dist in ${debian_dists}; do
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
-    for gv in ${ver_galera}; do
+    case ${TREE} in
+      *10.4*)
+        ver_galera_real=${ver_galera4}
+        galera_name='galera-4'
+        ;;
+      *)
+        ver_galera_real=${ver_galera}
+        galera_name='galera-3'
+        ;;
+    esac
+    for gv in ${ver_galera_real}; do
       #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
       #case ${dist} in
       #  'jessie')
@@ -324,24 +337,24 @@ for dist in ${debian_dists}; do
 
           case ${dist} in
             "jessie"|"stretch")
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
               ;;
             *) 
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
               ;;
           esac
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
               #"sid")
-              #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
+              #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_25.3.19-${dist}*_i386.changes
               #  ;;
               'buster')
                 echo "+ no x86 packages for ${dist}"
                 ;;
               *)
-                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_i386.changes
                 ;;
             esac
           fi
