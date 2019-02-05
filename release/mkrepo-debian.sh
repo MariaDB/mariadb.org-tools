@@ -237,7 +237,7 @@ case ${TREE} in
     debian_dists="jessie stretch sid"
     ;;
   *)
-    debian_dists="jessie stretch sid"
+    debian_dists="jessie stretch buster sid"
     ;;
 esac
 
@@ -260,7 +260,7 @@ for dist in ${debian_dists}; do
     'jessie')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
-    'stretch'|'sid')
+    'stretch'|'buster'|'sid')
       # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
       #runCommand sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
@@ -290,6 +290,9 @@ for dist in ${debian_dists}; do
       #  # use stretch packages for sid, for now - 2017-08-01 dbart
       #  for i in $(find "$ARCHDIR/kvm-deb-stretch-x86/" -name '*_i386.deb'); do reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. includedeb ${dist} $i ; done
       #  ;;
+      'buster')
+        echo "+ no x86 packages for ${builder}"
+        ;;
       * )
         for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
         ;;
@@ -305,7 +308,7 @@ for dist in ${debian_dists}; do
       fi
       ;;
     * )
-      echo "no custom jemalloc packages for ${dist}"
+      echo "+ no custom jemalloc packages for ${dist}"
       ;;
   esac
 
@@ -334,6 +337,9 @@ for dist in ${debian_dists}; do
               #"sid")
               #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_25.3.19-${dist}*_i386.changes
               #  ;;
+              'buster')
+                echo "+ no x86 packages for ${dist}"
+                ;;
               *)
                 runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
                 ;;
