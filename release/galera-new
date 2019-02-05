@@ -26,7 +26,7 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 
 case ${tree} in 
   '5.5'|'5.5-galera')
-    debian_dists="wheezy"
+    debian_dists=""
     ubuntu_dists="trusty"
     yum_dists="
       centos6-amd64
@@ -43,7 +43,7 @@ case ${tree} in
     "
     ;;
   '10.0'|'10.0-galera')
-    debian_dists="wheezy jessie"
+    debian_dists="jessie"
     ubuntu_dists="trusty xenial"
     yum_dists="
       centos6-amd64
@@ -64,8 +64,8 @@ case ${tree} in
       sles12-ppc64le
     "
     ;;
-  *) debian_dists="wheezy jessie sid"
-     ubuntu_dists="trusty xenial artful"
+  *) debian_dists="jessie sid"
+     ubuntu_dists="trusty xenial bionic cosmic"
      yum_dists="
       centos6-amd64
       centos6-x86
