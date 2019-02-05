@@ -231,38 +231,48 @@ for dist in ${ubuntu_dists}; do
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
-    for gv in ${ver_galera}; do
+    case ${ARCHDIR} in
+      *10.4*)
+        ver_galera_real=${ver_galera4}
+        galera_name='galera-4'
+        ;;
+      *)
+        ver_galera_real=${ver_galera}
+        galera_name='galera-3'
+        ;;
+    esac
+    for gv in ${ver_galera_real}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
         if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
-          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
         fi
       else
 
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
 
         # include amd64
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
+        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
 
         # include i386
         case ${dist} in
           'trusty'|'xenial')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_i386.changes
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_i386.changes
             ;;
         esac
 
         # include ppc64le
         case ${dist} in
           'trusty'|'xenial'|'bionic')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
           'xenial'|'bionic')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_arm64.changes
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
             ;;
         esac
       fi
