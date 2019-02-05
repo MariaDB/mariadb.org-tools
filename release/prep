@@ -256,6 +256,9 @@ dir_release_ent="/path/to/mariadb-enterprise/releases"
 # Full path to P8 builds (if needed)
 dir_archive_p8="/path/to/p8/archive/builds"
 
+# ssh key to use for uploading
+ssh_upload_key='.ssh/KEY_NAME'
+
 # Mirrors
 staging_mirror="mirror_name"
 primary_mirror="mirror_name"
@@ -1006,6 +1009,12 @@ echo
 line
 echo "+ creating the ${version} release"
 line
+
+# start the ssh-agent and add the upload key
+eval $(ssh-agent)
+ssh-add ${ssh_upload_key}
+
+# start the gpg-agent if it's not already started
 eval $(gpg-agent --daemon)
 
 
