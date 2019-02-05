@@ -222,6 +222,8 @@ dir_bundles="/path/to/bundles/TX" # where bundle tarballs should be saved
 
 ver_galera="25.3.25"                        # galera version[s] in our repos
 ver_galera_preferred="25.3.25"              # preferred galera version
+ver_galera4="26.4.0"                        # galera4 version[s] in our repos
+ver_galera4_preferred="26.4.0"              # preferred galera4 version
 ver_nmap="6.25"                             # current nmap ver in sles12 repo
   
 # Full paths to the mkrepo-* scripts
@@ -955,6 +957,15 @@ loadDefaults                                    # Load Default paths and vars
 # create major variable that has the base major version of mariadb (e.g. 10.3)
 major=${num%.*}
 
+# Set the real version of galera to use
+if [ ${major} = "10.4" ]; then
+  ver_galera_real=${ver_galera4}
+  ver_galera_preferred_real=${ver_galera4_preferred}
+else
+  ver_galera_real=${ver_galera}
+  ver_galera_preferred_real=${ver_galera_preferred}
+fi
+
 # Put ${galera_suffix} and ${num} together to form the base version string
 if [ "${is_ent}" = "yes" ];then
   if [ "${galera_suffix}" = "-galera" ]; then
@@ -1140,10 +1151,10 @@ if [ "${create_bintar}" != "no" ]; then
                     tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
             mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
             echo "+ tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}"
                     tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
@@ -1196,10 +1207,10 @@ if [ "${create_bintar}" != "no" ]; then
                     tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
             mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
             echo "+ tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}"
                     tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
             rm -rf ${version}-linux-systemd-${galera_arch}
@@ -1258,12 +1269,12 @@ if [ "${create_bintar}" != "no" ]; then
             if [ ! -d ${version}-linux-${galera_arch} ]; then
               mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
             fi
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
-            #cp -avi ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
-            #if [ -d ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib64 ];then
-            #  rsync -av ${dir_galera}/galera-${ver_galera_preferred}/bintar/galera-${ver_galera_preferred}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
+            #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+            #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
+            #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
             echo "+ tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}"
                     tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
@@ -1361,7 +1372,7 @@ if [ "${create_bintar}" != "no" ]; then
     line
     echo "+ transfering Galera source and package files..."
     line
-    for galera_version in ${ver_galera}; do
+    for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
       # rsync the galera dir to the release dir
       if rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
