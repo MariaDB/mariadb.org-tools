@@ -777,6 +777,14 @@ maybe_fix_permissions() {
     line
     echo "+ fixing permissions..."
     line
+
+    # Make sure parent dirs are OK first
+    sudo chmod -c 755 ${dir_archive}/${tree}/
+    sudo chmod -c 755 ${dir_archive}/${tree}/build-${tarbuildnum}/
+    sudo chmod -c 755 ${dir_archive_p8}/${tree}/
+    sudo chmod -c 755 ${dir_archive_p8}/${tree}/build-${tarbuildnum}/
+
+    # scan and adjust perms of subdirs
     for dir in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type d);do
       sudo chmod 755 "${dir}"
     done
