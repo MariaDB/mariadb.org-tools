@@ -230,10 +230,10 @@ case ${TREE} in
   '10.0e'|'10.0e-galera')
     debian_dists="jessie"
     ;;
-  '10.0'|'10.0-galera')
+  '10.0'|'10.0-galera'|'bb-10.0-release')
     debian_dists="jessie"
     ;;
-  '10.1')
+  '10.1'|'bb-10.1-release')
     debian_dists="jessie stretch sid"
     ;;
   *)
