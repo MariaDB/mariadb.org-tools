@@ -971,7 +971,16 @@ shouldI prepare_bintar_and_source_packages
 if [ "${galera_suffix}" != "-galera" ]; then
   shouldI prepare_Windows_packages
 fi
-shouldI prepare_Debian_packages
+
+case $tree in
+  *5.5* )
+    echo "+ no Debian for 5.5"
+    ;;
+  *)
+    shouldI prepare_Debian_packages
+    ;;
+esac
+
 shouldI prepare_Ubuntu_packages
 shouldI prepare_yum_packages
 #shouldI include_Galera_packages_in_repositories
