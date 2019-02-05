@@ -1409,7 +1409,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
         # Download debugsymbols package for 10.2+ releases
         if [ "${pkgtype}" = "zip" ]; then
           case ${tree} in
-            '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release')
+            '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release'|'bb-10.0-release')
               echo "+ tree=${tree}, so not downloading debugsymbols package..."
               ;;
             *)
