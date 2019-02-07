@@ -234,13 +234,19 @@ case ${TREE} in
     debian_dists="jessie"
     ;;
   '10.1'|'bb-10.1-release')
-    debian_dists="jessie stretch sid"
+    debian_dists="jessie stretch"
     ;;
-  '10.4'|'bb-10.4-release')
+  '10.2'|'bb-10.2-release')
     debian_dists="jessie stretch buster"
     ;;
-  *)
+  '10.3'|'bb-10.3-release')
     debian_dists="jessie stretch buster sid"
+    ;;
+  '10.4'|'bb-10.4-release')
+    debian_dists="jessie stretch buster sid"
+    ;;
+  *)
+    debian_dists="jessie stretch buster"
     ;;
 esac
 
