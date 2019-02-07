@@ -39,6 +39,12 @@ url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
 url_xtrabackup_24="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup-24"
 url_rpm="http://repo.percona.com/release"
 
+# set location of prep.conf and prep.log to XDG-compatible directories and then
+# create them if they don't exist
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
@@ -136,11 +142,11 @@ shouldI() {
 
 loadDefaults() {
   # Load the paths (if they exist)
-  if [ -f ${HOME}/.prep.conf ]; then
-      . ${HOME}/.prep.conf
+  if [ -f ${dir_conf}/prep.conf ]; then
+      . ${dir_conf}/prep.conf
   else
     echo
-    echo "The file ${HOME}/.prep.conf does not exist."
+    echo "The file ${dir_conf}/prep.conf does not exist."
     echo "I cannot continue."
     exit 3
   fi

@@ -21,8 +21,14 @@ fi
 
 set -o nounset                              # Treat unset variables as an error
 
-if [ -f ${HOME}/.prep.conf ]; then
-    . ${HOME}/.prep.conf
+# set location of prep.conf and prep.log to XDG-compatible directories and then
+# create them if they don't exist
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+
+if [ -f ${dir_conf}/prep.conf ]; then
+    . ${dir_conf}/prep.conf
 fi
 
 dists="

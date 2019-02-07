@@ -48,6 +48,12 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
 
+# set location of prep.conf and prep.log to XDG-compatible directories and then
+# create them if they don't exist
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
   *"5.5"*)
@@ -83,11 +89,11 @@ runCommand() {
 
 loadDefaults() {
   # Load the paths (if they exist)
-  if [ -f ${HOME}/.prep.conf ]; then
-      . ${HOME}/.prep.conf
+  if [ -f ${dir_conf}/prep.conf ]; then
+      . ${dir_conf}/prep.conf
   else
     echo
-    echo "The file ${HOME}/.prep.conf does not exist in your home."
+    echo "The file ${dir_conf}/prep.conf does not exist in your home."
     echo "The prep script creates a default template of this file when run."
     echo "Exiting..."
     exit 1

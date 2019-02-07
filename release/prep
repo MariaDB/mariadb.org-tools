@@ -43,6 +43,22 @@ set -eu
 # Various miscellaneous options
 rsync_opts="-a -L --info=progress2"
 
+# set location of prep.conf and prep.log to XDG-compatible directories and then
+# create them if they don't exist
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+if [ ! -d ${dir_conf}/ ];then
+  mkdir -vp ${dir_conf}
+fi
+
+if [ ! -d ${dir_log}/ ];then
+  mkdir -vp ${dir_log}
+fi
+
+
+
+
 #-------------------------------------------------------------------------------
 #  The ${build_dirs} option contains two-part names of various bintar builds
 #  separated by a colon. The first part is the name of the directory that
@@ -194,7 +210,7 @@ include_Galera_packages_in_repositories() {
 }
 
 create_a_template_file() {
-cat >> ${HOME}/.prep.conf <<END
+cat >> ${dir_conf}/prep.conf <<END
 #-------------------------------------------------------------------------------
 # default conf file for the MariaDB 'prep' script
 #-------------------------------------------------------------------------------
@@ -284,11 +300,11 @@ co_home_corp="remote_home"
 # vim: filetype=sh
 
 END
-chown $(basename ${HOME}): ${HOME}/.prep.conf
+chown ${USER}: ${dir_conf}/prep.conf
 }
 
 logSettings() {
-cat >> ${HOME}/.prep.log <<END
+cat >> ${dir_log}/prep.log <<END
 
 # Prepped $(date)
 # Command:
@@ -317,7 +333,7 @@ cat >> ${HOME}/.prep.log <<END
 # gpg_opts="${gpg_opts}"
 
 END
-chown $(basename ${HOME}): ${HOME}/.prep.conf
+chown ${USER}: ${dir_conf}/prep.conf
 }
 
 pressAnyKeyToContinue() {
@@ -363,24 +379,24 @@ shouldI() {
 
 loadDefaults() {
   # Load the paths (if they exist)
-  if [ -f ${HOME}/.prep.conf ]; then
-      . ${HOME}/.prep.conf
+  if [ -f ${dir_conf}/prep.conf ]; then
+      . ${dir_conf}/prep.conf
   else
     echo
-    echo "The file ${HOME}/.prep.conf does not exist in your home"
+    echo "The file ${dir_conf}/prep.conf does not exist in your home"
     echo "directory. If it does not exist, and have valid settings in it,"
     echo "this script will fail. I can create a default template file for you"
     echo "to fill out. Afterwards, please re-run this script."
     echo
     shouldI create_a_template_file
     # after creating the file, check if it exists again, if not, exit
-    if [ ! -f ${HOME}/.prep.conf ]; then
-      echo "I was unable to create ${HOME}/.prep.conf"
+    if [ ! -f ${dir_conf}/prep.conf ]; then
+      echo "I was unable to create ${dir_conf}/prep.conf"
       echo "Exiting..."
       exit 3
     else
       echo
-      echo "Template file created at ${HOME}/.prep.conf"
+      echo "Template file created at ${dir_conf}/prep.conf"
       echo "Please edit and re-run this script."
       echo
       exit 0
@@ -398,7 +414,7 @@ usage() {
   echo "  -e : this is a MariaDB Enterprise release"
   echo "  -g : this is a MariaDB Galera Cluster or Enterprise Cluster release"
   echo "  -h : display this usage message"
-  echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ~/.prep.log"
+  echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ${dir_log}/prep.log"
   echo "  -t <tree> : the MariaDB source code tree"
   echo "  -r <revision> : the MariaDB source code tree revision"
   echo "  -v <version> : the MariaDB version number"
@@ -896,7 +912,7 @@ do
       displayusage="yes"
       log_displayusage="h"
       ;;
-    l)  # Log the release to ~/.prep.log
+    l)  # Log the release to ${dir_log}/prep.log
       log="yes"
       log_log="l"
       ;;
