@@ -104,6 +104,19 @@ Deploying a new master (since Buildbot > 1.0 supports multi-master configuration
 7. For https support and better HTTP performance overall, consider setting up nginx as a reverse proxy, see *util/nginx.conf*.
 8. Some build artefacts are uploaded from workers to the master for archival and debugging purposes. In our setup, they are placed in /srv/buildbot/bb_builds/. This directory is also exposed via nginx index listing at [ci.mariadb.org](https://ci.mariadb.org).
 
+To upgrade Buildbot to latest version:
+```bash
+$ sudo systemctl stop buildbot-master
+$ sudo pip3 install -U buildbot buildbot-grid-view buildbot-waterfall-view buildbot-console-view buildbot-wsgi-dashboards buildbot-www 
+$ buildbot upgrade-master /srv/buildbot/master
+$ buildbot cleanupdb /srv/buildbot/master
+$ sudo systemctl start buildbot-master
+```
+To upgrade Buildbot-worker to latest version:
+```bash
+$ sudo pip3 install -U buildbot-worker
+```
+
 ## Master configuration
 
 The master configuration can be site specific and should be customized according to the needs and purpose for a particular master. What follows is a description of our current master configuration.
