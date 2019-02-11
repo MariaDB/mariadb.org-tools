@@ -52,10 +52,10 @@ win
 "
 
 # bundle members versions
-cj17='1.7.4'
+cj18='1.8.0'
 cj24='2.4.0'
 cc23='2.3.7'
-cc30='3.0.8'
+cc30='3.0.9'
 co30='3.0.8'
 co20='2.0.18'
 cn20='2.0.1'
@@ -195,7 +195,7 @@ for bundle in ${bundles}; do
 
   mkdir -v ${dir}
   pushd ${dir}
-    rsync ${rsync_opts} ${cj_home}/connector-java-${cj17}/mariadb-java-client-${cj17}.jar ./
+    rsync ${rsync_opts} ${cj_home}/connector-java-${cj18}/mariadb-java-client-${cj18}.jar ./
     rsync ${rsync_opts} ${cj_home}/connector-java-${cj24}/mariadb-java-client-${cj24}.jar ./
 
     if [ "${dist}" = "win" ]; then
