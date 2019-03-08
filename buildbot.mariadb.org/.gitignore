@@ -1,3 +1,2 @@
 *.log*
 master-private.cfg
-nginx/cert
