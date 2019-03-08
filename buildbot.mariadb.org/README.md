@@ -86,22 +86,22 @@ After this step you can follow the usual MariaDB development setup instructions,
 
 Deploying a new master (since Buildbot > 1.0 supports multi-master configuration):
 
-1. Setup your server. This configuration has been tested on Buildbot 1.3.0 and Ubuntu so far.
-2. Install Buildbot, you have two options here:
+1. Setup your server. This configuration has been tested on Buildbot 2.0.1, Python 3 and Ubuntu so far.
+2. Install Buildbot and associated plugins, you have two options here:
    a) install from the official distribution repositories (1.1 in Ubuntu 18.04)
-   b) install from the PyPi repository which should have the latest stable release (1.3 in August 2018)
+   b) install from the PyPi repository which should have the latest stable release (2.0.1 in March 2019)
    Follow the official install instructions here:
    http://docs.buildbot.net/latest/manual/installation/installation.html
 3. Clone this directory to your desired master destination. A good choice on Ubuntu would be:
    `/srv/buildbot/master`
 4. Create the master using:
-   `buildbot create-master -r /srv/buildbot/master `
+   `buildbot create-master -r /srv/buildbot/master`
    `buildbot upgrade-master /srv/buildbot/master`
 5. Start the master using:
    `buildbot start /srv/buildbot/master`
    Stop, restart and reconfig are the other most relevant commands.
 6. For service persistence and convenience, consider using the systemd service file *util/buildbot-master.service*.
-7. For https support and better HTTP performance overall, consider setting up nginx as a reverse proxy, see *util/nginx.conf*.
+7. For https support and better HTTP performance overall, consider setting up Nginx as a reverse proxy, see *util/nginx.conf*.
 8. Some build artefacts are uploaded from workers to the master for archival and debugging purposes. In our setup, they are placed in /srv/buildbot/bb_builds/. This directory is also exposed via nginx index listing at [ci.mariadb.org](https://ci.mariadb.org).
 
 To upgrade Buildbot to latest version:
