@@ -130,15 +130,15 @@ create_p8_bintar="no"
 # Functions
 #-------------------------------------------------------------------------------
 
-#function runCommand() {
-#  echo "+ ${@}"
-#  sleep 1
-#  if ${@} ; then
-#    return 0
-#  else
-#    return 1
-#  fi
-#}
+runCommand() {
+  echo "+ ${@}"
+  sleep 1
+  if ${@} ; then
+    return 0
+  else
+    return 1
+  fi
+}
 
 userResponse() {
   question="${@}"
@@ -1098,7 +1098,7 @@ if [ "${create_bintar}" != "no" ]; then
           ;;
       esac
       if [ "${dir_array[1]}" = "source" ]; then
-        if rsync ${rsync_opts} "${location}/mariadb-${num}.tar.gz" "/run/shm/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+        if runCommand rsync ${rsync_opts} "${location}/mariadb-${num}.tar.gz" "/run/shm/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
           pushd /run/shm/${dir_array[1]}
           # rename the source tarball for enterprise
           if [ "${is_ent}" = "yes" ];then
@@ -1147,7 +1147,7 @@ if [ "${create_bintar}" != "no" ]; then
         fi
         echo "+ transfer of ${dir_array[1]} done"
         echo
-      elif rsync ${rsync_opts} "${location}/" "/run/shm/${dir_array[1]}/"; then
+      elif runCommand rsync ${rsync_opts} "${location}/" "/run/shm/${dir_array[1]}/"; then
         echo "+ transfer of ${dir_array[1]} done"
         pushd /run/shm/${dir_array[1]}/
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
@@ -1163,25 +1163,21 @@ if [ "${create_bintar}" != "no" ]; then
           if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
-            echo "+ tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz"
-                    tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
+            runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
             mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
             rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
             rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
-            echo "+ tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}"
-                    tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
+            runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
           else
             echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
-            echo "+ tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz"
-                    tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
+            runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
             mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-            echo "+ tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}"
-                    tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
+            runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
           fi
 
@@ -1219,25 +1215,21 @@ if [ "${create_bintar}" != "no" ]; then
           if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
-            echo "+ tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz"
-                    tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
+            runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
             mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
             rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
             rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
-            echo "+ tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}"
-                    tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
+            runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
             rm -rf ${version}-linux-systemd-${galera_arch}
           else
             echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
-            echo "+ tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz"
-                    tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
+            runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
             mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
-            echo "+ tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}"
-                    tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
+            runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
             rm -rf ${version}-linux-systemd-${galera_arch}
           fi
 
@@ -1278,8 +1270,7 @@ if [ "${create_bintar}" != "no" ]; then
               fi
               galera_arch="i686"
             fi
-            echo "+ tar -zxf ${version}-linux-${galera_arch}.tar.gz"
-                    tar -zxf ${version}-linux-${galera_arch}.tar.gz
+            runCommand tar -zxf ${version}-linux-${galera_arch}.tar.gz
             mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
             # if the directory isn't named like we want, rename it
             if [ ! -d ${version}-linux-${galera_arch} ]; then
@@ -1292,8 +1283,7 @@ if [ "${create_bintar}" != "no" ]; then
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
-            echo "+ tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}"
-                    tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
+            runCommand tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
             rm -rf ${version}-linux-${galera_arch}
             # since we repacked them, we also need to regenerate the sums
             if [ -e md5sums.txt ]; then
@@ -1368,7 +1358,7 @@ if [ "${create_bintar}" != "no" ]; then
         echo
         # copy the dir to the corp dir
         echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
-        rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
+        runCommand rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
         echo
         echo
       else
@@ -1391,9 +1381,9 @@ if [ "${create_bintar}" != "no" ]; then
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
       # rsync the galera dir to the release dir
-      if rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
+      if runCommand rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
         # rsync the galera dir to the corp dir
-        if rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* --exclude=deb/ --exclude=rpm/ "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
+        if runCommand rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* --exclude=deb/ --exclude=rpm/ "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
           echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
         fi
         echo
@@ -1440,7 +1430,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       pushd ${dir_release}/${dir_name}/${arch}-packages
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
-        wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
+        runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
 
         # Download debugsymbols package for 10.2+ releases
         if [ "${pkgtype}" = "zip" ]; then
@@ -1450,14 +1440,14 @@ if [ "${galera_suffix}" != "-galera" ]; then
               ;;
             *)
               echo "+ tree=${tree}, so downloading debugsymbols package..."
-              wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
+              runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
               ;;
           esac
         fi
 
       done
       #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
-      wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
+      runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
     done
     line
     echo "+ fixing Win md5sums..."
@@ -1465,7 +1455,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
     for arch in win32 winx64; do
       pushd ${dir_release}/${dir_name}/${arch}-packages
       pwd
-      dos2unix md5sums.txt
+      runCommand dos2unix md5sums.txt
       grep ${arch} md5sums.txt > md5sums.txt.tmp
       mv -v md5sums.txt.tmp md5sums.txt
       #pwd
