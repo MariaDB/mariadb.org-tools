@@ -58,6 +58,7 @@ log_displayusage=""
   log_is_cluster=""
              log="no"
          log_log=""
+         is_test="no"
 galera_suffix=""
      treeflag=false
       revflag=false
@@ -331,6 +332,10 @@ shouldI() {
   done
 }
 
+treat_this_as_a_test() {
+  is_test="yes"
+}
+
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${dir_conf}/prep.conf ]; then
@@ -395,8 +400,15 @@ loadDefaults                                    # Load Default paths and vars
 version="galera-${num}"
 suffix_ent="signed-ent"
 suffix="signed"
-release_dir="${dir_galera}"
-#release_dir="/ds413/tmp"
+
+shouldI treat_this_as_a_test
+
+if [ "${is_test}" = "yes" ]; then
+  release_dir="${dir_galera}-test"
+else
+  release_dir="${dir_galera}"
+fi
+
 dir_name="${version}"
 archive_dir="/ds413/archive/builds"
 
