@@ -243,7 +243,7 @@ case ${TREE} in
     debian_dists="jessie stretch"
     ;;
   '10.2'|'bb-10.2-release')
-    debian_dists="jessie stretch buster"
+    debian_dists="jessie stretch"
     ;;
   '10.3'|'bb-10.3-release')
     debian_dists="jessie stretch buster sid"
