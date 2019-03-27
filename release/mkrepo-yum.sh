@@ -638,10 +638,12 @@ for DIR in ${dists}; do
 
   echo 
   # Add a README to the srpms directory
-  runCommand mkdir -vp ${DIR}/srpms
-  echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
+  if [ ! -d ${DIR}/srpms ] ;then
+    runCommand mkdir -vp ${DIR}/srpms
+    echo "Why do MariaDB RPMs not include the source RPM (SRPMS)?
 https://mariadb.com/kb/en/why-do-mariadb-rpms-not-include-the-source-rpm-srpms
 " > ${DIR}/srpms/README
+  fi
 done
 
 
