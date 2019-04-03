@@ -130,7 +130,6 @@ deb_dists_full="
   cosmic-amd64
 
   jessie-amd64
-  jessie-ppc64le
   jessie-x86
 
   sid-amd64
@@ -960,11 +959,6 @@ END
         echo ${dist}
         reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*jessie*_amd64.changes
         reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*jessie*_amd64.changes
-        ;;
-      'jessie-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*jessie*_ppc64el.changes
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*jessie*_ppc64el.changes
         ;;
       'jessie-x86')
         echo ${dist}
