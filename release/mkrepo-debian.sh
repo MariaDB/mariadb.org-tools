@@ -288,11 +288,6 @@ for dist in ${debian_dists}; do
 
   # add ppc64el files
   case ${builder} in
-    'jessie')
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
-      # Add Advance Toolkit files
-      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*runtime*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      ;;
     'stretch')
       for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
@@ -348,7 +343,7 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "jessie"|"stretch")
+            "stretch")
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
               ;;
