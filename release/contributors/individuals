@@ -15,6 +15,8 @@ Andrei Elkin (MariaDB Corporation) <andrei.elkin@mariadb.com> andrelkin <andrei.
 Andrei Elkin (MariaDB Corporation) <andrei.elkin@pp.inet.fi> Andrei Elkin <andrei.elkin@pp.inet.fi>
 Andrii Nikitin (MariaDB Corporation)  <andrii.nikitin@mariadb.com> Andrii Nikitin <andrii.nikitin@mariadb.com>
 Chris Calender (MariaDB Corporation) <chris@mariadb.com> Chris Calender <chris@mariadb.com>
+Chris Calender (MariaDB Corporation) <chriscalender@gmail.com> Chris Calender <chriscalender@gmail.com>
+Chris Calender (MariaDB Corporation) <chriscalender@gmail.com> chriscalender <chriscalender@gmail.com>
 Daniel Bartholomew (MariaDB Corporation) <dbart@mariadb.com> Daniel Bartholomew <db@dbart.us>
 Daniel Bartholomew (MariaDB Corporation) <daniel@gandalf> Daniel Bartholomew <daniel@gandalf>
 Elena Stepanova (MariaDB Corporation) <elenst@mariadb.com> Elena Stepanova <elenst@montyprogram.com>
@@ -63,6 +65,7 @@ Sergei Golubchik (MariaDB Corporation) <sergii@pisem.net> Sergei Golubchik <serg
 Sergei Golubchik (MariaDB Corporation) <vuvova@gmail.com> Sergei Golubchik <vuvova@gmail.com>
 Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <psergey@askmonty.org>
 Sergey Petrunya (MariaDB Corporation) <psergey@askmonty.org> Sergey Petrunya <psergey@askmonty.org>
+Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha Sivakumar <sujatha.sivakumar@mariadb.com>
 Thirunarayanan Balathandayuthapani (MariaDB Corporation) <thiru@mariadb.com>
 Varun Gupta (MariaDB Corporation) <varun@mariadb.com> Varun Gupta <varunraiko1803@gmail.com>
 Varun Gupta (MariaDB Corporation) <varun.gupta@mariadb.com> Varun Gupta <varun.gupta@mariadb.com>
@@ -90,6 +93,7 @@ Michael Widenius (MariaDB Corporation and MariaDB Foundation) <monty@askmonty.or
 Otto Kekäläinen (MariaDB Foundation) <otto@mariadb.org> Otto Kekäläinen <otto@mariadb.org>
 Otto Kekäläinen (MariaDB Foundation) <otto@seravo.fi> Otto Kekäläinen <otto@seravo.fi>
 Otto Kekäläinen (MariaDB Foundation) <otto.kekalainen@seravo.fi> Otto Kekäläinen <otto.kekalainen@seravo.fi>
+Robert Bindar (MariaDB Foundation) <robert@mariadb.org> Robert Bindar <robert@mariadb.org>
 Rutuja Surve (MariaDB Foundation) <rutuja.r.surve@gmail.com> Rutuja Surve <rutuja.r.surve@gmail.com>
 Sergey Vojtovich (MariaDB Foundation) <svoj@mariadb.org> Sergey Vojtovich <svoj@mariadb.org>
 Sergey Vojtovich (MariaDB Foundation) <svoj@mariadb.org> Sergey <svoj@mariadb.org>
@@ -275,11 +279,14 @@ Yasufumi Kinoshita (Oracle) <yasufumi.kinoshita@oracle.com> Yasufumi Kinoshita <
 
 Aleksey Midenkov (Tempesta) <midenok@gmail.com> Aleksey Midenkov <midenok@gmail.com>
 Eugene Kosov (Tempesta) <claprix@yandex.ru> Eugene Kosov <claprix@yandex.ru>
+Julius Goryavsky (Tempesta) <sysprg@gmail.com> sysprg <sysprg@gmail.com>
+Julius Goryavsky (Tempesta) <sysprg@gmail.com> Julius Goryavsky <sysprg@gmail.com>
 Nikita Malyavin (Tempesta) <nikitamalyavin@gmail.com> Nikita Malyavin <nikitamalyavin@gmail.com>
 
 Honza Horak (Red Hat) <hhorak@redhat.com> Honza Horak <hhorak@redhat.com>
 Jakub Dorňák (Red Hat) <jdornak@redhat.com> Jakub Dorňák <jdornak@redhat.com>
 Michal Schorm (Red Hat) <mschorm@redhat.com> Michal Schorm <mschorm@redhat.com>
+Michal Schorm (Red Hat) <mschorm@centrum.cz> FaramosCZ <mschorm@centrum.cz>
 Robbie Harwood (Red Hat) <rharwood@redhat.com> Robbie Harwood <rharwood@redhat.com>
 
 Natanael Copa (Alpine Linux) <ncopa@alpinelinux.org> Natanael Copa <ncopa@alpinelinux.org>
@@ -316,6 +323,7 @@ Bernard Spil (FreeBSD) <brnrd@FreeBSD.org> Bernard Spil <brnrd@FreeBSD.org>
 Bernard Spil (FreeBSD) <Sp1l@users.noreply.github.com> Bernard Spil <Sp1l@users.noreply.github.com>
 Don Lewis (FreeBSD) <truckman@FreeBSD.org> Don Lewis <truckman@FreeBSD.org>
 
+Bernhard M. Wiedemann (SUSE) <bwiedemann@suse.de> Bernhard M. Wiedemann <bwiedemann@suse.de>
 Dinar Valeev(SUSE) <dvaleev@suse.com> Dinar Valeev <dvaleev@suse.com>
 
 Dimitri John Ledkov (Ubuntu) <xnox@ubuntu.com> Dimitri John Ledkov <xnox@ubuntu.com>
@@ -335,6 +343,7 @@ Arjen Lentz (Open Query) <arjen@openquery.com> Arjen Lentz <arjen@openquery.com>
 Daniel Black (Open Query) <daniel.black@openquery.com> Daniel Black <daniel.black@openquery.com>
 
 Krunal Bauskar (Percona) <krunal.bauskar@percona.com> Krunal Bauskar <krunal.bauskar@percona.com>
+Laurynas Biveinis (Percona) <laurynas.biveinis@gmail.com> Laurynas Biveinis <laurynas.biveinis@gmail.com>
 
 Barry Perlman (Tokutek) <barry@tokutek.com> Barry Perlman <barry@tokutek.com>
 Bradley C. Kuszmaul (Tokutek) <bradley@tokutek.com> Bradley C. Kuszmaul <bradley@tokutek.com>
@@ -387,7 +396,6 @@ DevilSatan () <2530212445@qq.com> DevilSatan <2530212445@qq.com>
 dirtysalt () <dirtysalt1987@gmail.com> dirtysalt <dirtysalt1987@gmail.com>
 f4rnham () <f4rnham@PC.none> f4rnham <f4rnham@PC.none>
 f4rnham () <f4rnham@users.noreply.github.com> f4rnham <f4rnham@users.noreply.github.com>
-FaramosCZ () <mschorm@centrum.cz> FaramosCZ <mschorm@centrum.cz>
 fran () <kahun@scriabin.(none)> fran <kahun@scriabin.(none)>
 Fredrik Fornwall () <fredrik@fornwall.net> Fredrik Fornwall <fredrik@fornwall.net>
 gvtek () <34262684+gvtek@users.noreply.github.com> gvtek <34262684+gvtek@users.noreply.github.com>
@@ -405,7 +413,6 @@ Jia Zhouyang () <jiazhouyang@nudt.edu.cn> Jia Zhouyang <jiazhouyang@nudt.edu.cn>
 josh4trunks () <joshruehlig@gmail.com> josh4trunks <joshruehlig@gmail.com>
 Julien Del-Piccolo () <jdel@users.noreply.github.com> Julien Del-Piccolo <jdel@users.noreply.github.com>
 Julien Pivotto () <roidelapluie@inuits.eu> Julien Pivotto <roidelapluie@inuits.eu>
-Julius Goryavsky () <sysprg@gmail.com> Julius Goryavsky <sysprg@gmail.com>
 Kenny John Jacob () <johnjacobkenny@gmail.com> Kenny John Jacob <johnjacobkenny@gmail.com>
 Kentoku Shiba () <kentokushiba@gmail.com> Kentoku <kentokushiba@gmail.com>
 Kentoku Shiba () <kentokushiba@gmail.com> Kentoku SHIBA <kentokushiba@gmail.com>
