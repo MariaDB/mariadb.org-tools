@@ -285,6 +285,10 @@ if [ "${create_yum}" != "no" ]; then
         runCommand rsync -avP ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*server.rpm ${REPONAME}/rpms/
         runCommand rsync -avP ${dir_archive_p8}/${tree}/${rev}/p8-suse12-rpm/rpms/*test.rpm   ${REPONAME}/rpms/
         ;;
+      'sles12-amd64')
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-sles123-amd64/rpms/*server.rpm ${REPONAME}/rpms/
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-zyp-sles123-amd64/rpms/*test.rpm ${REPONAME}/rpms/
+        ;;
       *)
         runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*server.rpm ${REPONAME}/rpms/
         runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/kvm-*-${REPONAME}/rpms/*test.rpm ${REPONAME}/rpms/
