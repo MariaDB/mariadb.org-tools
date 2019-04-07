@@ -112,7 +112,7 @@ create_p8_bintar="no"
    create_debian="no"
    create_ubuntu="no"
       create_yum="no"
-           fixed="no"
+     perms_fixed="no"
      incl_galera="no"
       is_cluster="no"
   log_is_cluster=""
@@ -121,6 +121,8 @@ create_p8_bintar="no"
          log_log=""
    galera_suffix=""
  exclude_release=""
+     remote_prep="no"
+    skip_staging="no"
         treeflag=false
          revflag=false
          numflag=false
@@ -277,11 +279,12 @@ dir_archive_p8="/path/to/p8/archive/builds"
 # ssh key to use for uploading
 ssh_upload_key='.ssh/KEY_NAME'
 
-# Mirrors
-staging_mirror="mirror_name"
-primary_mirror="mirror_name"
+# remote server information
+buildmaster="buildmaster_ssh"
+staging_mirror="mirror_ssh"
+primary_mirror="mirror_ssh"
 primary_mirror_rsync="rsync_addr_of_primary_mirror"
-corp_mirror="mirror_name"
+corp_mirror="mirror_ssh"
 corp_mirror_path="/dest/dir/on/corp/mirror"
 corp_bundles_path="/home/mariadb-repos/bundles/TX"
 corp_tools_path="/home/mariadb-repos/mariadb-enterprise-tools"
@@ -424,34 +427,56 @@ usage() {
   set -x
 }
 
+thickline() {
+  echo "==============================================================================="
+}
+
 line() {
   echo "-------------------------------------------------------------------------------"
 }
 
-message() {
+important_message() {
   message="${@}"
-  echo;echo;echo;
-  echo;line;echo "${message}";line;
+  echo;echo;thickline;echo "+ ${message}";thickline;
 }
 
+message() {
+  message="${@}"
+  line;echo "+ ${message}";line;
+}
+
+lowkey_message() {
+  message="${@}"
+  echo "+ ${message}"
+}
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
 rsync_wrapper() {
   local upload
   upload=""
   rsync_body="${@}"
-  message "Doing a dry run..."
+  lowkey_message "Doing a dry run..."
   set -x
   rsync --dry-run ${rsync_body}
   set +x
-  echo;echo;echo;
+  echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
+        lowkey_message "Transferring for real..."
         set -x
         rsync ${rsync_body}
         set +x
-        echo;echo;echo
+        echo
         upload="yes"
         ANSWER=""
         return 0
@@ -474,20 +499,20 @@ rsync_wrapper_staging() {
   local upload_staging
   upload_staging=""
   rsync_body_staging="${@}"
-  message "Doing a dry run..."
+  lowkey_message "Doing a dry run..."
   set -x
   ssh -t -t ${staging_mirror} "rsync --dry-run ${rsync_body_staging}"
   set +x
-  echo;echo;echo;
+  echo
   while [ -z ${upload_staging} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
+        message "Transferring for real..."
         set -x
         ssh -t -t ${staging_mirror} "rsync ${rsync_body_staging}"
         set +x
-        echo;echo;echo
+        echo
         upload_staging="yes"
         ANSWER=""
         return 0
@@ -510,20 +535,20 @@ rsync_wrapper_primary() {
   local upload_primary
   upload_primary=""
   rsync_body_primary="${@}"
-  message "Doing a dry run..."
+  lowkey_message "Doing a dry run..."
   set -x
   ssh -t -t ${primary_mirror} "rsync --dry-run ${rsync_body_primary}"
   set +x
-  echo;echo;echo;
+  echo
   while [ -z ${upload_primary} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
+        lowkey_message "Transferring for real..."
         set -x
         ssh -t -t ${primary_mirror} "rsync ${rsync_body_primary}"
         set +x
-        echo;echo;echo
+        echo
         upload_primary="yes"
         ANSWER=""
         return 0
@@ -541,6 +566,66 @@ rsync_wrapper_primary() {
     esac
   done
 }
+
+
+#===  FUNCTION  ================================================================
+#          NAME:  pull_this_release_from_the_buildmaster
+#   DESCRIPTION:  Transfer files over from the buildmaster before prepping
+#===============================================================================
+pull_this_release_from_the_buildmaster() {
+  # This function enables prepping a release remotely. To be able to do this we
+  # need to:
+  # - Fix permissions on the buildmaster
+  # - rsync the needed dirs from the buildmaster such that they can all be
+  #   found at the same paths on the local machine
+  # - Possibly not upload to the staging mirror (because we might be doing this
+  #   on the staging mirror)
+
+  # First set the remote_prep variable to yes so that other parts of the script
+  # know what is going on
+  remote_prep="yes"
+
+  important_message "Transferring files on ${buildmaster} to here"
+
+  # Fix permissions on the buildmaster
+  maybe_fix_permissions
+
+  # Create the local directories if they don't exist
+  lowkey_message "Making sure local directories exist..."
+  if [ ! -d ${dir_archive}/${tree}/build-${tarbuildnum} ]; then
+    mkdir -vp ${dir_archive}/${tree}/build-${tarbuildnum}
+  fi
+
+  if [ ! -d ${dir_archive_p8}/${tree}/${rev} ]; then
+    mkdir -vp ${dir_archive_p8}/${tree}/${rev}
+  fi
+  echo
+
+  # After the above is finished we should have something like:
+  #   /ds413/archive/pack/10.4/build-25413
+  #   /ds413/archive/builds/10.4/5da6944ea3a592efefd1adc33b1280ad1de66688
+
+  # We can now rsync the builds from the buildmaster
+  message "Transferring kvm builds from ${buildmaster}..."
+  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
+  message "Transferring other builds from ${buildmaster}..."
+  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
+
+  # We should be done now
+
+}
+
+skip_uploading_to_the_staging_mirror() {
+  skip_staging="yes"
+}
+
+start_the_ssh-agent() {
+  # start the ssh-agent and add the upload key
+  lowkey_message "Starting the ssh-agent.."
+  eval $(ssh-agent)
+  ssh-add ${ssh_upload_key}
+}
+
 
 #===  FUNCTION  ================================================================
 #          NAME:  upload_the_bundles_to_the_staging_mirror
@@ -598,42 +683,54 @@ upload_corp_dir_to_the_staging_mirror() {
 
 
 #===  FUNCTION  ================================================================
-#          NAME:  upload_from_the_staging_mirror_to_the_primary_mirror
+#          NAME:  upload_to_the_primary_mirror
 #   DESCRIPTION:  Transfer the release from the staging mirror to the primary
 #                 mirror
 #===============================================================================
-upload_from_the_staging_mirror_to_the_primary_mirror() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+upload_to_the_primary_mirror() {
+  if [ "${skip_staging}" = "yes" ]; then
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    else
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    fi
   else
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    else
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+    fi
   fi
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  upload_from_the_staging_mirror_to_the_yum_mirrors
+#          NAME:  upload_to_the_yum_mirrors
 #   DESCRIPTION:  Transfer files from the primary mirror to the yum repository
 #                 mirrors
 #===============================================================================
-upload_from_the_staging_mirror_to_the_yum_mirrors() {
+upload_to_the_yum_mirrors() {
   # After the staging mirror has the files, rsync to the bb boxes:
-  #ssh -t -t ${yum_primary_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${primary_mirror_rsync}/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
-
   set -x
   ssh -t -t ${yum_primary_mirror} "if [ ! -d '${yum_mirror_path}/${num}' ];then mkdir -v ${yum_mirror_path}/${num};fi" 
   set +x
 
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+  if [ "${skip_staging}" = "yes" ]; then
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    else
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    fi
   else
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    else
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+    fi
   fi
 
   set -x
   for yum_mirror in ${yum_mirrors} ;do 
-    #echo;echo;echo;line; echo "uploading to ${yum_mirror}";line;
     ssh -t -t ${yum_primary_mirror} "rsync -a --info=progress2 --delete-after --delay-updates ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
-    #ssh -t -t ${yum_mirror} "mkdir -v ${yum_mirror_path}/${num} ; rsync -av --delete-after --delay-updates ${yum_primary_mirror}:data/${version_nog}/yum/ ${yum_mirror_path}/${num}/"; 
   done
   set +x
 }
@@ -743,22 +840,24 @@ bundles() {
 
 
 #===  FUNCTION  ================================================================
-#          NAME:  upload_from_the_staging_mirror_to_the_corp_mirror
+#          NAME:  upload_to_the_corp_mirror
 #   DESCRIPTION:  Sync the release from the primary public mirror to the corp
 #                 mirror
 #===============================================================================
-upload_from_the_staging_mirror_to_the_corp_mirror() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+upload_to_the_corp_mirror() {
+  if [ "${skip_staging}" = "yes" ]; then
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    else
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    fi
   else
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    else
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+    fi
   fi
-
-#  if [ "${galera_suffix}" = "-galera" ]; then
-#    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${dir_name} ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
-#  else
-#    ssh -t -t ${corp_mirror} rsync -av --delete-after ${primary_mirror_rsync}/${version_nog} ${corp_mirror_path}/
-#  fi
 }
 
 #===  FUNCTION  ================================================================
@@ -790,34 +889,43 @@ maybe_create_release_dir() {
 #                 fixed already during this run of the script
 #===============================================================================
 maybe_fix_permissions() {
-  if [ "${fixed}" = "no" ]; then
-    echo
-    line
-    echo "+ fixing permissions..."
-    line
+  if [ "${perms_fixed}" = "no" ]; then
+     message "fixing permissions..."
 
-    # Make sure parent dirs are OK first
-    sudo chmod -c 755 ${dir_archive}/${tree}/
-    sudo chmod -c 755 ${dir_archive}/${tree}/build-${tarbuildnum}/
-    sudo chmod -c 755 ${dir_archive_p8}/${tree}/
-    sudo chmod -c 755 ${dir_archive_p8}/${tree}/${rev}/
+    dirs_to_chmod="${dir_archive}/${tree}/ ${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8}/${tree}/ ${dir_archive_p8}/${tree}/${rev}"
 
-    # scan and adjust perms of subdirs
-    for dir in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type d);do
-      sudo chmod 755 "${dir}"
-    done
-    for file in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type f);do
-      sudo chmod 644 "${file}"
-    done
-    for dir in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type d);do
-      sudo chmod 755 "${dir}"
-    done
-    for file in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type f);do
-      sudo chmod 644 "${file}"
-    done
-    fixed="yes" # set fixed to 'yes' so that this function doesn't run again
+    if [ "${remote_prep}" = "yes" ]; then
+
+      # If we're fixing remote permissions, we want to to it with one ssh
+      # connection, so everything goes on one line
+
+      ssh -t -t ${buildmaster} "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
+
+    else
+      # If we're here we are not fixing remote permissions, so we can do things
+      # on separate lines, which makes everything more readable
+
+      # Make sure parent dirs are OK first
+      sudo chmod -c 755 ${dirs_to_chmod}
+
+      # scan and adjust perms of subdirs
+      for dir in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type d);do
+        sudo chmod 755 "${dir}"
+      done
+      for file in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type f);do
+        sudo chmod 644 "${file}"
+      done
+      for dir in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type d);do
+        sudo chmod 755 "${dir}"
+      done
+      for file in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type f);do
+        sudo chmod 644 "${file}"
+      done
+    fi
+
+    perms_fixed="yes" # set perms_fixed to 'yes' so this doesn't run again
+
     echo "+ done fixing permissions"
-    echo
     echo
   fi
 }
@@ -994,6 +1102,10 @@ else
   version_nog="mariadb-${num}"
 fi
 
+shouldI pull_this_release_from_the_buildmaster
+
+important_message "Creating the ${version} Release"
+
 shouldI prepare_bintar_and_source_packages
 if [ "${galera_suffix}" != "-galera" ]; then
   shouldI prepare_Windows_packages
@@ -1046,18 +1158,10 @@ if [ ${log} = "yes" ]; then
 fi
 
 #exit 0;
-
+echo
+shouldI start_the_ssh-agent
 
 echo
-echo
-line
-echo "+ creating the ${version} release"
-line
-
-# start the ssh-agent and add the upload key
-eval $(ssh-agent)
-ssh-add ${ssh_upload_key}
-
 # start the gpg-agent if it's not already started
 eval $(gpg-agent --daemon)
 
@@ -1744,28 +1848,27 @@ bundles
 
 echo;echo;echo;echo
 
-# now upload
-shouldI upload_to_the_staging_mirror
+
+shouldI skip_uploading_to_the_staging_mirror
+
+if [ "${skip_staging}" = "no" ]; then
+  shouldI upload_to_the_staging_mirror
+  echo;echo;echo;echo
+  shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
+  echo;echo;echo;echo
+  shouldI upload_corp_dir_to_the_staging_mirror
+  echo;echo;echo;echo
+fi
+
+shouldI upload_to_the_primary_mirror
 
 echo;echo;echo;echo
 
-shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
+shouldI upload_to_the_corp_mirror
 
 echo;echo;echo;echo
 
-shouldI upload_corp_dir_to_the_staging_mirror
-
-echo;echo;echo;echo
-
-shouldI upload_from_the_staging_mirror_to_the_primary_mirror
-
-echo;echo;echo;echo
-
-shouldI upload_from_the_staging_mirror_to_the_corp_mirror
-
-echo;echo;echo;echo
-
-shouldI upload_from_the_staging_mirror_to_the_yum_mirrors
+shouldI upload_to_the_yum_mirrors
 
 echo;echo;echo;echo
 
