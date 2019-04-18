@@ -1,64 +1,28 @@
-import gdb.printing
+import duel
+from pretty_printer import PrettyPrinter
 
-# in python2 gdb.Value can only be converted to long(), python3 only has int()
-try: a=long(1)
-except: long=int
-
-def PrettyPrinter(arg):
-
-    name = getattr(arg, '__name__', arg)
-
-    def PrettyPrinterWrapperWrapperWrapper(func):
-
-        class PrettyPrinterWrapperWrapper:
-
-            class PrettyPrinterWrapper:
-                def __init__(self, prefix, val, cb):
-                    self.prefix = prefix
-                    self.val = val
-                    self.cb = cb
-                def to_string(self):
-                    return self.prefix + self.cb(self.val)
-
-            def __init__(self, name, cb):
-                self.name = name
-                self.enabled = True
-                self.cb = cb
-
-            def __call__(self, val):
-                prefix = ''
-                if val.type.code == gdb.TYPE_CODE_PTR:
-                    prefix = '({}) {:#08x} '.format(str(val.type), long(val))
-                    try: val = val.dereference()
-                    except: return None
-                valtype=val.type.unqualified()
-                if valtype.name == self.name:
-                    return self.PrettyPrinterWrapper(prefix, val, self.cb)
-                if valtype.strip_typedefs().name == self.name:
-                    return self.PrettyPrinterWrapper(prefix, val, self.cb)
-                return None
-
-        pp=PrettyPrinterWrapperWrapper(name, func)
-        gdb.printing.register_pretty_printer(None, pp, True)
-        return func
-
-    if callable(arg):
-        return PrettyPrinterWrapperWrapperWrapper(arg)
-
-    return PrettyPrinterWrapperWrapperWrapper
+def print_string(val, length):
+    if length <= 0:
+        return '""'
+    return str(val.dereference().cast(gdb.lookup_type('char').array(length - 1)))
 
 @PrettyPrinter
 def String(val):
-    return '_' + val['str_charset']['name'].string() + \
-           ' "' + val['Ptr'].string('ascii', 'strict',
-                    val['str_length']) + '"'
+    try:    cs=val['m_charset']   # 10.4+
+    except: cs=val['str_charset'] # 10.3-
+    return '_' + cs['name'].string() + ' ' + \
+            print_string(val['Ptr'], val['str_length'])
 
 @PrettyPrinter
 def st_bitmap(val):
-    s=''
-    for i in range(int(val['n_bits']+7)//8):
-        s = format(int(val['bitmap'][i]), '032b') + s
+    s=''.join(reversed([format(int(val['bitmap'][i]),'032b')
+                          for i in range(int(val['n_bits']+31)//32)]))
     return "b'" + s[-int(val['n_bits']):] + "'"
+
+@PrettyPrinter('Bitmap<64u>')
+def keymap64(val):
+    return "b'" + format(long(val['map']),'b') + "'"
+
 
 def print_flags(val, bits):
     return ','.join([s for n,s in enumerate(bits) if val & (1 << n)])
@@ -101,6 +65,7 @@ def byte(val):
 
 @PrettyPrinter
 def sockaddr_storage(val):
+    if val['ss_family'] == 0: return 'AF_UNSPEC'
     if val['ss_family'] == 1: return 'AF_UNIX ???'
     if val['ss_family'] == 2:
         s = val['__ss_padding']
@@ -111,3 +76,14 @@ def sockaddr_storage(val):
     if val['ss_family'] == 10: return 'AF_INET6 ???'
     return 'AF_???'
 
+@PrettyPrinter
+def mysql_prlock_t(val):
+    return '=mysql_prlock_t'
+
+@PrettyPrinter
+def mysql_mutex_t(val):
+    return '=mysql_mutex_t'
+
+@PrettyPrinter
+def mysql_cond_t(val):
+    return '=mysql_cond_t'
