@@ -53,7 +53,7 @@ define bq
   b mysql_parse if $_streq(rawbuf,$arg0)
   r
 end
-document bque
+document bq
 Breakpoint on a Query (and Run).
 Use: ./mtr --gdb='bq "select 1 from t1"'
 end
