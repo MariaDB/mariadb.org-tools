@@ -6,7 +6,7 @@
 #         USAGE:  ./prep-c <version> <build_dir>
 # 
 #   DESCRIPTION:  This script is used to prepare files for a MariaDB
-#                 Connector/ODBC release
+#                 Connector/C release
 # 
 #        AUTHOR: Daniel Bartholomew
 #       CREATED: 17/05/23 00:56:37 EST
@@ -288,7 +288,7 @@ set -eu
 
 echo;echo;echo
 line
-echo "Preparing MariaDB Connector/ODBC ${version} release..."
+echo "Preparing MariaDB Connector/C ${version} release..."
 line
 echo
 
