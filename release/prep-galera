@@ -113,6 +113,7 @@ shift $(($OPTIND - 1))
 deb_dists="
   bionic
   cosmic
+  disco
   buster
   jessie
   sid
@@ -128,6 +129,8 @@ deb_dists_full="
   buster-amd64
 
   cosmic-amd64
+
+  disco-amd64
 
   jessie-amd64
   jessie-x86
@@ -890,7 +893,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'artful'|'cosmic'|'buster') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'artful'|'cosmic'|'buster'|'disco') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -952,6 +955,14 @@ END
         reprepro --basedir=. include cosmic $_
         vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*cosmic*_amd64.changes
         reprepro --basedir=. include cosmic $_
+        ;;
+
+      'disco-amd64')
+        echo ${dist}
+        vi ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*disco*_amd64.changes
+        reprepro --basedir=. include disco $_
+        vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*disco*_amd64.changes
+        reprepro --basedir=. include disco $_
         ;;
 
       'jessie-amd64')

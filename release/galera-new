@@ -64,8 +64,8 @@ case ${tree} in
       sles12-ppc64le
     "
     ;;
-  *) debian_dists="jessie sid"
-     ubuntu_dists="trusty xenial bionic cosmic"
+  *) debian_dists="jessie sid buster"
+     ubuntu_dists="trusty xenial bionic cosmic disco"
      yum_dists="
       centos6-amd64
       centos6-x86
