@@ -57,19 +57,19 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
   *"5.5"*)
-    ubuntu_dists="trusty"
+    ubuntu_dists=""
     ;;
   *"10.0"*)
-    ubuntu_dists="trusty xenial"
+    ubuntu_dists="xenial"
     ;;
   *"10.1"*)
-    ubuntu_dists="trusty xenial bionic cosmic"
+    ubuntu_dists="xenial bionic cosmic"
     ;;
   *"10.2"*)
-    ubuntu_dists="trusty xenial bionic cosmic"
+    ubuntu_dists="xenial bionic cosmic"
     ;;
   *)
-    ubuntu_dists="trusty xenial bionic cosmic disco"
+    ubuntu_dists="xenial bionic cosmic disco"
     ;;
 esac
 
@@ -136,7 +136,7 @@ if [ "${ENTERPRISE}" = "yes" ]; then
   description="MariaDB Enterprise Repository"
   gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
   #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
-  ubuntu_dists="trusty xenial"
+  ubuntu_dists="xenial"
   suffix="signed-ent"
 else
   origin="MariaDB"
@@ -167,7 +167,7 @@ for dist in ${ubuntu_dists}; do
 
   # First we import the amd64 files
   case ${dist} in 
-    'trusty'|'xenial'|'bionic'|'cosmic'|'disco')
+    'xenial'|'bionic'|'cosmic'|'disco')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
@@ -178,17 +178,13 @@ for dist in ${ubuntu_dists}; do
 
   # Include i386 debs
   case ${dist} in
-    'trusty'|'xenial')
+    'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
 
   # Include ppc64le debs
   case ${dist} in
-    'trusty')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "${dir_at}/${dist}-ppc64el-${suffix}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      ;;
     'xenial'|'bionic')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
@@ -225,14 +221,6 @@ for dist in ${ubuntu_dists}; do
   esac
 
 
-  # Add in custom libjudy packages for distros that need them
-  case ${dist} in
-    "trusty")
-      runCommand reprepro --basedir=. includedeb ${dist} ${dir_judy}/libjudydebian1_1.0.5-4_ppc64el.deb
-      ;;
-  esac
-
-
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     case ${ARCHDIR} in
@@ -249,7 +237,7 @@ for dist in ${ubuntu_dists}; do
       if [ "${ENTERPRISE}" = "yes" ]; then
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
-        if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+        if [ "${dist}" = "xenial" ]; then
           runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
         fi
       else
@@ -261,14 +249,14 @@ for dist in ${ubuntu_dists}; do
 
         # include i386
         case ${dist} in
-          'trusty'|'xenial')
+          'xenial')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_i386.changes
             ;;
         esac
 
         # include ppc64le
         case ${dist} in
-          'trusty'|'xenial'|'bionic')
+          'xenial'|'bionic')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
             ;;
         esac

@@ -118,7 +118,6 @@ deb_dists="
   jessie
   sid
   stretch
-  trusty
   xenial
 "
 deb_dists_full="
@@ -141,10 +140,6 @@ deb_dists_full="
   stretch-amd64
   stretch-ppc64le
   stretch-x86
-
-  trusty-amd64
-  trusty-ppc64le
-  trusty-x86
 
   xenial-aarch64
   xenial-amd64
@@ -415,13 +410,13 @@ archive_dir="/ds413/archive/builds"
 
 case ${tree} in
   "mariadb-3.x")
-    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-xenial-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-xenial-x86-gal:galera-${num}-systemd-i686"
     ;;
   "mariadb-4.x")
-    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-deb-xenial-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-xenial-x86-gal:galera-${num}-systemd-i686"
     ;;
 esac
-build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
+build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-xenial-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-xenial-amd64-gal:galera-${num}-systemd-x86_64"
 build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64 kvm-rpm-centos74-aarch64-gal:galera-${num}-aarch64"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
@@ -849,7 +844,7 @@ if [ "${create_repo}" != "no" ]; then
 
   for dist in ${deb_dists}; do
     case ${dist} in
-      'trusty'|'jessie') cat >>conf/distributions <<END
+      'jessie') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -1011,22 +1006,6 @@ END
         reprepro --basedir=. include stretch $_
         vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*stretch*_i386.changes
         reprepro --basedir=. include stretch $_
-        ;;
-
-      'trusty-amd64')
-        echo ${dist}
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_amd64.changes
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_amd64.changes
-        ;;
-      'trusty-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_ppc64el.changes
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_ppc64el.changes
-        ;;
-      'trusty-x86')
-        echo ${dist}
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_i386.changes
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_i386.changes
         ;;
       'xenial-aarch64')
         echo ${dist}

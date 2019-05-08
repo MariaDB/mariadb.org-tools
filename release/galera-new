@@ -27,7 +27,7 @@ create_ubuntu="${2}"  # Create Ubuntu repository?
 case ${tree} in 
   '5.5'|'5.5-galera')
     debian_dists=""
-    ubuntu_dists="trusty"
+    ubuntu_dists=""
     yum_dists="
       centos6-amd64
       centos6-x86
@@ -44,7 +44,7 @@ case ${tree} in
     ;;
   '10.0'|'10.0-galera')
     debian_dists="jessie"
-    ubuntu_dists="trusty xenial"
+    ubuntu_dists="xenial"
     yum_dists="
       centos6-amd64
       centos6-x86
@@ -65,7 +65,7 @@ case ${tree} in
     "
     ;;
   *) debian_dists="jessie sid buster"
-     ubuntu_dists="trusty xenial bionic cosmic disco"
+     ubuntu_dists="xenial bionic cosmic disco"
      yum_dists="
       centos6-amd64
       centos6-x86
@@ -145,7 +145,7 @@ if [ "${is_ent}" = "yes" ];then
   gpg_key="0xce1a3dd5e3c94f49"                  # new enterprise key
   dir_release="${dir_release_ent}" # Default location for mdbe releases
   dir_name="${num}"
-  ubuntu_dists="trusty"
+  ubuntu_dists=""
 else
   suffix="signed"
   gpg_key="0xcbcb082a1bb943db"
@@ -186,7 +186,7 @@ if [ "${create_ubuntu}" != "no" ]; then
           runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
         done;
         if [ "${dir_path}" = "${dir_release}" ];then
-          if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+          if [ "${dist}" = "xenial" ]; then
             for file in $(find "${dir_archive_p8}/${tree}/${rev}/p8-${dist}-deb/" -name "*galera-server*${dist}*ppc64el.deb"); do
               runCommand reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ;
             done;
@@ -207,7 +207,7 @@ if [ "${create_ubuntu}" != "no" ]; then
         #fi
         #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb $dist ${file} ; done
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_amd64.changes
-        #if [ "${dist}" = "trusty" ] || [ "${dist}" = "xenial" ]; then
+        #if [ "${dist}" = "xenial" ]; then
         #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/galera-3_${gv}-${dist}*_ppc64el.changes
         #fi
       done

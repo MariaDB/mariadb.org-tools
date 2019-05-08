@@ -36,7 +36,6 @@ set -eux
 #------------------------------------------------------------------------------
 
 bundles="
-ubuntu-trusty-amd64
 ubuntu-xenial-amd64
 ubuntu-bionic-amd64
 
@@ -142,11 +141,6 @@ pushd ${dir_bundles}
 
 for bundle in ${bundles}; do
   case ${bundle} in
-    ubuntu-trusty-amd64)
-      dir="mariadb-tx-3.0-${num}-ubuntu-14.04"
-      dist="ubuntu"
-      ver="trusty"
-      ;;
     ubuntu-xenial-amd64)
       dir="mariadb-tx-3.0-${num}-ubuntu-16.04"
       dist="ubuntu"

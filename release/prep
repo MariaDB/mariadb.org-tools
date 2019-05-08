@@ -1113,7 +1113,7 @@ fi
 
 case $tree in
   *5.5* )
-    echo "+ no Debian for 5.5"
+    echo "+ no Debian or Ubuntu for 5.5"
     ;;
   *)
     shouldI prepare_Debian_packages
