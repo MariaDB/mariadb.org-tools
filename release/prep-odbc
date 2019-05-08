@@ -113,7 +113,7 @@ copy_and_stage_files() {
     # Windows files
     cp -avi ${dir_build}/win*/*msi ${dir_odbc}/
     # Mac file
-    cp -avi ${dir_build}/mac*/*pkg ${dir_odbc}/
+    cp -avi ${dir_build}/osx*/*pkg ${dir_odbc}/
     # Src files
     cp -avi ${dir_build}/*/*src.zip ${dir_odbc}/
     cp -avi ${dir_build}/*/*src.tar.gz ${dir_odbc}/
