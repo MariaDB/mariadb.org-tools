@@ -62,6 +62,12 @@ case ${ARCHDIR} in
   *"10.0"*)
     ubuntu_dists="trusty xenial"
     ;;
+  *"10.1"*)
+    ubuntu_dists="trusty xenial bionic cosmic"
+    ;;
+  *"10.2"*)
+    ubuntu_dists="trusty xenial bionic cosmic"
+    ;;
   *)
     ubuntu_dists="trusty xenial bionic cosmic disco"
     ;;
@@ -161,16 +167,8 @@ for dist in ${ubuntu_dists}; do
 
   # First we import the amd64 files
   case ${dist} in 
-    'trusty'|'xenial'|'cosmic'|'disco')
+    'trusty'|'xenial'|'bionic'|'cosmic'|'disco')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
-      ;;
-    'bionic')
-      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      #runCommand sudo vi $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
-      # Need to include .deb files manually because of https://bugs.launchpad.net/ubuntu/+source/reprepro/+bug/799889
-      #for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      #for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
     * )
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
