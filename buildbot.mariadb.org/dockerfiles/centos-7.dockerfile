@@ -13,7 +13,7 @@ RUN yum -y --enablerepo=extras install epel-release && \
     yum -y groupinstall 'Development Tools' && \
     yum -y install git ccache subversion \
     python-devel libffi-devel openssl-devel \
-    python-pip redhat-rpm-config curl && \
+    python-pip redhat-rpm-config curl wget && \
     # install MariaDB dependencies
     yum-builddep -y mariadb-server
 

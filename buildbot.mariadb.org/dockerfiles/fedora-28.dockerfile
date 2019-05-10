@@ -9,7 +9,7 @@ LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
 RUN dnf -y upgrade && \
-    dnf -y install @development-tools git ccache \
+    dnf -y install @development-tools git wget ccache \
     subversion python-devel libffi-devel \
     openssl-devel python-pip redhat-rpm-config \
     dnf-plugins-core rpm-build && \

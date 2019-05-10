@@ -20,7 +20,7 @@ RUN apt-get update && \
     apt-get -y install -q \
     apt-utils build-essential python-dev sudo git \
     devscripts equivs libcurl4-openssl-dev hardening-wrapper \
-    ccache python3 python3-pip curl \
+    ccache python3 python3-pip curl wget \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
     unixodbc-dev uuid-dev fakeroot iputils-ping

@@ -12,7 +12,7 @@ RUN zypper update -y && \
     zypper install -y -t pattern devel_basis && \
     zypper install -y git ccache subversion \
     python-devel libffi-devel openssl-devel glibc-locale\
-    python-pip curl && \
+    python-pip curl wget && \
     # install MariaDB dependencies
     #zypper mr -er repo-source
     zypper -n si -d mariadb
