@@ -441,44 +441,6 @@ for REPONAME in ${dists}; do
       done
 
       ;;
-    'fedora25-x86')
-      runCommand mkdir -vp fedora/25/i386
-      maybe_make_symlink fedora/25/i386 fedora25-x86
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'fedora25-amd64')
-      runCommand mkdir -vp fedora/25/x86_64
-      maybe_make_symlink fedora/25/x86_64 fedora25-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'fedora26-amd64')
-      runCommand mkdir -vp fedora/26/x86_64
-      maybe_make_symlink fedora/26/x86_64 fedora26-amd64
-
-      # Copy in MariaDB files
-      echo "+ rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-              rsync -a --info=progress2 --keep-dirlinks ${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        echo "+ rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-                rsync -av --keep-dirlinks ${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/
-      done
-      ;;
     'fedora28-amd64')
       runCommand mkdir -vp fedora/28/x86_64
       maybe_make_symlink fedora/28/x86_64 fedora28-amd64
