@@ -25,7 +25,6 @@
 # /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-6-x86_64-rpms.tar
 # /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-5-x86_64-rpms.tar
 # /home/MariaDB/mariadb-10.2.2/yum/rhel/mariadb-10.2.2-rhel-7-x86_64-rpms.tar
-# /home/MariaDB/mariadb-10.2.2/repo/ubuntu/mariadb-10.2.2-ubuntu-trusty-amd64-debs.tar
 # /home/MariaDB/mariadb-10.2.2/repo/ubuntu/mariadb-10.2.2-ubuntu-xenial-amd64-debs.tar
 # /home/MariaDB/mariadb-10.2.2/repo/debian/mariadb-10.2.2-debian-jessie-amd64-debs.tar
  
@@ -37,25 +36,25 @@ set -xe
 case $1 in
   *5.5*)
     debian_ver=""
-    ubuntu_ver=( trusty xenial )
+    ubuntu_ver=( xenial )
     rhel_ver=( 6 7 )
     sles_ver=( 11 12 )
     ;;
   *10.0*)
     debian_ver=( jessie )
-    ubuntu_ver=( trusty xenial )
+    ubuntu_ver=( xenial )
     rhel_ver=( 6 7 )
     sles_ver=( 11 12 )
     ;;
   *10.1*)
     debian_ver=( jessie stretch )
-    ubuntu_ver=( trusty xenial bionic )
+    ubuntu_ver=( xenial bionic )
     rhel_ver=( 6 7 )
     sles_ver=( 11 12 )
     ;;
   *)
     debian_ver=( jessie stretch )
-    ubuntu_ver=( trusty xenial bionic )
+    ubuntu_ver=( xenial bionic )
     rhel_ver=( 6 7 )
     sles_ver=( 12 15 )
     ;;
