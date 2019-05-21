@@ -72,12 +72,12 @@ fi
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
                 kvm-bintar-centos6-x86:bintar-linux-x86
                 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
-                kvm-bintar-trusty-x86:bintar-linux-systemd-x86"
+                kvm-bintar-xenial-x86:bintar-linux-systemd-x86"
 
 build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
                    kvm-bintar-centos6-amd64:bintar-linux-x86_64
                    kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
-                   kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
+                   kvm-bintar-xenial-amd64:bintar-linux-systemd-x86_64
                    kvm-tarbake-jaunty-x86:source
                    sol10-64:bintar-sol10-64
                    mac-1012-pkg:macOS
