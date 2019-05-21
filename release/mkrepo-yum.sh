@@ -121,6 +121,8 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
 
     fedora28-amd64
     fedora29-amd64
+    fedora29-aarch64
+    fedora30-amd64
 
     opensuse42-amd64
     opensuse150-amd64
@@ -128,6 +130,7 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
     sles12-amd64
     sles150-amd64
   "
+
 elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
   dists="
     centos6-amd64
@@ -143,6 +146,8 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
 
     fedora28-amd64
     fedora29-amd64
+    fedora29-aarch64
+    fedora30-amd64
 
     opensuse42-amd64
     opensuse150-amd64
@@ -492,6 +497,35 @@ for REPONAME in ${dists}; do
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'fedora29-aarch64')
+      runCommand mkdir -vp fedora/29/aarch64
+      maybe_make_symlink fedora/29/aarch64 fedora29-aarch64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'fedora30-amd64')
+      runCommand mkdir -vp fedora/30/x86_64
+      maybe_make_symlink fedora/30/x86_64 fedora30-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
       ;;
     'opensuse42-amd64')
       runCommand mkdir -vp opensuse/42/x86_64
