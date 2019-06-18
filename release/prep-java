@@ -222,6 +222,17 @@ upload_to_the_corp_mirror() {
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  generate_the_file_list_pickle_for_org_downloads
+#   DESCRIPTION:  This function logs in to the primary mirror and runs the
+#                 command to generate the pickle that is then imported into the
+#                 mariadb.org downloads system.
+#===============================================================================
+generate_the_file_list_pickle_for_org_downloads() {
+  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_java}";
+}
+
+#-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Main Script
 #-------------------------------------------------------------------------------
@@ -254,6 +265,8 @@ shouldI prep_com_files
 shouldI upload_to_the_primary_mirror
 
 shouldI upload_to_the_corp_mirror
+
+shouldI generate_the_file_list_pickle_for_org_downloads
 
 echo "+ All done!"
 echo;echo;echo
