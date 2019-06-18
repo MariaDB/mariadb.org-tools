@@ -131,7 +131,7 @@ copy_and_stage_files() {
           ;;
         "win-connector_c")
           echo
-          cp -avi ${dir}/*.msi ${dir_c}/
+          #cp -avi ${dir}/*.msi ${dir_c}/
           ;;
         "win-connector_c_3")
           echo
