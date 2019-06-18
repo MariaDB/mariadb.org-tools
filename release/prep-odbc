@@ -113,7 +113,11 @@ copy_and_stage_files() {
     # Windows files
     cp -avi ${dir_build}/win*/*msi ${dir_odbc}/
     # Mac file
-    cp -avi ${dir_build}/osx*/*pkg ${dir_odbc}/
+    if cp -avi ${dir_build}/osx*/*pkg ${dir_odbc}/;then
+      echo "+ copied MacOS files"
+    else
+      echo "+ no MacOS files"
+    fi
     # Src files
     cp -avi ${dir_build}/*/*src.zip ${dir_odbc}/
     cp -avi ${dir_build}/*/*src.tar.gz ${dir_odbc}/
