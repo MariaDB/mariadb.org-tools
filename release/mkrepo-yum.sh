@@ -53,7 +53,6 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 
-# If we are on 5.5 then no fedora
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
   dists="
     centos6-x86
@@ -119,7 +118,6 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
 
     rhel8-amd64
 
-    fedora28-amd64
     fedora29-amd64
     fedora29-aarch64
     fedora30-amd64
@@ -144,7 +142,6 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
 
     rhel8-amd64
 
-    fedora28-amd64
     fedora29-amd64
     fedora29-aarch64
     fedora30-amd64
@@ -166,8 +163,6 @@ elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
     centos73-ppc64le
 
     centos74-aarch64
-
-    fedora28-amd64
 
     opensuse42-amd64
     opensuse150-amd64
@@ -440,18 +435,6 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
 
-      ;;
-    'fedora28-amd64')
-      runCommand mkdir -vp fedora/28/x86_64
-      maybe_make_symlink fedora/28/x86_64 fedora28-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      #for gv in ${ver_galera_real}; do
-      #  copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      #done
       ;;
     'fedora29-amd64')
       runCommand mkdir -vp fedora/29/x86_64
