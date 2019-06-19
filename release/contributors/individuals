@@ -7,6 +7,7 @@ Alexander Barkov (MariaDB Corporation) <bar@mnogosearch.org> Alexander Barkov <b
 Alexander Barkov (MariaDB Corporation) <bar@localhost.localdomain> Alexander Barkov <bar@localhost.localdomain>
 Alexander Barkov (MariaDB Corporation) <bar@debian> Alexander Barkov <bar@debian>
 Alexander Barkov (MariaDB Corporation) <bar@centos63> Alexander Barkov <bar@centos63>
+Alexander Barkov (MariaDB Corporation) <bar@home.Dlink> Alexander Barkov <bar@home.Dlink>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> Alexey Botchkov <holyfoot@askmonty.org>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> holyfoot <holyfoot@mariadb.com>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@montyprogram.com> Alexey Botchkov <holyfoot@montyprogram.com>
@@ -29,6 +30,7 @@ Elena Stepanova (MariaDB Corporation) <elenst@jessie.home> Elena Stepanova <elen
 Elena Stepanova (MariaDB Corporation) <elenst@opensuse.home> Elena Stepanova <elenst@opensuse.home>
 Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.com> Galina Shalygina <galina.shalygina@mariadb.com>
 Galina Shalygina (MariaDB Corporation) <galashalygina@gmail.com> Galina Shalygina <galashalygina@gmail.com>
+Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.org> Galina Shalygina <galina.shalygina@mariadb.org>
 Geoff Montee (MariaDB Corporation) <geoff.montee@gmail.com> Geoff Montee <geoff.montee@gmail.com>
 Georg Richter (MariaDB Corporation) <georg@mariadb.com> Georg Richter <georg@mariadb.com>
 Hartmut Holzgraefe (MariaDB Corporation) <hartmut@mariadb.com> Hartmut Holzgraefe <hartmut@php.net>
@@ -67,9 +69,11 @@ Sergei Golubchik (MariaDB Corporation) <vuvova@gmail.com> Sergei Golubchik <vuvo
 Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <psergey@askmonty.org>
 Sergey Petrunya (MariaDB Corporation) <psergey@askmonty.org> Sergey Petrunya <psergey@askmonty.org>
 Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha Sivakumar <sujatha.sivakumar@mariadb.com>
+Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha <sujatha.sivakumar@mariadb.com>
 Thirunarayanan Balathandayuthapani (MariaDB Corporation) <thiru@mariadb.com>
 Varun Gupta (MariaDB Corporation) <varun@mariadb.com> Varun Gupta <varunraiko1803@gmail.com>
 Varun Gupta (MariaDB Corporation) <varun.gupta@mariadb.com> Varun Gupta <varun.gupta@mariadb.com>
+Varun Gupta (MariaDB Corporation) <varun.gupta@mariadb.com> Varun <varun.gupta@mariadb.com>
 Vladislav Vaintroub (MariaDB Corporation) <wlad@mariadb.com> Vladislav Vaintroub <wlad@mariadb.com>
 Vladislav Vaintroub (MariaDB Corporation) <vvaintroub@gmail.com> Vladislav Vaintroub <vvaintroub@gmail.com>
 Vladislav Vaintroub (MariaDB Corporation) <wlad@localhost.localdomain> wlad <wlad@localhost.localdomain>
@@ -81,6 +85,8 @@ Zdravelina Sokolovska (MariaDB Corporation) <zdravelina.sokolovska@mariadb.com> 
 
 Anel Husakovic (MariaDB Foundation) <anelhusakovic88@gmail.com> Anel Husakovic <anelhusakovic88@gmail.com>
 Anel Husakovic (MariaDB Foundation) <anel@mariadb.org> Anel Husakovic <anel@mariadb.org>
+Anel Husakovic (MariaDB Foundation) <Anel Husakovic> Anel Husakovic <Anel Husakovic>
+Faustin Lammler (MariaDB Foundation)  <faustin@fala.red> Faustin Lammler <faustin@fala.red>
 Faustin Lammler (MariaDB Foundation) <faustin@fala.red> faust <faustin@fala.red>
 Faustin Lammler (MariaDB Foundation) <faustin@falared.net> Faustin Lammler <faustin@falared.net>
 Ian Gilfillan (MariaDB Foundation) <ian@mariadb.org> Ian Gilfillan <github@greenman.co.za>
@@ -380,6 +386,7 @@ Abdelhak Errami () <abdelhak.errami@yahoo.com> Abdelhak Errami <abdelhak.errami@
 Akira Higuchi () <ahiguti100@gmail.com> Akira Higuchi <ahiguti100@gmail.com>
 Alexander Kuleshov () <kuleshovmail@gmail.com> Alexander Kuleshov <kuleshovmail@gmail.com>
 Alexey Kopytov () <akopytov@gmail.com> Alexey Kopytov <akopytov@gmail.com>
+Andrea Kao () <eirinikos@gmail.com> Andrea Kao <eirinikos@gmail.com>
 Andrew McDonnell () <bugs@andrewmcdonnell.net> Andrew McDonnell <bugs@andrewmcdonnell.net>
 Andrew McDonnell () <andrew@atlantis4.andrewmcdonnell.net> andrew <andrew@atlantis4.andrewmcdonnell.net>
 andrew () <andrew@atlantis4> andrew <andrew@atlantis4>
@@ -406,6 +413,7 @@ gvtek () <34262684+gvtek@users.noreply.github.com> gvtek <34262684+gvtek@users.n
 Guido Günther () <agx@sigxcpu.org> Guido Günther <agx@sigxcpu.org>
 Heinz Wiesinger () <heinz@m2mobi.com> Heinz Wiesinger <heinz@m2mobi.com>
 Hyeonseok Oh () <hyeonso5@gmail.com> Hyeonseok Oh <hyeonso5@gmail.com>
+hygonsoc () <hygonsoc@gmail.com> hygonsoc <hygonsoc@gmail.com>
 Igor Mazur (Grammarly) <igor.mazur@grammarly.com> Igor Mazur <igor.mazur@grammarly.com>
 Igor Pashev () <pashev.igor@gmail.com> Igor Pashev <pashev.igor@gmail.com>
 James Le Cuirot () <chewi@aura-online.co.uk> James Le Cuirot <chewi@aura-online.co.uk>
@@ -434,10 +442,13 @@ Olivier Bertrand () <bertrandop@gmail.com> Olivier Bertrand <bertrandop@gmail.co
 Olivier Bertrand () <bertrandop@gmail.com> Olivier on SAMSUNG 64-bits <bertrandop@gmail.com>
 Olivier Bertrand () <Olivier@UBUVIR> unknown <Olivier@UBUVIR>
 Oliver Giles () <ohw.giles@gmail.com> Oliver Giles <ohw.giles@gmail.com>
+Otto Kekäläinen () <otto@kekalainen.net> Otto Kekäläinen <otto@kekalainen.net>
 pruet () <pruetboonma@gmail.com> pruet <pruetboonma@gmail.com>
+qingda2019 () <344369869@qq.com> qingda2019 <344369869@qq.com>
 Raghavendra D Prabhu () <rprabhu@wnohang.net> Raghavendra D Prabhu <rprabhu@wnohang.net>
 Rakshit Kumar () <32777813+rakshitkumarcse@users.noreply.github.com> Rakshit Kumar <32777813+rakshitkumarcse@users.noreply.github.com>
 root () <ChengXiaoZ@189.cn> root <ChengXiaoZ@189.cn>
+Samuel Thibault () <samuel.thibault@ens-lyon.org> Samuel Thibault <samuel.thibault@ens-lyon.org>
 Sauron () <git@sauron.cf> Sauron <git@sauron.cf>
 Seamus Lee () <seamuslee001@gmail.com> Seamus Lee <seamuslee001@gmail.com>
 sensssz () <hjmsens@gmail.com> sensssz <hjmsens@gmail.com>
@@ -448,6 +459,10 @@ Unknown () <Unknown> unknown <Unknown>
 Unknown () <holzboote@googlemail.com> unknown <holzboote@googlemail.com>
 Vincent Milum Jr () <github@darkain.com> Vincent Milum Jr <github@darkain.com>
 vinchen () <vinchen13@gmail.com> vinchen <vinchen13@gmail.com>
+Vlad Lesin () <vlad_lesin@mail.ru> Vlad Lesin <vlad_lesin@mail.ru>
+wayne () <i@waynest.com> wayne <i@waynest.com>
 Will () <war59312@gmail.com> Will <war59312@gmail.com>
+willhan () <526786050@qq.com> willhan <526786050@qq.com>
 zhzhzoo () <zhzhzoo@gmail.com> zhzhzoo <zhzhzoo@gmail.com>
+Zicheng Huang () <hzc989@outlook.com> Zicheng Huang <hzc989@outlook.com>
 
