@@ -72,12 +72,12 @@ fi
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
                 kvm-bintar-centos6-x86:bintar-linux-x86
                 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
-                kvm-bintar-xenial-x86:bintar-linux-systemd-x86"
+                kvm-bintar-trusty-x86:bintar-linux-systemd-x86"
 
 build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
                    kvm-bintar-centos6-amd64:bintar-linux-x86_64
                    kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
-                   kvm-bintar-xenial-amd64:bintar-linux-systemd-x86_64
+                   kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
                    kvm-tarbake-jaunty-x86:source
                    sol10-64:bintar-sol10-64
                    mac-1012-pkg:macOS
@@ -1769,7 +1769,7 @@ else
 
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
-    # mkdir -v ${HOME}/yum
+    # mkdir -v ${dir_yum_prep}/yum
 
     echo "Before rsyncing the yum release..."
 
@@ -1779,22 +1779,22 @@ else
 
     # Rsync a copy of the previous release to ${HOME}
     if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
     echo
 
-    pushd ${HOME}/yum
+    pushd ${dir_yum_prep}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
       ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     popd
 
     # move the yum dir to where it needs to go
-    echo "+ mv -i ${HOME}/yum ${dir_release}/${dir_name}/"
-            mv -i ${HOME}/yum ${dir_release}/${dir_name}/
+    echo "+ mv -i ${dir_yum_prep}/yum ${dir_release}/${dir_name}/"
+            mv -i ${dir_yum_prep}/yum ${dir_release}/${dir_name}/
     pushd ${dir_release}/${dir_name}/
 
     # copy the yum dir to the corp release dir
