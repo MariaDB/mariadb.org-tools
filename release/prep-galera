@@ -817,8 +817,9 @@ else
   line
 fi
 
+date=$(date +%F)
+
 if [ "${create_repo}" != "no" ] || [ "${create_yum}" != "no" ]; then
-  date=$(date +%F)
   userInput "What galera-3 version should I use? (e.g. 25.3.25)"
   ver_galera3="${INPUT}"
 
@@ -1132,7 +1133,7 @@ rsync           -avP --delete-after ${release_dir}/galera-test-repo/${date}/repo
 
 ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${date}/repo ./\" ; 
 line=\"----------------------------------------\"
-for host in bb02 bb03;do 
+for host in bb02;do
   echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};
   ssh -t -t bb01 \"rsync -a --info=progress2 --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done;echo;echo;echo
