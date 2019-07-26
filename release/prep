@@ -111,6 +111,8 @@ create_p8_bintar="no"
       create_win="no"
    create_debian="no"
    create_ubuntu="no"
+rsync_debian_repo="no"
+rsync_ubuntu_repo="no"
       create_yum="no"
      perms_fixed="no"
      incl_galera="no"
@@ -195,6 +197,14 @@ prepare_Windows_packages() {
   create_win="yes"
 }
 
+rsync_the_debian_repo() {
+  rsync_debian_repo="yes"
+}
+
+rsync_the_ubuntu_repo() {
+  rsync_ubuntu_repo="yes"
+}
+
 prepare_Debian_packages() {
   create_debian="yes"
 }
@@ -272,6 +282,7 @@ ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
        dir_corp="/path/to/corp/releases"
       dir_tools="/path/to/tools/releases"
 dir_release_ent="/path/to/mariadb-enterprise/releases"
+   dir_yum_prep="/path/to/where/to/prep/yum/repos"
 
 # Full path to P8 builds (if needed)
 dir_archive_p8="/path/to/p8/archive/builds"
@@ -1113,14 +1124,24 @@ fi
 
 case $tree in
   *5.5* )
-    echo "+ no Debian or Ubuntu for 5.5"
+    echo "+ no Debian for 5.5"
+    shouldI rsync_the_debian_repo
     ;;
   *)
     shouldI prepare_Debian_packages
     ;;
 esac
 
-shouldI prepare_Ubuntu_packages
+case $tree in
+  *5.5* )
+    echo "+ no Ubuntu for 5.5"
+    shouldI rsync_the_ubuntu_repo
+    ;;
+  *)
+    shouldI prepare_Ubuntu_packages
+    ;;
+esac
+
 shouldI prepare_yum_packages
 #shouldI include_Galera_packages_in_repositories
 include_Galera_packages_in_repositories
@@ -1646,7 +1667,7 @@ else
     fi
   fi
 
-  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ]; then
+  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || ["${rsync_debian_repo}" != "no" ] || ["${rsync_ubuntu_repo}" != "no" ]; then
     userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
     prev_release="${INPUT}"
   fi
@@ -1686,13 +1707,15 @@ else
       done
     popd
 
-    # after creating the repo, copy it to ${dir_release}/repo-no-mgc
-    case ${tree} in
-      '5.5'|'10.0'|'bb-5.5-release'|'bb-10.0-release')
-        echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/"
-                rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_release}/repo-no-mgc/${num}/
-        ;;
-    esac
+    echo
+  elif [ "${rsync_debian_repo}" != "no" ]; then
+    # This is a version of MariaDB that no longer gets updates for Debian
+    # distros, but we want to maintain the last versions we released
+    line
+    echo "+ rsyncing old Debian repos..."
+    line
+    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
+            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
     echo
   else
     line
@@ -1740,13 +1763,15 @@ else
       done
     popd
 
-    # after creating the repo, copy it to ${dir_release}/repo-no-mgc
-    case ${tree} in
-      '5.5'|'10.0'|'bb-5.5-release'|'bb-10.0-release')
-        echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/"
-                rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_release}/repo-no-mgc/${num}/
-        ;;
-    esac
+    echo
+  elif [ "${rsync_ubuntu_repo}" != "no" ]; then
+    # This is a version of MariaDB that no longer gets updates for Ubuntu
+    # distros, but we want to maintain the last versions we released
+    line
+    echo "+ rsyncing old Ubuntu repos..."
+    line
+    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
+            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
     echo
   else
     line
