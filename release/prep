@@ -1909,7 +1909,14 @@ shouldI activate_the_corp_repos
 
 echo;echo;echo;echo
 
-shouldI update_the_docker_mariadb_version
+case $tree in
+  *5.5* )
+    echo "+ no Docker for 5.5"
+    ;;
+  *)
+    shouldI update_the_docker_mariadb_version
+    ;;
+esac
 
 echo;echo;echo;echo
 
