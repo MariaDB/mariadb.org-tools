@@ -47,6 +47,8 @@ DIR=`readlink -f $1`
 if [ -e "$DIR/.git" ] ; then
   # it is git repository (or working tree)
   echo "$DIR/.git"
+  # remove this service file to avoid it double mentioning it
+  rm "$DIR/.backup_deleted_files_by_git_backup"
   # It is possible to have a submodule in the changed files so better call
   # this scrit to process it
   for filename in $( cd $DIR && git status --short |grep -v '^ D '|sed 's/^ *//'|cut -d" " -f2- ) ; do
