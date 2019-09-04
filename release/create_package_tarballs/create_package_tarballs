@@ -28,6 +28,14 @@
 # /home/MariaDB/mariadb-10.2.2/repo/ubuntu/mariadb-10.2.2-ubuntu-xenial-amd64-debs.tar
 # /home/MariaDB/mariadb-10.2.2/repo/debian/mariadb-10.2.2-debian-jessie-amd64-debs.tar
  
+# set location of prep.conf to XDG-compatible directories
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+
+# Load prep.conf file
+if [ -f ${dir_conf}/prep.conf ]; then
+  . ${dir_conf}/prep.conf
+fi
+
 set -xe
 
 # This is the "matrix" of support OSs/versions. There's no clean support right now
@@ -53,7 +61,7 @@ case $1 in
     sles_ver=( 11 12 )
     ;;
   *)
-    debian_ver=( jessie stretch )
+    debian_ver=( jessie stretch buster )
     ubuntu_ver=( xenial bionic )
     rhel_ver=( 6 7 )
     sles_ver=( 12 15 )
@@ -185,7 +193,15 @@ do_rpms() {
   find . -name 'MariaDB-*' -a '!' -name "MariaDB*${version}*" -exec rm -v {} +
 
   # Also remove old galera versions
-  find . -name 'galera-*' -a '!' -name "galera-25.3.25-*" -exec rm -v {} +
+  case $version in
+    10.5.*|10.4.*)
+      find . -name 'galera-*' -a '!' -name "galera-4-${ver_galera4}*" -exec rm -v {} +
+      ;;
+    *)
+      find . -name 'galera-*' -a '!' -name "galera-${ver_galera}*" -exec rm -v {} +
+      ;;
+  esac
+
   
   # Create the repository
   createrepo .
