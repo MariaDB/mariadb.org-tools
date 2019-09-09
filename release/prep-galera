@@ -112,12 +112,12 @@ shift $(($OPTIND - 1))
 
 deb_dists="
   bionic
-  cosmic
   disco
   buster
   jessie
   sid
   stretch
+  trusty
   xenial
 "
 deb_dists_full="
@@ -126,8 +126,6 @@ deb_dists_full="
   bionic-ppc64le
 
   buster-amd64
-
-  cosmic-amd64
 
   disco-amd64
 
@@ -140,6 +138,9 @@ deb_dists_full="
   stretch-amd64
   stretch-ppc64le
   stretch-x86
+
+  trusty-amd64
+  trusty-x86
 
   xenial-aarch64
   xenial-amd64
@@ -159,12 +160,11 @@ rpm_dists="
   centos74-amd64
 
   rhel8-amd64
+  rhel8-ppc64le
 
-  fedora28-amd64
   fedora29-amd64
+  fedora30-amd64
 
-  opensuse42-amd64
-  opensuse423-amd64
   opensuse150-amd64
 
   sles123-amd64
@@ -889,7 +889,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'artful'|'cosmic'|'buster'|'disco') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'buster'|'disco') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -944,15 +944,6 @@ END
         vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*buster*_amd64.changes
         reprepro --basedir=. include buster $_
         ;;
-
-      'cosmic-amd64')
-        echo ${dist}
-        vi ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*cosmic*_amd64.changes
-        reprepro --basedir=. include cosmic $_
-        vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*cosmic*_amd64.changes
-        reprepro --basedir=. include cosmic $_
-        ;;
-
       'disco-amd64')
         echo ${dist}
         vi ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*disco*_amd64.changes
@@ -1007,6 +998,16 @@ END
         reprepro --basedir=. include stretch $_
         vi ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*stretch*_i386.changes
         reprepro --basedir=. include stretch $_
+        ;;
+      'trusty-amd64')
+        echo ${dist}
+        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_amd64.changes
+        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_amd64.changes
+        ;;
+      'trusty-x86')
+        echo ${dist}
+        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_i386.changes
+        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_i386.changes
         ;;
       'xenial-aarch64')
         echo ${dist}
