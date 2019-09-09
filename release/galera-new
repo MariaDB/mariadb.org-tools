@@ -65,7 +65,7 @@ case ${tree} in
     "
     ;;
   *) debian_dists="jessie sid buster"
-     ubuntu_dists="xenial bionic cosmic disco"
+     ubuntu_dists="xenial bionic disco"
      yum_dists="
       centos6-amd64
       centos6-x86
