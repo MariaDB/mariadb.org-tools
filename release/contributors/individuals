@@ -11,6 +11,7 @@ Alexander Barkov (MariaDB Corporation) <bar@home.Dlink> Alexander Barkov <bar@ho
 Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> Alexey Botchkov <holyfoot@askmonty.org>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> holyfoot <holyfoot@mariadb.com>
 Alexey Botchkov (MariaDB Corporation) <holyfoot@montyprogram.com> Alexey Botchkov <holyfoot@montyprogram.com>
+Alexey Botchkov (MariaDB Corporation) <holyfoot@mariadb.com> HF <holyfoot@mariadb.com>
 Andrei Elkin (MariaDB Corporation) <andrei.elkin@mariadb.com> Andrei Elkin <andrei.elkin@mariadb.com>
 Andrei Elkin (MariaDB Corporation) <andrei.elkin@mariadb.com> andrelkin <andrei.elkin@mariadb.com>
 Andrei Elkin (MariaDB Corporation) <andrei.elkin@pp.inet.fi> Andrei Elkin <andrei.elkin@pp.inet.fi>
@@ -28,6 +29,8 @@ Elena Stepanova (MariaDB Corporation) <elenst@linux-0bhr.suse> Elena Stepanova <
 Elena Stepanova (MariaDB Corporation) <elenst@mariadb.com> Elena Stepanova <elenst@mariadb.com>
 Elena Stepanova (MariaDB Corporation) <elenst@jessie.home> Elena Stepanova <elenst@jessie.home>
 Elena Stepanova (MariaDB Corporation) <elenst@opensuse.home> Elena Stepanova <elenst@opensuse.home>
+Eugene Kosov (MariaDB Corporation) <claprix@yandex.ru> Eugene Kosov <claprix@yandex.ru>
+Eugene Kosov (MariaDB Corporation) <eugene.kosov@mariadb.com> Eugene Kosov <eugene.kosov@mariadb.com>
 Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.com> Galina Shalygina <galina.shalygina@mariadb.com>
 Galina Shalygina (MariaDB Corporation) <galashalygina@gmail.com> Galina Shalygina <galashalygina@gmail.com>
 Galina Shalygina (MariaDB Corporation) <galina.shalygina@mariadb.org> Galina Shalygina <galina.shalygina@mariadb.org>
@@ -40,6 +43,9 @@ Jacob Mathew (MariaDB Corporation) <jacob.mathew@mariadb.com> Jacob Mathew <jaco
 Jan Lindström (MariaDB Corporation) <jan.lindstrom@mariadb.com> Jan Lindström <jan.lindstrom@mariadb.com>
 Jan Lindström (MariaDB Corporation) <jplindst@mariadb.org> Jan Lindström <jplindst@mariadb.org>
 Jan Lindström (MariaDB Corporation) <jan.lindstrom@skysql.com> Jan Lindström <jan.lindstrom@skysql.com>
+Julius Goryavsky (MariaDB Corporation) <julius.goryavsky@mariadb.com> Julius Goryavsky <julius.goryavsky@mariadb.com>
+Julius Goryavsky (MariaDB Corporation) <sysprg@gmail.com> sysprg <sysprg@gmail.com>
+Julius Goryavsky (MariaDB Corporation) <sysprg@gmail.com> Julius Goryavsky <sysprg@gmail.com>
 Lawrin Novitsky (MariaDB Corporation) <lawrin.novitsky@mariadb.com> Lawrin Novitsky <lawrin.novitsky@mariadb.com>
 Marko Mäkelä (MariaDB Corporation) <marko.makela@mariadb.com> Marko Mäkelä <marko.makela@mariadb.com>
 Matthias Leich (MariaDB Corporation) <Matthias.Leich@mariadb.com> mleich1 <Matthias.Leich@mariadb.com>
@@ -56,6 +62,7 @@ Oleksandr Byelkin (MariaDB Corporation) <sanja@mariadb.org> Oleksandr Byelkin <s
 Rasmus Johansson (MariaDB Corporation) <rasmus@mariadb.com> Rasmus Johansson <rasmus@mariadb.com>
 Rasmus Johansson (MariaDB Corporation) <razze@iki.fi> Rasmus Johansson <razze@iki.fi>
 Rasmus Johansson (MariaDB Corporation) <ratzpo@gmail.com> Rasmus Johansson <ratzpo@gmail.com>
+Roman Nozdrin (MariaDB Corporation) <roman.nozdrin@mariadb.com> Roman Nozdrin <roman.nozdrin@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@maridb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> sachin <sachin.setiya@mariadb.com>
 Sachin Setiya (MariaDB Corporation) <sachin.setiya@mariadb.com> Sachin Setiya <sachin.setiya@mariadb.com>
@@ -66,6 +73,7 @@ Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> sachinsetia1001@
 Sergei Golubchik (MariaDB Corporation) <serg@mariadb.com> Sergei Golubchik <serg@mariadb.org>
 Sergei Golubchik (MariaDB Corporation) <sergii@pisem.net> Sergei Golubchik <sergii@pisem.net>
 Sergei Golubchik (MariaDB Corporation) <vuvova@gmail.com> Sergei Golubchik <vuvova@gmail.com>
+Sergei Golubchik (MariaDB Corporation) <serg@mariadb.com> Sergei Golubchik <serg@mariadb.com>
 Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <psergey@askmonty.org>
 Sergey Petrunya (MariaDB Corporation) <psergey@askmonty.org> Sergey Petrunya <psergey@askmonty.org>
 Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha Sivakumar <sujatha.sivakumar@mariadb.com>
@@ -286,9 +294,6 @@ Yashwant Sahu (Oracle) <yashwant.sahu@oracle.com> Yashwant Sahu <yashwant.sahu@o
 Yasufumi Kinoshita (Oracle) <yasufumi.kinoshita@oracle.com> Yasufumi Kinoshita <yasufumi.kinoshita@oracle.com>
 
 Aleksey Midenkov (Tempesta) <midenok@gmail.com> Aleksey Midenkov <midenok@gmail.com>
-Eugene Kosov (Tempesta) <claprix@yandex.ru> Eugene Kosov <claprix@yandex.ru>
-Julius Goryavsky (Tempesta) <sysprg@gmail.com> sysprg <sysprg@gmail.com>
-Julius Goryavsky (Tempesta) <sysprg@gmail.com> Julius Goryavsky <sysprg@gmail.com>
 Nikita Malyavin (Tempesta) <nikitamalyavin@gmail.com> Nikita Malyavin <nikitamalyavin@gmail.com>
 
 Honza Horak (Red Hat) <hhorak@redhat.com> Honza Horak <hhorak@redhat.com>
@@ -315,6 +320,7 @@ Brave Galera Crew (Codership) <devel@codership.com> Brave Galera Crew <devel@cod
 Daniele Sciascia (Codership) <daniele.sciascia@galeracluster.com>
 Mario Karuza (Codership) <mario.karuza@galeracluster.com> mkaruza <mario.karuza@galeracluster.com>
 Mario Karuza (Codership) <mario.karuza@gmail.com> mkaruza <mario.karuza@gmail.com>
+Mario Karuza (Codership) <mkaruza@users.noreply.github.com> mkaruza <mkaruza@users.noreply.github.com>
 Philip Stoev (Codership) <philip.stoev@galeracluster.com>
 Seppo Jaakola (Codership) <seppo.jaakola@codership.com> Seppo Jaakola <seppo.jaakola@codership.com>
 Seppo Jaakola (Codership) <seppo.jaakola@iki.fi> seppo <seppo.jaakola@iki.fi>
@@ -434,10 +440,12 @@ klemens () <ka7@github.com> klemens <ka7@github.com>
 Kristian Nielsen () <knielsen@knielsen-hq.org> Kristian Nielsen <knielsen@knielsen-hq.org>
 Kristian Nielsen () <knielsen@knielsen-hq.org> unknown <knielsen@knielsen-hq.org>
 Leandro Pacheco () <contact@leandropacheco.com> Leandro Pacheco <contact@leandropacheco.com>
+LingBin () <lingbinlb@gmail.com> LingBin <lingbinlb@gmail.com>
 Martin Stefany () <martinstefany@users.noreply.github.com> Martin Stefany <martinstefany@users.noreply.github.com>
 Martynas Bendorius () <martynas@martynas.it> Martynas Bendorius <martynas@martynas.it>
 Michael Gmelin () <mg@grem.de> Michael Gmelin <mg@grem.de>
 Ming Lin () <minggr@gmail.com> Ming Lin <minggr@gmail.com>
+Mostafa Hussein () <mostafa.hussein91@gmail.com> Mostafa Hussein <mostafa.hussein91@gmail.com>
 Olivier Bertrand () <bertrandop@gmail.com> Olivier Bertrand <bertrandop@gmail.com>
 Olivier Bertrand () <bertrandop@gmail.com> Olivier on SAMSUNG 64-bits <bertrandop@gmail.com>
 Olivier Bertrand () <Olivier@UBUVIR> unknown <Olivier@UBUVIR>
@@ -463,6 +471,7 @@ Vlad Lesin () <vlad_lesin@mail.ru> Vlad Lesin <vlad_lesin@mail.ru>
 wayne () <i@waynest.com> wayne <i@waynest.com>
 Will () <war59312@gmail.com> Will <war59312@gmail.com>
 willhan () <526786050@qq.com> willhan <526786050@qq.com>
+YunQiang Su () <wzssyqa@gmail.com> YunQiang Su <wzssyqa@gmail.com>
 zhzhzoo () <zhzhzoo@gmail.com> zhzhzoo <zhzhzoo@gmail.com>
 Zicheng Huang () <hzc989@outlook.com> Zicheng Huang <hzc989@outlook.com>
 
