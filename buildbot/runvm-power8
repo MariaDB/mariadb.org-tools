@@ -1,0 +1,605 @@
+#! /usr/bin/perl
+
+# runvm: Run a list of commands inside a KVM virtual machine.
+# Copyright (C) 2009  Kristian Nielsen and Monty Program AB.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+use strict;
+use warnings;
+
+use POSIX;
+use Socket;
+
+use Getopt::Long;
+
+my $ssh_exec= 'ssh';
+my $kvm_exec= 'kvm';
+my $qimg_exe= 'qemu-img';
+
+
+my @cpu_fix;
+
+my $opt_port= 2222;
+#my $opt_background= undef;
+my $opt_memory= 16384;
+my $opt_smp= 2;
+# This workaround (-nx) is needed to boot Ubuntu Jaunty i386 guest on
+# Jaunty i386 host. For now we just include it everywhere by default,
+# better safe than sorry.
+my $opt_cpu= 'POWER8';
+my $opt_netdev= 'virtio';
+#my $opt_shutdown= undef;
+my $opt_initial_sleep= 15;
+my $opt_startup_timeout= 300;
+my $opt_shutdown_timeout= 120;
+my $opt_max_retries= 3;
+my $opt_kvm_logfile= '/dev/null';
+my $opt_user= undef;
+my $opt_extra_kvm= [];
+my $opt_baseimage= undef;
+my @user_cmd_opt;
+my $opt_work_image= undef;
+my $opt_win;
+
+# Disable host key checking for ssh.
+# This is a bit convoluted due to OpenSSH's slight security-paranoia.
+# Without this, we would get a login failure if using another VM image
+# (with different host key) on the same port, which is annoying.
+# An alternative would be to use CheckHostIP=no and HostKeyAlias=<img.qcow2>
+# to get ssh to check a different key for each image. But that would still
+# cause an error if re-generating an image (with new ssh host key), and it
+# doesn't really give any additional security.
+my @ssh_cmd_prefix= ($ssh_exec, '-t', '-t',
+                     '-o', 'UserKnownHostsFile=/dev/null',
+                     '-o', 'StrictHostKeyChecking=no',
+                     '-o', 'LogLevel=ERROR');
+
+my $image;
+my $pidfile;
+
+sub usage {
+  print <<END;
+Usage: $0 <options> image.qcow2 [command ...]
+
+Boot the given KVM virtual machine image and wait for it to come up.
+Run the list of commands one at a time, aborting on receiving an error.
+When all commands are run (or one of them failed), shutdown the virtual
+machine and exit.
+
+Commands are by default run inside the virtual machine using ssh(1). By
+prefixing a command with an equals sign '=', it will instead be run on the
+host system (for example to copy files into or out of the virtual machine
+using scp(1)). By prefixing with an exclamation sign '!' it will be run
+even if a previous command fails (normal commands are not processed after
+failure of a previous command). The '=' and '!' prefixes may be combined.
+
+Some care is taken to ensure that the virtual machine is shutdown
+gracefully and not left running even in case the controlling tty is
+closed or the parent process killed. If a previous virtual machine is
+already running on a conflicting port, an attempt is made to shut it
+down first. For this purpose, a PID file is created in \$HOME/.runvm/
+
+Available options:
+
+  -p, --port=N        Forward this port on the host side to the ssh port (port
+                      22) on the guest side. Must be different for each runvm
+                      instance running in parallel to avoid conflicts. The
+                      default is $opt_port.
+                      To copy files in/out of the guest use a command prefixed
+                      with '=' calling scp(1) with the -P option using the port
+                      specified here, like this:
+                          runvm img.qcow2 "=scp -P 2222 file.txt localhost:"
+  -u, --user=USER     Name of the account to ssh into in the guest. Defaults to
+                      the name of the user invoking runvm on the host.
+  -m, --memory=N      Amount of memory (in megabytes) to allocate to the guest.
+                      Defaults to $opt_memory.
+  --smp=N             Number of CPU cores to allocate to the guest.
+                      Defaults to $opt_smp.
+  -c, --cpu=NAME      Type of CPU to emulate for KVM, see qemu(1) for details.
+                      For example:
+                          --cpu=qemu64      For 64-bit amd64 emulation
+                          --cpu=qemu32      For 32-bit x86 emulation
+                          --cpu=qemu32,-nx  32-bit and disable "no-execute"
+                      The default is $opt_cpu
+  --netdev=NAME       Network device to emulate. The 'virtio' device has good
+                      performance but may not have driver support in all
+                      operating systems, if so another can be specified.
+                      The default is $opt_netdev.
+  --kvm=OPT           Pass additional option OPT to kvm. Specify multiple times
+                      to pass more than one option. For example
+                          runvm --kvm=-cdrom --kvm=mycd.iso img.qcow2 ...
+  --initial-sleep=SECS
+                      Wait this many seconds before starting to poll the guest
+                      ssh port for it to be up. Default $opt_initial_sleep.
+  --startup-timeout=SECS
+                      Wait at most this many seconds for the guest OS to respond
+                      to ssh. If this time is exceeded assume it has failed to
+                      boot correctly. Default $opt_startup_timeout.
+  --shutdown-timeout=SECS
+                      Wait at most this many seconds for the guest OS to
+                      shutdown gracefully after sending a shutdown command. If
+                      this time is exceeded, assume the guest has failed to
+                      shutdown gracefully and kill it forcibly. Default $opt_shutdown_timeout.
+  --kvm-retries=N     If the guest fails to come up, retry the boot this many
+                      times before giving up. This helps if the virtual machine
+                      sometimes crashes during boot. Default $opt_max_retries.
+  -l, --logfile=FILE  File to redirect the output from kvm into. This includes
+                      any (error) messages from kvm, and also includes anything
+                      the guest writes to the kvm emulated serial port (it can
+                      be useful to set the guest to send boot loader and kernel
+                      messages to the serial console and log them with this
+                      option). Default is to not log this output anywhere.
+  -b, --base-image=IMG
+                      Instead of booting an existing image, create a new
+                      copy-on-write image based on IMG. This uses the -b option
+                      of qemu-img(1). IMG is not modified in any way. This way,
+                      the booted image can be discarded after use, so that each
+                      use of IMG is using the same reference image with no risk
+                      of "polution" between different invocations.
+                      Note that this DELETES any existing image of the same
+                      name as the one specified on the command line to boot! It
+                      will be replaced with the image created as a copy of IMG,
+                      with any modifications done during the runvm session.
+  --work-image=<file> Use <file> for the new copy-on-write-image while running,
+                      and afterwards move it back to the specified image.qcow2
+                      location. Used with eg. /dev/shm/ to save I/O. Only
+                      applicable when --base-image is used.
+  --windows           The guest is Windows, not Linux.
+END
+  exit 1;
+};
+
+# Quote and escape meta-characters as necessary.
+# Don't have to do this perfectly, as it's just for printing, but
+# doing at least some effort is nice for copy-paste ability.
+sub quote_for_print {
+  my @print_args= @_;
+  for (@print_args) {
+    if (/[^-_\/\+=,.a-zA-Z0-9]/) {
+      if (/[\']/) {
+        s/\\/\\\\/g;
+        s/\"/\\\"/g;
+        s/\$/\\\$/g;
+        s/\`/\\\`/g;
+        $_= '"'. $_ .'"';
+      } else {
+        $_= "'". $_ . "'";
+      }
+    }
+  }
+  return @print_args;
+}
+
+sub exec_with_print {
+  my @args= @_;
+
+  print STDERR "+ ", join(" ", quote_for_print(@args)), "\n";
+  exec {$args[0]} @args
+      or die "exec() failed: $!\n";
+}
+
+sub system_with_print {
+  my @args= @_;
+
+  print STDERR "+ ", join(" ", quote_for_print(@args)), "\n";
+  my $res= system {$args[0]} @args;
+  return $res;
+}
+
+sub is_port_used {
+  socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname('tcp'))
+      or die "socket() failed: $!\n";
+  my $addr= sockaddr_in($opt_port, inet_aton('localhost'));
+  my $res= connect(SOCK, $addr);
+  close SOCK;
+  return $res;
+}
+
+sub get_kvm_pid {
+  open PIDFILE, '<', $pidfile
+      or return undef;
+  my $pid= <PIDFILE>;
+  close PIDFILE;
+  chomp($pid);
+  if ($pid =~ /^[0-9]+$/) {
+    return $pid;
+  } else {
+    return undef;
+  }
+}
+
+# Copy back any working image to the permanently saved location.
+# We do this here, so that we will not do it until kvm is shut down, and
+# also minimise the risk that we leave the work image undeleted, eg. if
+# the parent is killed.
+sub copy_back_work_image {
+  if (defined($opt_work_image) && defined($opt_baseimage)) {
+    system('/bin/mv', $opt_work_image, $image);
+  }
+}
+
+# Start the KVM process.
+#
+# We want to avoid leaving stray KVM processes running, even when other things
+# go wrong (Crashed Buildbot, master-slave connection breaks, etc).
+#
+# Further, Even if we do manage to leave a stray KVM, we want the next
+# invocation to be able to succeed by first shutting down the old one if at
+# all possible.
+#
+sub start_kvm {
+  my $kvm_pid= get_kvm_pid();
+  # Don't attempt to use a stale pid file.
+  if (defined ($kvm_pid) && !kill(0, $kvm_pid)) {
+    # No process associated with pid file (or if there is we do not
+    # have privileges to signal it).
+    $kvm_pid= undef;
+  }
+
+  # If the port is unused, seems safer to leave any stray process
+  # running (it shouldn't really bother us) rather than trying to kill
+  # it in an unclean fashion.
+  if (is_port_used()) {
+    shutdown_kvm($kvm_pid);
+  }
+
+  if (is_port_used()) {
+    die "Cannot start KVM. The port $opt_port is already in use, and we\n".
+        "were not able to shutdown any existing KVM process properly to\n".
+        "free up the port.\n";
+  }
+
+  # We fork() a management process in-between the main parent process and the
+  # KVM process. This process will attempt to cleanly shutdown the KVM process
+  # if the parent dies; this is better to preserve the integrity of the VM
+  # disk image (no fsck etc. on next boot).
+  #
+  # The stdin of the management process is made a pipe so it can easily detect
+  # parent exit by waiting for stdin to close.
+  #
+  # The stdin of KVM is redirected to /dev/null, and the output is
+  # sent to log file.
+  open KVM_LOG, '>', $opt_kvm_logfile
+      or die "Failed to open '$opt_kvm_logfile' for writing: $!\n";
+
+  # We want the kvm startup command both in the normal stdout log and
+  # in the kernel log.
+  my $img= (defined($opt_baseimage) && defined($opt_work_image) ?
+            $opt_work_image : $image);
+  my @kvm_cmdline=
+      ($kvm_exec, '-m', $opt_memory, '-hda', $img,
+       '-boot', 'c', '-smp', $opt_smp, @cpu_fix,
+       '-nographic', '-net', 'nic,model='. $opt_netdev,
+       '-net', "user,hostfwd=tcp:127.0.0.1:${opt_port}-:22",
+       '-pidfile', $pidfile,
+       ($opt_win ? ('-localtime') : ()),
+       @$opt_extra_kvm);
+  print STDERR "+ ", join(" ", quote_for_print(@kvm_cmdline)), "\n";
+
+  my $res= open(PIPE1, '|-');
+  if (!defined($res)) {
+    die "fork() or pipe() failed: $!\n";
+  } elsif (!$res) {
+    # Management process.
+
+    # Make us the process group leader, so that when the parent
+    # process group is signalled, we get time to do our own cleanup.
+    setpgrp(0,0);
+
+    # Close not used file descriptors.
+    close PIPE1;
+
+    # Set up a signal handler so that we can exit when the kvm child
+    # process does.
+    $SIG{'CHLD'}= sub {
+      waitpid(-1, 0);
+      my $status= $?;
+      copy_back_work_image();
+      exit($status);
+    };
+    $res= fork();
+    if (!defined($res)) {
+      die "fork() failed: $!\n";
+    } elsif (!$res) {
+      # KVM child process.
+      # Kill stdin.
+      open STDIN, '<', '/dev/null'
+          or die "Failed to redirect stdin: $!\n";
+      # Redirect STDOUT/STDERR to log file.
+      open STDOUT, '>&KVM_LOG'
+          or die "Failed to redirect stdout: $!\n";
+      open STDERR, '>&STDOUT'
+          or die "Failed to redirect stderr: $!\n";
+      exec_with_print @kvm_cmdline;
+      # Not reached.
+      die "Unexpected failure to start kvm.";
+    } else {
+      # Management process after forking kvm child.
+
+      close KVM_LOG;
+
+      # We just wait for the STDIN pipe from parent to close, indicating that
+      # the parent process has exited. Once this happens, we shutdown the KVM
+      # child process and exit.
+
+      scalar(<STDIN>);
+      # Parent process exited.
+      print STDERR "Parent process exited, shutting down KVM...\n";
+      shutdown_kvm(get_kvm_pid());
+      waitpid($res, 0);
+      my $status= $?;
+
+      copy_back_work_image();
+      exit($status);
+    }
+  } else {
+    # Parent process.
+    close KVM_LOG;
+  }
+}
+
+sub check_if_still_running {
+  my ($kvm_pid)= @_;
+  return 1 if is_port_used();
+  return 1 if $kvm_pid && kill(0, $kvm_pid);
+  return undef;
+}
+
+# Shutdown kvm. Try nicely first, to protect disk images, but kill
+# hard if necessary.
+sub shutdown_kvm {
+  my ($kvm_pid)= @_;
+
+  my $pid;
+  my $timeout= undef;
+  $SIG{ALRM}= sub {
+    kill 9, $pid
+        if defined($pid);
+    $timeout= 1;
+  };
+  alarm($opt_shutdown_timeout);
+
+  while (!$timeout) {
+    $pid= fork();
+    if (!defined($pid)) {
+      die "Fatal error: Cannot fork(): $!\n";
+    } elsif (!$pid) {
+      # Child.
+      if ($opt_win) {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'shutdown', '-s', '-f', '-t', '1');
+      } elsif ($opt_baseimage =~ /freebsd/) {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'sudo', '/sbin/shutdown', '-p', 'now');
+      } else {
+        exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+                        @user_cmd_opt, 'localhost',
+                        'sudo', '/sbin/shutdown', '-h', 'now');
+      }
+    } else {
+      # Parent.
+      my $res= waitpid $pid, 0;
+      $pid= undef;
+      last unless $?;
+      last if !check_if_still_running($kvm_pid);
+      sleep 1;
+    }
+  }
+
+  # See if it will come down by itself.
+  my $still_running;
+  for(;;) {
+    $still_running= check_if_still_running($kvm_pid);
+    last if $timeout || !$still_running;
+    sleep 1;
+  }
+
+  alarm(0);
+  $SIG{ALRM}= 'DEFAULT';
+
+  return unless $still_running;
+
+  # Ok, it refuses to die, kill it the hard way.
+  print STDERR "Failed to gracefully shutdown KVM within ".
+      "$opt_shutdown_timeout seconds\nTrying kill -9 ...\n";
+  kill 9, $kvm_pid;
+  for (1 .. 10) {
+    sleep 1;
+    last if !kill(0, $kvm_pid) && !is_port_used();
+  }
+  # If that didn't work, there is not much else we can try.
+  print STDERR "Unable to kill kvm process (pid $kvm_pid).\n"
+      if kill(0, $kvm_pid);
+}
+
+# Wait for kvm to come up, with timeout for giving up.
+# Return 0 on success, -1 on timeout, 1 on kvm process gone.
+sub wait_for_up {
+  my ($kvm_pid)= @_;
+
+  # Set an alarm() timeout so we don't hang forever waiting for a broken KVM
+  # to come up.
+  my $pid;
+  my $timeout= undef;
+  $SIG{ALRM}= sub {
+    kill 9, $pid
+        if defined($pid);
+    $timeout= 1;
+  };
+  alarm($opt_startup_timeout);
+
+  sleep ($opt_initial_sleep)
+      if $opt_initial_sleep;
+
+  my $ret= -1;
+  # Occasionally we see ssh connection succeeding, then immediately
+  # after failing, then after a brief moment working again,
+  # permanently. Handle this by checking a few times with short
+  # interval that the connection is really working.
+  my $success_attempts= 0;
+  while (!$timeout) {
+    $pid= fork();
+    if (!defined($pid)) {
+      die "Fatal error: Cannot fork(): $!\n";
+    } elsif (!$pid) {
+      # Child.
+      exec_with_print(@ssh_cmd_prefix, '-o', 'ConnectTimeout=4', '-p', $opt_port,
+           @user_cmd_opt, 'localhost', 'true');
+    } else {
+      # Parent.
+      my $res= waitpid $pid, 0;
+      $pid= undef;
+      if ($? == 0) {
+        if (++$success_attempts >= 3) {
+          # Ok, KVM is up now!
+          $ret= 0;
+          last;
+        }
+      } else {
+        $success_attempts= 0;
+      }
+      $kvm_pid= get_kvm_pid()
+          unless defined($kvm_pid);
+      if (!kill(0, $kvm_pid)) {
+        # The KVM process seems to have died!
+        $ret= 1;
+        last;
+      }
+      # Wait a bit before retrying (select() is an easy way to get
+      # portable sub-second sleep).
+      select(undef, undef, undef, $success_attempts ? 0.33 : 2);
+    }
+  }
+
+  alarm(0);
+  $SIG{ALRM}= 'DEFAULT';
+  return $ret;
+}
+
+my $result= GetOptions
+    ( 'port|p=i' => \$opt_port,
+      'user|u=s' => \$opt_user,
+#      'background|b' => \$opt_background,
+      'memory|m=i' => \$opt_memory,
+      'smp=i' => \$opt_smp,
+      'cpu|c=s' => \$opt_cpu,
+      'netdev=s' => \$opt_netdev,
+      'kvm=s' => $opt_extra_kvm,
+#      'shutdown|s' => \$opt_shutdown,
+      'initial-sleep=i' => \$opt_initial_sleep,
+      'startup-timeout=i' => \$opt_startup_timeout,
+      'shutdown-timeout=i' => \$opt_shutdown_timeout,
+      'kvm-retries=i' => \$opt_max_retries,
+      'logfile|l=s' => \$opt_kvm_logfile,
+      'base-image|b=s' => \$opt_baseimage,
+      'work-image=s' => \$opt_work_image,
+      'windows' => \$opt_win,
+    );
+
+if (defined($opt_user)) {
+    @user_cmd_opt= ('-l', $opt_user);
+}
+
+if (@ARGV < 1) {
+    print STDERR "No KVM/Qemu image specified, aborting.\n";
+    usage();
+}
+
+$image= shift @ARGV;
+
+$pidfile= $ENV{HOME} . "/.runvm";
+system 'mkdir', '-p', $pidfile
+    and die "Failed to create pidfile directory '$pidfile': $!\n";
+$pidfile.= "kvm_$opt_port.pid";
+
+# Fix for Ubuntu 13.04 "raring" amd64 VMs
+if ($opt_port == 2279) {
+  @cpu_fix= ('-cpu', "$opt_cpu");
+} elsif ($opt_cpu eq "POWER8") {
+  @cpu_fix= ('-cpu', "$opt_cpu");
+} else {
+  @cpu_fix= ('-cpu', "$opt_cpu,-kvmclock");
+}
+
+my $retries= 0;
+for (;;) {
+  if (defined($opt_baseimage)) {
+    my $img= (defined($opt_work_image) ? $opt_work_image : $image);
+    my $res= system_with_print($qimg_exe, 'create', '-o', 'compat=0.10', '-b', $opt_baseimage, '-f', 'qcow2', $img);
+    if ($res) {
+      print STDERR "Failed to clone base image, aborting\n";
+      exit 1;
+    }
+  }
+
+  start_kvm();
+  my $err= wait_for_up();
+  last unless $err;
+
+  # Hm, we did not come up :-(. Retry until the limit.
+  $retries++;
+
+  print "KVM does not seem to come up properly, shutting down and ",
+      ($retries < $opt_max_retries ? "retrying" : "aborting"), ".\n";
+  shutdown_kvm(get_kvm_pid());
+  exit 1 unless $retries < $opt_max_retries;
+}
+
+my $ret= 0;
+for my $arg (@ARGV) {
+  my $always_run= undef;
+  my $local_cmd= undef;
+  # Leading exclamation mark means run even if an earlier command failed.
+  $always_run= 1
+      if $arg =~ s/^(=?)\!\s*/$1/;
+  # A leading equals sign '=' means it is a host command, else guest.
+  $local_cmd= 1
+      if $arg =~ s/^=\s*//;
+  # If a command already failed, only run commands prefixed with `!'.
+  next if $ret && !$always_run;
+
+  my $res;
+  if ($local_cmd) {
+    print STDERR "= $arg\n";
+    $res= system($arg);
+  } else {
+    print STDERR "+ $arg\n";
+    $res= system(@ssh_cmd_prefix, '-p', $opt_port, @user_cmd_opt, 'localhost', $arg);
+  }
+  if ($res < 0) {
+    print STDERR "Could not spawn command: $!\n";
+    $ret= 1 unless $ret;
+  } elsif ($res > 0) {
+    my $exit_val= $res >> 8;
+    my $core= (($res >> 7) & 1) ? " (core dumped)" : "";
+    my $sig= $res & 127;
+    if ($core || $sig) {
+      print STDERR "Terminated$core";
+      print STDERR ": got signal $sig"
+          if $sig;
+      print STDERR "\n";
+    } else {
+      print STDERR "Command exit $exit_val\n";
+    }
+    $ret= $exit_val || 1 unless $ret;
+  }
+}
+
+shutdown_kvm(get_kvm_pid());
+
+exit $ret;
