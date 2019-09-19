@@ -60,10 +60,16 @@ case $1 in
     rhel_ver=( 6 7 )
     sles_ver=( 11 12 )
     ;;
+  *10.2*)
+    debian_ver=( jessie stretch )
+    ubuntu_ver=( xenial bionic )
+    rhel_ver=( 6 7 )
+    sles_ver=( 12 15 )
+    ;;
   *)
     debian_ver=( jessie stretch buster )
     ubuntu_ver=( xenial bionic )
-    rhel_ver=( 6 7 )
+    rhel_ver=( 6 7 8 )
     sles_ver=( 12 15 )
     ;;
 esac
@@ -117,6 +123,7 @@ case $rel in
       altarchs="amd64 arm64"
     fi
     for altarch in ${altarchs};do
+      oldarch=$arch
       arch=$altarch
       newdir="mariadb-$version-$os-$rel-$arch-$type"
       mkdir "/tmp/$newdir"
@@ -129,7 +136,7 @@ case $rel in
       mv -i "/tmp/$newdir" ./
       tar cvf "$newdir.tar" "$newdir"
       rm -rf "$newdir"
-      arch=amd64
+      arch=$oldarch
     done
 
     ;;
