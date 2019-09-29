@@ -33,13 +33,14 @@ sudo yum -y install unixODBC-devel
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
 """) + """export CFLAGS="${CFLAGS}"""+ cflags + """"
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
+[-z "%(revision)s"] && git checkout %(revision)s
 cd build
 rm -rf ./test
 git submodule init
 git submodule update
 cd libmariadb
 git fetch --all --tags --prune
-git checkout """+ tag + """
+#git checkout """+ tag + """
 git log | head -n5
 cd ..
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off""" + cmake_params + """ .
