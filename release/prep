@@ -803,6 +803,18 @@ create_package_tarballs() {
   ./create_package_tarballs ${dir_corp}/${version_nog}/
   popd
   set +x
+  pushd ${dir_corp}/${version_nog}
+    tarfiles=$(find . -name '*.tar')
+    for tarfile in ${tarfiles}; do
+      if ! tar -tf ${tarfile} | grep galera &>/dev/null
+      then
+        echo "+ ERROR: galera package missing from ${tarfile}"
+        exit 1
+      else
+        echo "+ INFO: galera package present in ${tarfile}"
+      fi
+    done
+  popd
 }
 
 create_bundles() {
