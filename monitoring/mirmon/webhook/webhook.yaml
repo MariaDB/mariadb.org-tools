@@ -1,0 +1,23 @@
+- id: mirmon_update_list
+  execute-command: /opt/webhooks/mirmon_update.sh
+  command-working-directory: /opt/webhooks
+  response-message: OK starting mirmon update
+  pass-arguments-to-command:
+    - source: payload
+      name: repository.full_name
+    - source: payload
+      name: head_commit.id
+  trigger-rule:
+    and:
+    - match:
+        type: payload-hash-sha1
+        secret: my-secret
+        parameter:
+          source: header
+          name: X-Hub-Signature
+    - match:
+        type: regex
+        regex: monitoring/mirmon/mariadb_mirror_list
+        parameter:
+          source: payload
+          name: head_commit.modified
