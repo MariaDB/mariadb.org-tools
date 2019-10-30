@@ -169,6 +169,9 @@ rpm_dists="
 
   opensuse150-amd64
 
+  sles11-amd64
+  sles11-x86
+
   sles123-amd64
   sles12-ppc64le
   sles150-amd64
@@ -734,8 +737,12 @@ if [ "${create_rpm}" != "no" ]; then
   for dist in ${rpm_dists}; do
     mkdir -v ${release_dir}/${dir_name}/rpm/${dist}
     case ${dist} in
-      'sles11-amd64')
-        cp -avi ${archive_dir}/${tree}/${rev}/kvm-zyp-sles11sp1-amd64-gal/rpms/galera*.rpm ${release_dir}/${dir_name}/rpm/${dist}/
+      'sles11-amd64'|'sles11-x86')
+        if [ "${tree}" = "mariadb-3.x" ];then
+          cp -avi ${release_dir}/galera-25.3.23/rpm/${dist}/galera*rpm ${release_dir}/${dir_name}/rpm/${dist}/
+        else
+          rmdir -v ${release_dir}/${dir_name}/rpm/${dist}
+        fi
         ;;
       'sles12-ppc64le')
         if [ "${tree}" = "mariadb-3.x" ];then
@@ -1045,8 +1052,8 @@ if [ "${create_yum}" != "no" ]; then
   for dist in ${rpm_dists};do
     mkdir -vp ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms
     case ${dist} in
-      'sles12-ppc64le')
-        # no galera4 packages for sles12-ppc64le
+      'sles12-ppc64le'|'sles11-amd64'|'sles11-x86')
+        # no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86
         rsync -avP --keep-dirlinks ${release_dir}/galera-${ver_galera3}-${suffix}/rpm/${dist}/ ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms/
         ;;
       *)
@@ -1074,11 +1081,11 @@ if [ "${create_yum}" != "no" ]; then
     pressAnyKeyToContinue
     runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
   done
-  # Now copy the sles11 test repos from the old 2019-03-16 release (the last
-  # one with sles11 packages)
-  cp -avil ${release_dir}/galera-test-repo/2019-03-16/repo/rpm/sles11* .
 
   # one final thing: create symlinks so buildbot tests work
+  ln -sv sles11-amd64 sles11sp1-amd64
+  ln -sv sles11-amd64 sles114-amd64
+  ln -sv sles11-x86 sles114-x86
   ln -sv sles150-amd64 sles15-amd64
   ln -sv sles123-amd64 sles12-amd64
   ln -sv sles12-ppc64le suse12-ppc64le 
