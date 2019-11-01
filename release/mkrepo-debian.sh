@@ -276,8 +276,6 @@ for dist in ${debian_dists}; do
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     'stretch'|'buster'|'sid')
-      # Need to remove *.buildinfo lines from changes file so reprepro doesn't choke
-      #runCommand sudo vi $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
