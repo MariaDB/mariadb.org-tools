@@ -806,6 +806,7 @@ create_package_tarballs() {
   pushd ${dir_corp}/${version_nog}
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
+      echo;echo;line;echo "+ ${tarfile}";line;tar -tf ${tarfile}
       if ! tar -tf ${tarfile} | grep galera &>/dev/null
       then
         echo "+ ERROR: galera package missing from ${tarfile}"
