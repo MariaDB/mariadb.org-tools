@@ -113,6 +113,7 @@ shift $(($OPTIND - 1))
 deb_dists="
   bionic
   disco
+  eoan
   buster
   jessie
   sid
@@ -128,6 +129,8 @@ deb_dists_full="
   buster-amd64
 
   disco-amd64
+
+  eoan-amd64
 
   jessie-amd64
   jessie-x86
@@ -166,6 +169,8 @@ rpm_dists="
   fedora29-aarch64
 
   fedora30-amd64
+
+  fedora31-amd64
 
   opensuse150-amd64
 
@@ -898,7 +903,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'buster'|'disco') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'buster'|'disco'|'eoan') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -950,7 +955,11 @@ END
         reprepro --basedir=. include disco ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*disco*_amd64.changes
         reprepro --basedir=. include disco ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*disco*_amd64.changes
         ;;
-
+      'eoan-amd64')
+        echo ${dist}
+        reprepro --basedir=. include eoan ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*eoan*_amd64.changes
+        reprepro --basedir=. include eoan ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*eoan*_amd64.changes
+        ;;
       'jessie-amd64')
         echo ${dist}
         reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*jessie*_amd64.changes
