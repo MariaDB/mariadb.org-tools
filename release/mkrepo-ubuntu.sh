@@ -69,7 +69,7 @@ case ${ARCHDIR} in
     ubuntu_dists="xenial bionic"
     ;;
   *)
-    ubuntu_dists="xenial bionic disco"
+    ubuntu_dists="xenial bionic disco eoan"
     ;;
 esac
 
@@ -167,7 +167,7 @@ for dist in ${ubuntu_dists}; do
 
   # First we import the amd64 files
   case ${dist} in 
-    'xenial'|'bionic'|'disco')
+    'xenial'|'bionic'|'disco'|'eoan')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
