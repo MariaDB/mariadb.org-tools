@@ -33,7 +33,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 15 2017\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" -DWITH_SSL=SCHANNEL && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 15 2017\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DWITH_SSL=SCHANNEL && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
 #WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" " + cmake_params + " && cmake --build . --config RelWithDebInfo")
 #        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
         ],
@@ -45,7 +45,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_64",
         command=["dojob",
 #        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -114,5 +114,5 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         'category': "connectors" }
 
 bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
-bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.5", False)
+bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.6", False)
 bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("win_connector_odbc_gnutls", "3.1", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", "05f70d2", True)
