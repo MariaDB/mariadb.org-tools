@@ -19,9 +19,9 @@
 version=${1}
 
 if [ ! ${2} ];then
-  file=${version}
+  release=${version}
 else
-  file=${2}
+  release=${2}
 fi
 
 url="https://github.com/MariaDB/mariadb-connector-nodejs/archive"
@@ -118,10 +118,10 @@ stage_files() {
   pushd ${cn_home}
     mkdir -v ${dir_nodejs}
     pushd ${dir_nodejs}
-      wget -N ${url}/${file}.tar.gz
-      mv -vi ${file}.tar.gz mariadb-connector-nodejs-${file}.tar.gz
-      wget -N ${url}/${file}.zip
-      mv -vi ${file}.zip mariadb-connector-nodejs-${file}.zip
+      wget -N ${url}/${release}.tar.gz
+      mv -vi ${release}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
+      wget -N ${url}/${release}.zip
+      mv -vi ${release}.zip mariadb-connector-nodejs-${release}.zip
       #cp -avi ${tarball} ./
     popd
   popd
@@ -135,6 +135,25 @@ prep_org_files() {
   set -x
   cp -avi ${cn_home}/${dir_nodejs} ${dir_release}/
   pushd ${dir_release}/${dir_nodejs}
+  sumgen
+  for file in *;do
+    gpg2 ${gpg_opts} ${file}
+  done
+  popd
+  set +x
+  echo;echo;echo
+}
+
+update_org_current_to_this_release() {
+  if [[ -d ${dir_release}/connector-nodejs-current ]]; then
+    rm -rf ${dir_release}/connector-nodejs-current
+  fi
+  message "Updating current org release to this one..."
+  set -x
+  mkdir ${dir_release}/connector-nodejs-current
+  cp -avi ${cn_home}/${dir_nodejs}/mariadb-connector-nodejs-${release}.tar.gz ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.tar.gz
+  cp -avi ${cn_home}/${dir_nodejs}/mariadb-connector-nodejs-${release}.zip ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.zip
+  pushd ${dir_release}/connector-nodejs-current/
   sumgen
   for file in *;do
     gpg2 ${gpg_opts} ${file}
@@ -163,7 +182,7 @@ upload_to_the_primary_mirror() {
   upload=""
   message "Doing a dry-run..."
   set -x
-  rsync --dry-run -av --delete-after ${dir_release}/${dir_nodejs} ${primary_mirror}:data/
+  rsync --dry-run -av --delete-after ${dir_release}/${dir_nodejs} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
   set +x
   echo;echo;echo
   while [ -z ${upload} ]; do
@@ -172,7 +191,7 @@ upload_to_the_primary_mirror() {
       "y")
         message "Uploading for real..."
         set -x
-        rsync -av --delete-after ${dir_release}/${dir_nodejs} ${primary_mirror}:data/
+        rsync -av --delete-after ${dir_release}/${dir_nodejs} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
         set +x
         echo;echo;echo
         upload="yes"
@@ -260,6 +279,8 @@ set -eu
 shouldI stage_files
 
 shouldI prep_org_files
+
+shouldI update_org_current_to_this_release
 
 shouldI prep_com_files
 
