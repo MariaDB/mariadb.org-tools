@@ -104,6 +104,26 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
     sles12-amd64
     sles12-ppc64le
   "
+elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
+  dists="
+    centos73-ppc64
+    centos73-ppc64le
+
+    centos74-amd64
+    centos74-aarch64
+
+    rhel8-amd64
+    rhel8-ppc64le
+
+    fedora30-amd64
+    fedora31-amd64
+
+    opensuse150-amd64
+
+    sles12-amd64
+    sles150-amd64
+  "
+
 elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
   dists="
     centos6-amd64
@@ -117,8 +137,6 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
     rhel8-amd64
     rhel8-ppc64le
 
-    fedora29-amd64
-    fedora29-aarch64
     fedora30-amd64
     fedora31-amd64
 
@@ -142,8 +160,6 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
     rhel8-amd64
     rhel8-ppc64le
 
-    fedora29-amd64
-    fedora29-aarch64
     fedora30-amd64
     fedora31-amd64
 
@@ -269,7 +285,7 @@ set -u
   #     non-interactive shell will exit.
 
 case ${ARCHDIR} in
-  *10.4*)
+  *10.4*|*10.5*)
     ver_galera_real=${ver_galera4}
     ;;
   *)
@@ -322,10 +338,38 @@ for REPONAME in ${dists}; do
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
+    'centos74-amd64')
+      runCommand mkdir -vp rhel/7/x86_64
+      pushd rhel/
+        for i in $(seq 0 5); do
+          maybe_make_symlink 7 7.${i}
+        done
+        maybe_make_symlink 7 7Server
+        maybe_make_symlink 7 7Client
+      popd
+      maybe_make_symlink rhel/7/x86_64 rhel7-amd64
+      maybe_make_symlink rhel7-amd64 rhel74-amd64
+      maybe_make_symlink rhel7-amd64 rhel73-amd64
+      maybe_make_symlink rhel7-amd64 centos7-amd64
+      maybe_make_symlink centos7-amd64 centos74-amd64
+      maybe_make_symlink centos7-amd64 centos73-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      ;;
     'centos73-amd64')
       runCommand mkdir -vp rhel/7/x86_64
       pushd rhel/
-        for i in $(seq 0 3); do
+        for i in $(seq 0 5); do
           maybe_make_symlink 7 7.${i}
         done
         maybe_make_symlink 7 7Server
@@ -449,30 +493,6 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
 
-      ;;
-    'fedora29-amd64')
-      runCommand mkdir -vp fedora/29/x86_64
-      maybe_make_symlink fedora/29/x86_64 fedora29-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'fedora29-aarch64')
-      runCommand mkdir -vp fedora/29/aarch64
-      maybe_make_symlink fedora/29/aarch64 fedora29-aarch64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
       ;;
     'fedora30-amd64')
       runCommand mkdir -vp fedora/30/x86_64
