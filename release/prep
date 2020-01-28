@@ -580,6 +580,20 @@ rsync_wrapper_primary() {
 
 
 #===  FUNCTION  ================================================================
+#          NAME:  upload_this_release_to_the_buildmaster
+#   DESCRIPTION:  Transfer files from the local host to the buildmaster
+#===============================================================================
+upload_this_release_to_the_buildmaster() {
+  important_message "Transferring files from here to the ${buildmaster}"
+  message "Uploading release to ${buildmaster}..."
+  rsync_wrapper "-av --delete-after ${dir_release}/${dir_name} ${buildmaster}:${dir_release}/"
+
+  message "Uploading corp release to ${buildmaster}..."
+  rsync_wrapper "-av --delete-after ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp}/"
+  # All done
+}
+
+#===  FUNCTION  ================================================================
 #          NAME:  pull_this_release_from_the_buildmaster
 #   DESCRIPTION:  Transfer files over from the buildmaster before prepping
 #===============================================================================
@@ -1106,13 +1120,16 @@ loadDefaults                                    # Load Default paths and vars
 major=${num%.*}
 
 # Set the real version of galera to use
-if [ ${major} = "10.4" ]; then
-  ver_galera_real=${ver_galera4}
-  ver_galera_preferred_real=${ver_galera4_preferred}
-else
-  ver_galera_real=${ver_galera}
-  ver_galera_preferred_real=${ver_galera_preferred}
-fi
+case ${major} in
+  10.4|10.5)
+    ver_galera_real=${ver_galera4}
+    ver_galera_preferred_real=${ver_galera4_preferred}
+    ;;
+  *)
+    ver_galera_real=${ver_galera}
+    ver_galera_preferred_real=${ver_galera_preferred}
+    ;;
+esac
 
 # Put ${galera_suffix} and ${num} together to form the base version string
 if [ "${is_ent}" = "yes" ];then
@@ -1680,7 +1697,7 @@ else
     fi
   fi
 
-  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || ["${rsync_debian_repo}" != "no" ] || ["${rsync_ubuntu_repo}" != "no" ]; then
+  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || [ "${rsync_debian_repo}" != "no" ] || [ "${rsync_ubuntu_repo}" != "no" ]; then
     userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
     prev_release="${INPUT}"
   fi
@@ -1936,6 +1953,11 @@ echo;echo;echo;echo
 shouldI generate_the_file_list_pickle_for_org_downloads
 
 echo;echo;echo;echo
+
+#if [ "${skip_staging}" = "no" ]; then
+  shouldI upload_this_release_to_the_buildmaster
+  echo;echo;echo;echo
+#fi
 
 echo "+ all done!"
 echo;echo;echo;echo
