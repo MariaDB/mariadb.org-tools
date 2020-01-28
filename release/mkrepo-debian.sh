@@ -251,6 +251,9 @@ case ${TREE} in
   '10.4'|'bb-10.4-release')
     debian_dists="jessie stretch buster sid"
     ;;
+  '10.5'|'bb-10.5-release')
+    debian_dists="jessie stretch buster sid"
+    ;;
   *)
     debian_dists="jessie stretch buster"
     ;;
@@ -323,7 +326,7 @@ for dist in ${debian_dists}; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     case ${TREE} in
-      *10.4*)
+      *10.4*|*10.5*)
         ver_galera_real=${ver_galera4}
         galera_name='galera-4'
         ;;

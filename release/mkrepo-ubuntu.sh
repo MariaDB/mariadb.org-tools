@@ -68,6 +68,9 @@ case ${ARCHDIR} in
   *"10.2"*)
     ubuntu_dists="xenial bionic"
     ;;
+  *"10.5"*)
+    ubuntu_dists="xenial bionic eoan"
+    ;;
   *)
     ubuntu_dists="xenial bionic disco eoan"
     ;;
@@ -185,16 +188,24 @@ for dist in ${ubuntu_dists}; do
 
   # Include ppc64le debs
   case ${dist} in
-    'xenial'|'bionic')
+    'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+    'bionic')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
   esac
 
 
   # Include aarch64 debs
   case ${dist} in
-    'xenial'|'bionic')
+    'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      ;;
+    'bionic')
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
   esac
 
@@ -224,7 +235,7 @@ for dist in ${ubuntu_dists}; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     case ${ARCHDIR} in
-      *10.4*)
+      *10.4*|*10.5*)
         ver_galera_real=${ver_galera4}
         galera_name='galera-4'
         ;;
