@@ -167,6 +167,22 @@ do_debs() {
 
   # Hop into the work directory and generate the package metadata.
   pushd "/tmp/$newdir"
+
+  # DEB repos now contains multiple versions, remove all files except the
+  # current versions
+  find . -name '*mariadb*' -a '!' -name "*mariadb*${version}*" -exec rm -v {} +
+
+  find . -name '*mysql*' -a '!' -name "*mysql*${version}*" -exec rm -v {} +
+
+  case $version in
+    10.5.*|10.4.*)
+      find . -name 'galera*' -a '!' -name "galera*${ver_galera4}*" -exec rm -v {} +
+      ;;
+    *)
+      find . -name 'galera*' -a '!' -name "galera*${ver_galera}*" -exec rm -v {} +
+      ;;
+  esac
+
   apt-ftparchive packages . > Packages
   apt-ftparchive release . | { cat > Release; }
 
@@ -205,7 +221,9 @@ do_rpms() {
       find . -name 'galera-*' -a '!' -name "galera-4-${ver_galera4}*" -exec rm -v {} +
       ;;
     *)
-      find . -name 'galera-*' -a '!' -name "galera-${ver_galera}*" -exec rm -v {} +
+      if [ "${rel}" != "11" ];then
+        find . -name 'galera-*' -a '!' -name "galera-${ver_galera}*" -exec rm -v {} +
+      fi
       ;;
   esac
 
