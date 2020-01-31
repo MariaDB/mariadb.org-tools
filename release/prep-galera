@@ -161,12 +161,10 @@ rpm_dists="
 
   centos74-aarch64
   centos74-amd64
+  centos8-amd64
 
   rhel8-amd64
   rhel8-ppc64le
-
-  fedora29-amd64
-  fedora29-aarch64
 
   fedora30-amd64
 
@@ -416,7 +414,7 @@ else
 fi
 
 dir_name="${version}"
-archive_dir="/ds413/archive/builds"
+archive_dir="/ds1819/archive/builds"
 
 case ${tree} in
   "mariadb-3.x")
@@ -1138,7 +1136,7 @@ ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${date}/repo ./\" ;
 line=\"----------------------------------------\"
 for host in bb02;do
   echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};
-  ssh -t -t bb01 \"rsync -a --info=progress2 --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
+  ssh -t -t bb01 \"set -x;rsync -a --info=progress2 --delete-after /var/www/galera/ \${host}:/var/www/galera/\"; 
 done;echo;echo;echo
 "
 
