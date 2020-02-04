@@ -238,7 +238,7 @@ maybe_make_symlink() {
   fi
 
   # Check to see if ${1} and ${2} are the same
-  if [ "${2}" -ef "${2}" ]; then
+  if [ "${1}" -ef "${2}" ]; then
     # if they are the same, show the link and where it points
     ls -ld ${2}
   else
@@ -341,7 +341,7 @@ for REPONAME in ${dists}; do
     'centos74-amd64')
       runCommand mkdir -vp rhel/7/x86_64
       pushd rhel/
-        for i in $(seq 0 5); do
+        for i in $(seq 0 7); do
           maybe_make_symlink 7 7.${i}
         done
         maybe_make_symlink 7 7Server
@@ -377,7 +377,9 @@ for REPONAME in ${dists}; do
       popd
       maybe_make_symlink rhel/7/x86_64 rhel7-amd64
       maybe_make_symlink rhel7-amd64 rhel73-amd64
+      maybe_make_symlink rhel7-amd64 rhel74-amd64
       maybe_make_symlink rhel7-amd64 centos7-amd64
+      maybe_make_symlink centos7-amd64 centos74-amd64
       maybe_make_symlink centos7-amd64 centos73-amd64
 
       # Copy in MariaDB files
@@ -435,23 +437,6 @@ for REPONAME in ${dists}; do
       maybe_make_symlink rhel7-aarch64 rhel74-aarch64
       maybe_make_symlink rhel7-aarch64 centos7-aarch64
       maybe_make_symlink centos7-aarch64 centos74-aarch64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos74-amd64')
-      runCommand mkdir -vp rhel/7.4/x86_64
-      maybe_make_symlink rhel/7.4/x86_64 rhel74-amd64
-      maybe_make_symlink rhel74-amd64 centos74-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
