@@ -134,6 +134,7 @@ case $rel in
       "do_$type"
 
       mv -i "/tmp/$newdir" ./
+      sed -i "s/filename/$newdir/" $newdir/README
       tar cvf "$newdir.tar" "$newdir"
       rm -rf "$newdir"
       arch=$oldarch
@@ -150,6 +151,7 @@ case $rel in
     "do_$type"
 
     mv -i "/tmp/$newdir" ./
+    sed -i "s/filename/$newdir/" $newdir/README
     tar cvf "$newdir.tar" "$newdir"
     rm -rf "$newdir"
 esac

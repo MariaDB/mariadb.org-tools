@@ -1,25 +1,40 @@
 MariaDB Server 
 
-This package contains a number of .rpm files that together comprise the MariaDB Server distribution.
+This package contains a number of .rpm files that together comprise the MariaDB
+Server distribution.
 
-The packages included in this archive may vary depending on the OS you're using and its release version, as different components may require libraries or functionality available only in newer releases. 
+The packages included in this archive may vary depending on the OS you're using
+and its release version, as different components may require libraries or
+functionality available only in newer releases. 
 
-The .rpm files can be installed individually, but there are complex interdependencies that are difficult to resolve using rpm alone. For that reason, this package is distributed as a ready-to-use Yum archive, so that you can use yum to install the packages in it.
+The .rpm files can be installed individually, but there are complex
+interdependencies that are difficult to resolve using rpm alone. For that
+reason, this package is distributed as a ready-to-use Yum archive, so that you
+can use yum to install the packages in it.
 
-In order for the package manager to be able to install these packages, you will need to place them in a location that the package manager has privileges to access. You may find that /opt is a good location where you can unpack the archive and the package manager will be able to read it.
+In order for the package manager to be able to install these packages, you will
+need to place them in a location that the package manager has privileges to
+access. You may find that /opt is a good location where you can unpack the
+archive and the package manager will be able to read it.
 
-To use the archive with yum, create a mariadb.repo file in /etc/yum.repos.d/ that points to the directory where you've extracted the files. A helpful script called setup_repository is included in this archive to do this for you.
+To use the archive with yum, create a mariadb.repo file in /etc/yum.repos.d/
+that points to the directory where you've extracted the files. A helpful script
+called setup_repository is included in this archive to do this for you.
 
-You'll need to do this work as root, so that you can write files to these locations.
+You'll need to do this work as root, so that you can write files to these
+locations.
 
 cd /opt
-tar -xf ~/mariadb-10.1.17-rhel-7-x86_64-rpms.tar
-mariadb-10.1.17-rhel-7-x86_64-rpms/setup_repository
+tar -xf ~/filename.tar
+filename/setup_repository
 
 After the repository is set up, you should install the MariaDB-server package.
 
 yum install -y MariaDB-server
 
-For more information about installing MariaDB .rpm files, visit https://mariadb.com/kb/en/mariadb/about-the-mariadb-rpm-files/
+For more information about installing MariaDB .rpm files, visit:
+https://mariadb.com/kb/en/installing-mariadb-rpm-files/
 
-For more information about MariaDB TX, visit https://mariadb.com/products/mariadb-server and for help using MariaDB, please contact MariaDB Corporation: https://mariadb.com/contact.
+For more information about MariaDB products, visit https://mariadb.com/products
+and for help using MariaDB, please contact MariaDB Corporation:
+https://mariadb.com/contact
