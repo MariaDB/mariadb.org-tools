@@ -48,4 +48,3 @@ RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
-USER root
