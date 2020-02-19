@@ -65,6 +65,7 @@ galera_suffix=""
       numflag=false
       tarflag=false
 
+date=$(date +%F)
 
 # The first thing we need to do is parse the command-line options
 while getopts 'dhlr:t:v:y' OPTION
@@ -112,7 +113,6 @@ shift $(($OPTIND - 1))
 
 deb_dists="
   bionic
-  disco
   eoan
   buster
   jessie
@@ -127,8 +127,6 @@ deb_dists_full="
   bionic-ppc64le
 
   buster-amd64
-
-  disco-amd64
 
   eoan-amd64
 
@@ -197,7 +195,7 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 # Functions
 #-------------------------------------------------------------------------------
 
-function runCommand() {
+runCommand() {
   echo "+ ${@}"
   sleep 1
   if ${@} ; then
@@ -794,11 +792,6 @@ if [ "${create_rpm}" != "no" ]; then
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
-  # Create Symlinks so files can be found by prep scripts
-  ln -sv sles123-amd64 sles12-amd64
-  ln -sv sles150-amd64 sles15-amd64
-  ln -sv opensuse150-amd64 opensuse15-amd64
-  ln -sv rhel8-ppc64le centos8-ppc64le
 
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.com (aka MariaDB Enterprise)
@@ -834,15 +827,22 @@ else
   line
 fi
 
-date=$(date +%F)
-
 if [ "${create_repo}" != "no" ] || [ "${create_yum}" != "no" ]; then
-  userInput "What galera-3 version should I use? (e.g. 25.3.25)"
-  ver_galera3="${INPUT}"
-
-  userInput "What galera-4 version should I use? (e.g. 26.4.0)"
-  ver_galera4="${INPUT}"
+  case ${tree} in
+    mariadb-3.x)
+      repo="repo3"
+      ;;
+    mariadb-4.x)
+      repo="repo4"
+      ;;
+  esac
+#  userInput "What galera-3 version should I use? (e.g. 25.3.29)"
+#  ver_galera3="${INPUT}"
+#
+#  userInput "What galera-4 version should I use? (e.g. 26.4.4)"
+#  ver_galera4="${INPUT}"
 fi
+
 
 #-------------------------------------------------------------------------------
 #  Create DEB Repository
@@ -857,8 +857,8 @@ if [ "${create_repo}" != "no" ]; then
   architectures_all="amd64 arm64 i386 ppc64el source"
   gpg_key="0xcbcb082a1bb943db"
   gpg_key_2016="0xF1656F24C74CD1D8"
-  mkdir -vp ${release_dir}/galera-test-repo/${date}/repo/deb/conf
-  cd ${release_dir}/galera-test-repo/${date}/repo/deb/
+  mkdir -vp ${release_dir}/${dir_name}/${repo}/deb/conf
+  cd ${release_dir}/${dir_name}/${repo}/deb/
 
   for dist in ${deb_dists}; do
     case ${dist} in
@@ -906,7 +906,7 @@ SignWith: ${gpg_key_2016}
 
 END
         ;;
-      'sid'|'yakkety'|'zesty'|'buster'|'disco'|'eoan') cat >>conf/distributions <<END
+      'sid'|'yakkety'|'zesty'|'buster'|'eoan') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -935,100 +935,77 @@ END
     case ${dist} in
       'bionic-aarch64')
         echo ${dist}
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*bionic*_arm64.changes
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*bionic*_arm64.changes
+        reprepro --basedir=. include bionic ${release_dir}/${dir_name}-${suffix}/deb/galera*bionic*_arm64.changes
         ;;
       'bionic-amd64')
         echo ${dist}
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*bionic*_amd64.changes
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*bionic*_amd64.changes
+        reprepro --basedir=. include bionic ${release_dir}/${dir_name}-${suffix}/deb/galera*bionic*_amd64.changes
         ;;
       'bionic-ppc64le')
         echo ${dist}
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*bionic*_ppc64el.changes
-        reprepro --basedir=. include bionic ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*bionic*_ppc64el.changes
+        reprepro --basedir=. include bionic ${release_dir}/${dir_name}-${suffix}/deb/galera*bionic*_ppc64el.changes
         ;;
       'buster-amd64')
         echo ${dist}
-        reprepro --basedir=. include buster ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*buster*_amd64.changes
-        reprepro --basedir=. include buster ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*buster*_amd64.changes
-        ;;
-      'disco-amd64')
-        echo ${dist}
-        reprepro --basedir=. include disco ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*disco*_amd64.changes
-        reprepro --basedir=. include disco ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*disco*_amd64.changes
+        reprepro --basedir=. include buster ${release_dir}/${dir_name}-${suffix}/deb/galera*buster*_amd64.changes
         ;;
       'eoan-amd64')
         echo ${dist}
-        reprepro --basedir=. include eoan ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*eoan*_amd64.changes
-        reprepro --basedir=. include eoan ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*eoan*_amd64.changes
+        reprepro --basedir=. include eoan ${release_dir}/${dir_name}-${suffix}/deb/galera*eoan*_amd64.changes
         ;;
       'jessie-amd64')
         echo ${dist}
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*jessie*_amd64.changes
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*jessie*_amd64.changes
+        reprepro --basedir=. include jessie ${release_dir}/${dir_name}-${suffix}/deb/galera*jessie*_amd64.changes
         ;;
       'jessie-x86')
         echo ${dist}
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*jessie*_i386.changes
-        reprepro --basedir=. include jessie ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*jessie*_i386.changes
+        reprepro --basedir=. include jessie ${release_dir}/${dir_name}-${suffix}/deb/galera*jessie*_i386.changes
         ;;
 
       'sid-amd64')
         echo ${dist}
-        reprepro --basedir=. include sid ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*sid*_amd64.changes
-        reprepro --basedir=. include sid ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*sid*_amd64.changes
+        reprepro --basedir=. include sid ${release_dir}/${dir_name}-${suffix}/deb/galera*sid*_amd64.changes
         ;;
       'sid-x86')
         echo ${dist}
-        reprepro --basedir=. include sid ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*sid*_i386.changes
-        reprepro --basedir=. include sid ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*sid*_i386.changes
+        reprepro --basedir=. include sid ${release_dir}/${dir_name}-${suffix}/deb/galera*sid*_i386.changes
         ;;
 
       'stretch-amd64')
         echo ${dist}
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*stretch*_amd64.changes
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*stretch*_amd64.changes
+        reprepro --basedir=. include stretch ${release_dir}/${dir_name}-${suffix}/deb/galera*stretch*_amd64.changes
         ;;
       'stretch-ppc64le')
         echo ${dist}
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*stretch*_ppc64el.changes
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*stretch*_ppc64el.changes
+        reprepro --basedir=. include stretch ${release_dir}/${dir_name}-${suffix}/deb/galera*stretch*_ppc64el.changes
         ;;
       'stretch-x86')
         echo ${dist}
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*stretch*_i386.changes
-        reprepro --basedir=. include stretch ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*stretch*_i386.changes
+        reprepro --basedir=. include stretch ${release_dir}/${dir_name}-${suffix}/deb/galera*stretch*_i386.changes
         ;;
       'trusty-amd64')
         echo ${dist}
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_amd64.changes
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_amd64.changes
+        reprepro --basedir=. include trusty ${release_dir}/${dir_name}-${suffix}/deb/galera*trusty*_amd64.changes
         ;;
       'trusty-x86')
         echo ${dist}
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*trusty*_i386.changes
-        reprepro --basedir=. include trusty ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*trusty*_i386.changes
+        reprepro --basedir=. include trusty ${release_dir}/${dir_name}-${suffix}/deb/galera*trusty*_i386.changes
         ;;
       'xenial-aarch64')
         echo ${dist}
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*xenial*_arm64.changes
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*xenial*_arm64.changes
+        reprepro --basedir=. include xenial ${release_dir}/${dir_name}-${suffix}/deb/galera*xenial*_arm64.changes
         ;;
       'xenial-amd64')
         echo ${dist}
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*xenial*_amd64.changes
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*xenial*_amd64.changes
+        reprepro --basedir=. include xenial ${release_dir}/${dir_name}-${suffix}/deb/galera*xenial*_amd64.changes
         ;;
       'xenial-ppc64le')
         echo ${dist}
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*xenial*_ppc64el.changes
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*xenial*_ppc64el.changes
+        reprepro --basedir=. include xenial ${release_dir}/${dir_name}-${suffix}/deb/galera*xenial*_ppc64el.changes
         ;;
       'xenial-x86')
         echo ${dist}
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera3}-${suffix}/deb/galera*xenial*_i386.changes
-        reprepro --basedir=. include xenial ${release_dir}/galera-${ver_galera4}-${suffix}/deb/galera*xenial*_i386.changes
+        reprepro --basedir=. include xenial ${release_dir}/${dir_name}-${suffix}/deb/galera*xenial*_i386.changes
         ;;
 
       *)
@@ -1052,31 +1029,33 @@ if [ "${create_yum}" != "no" ]; then
   echo "+ creating yum repository..."
   line
   # Delete the directory if it exists (we want to start from scratch)
-  if [ -d ${release_dir}/galera-test-repo/${date}/repo/rpm ]; then
-    rm -rf "${release_dir}/galera-test-repo/${date}/repo/rpm"
+  if [ -d ${release_dir}/${dir_name}/${repo}/rpm ]; then
+    rm -rf "${release_dir}/${dir_name}/${repo}/rpm"
   fi
-  mkdir -vp ${release_dir}/galera-test-repo/${date}/repo/rpm
-  cd ${release_dir}/galera-test-repo/${date}/repo/rpm
+  mkdir -vp ${release_dir}/${dir_name}/${repo}/rpm
+  cd ${release_dir}/${dir_name}/${repo}/rpm
 
   # Here we are going to iterate through the various distros and:
   #   1. create the needed directories
   #   2. copy the correct rpm packages into those directories
   for dist in ${rpm_dists};do
-    mkdir -vp ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms
+    mkdir -vp ${release_dir}/${dir_name}/${repo}/rpm/${dist}/rpms
     case ${dist} in
       'sles12-ppc64le'|'sles11-amd64'|'sles11-x86')
-        # no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86
-        rsync -avP --keep-dirlinks ${release_dir}/galera-${ver_galera3}-${suffix}/rpm/${dist}/ ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms/
+        if [[ "${tree}" = "mariadb-4.x" ]]; then
+          echo "+ no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86"
+        else
+          rsync -avP --keep-dirlinks --exclude=*.asc ${release_dir}/${dir_name}-${suffix}/rpm/${dist}/ ${release_dir}/${dir_name}/${repo}/rpm/${dist}/rpms/
+        fi
         ;;
       *)
-        rsync -avP --keep-dirlinks ${release_dir}/galera-${ver_galera3}-${suffix}/rpm/${dist}/ ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms/
-        rsync -avP --keep-dirlinks ${release_dir}/galera-${ver_galera4}-${suffix}/rpm/${dist}/ ${release_dir}/galera-test-repo/${date}/repo/rpm/${dist}/rpms/
+        rsync -avP --keep-dirlinks --exclude=*.asc ${release_dir}/${dir_name}-${suffix}/rpm/${dist}/ ${release_dir}/${dir_name}/${repo}/rpm/${dist}/rpms/
         ;;
     esac
   done
   # At this point the files are in place
   # All that's left is to generate the repo metadata  and sign the repomd.xml file
-  cd ${release_dir}/galera-test-repo/${date}/repo/rpm/
+  cd ${release_dir}/${dir_name}/${repo}/rpm/
   for dist in ${rpm_dists}; do
     mv -vi ${dist} ~/ && cd ~/
     case ${dist} in
@@ -1088,7 +1067,7 @@ if [ "${create_yum}" != "no" ]; then
         createrepo --database --pretty ${dist}
         ;;
     esac
-    mv -vi ${dist} ${release_dir}/galera-test-repo/${date}/repo/rpm/ && cd ${release_dir}/galera-test-repo/${date}/repo/rpm/
+    mv -vi ${dist} ${release_dir}/${dir_name}/${repo}/rpm/ && cd ${release_dir}/${dir_name}/${repo}/rpm/
     echo "About to sign the repomd.xml file for ${dist}..."
     pressAnyKeyToContinue
     runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
@@ -1134,10 +1113,10 @@ echo
 
 echo;echo;echo;echo "+ Now upload using commands similar to the following: 
 
-rsync --dry-run -avP --delete-after ${release_dir}/galera-test-repo/${date}/repo bb01:/var/www/galera/${date}
-rsync           -avP --delete-after ${release_dir}/galera-test-repo/${date}/repo bb01:/var/www/galera/${date}
+rsync --dry-run -av --delete-after ${release_dir}/${dir_name}/${repo} bb01:/var/www/galera/${date}
+rsync           -av --delete-after ${release_dir}/${dir_name}/${repo} bb01:/var/www/galera/${date}
 
-ssh bb01 \"cd /var/www/galera/;rm -v repo; ln -sv ${date}/repo ./\" ; 
+ssh bb01 \"cd /var/www/galera/;rm -v ${repo}; ln -sv ${date}/${repo} ./\" ; 
 line=\"----------------------------------------\"
 for host in bb02;do
   echo;echo;echo;echo \${line} ; echo \"uploading to \${host}\";echo \${line};
