@@ -73,6 +73,12 @@ line() {
   echo "-------------------------------------------------------------------------------"
 }
 
+message() {
+  message="${@}"
+  echo;echo;echo;
+  echo;line;echo "${message}";line;
+}
+
 shouldI() {
   local cont
   cont=""
@@ -184,6 +190,27 @@ prep_org_files() {
   echo;echo;echo
 }
 
+update_org_current_to_this_release() {
+  if [[ -d ${dir_release}/connector-c-current ]]; then
+    rm -rf ${dir_release}/connector-c-current
+  fi
+  message "Updating current org release to this one..."
+  set -x
+  mkdir ${dir_release}/connector-c-current
+  cp -avi ${cc_home}/${dir_c}/*src.tar.gz ${dir_release}/connector-c-current/mariadb-connector-c-current-src.tar.gz
+  cp -avi ${cc_home}/${dir_c}/*src.zip ${dir_release}/connector-c-current/mariadb-connector-c-current-src.zip
+  pushd ${dir_release}/connector-c-current/
+  set +x
+  sumgen
+  for file in *;do
+    echo "+ gpg2 ${gpg_opts} ${file}"
+            gpg2 ${gpg_opts} ${file}
+  done
+  popd
+  set +x
+  echo;echo;echo
+}
+
 prep_com_files() {
   # Prep .com files
   echo;line;echo "Prepping com files";line;
@@ -202,15 +229,15 @@ upload_to_the_primary_mirror() {
   upload=""
   echo;echo;echo;
   echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${primary_mirror}:data/"
-          rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${primary_mirror}:data/
+  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/"
+          rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${dir_release}/${dir_c} ${primary_mirror}:data/"
-                rsync -av --delete-after ${dir_release}/${dir_c} ${primary_mirror}:data/
+        echo "+ rsync -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/"
+                rsync -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -305,6 +332,8 @@ echo
 shouldI copy_and_stage_files
 echo;echo
 shouldI prep_org_files
+echo;echo
+shouldI update_org_current_to_this_release
 echo;echo
 shouldI prep_com_files
 echo;echo

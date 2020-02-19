@@ -39,11 +39,11 @@ kvm-rpm-centos73-ppc64le:centos73-ppc64le:rhel/7/ppc64le:1.el7.centos.ppc64le
 kvm-rpm-centos74-aarch64:centos74-aarch64:rhel/7/aarch64:1.el7.centos.aarch64
 kvm-rpm-centos74-amd64:centos74-x86_64:rhel/7/x86_64:1.el7.centos.x86_64
 kvm-zyp-sles123-amd64:sles123-x86_64:sles/12/x86_64:1.x86_64
-kvm-zyp-opensuse423-amd64:opensuse42-x86_64:opensuse/42/x86_64
 p8-suse12-rpm-ppc64le:suse12-ppc64le:sles/12/ppc64le
 " 
 
 old_dists="
+kvm-zyp-opensuse423-amd64:opensuse42-x86_64:opensuse/42/x86_64
 kvm-zyp-sles114-amd64:sles114-x86_64:sles/11/x86_64
 kvm-zyp-sles114-x86:sles114-i686:sles/11/i386
 p8-rhel6-rpm-ppc64:rhel6-ppc64:rhel/6/ppc64

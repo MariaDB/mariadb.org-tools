@@ -17,7 +17,7 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-maven="http://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
+maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
 
 dir_java="connector-java-${version}"
 #tarball="mariadb-java-client-${version}.tar.gz"
