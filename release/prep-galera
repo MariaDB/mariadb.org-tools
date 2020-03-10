@@ -476,34 +476,18 @@ echo
 #-------------------------------------------------------------------------------
 #  Source Tarball
 #-------------------------------------------------------------------------------
-# Manually generate the src tarball
+# Prep the src tarball
 if [ "${create_source}" != "no" ]; then
   line
-  echo "+ generating source tarball..."
+  echo "+ prepping source tarball..."
   line
   if [ ! -d ${release_dir}/${dir_name}/src ]; then
     mkdir -v ${release_dir}/${dir_name}/src
   fi
-  cd ~/src
-  if [ -d galera ];then
-    rm -rf galera
-  fi
-  git clone https://github.com/MariaDB/galera.git
-  cd galera
-  git checkout ${tree}
-  git reset --hard ${rev}
-  git submodule init
-  git submodule update
-  scripts/build.sh -a
-  git submodule foreach 'cp -vi * ../../galera-*/${path}/'
-  gunzip ${version}.tar.gz
-  tar --update -vf ${version}.tar ${version}/
-  gzip ${version}.tar
-  mv -vi ${version}.tar.gz ${release_dir}/${dir_name}/src/
-  rm -rf ~/src/galera
 
-  # removing src rsync if statement (db:2017-01-06)
-  #if rsync ${rsync_opts} "${archive_dir}/${tree}/${rev}/src/${version}.tar.gz" "${release_dir}/${dir_name}/src/"; then
+  # Copy over the src tarball
+  rsync -av ${archive_dir}/${tree}/${rev}/kvm-src-centos8-amd64-gal/src/galera* ${release_dir}/${dir_name}/src/
+
     cd ${release_dir}/${dir_name}/src
     for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
@@ -540,7 +524,7 @@ if [ "${create_source}" != "no" ]; then
     # sign the sum files as well
     for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
   #fi # removing src rsync if statement (db:2017-01-06)
-  echo "+ transfer of src done"
+  echo "+ prep of src done"
   echo
 fi
 
