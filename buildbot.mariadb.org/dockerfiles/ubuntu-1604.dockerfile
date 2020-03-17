@@ -24,7 +24,7 @@ RUN apt-get update && \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
     unixodbc-dev uuid-dev fakeroot iputils-ping dh-systemd \
-    libkrb5-dev libsystemd-dev
+    libkrb5-dev libsystemd-dev dh-exec libpcre2-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
