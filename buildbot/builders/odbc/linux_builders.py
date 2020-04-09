@@ -115,13 +115,16 @@ rm -Rf build
 #sudo yum -y install git
 sudo yum --disablerepo=epel -y install git
 sudo yum -y install unixODBC.x86_64
-sudo yum -y install unixODBC.i686
+#sudo yum -y install unixODBC.i686
 sudo yum -y install unixODBC-devel.x86_64
-sudo yum -y install unixODBC-devel.i686
+#sudo yum -y install unixODBC-devel.i686
 sudo yum -y install zlib.x86_64
-sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
-sudo yum -y install openssl-devel.i686
-sudo yum -y install libcom_err.i686
+#sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
+sudo yum -y install glibc-devel.x86_64 libstdc++-devel.x86_64
+#sudo yum -y install openssl-devel.i686
+sudo yum -y install openssl-devel.x86_64
+#sudo yum -y install libcom_err.i686
+sudo yum -y install libcom_err.x86_64
 sudo ldconfig
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
