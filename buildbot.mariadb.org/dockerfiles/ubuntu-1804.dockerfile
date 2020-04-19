@@ -23,7 +23,8 @@ RUN apt-get update && \
     ccache python3 python3-pip curl wget libssl-dev libzstd-dev \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
-    unixodbc-dev uuid-dev fakeroot iputils-ping dh-exec libpcre2-dev
+    unixodbc-dev uuid-dev fakeroot iputils-ping dh-exec libpcre2-dev \
+    libedit-dev liblz4-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
