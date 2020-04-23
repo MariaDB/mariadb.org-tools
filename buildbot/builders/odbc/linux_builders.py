@@ -30,6 +30,7 @@ rm -Rf build
 sudo yum -y install unixODBC-devel
 """ if yum else """#sudo apt-get update
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m openssl libssl-dev"
 """) + """export CFLAGS="${CFLAGS}"""+ cflags + """"
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 [-z "%(revision)s"] && git checkout %(revision)s
@@ -81,6 +82,7 @@ bld_opensuse42_x64_connector_odbc_new= bld_linux_connector_odbc("opensuse42_x64-
 
 bld_jessie_x86_connector_odbc_new= bld_linux_connector_odbc("jessie_x86-connector-odbc-new", "vm-jessie-i386", "", False, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.1.7");
 bld_jessie_x64_connector_odbc_new= bld_linux_connector_odbc("jessie_x64-connector-odbc-new", "vm-jessie-amd64", "", False, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian ", "v3.1.7");
+bld_stretch_x64_connector_odbc= bld_linux_connector_odbc("stretch_x64-connector-odbc", "vm-stretch-amd64", "", False, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian9 ", "v3.1.7");
 
 bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "vm-centos5-i386", " -D_GNU_SOURCE", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.1.7");
 bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.1.7");
@@ -114,17 +116,17 @@ set -ex
 rm -Rf build
 #sudo yum -y install git
 sudo yum --disablerepo=epel -y install git
-sudo yum -y install unixODBC.x86_64
-#sudo yum -y install unixODBC.i686
-sudo yum -y install unixODBC-devel.x86_64
-#sudo yum -y install unixODBC-devel.i686
-sudo yum -y install zlib.x86_64
-#sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
-sudo yum -y install glibc-devel.x86_64 libstdc++-devel.x86_64
-#sudo yum -y install openssl-devel.i686
-sudo yum -y install openssl-devel.x86_64
-#sudo yum -y install libcom_err.i686
-sudo yum -y install libcom_err.x86_64
+#sudo yum -y install unixODBC.x86_64
+sudo yum -y install unixODBC.i686
+#sudo yum -y install unixODBC-devel.x86_64
+sudo yum -y install unixODBC-devel.i686
+#sudo yum -y install zlib.x86_64
+sudo yum -y install glibc-devel.i686 libstdc++-devel.i686 zlib.i686
+#sudo yum -y install glibc-devel.x86_64 libstdc++-devel.x86_64
+sudo yum -y install openssl-devel.i686
+#sudo yum -y install openssl-devel.x86_64
+sudo yum -y install libcom_err.i686
+#sudo yum -y install libcom_err.x86_64
 sudo ldconfig
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
 cd build
