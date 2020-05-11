@@ -58,10 +58,10 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
     centos6-x86
     centos6-amd64
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     sles114-x86
@@ -75,10 +75,10 @@ elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
     centos6-amd64
     centos6-x86
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     sles114-amd64
@@ -92,10 +92,10 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
     centos6-amd64
     centos6-x86
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     sles114-amd64
@@ -128,10 +128,10 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
   dists="
     centos6-amd64
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     rhel8-amd64
@@ -151,10 +151,10 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
     centos6-amd64
     centos6-x86
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     rhel8-amd64
@@ -174,10 +174,10 @@ elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
     centos6-amd64
     centos6-x86
 
-    centos73-amd64
     centos73-ppc64
     centos73-ppc64le
 
+    centos74-amd64
     centos74-aarch64
 
     opensuse150-amd64
