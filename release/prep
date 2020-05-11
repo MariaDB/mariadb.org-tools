@@ -124,7 +124,7 @@ rsync_ubuntu_repo="no"
    galera_suffix=""
  exclude_release=""
      remote_prep="no"
-    skip_staging="no"
+    skip_staging="yes"
         treeflag=false
          revflag=false
          numflag=false
@@ -633,15 +633,23 @@ pull_this_release_from_the_buildmaster() {
   # We can now rsync the builds from the buildmaster
   message "Transferring kvm builds from ${buildmaster}..."
   rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
+
   message "Transferring other builds from ${buildmaster}..."
   rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
+ 
+  message "Transferring galera from ${buildmaster}..."
+  for galera_version in ${ver_galera_real}; do
+    rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}* ${dir_galera}/"
+  done
+  #rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}-signed ${dir_galera}/"
+  #rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}-signed-ent ${dir_galera}/"
 
   # We should be done now
 
 }
 
-skip_uploading_to_the_staging_mirror() {
-  skip_staging="yes"
+use_the_staging_mirror() {
+  skip_staging="no"
 }
 
 start_the_ssh-agent() {
@@ -1904,7 +1912,7 @@ bundles
 echo;echo;echo;echo
 
 
-shouldI skip_uploading_to_the_staging_mirror
+shouldI use_the_staging_mirror
 
 if [ "${skip_staging}" = "no" ]; then
   shouldI upload_to_the_staging_mirror
