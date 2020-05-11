@@ -153,7 +153,6 @@ rpm_dists="
   centos6-x86
   centos6-amd64
 
-  centos73-amd64
   centos73-ppc64
   centos73-ppc64le
 
@@ -1067,8 +1066,8 @@ if [ "${create_yum}" != "no" ]; then
   ln -sv opensuse150-amd64 opensuse15-amd64
   ln -sv centos6-amd64 rhel6-amd64
   ln -sv centos6-x86 rhel6-x86
-  ln -sv centos73-amd64 centos7-amd64
-  ln -sv centos73-amd64 rhel7-amd64
+  ln -sv centos74-amd64 centos7-amd64
+  ln -sv centos74-amd64 rhel7-amd64
   ln -sv centos73-ppc64 centos7-ppc64
   ln -sv centos73-ppc64 rhel7-ppc64
   ln -sv centos73-ppc64le centos7-ppc64le
