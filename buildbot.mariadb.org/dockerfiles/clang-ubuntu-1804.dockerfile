@@ -23,7 +23,7 @@ RUN apt-get update && \
     ccache python3 python3-pip curl wget libssl-dev libzstd-dev \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
-    unixodbc-dev uuid-dev fakeroot iputils-ping dh-exec libpcre2-dev clang-6.0
+    unixodbc-dev uuid-dev fakeroot iputils-ping dh-exec libpcre2-dev clang-6.0 gnutls-dev
 
 RUN wget -O clang-10.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
 RUN tar xvf clang*
