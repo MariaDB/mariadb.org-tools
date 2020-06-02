@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o pipefail
+
+err() {
+  echo >&2 "ERROR: $*"
+  exit 1
+}
+
+typeset -r OUTPUT="$HOME/screenrecord_$(date +'%Y-%m-%dT%H:%M:%S').mkv"
+
+# necessary commands
+for cmd in slop ffmpeg; do
+  command -v $cmd >/dev/null || err "$cmd not found"
+done
+
+# get the area for recording from slop
+command -v slop >/dev/null || err "slop command not found"
+read -p "Select zone to capture" \
+  -r XOFFSET YOFFSET WEIGHT HIGHT < <(slop -f "%x %y %w %h")
+
+# see https://trac.ffmpeg.org/wiki/Capture/Desktop
+# with sound
+ffmpeg \
+  -video_size "${WEIGHT}x${HIGHT}" \
+  -framerate 25 \
+  -f x11grab \
+  -i :0.0+"$XOFFSET","$YOFFSET" \
+  -f pulse -ac 2 -i default \
+  "$OUTPUT" || err "ffmpeg encoding"
+
+# without sound
+# ffmpeg \
+#   -video_size "${WEIGHT}x${HIGHT}" \
+#   -framerate 25 \
+#   -f x11grab \
+#   -i :0.0+"$XOFFSET","$YOFFSET"\
+#   "$OUTPUT" || err "ffmpeg encoding"

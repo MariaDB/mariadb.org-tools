@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+err() {
+  echo >&2 "ERROR: $*"
+  exit 1
+}
+
+command -v cvlc &>/dev/null || err "cvlc command not found"
+
+cvlc v4l2:///dev/video0 \
+  :input-slave=alsa://hw:0,0 \
+  --sout="#transcode{vcodec=h264,acodec=mpga,ab=128,channels=2,samplerate=44100,scodec=none}\
+  :file{dst=./$(date +'%Y-%m-%dT%H:%M:%S')_rec.mp4,no-overwrite}" \
+  --no-sout-all --sout-keep
