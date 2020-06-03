@@ -8,6 +8,32 @@ err() {
   exit 1
 }
 
+usage() {
+  cat >&2 <<-EOF
+  Usage : $0
+    -s also record sound
+    -h help
+EOF
+}
+
+typeset VAR_OPTIONAL_ARGS=""
+
+while getopts "hs" OPTION; do
+  case $OPTION in
+    s)
+      VAR_OPTIONAL_ARGS="with-sound"
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+done
+
 typeset -r OUTPUT="$HOME/screenrecord_$(date +'%Y-%m-%dT%H:%M:%S').mkv"
 
 # necessary commands
@@ -16,24 +42,23 @@ for cmd in slop ffmpeg; do
 done
 
 # get the area for recording from slop
-command -v slop >/dev/null || err "slop command not found"
 read -p "Select zone to capture" \
   -r XOFFSET YOFFSET WEIGHT HIGHT < <(slop -f "%x %y %w %h")
 
 # see https://trac.ffmpeg.org/wiki/Capture/Desktop
-# with sound
-ffmpeg \
-  -video_size "${WEIGHT}x${HIGHT}" \
-  -framerate 25 \
-  -f x11grab \
-  -i :0.0+"$XOFFSET","$YOFFSET" \
-  -f pulse -ac 2 -i default \
-  "$OUTPUT" || err "ffmpeg encoding"
-
-# without sound
-# ffmpeg \
-#   -video_size "${WEIGHT}x${HIGHT}" \
-#   -framerate 25 \
-#   -f x11grab \
-#   -i :0.0+"$XOFFSET","$YOFFSET"\
-#   "$OUTPUT" || err "ffmpeg encoding"
+if [[ $VAR_OPTIONAL_ARGS == "with-sound" ]]; then
+  ffmpeg \
+    -video_size "${WEIGHT}x${HIGHT}" \
+    -framerate 25 \
+    -f x11grab \
+    -i :0.0+"$XOFFSET","$YOFFSET" \
+    -f pulse -ac 2 -i default \
+    "$OUTPUT" || err "ffmpeg encoding"
+else
+  ffmpeg \
+    -video_size "${WEIGHT}x${HIGHT}" \
+    -framerate 25 \
+    -f x11grab \
+    -i :0.0+"$XOFFSET","$YOFFSET" \
+    "$OUTPUT" || err "ffmpeg encoding"
+fi
