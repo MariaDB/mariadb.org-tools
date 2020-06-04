@@ -69,6 +69,36 @@ fi
 # Sunanda Menon : 02/27/2015
 # Splitting build dirs (refer ME-91). 
 # Enterprise builds need to grab only Linux 64bit, no 32bit builds
+
+set_build_dirs_variables() {
+  case ${major} in
+    10.5)
+      build_dirs_x86="
+        kvm-bintar-centos6-x86:bintar-linux-x86
+        kvm-bintar-trusty-x86:bintar-linux-systemd-x86
+        "
+      build_dirs_x86_64="
+        kvm-bintar-centos6-amd64:bintar-linux-x86_64
+        kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
+        kvm-tarbake-jaunty-x86:source
+        mac-1012-pkg:macOS
+        "
+      ;;
+    10.4|10.3)
+      build_dirs_x86="
+        kvm-bintar-centos6-x86:bintar-linux-x86
+        kvm-bintar-trusty-x86:bintar-linux-systemd-x86
+        kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
+        "
+      build_dirs_x86_64="
+        kvm-bintar-centos6-amd64:bintar-linux-x86_64
+        kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
+        kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
+        kvm-tarbake-jaunty-x86:source
+        mac-1012-pkg:macOS
+        "
+      ;;
+    *)
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
                 kvm-bintar-centos6-x86:bintar-linux-x86
                 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
@@ -83,6 +113,9 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
                    mac-1012-pkg:macOS
                    bsd9-64:bintar-bsd9-64
                    opensolaris-511-bintar:bintar-opensolaris-511"
+       ;;
+  esac
+}
 
 ## Enterprise builds should not build solaris10 for now
 ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
@@ -1183,6 +1216,8 @@ esac
 shouldI prepare_yum_packages
 #shouldI include_Galera_packages_in_repositories
 include_Galera_packages_in_repositories
+
+set_build_dirs_variables
 
 # Set various options that change depending on whether this is an enterprise
 # release or not
