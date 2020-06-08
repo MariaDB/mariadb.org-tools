@@ -101,5 +101,17 @@ RUN mkdir C:\Buildbot
 WORKDIR C:\\Buildbot
 SHELL ["powershell", "-command"]
 RUN Start-BitsTransfer -Source 'https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac' -Destination buildbot.tac
+
+# Install DiffUtils dependencies
+RUN Start-BitsTransfer -Source 'https://downloads.sourceforge.net/gnuwin32/diffutils/2.8.7-1/diffutils-2.8.7-1-dep.zip' -Destination c:\diffutilsDep.zip
+RUN Expand-Archive c:\diffutilsDep.zip -DestinationPath c:\diffutilsInstall
+RUN Remove-Item c:\diffutilsDep.zip
+# Install DiffUtils
+RUN Start-BitsTransfer -Source 'https://downloads.sourceforge.net/gnuwin32/diffutils/2.8.7-1/diffutils-2.8.7-1-bin.zip' -Destination c:\diffutilsInstall.zip
+RUN Expand-Archive c:\diffutilsInstall.zip -DestinationPath c:\diffutilsInstall; \
+$env:PATH = $env:PATH + ';C:\diffutilsInstall\bin\;C:\diffutilsInstall\bin'; \
+Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\' -Name Path -Value $env:PATH
+RUN Remove-Item C:\diffutilsInstall.zip
+
 CMD C:\\Python\\Scripts\\twistd.exe -noy C:\\Buildbot\\buildbot.tac
 
