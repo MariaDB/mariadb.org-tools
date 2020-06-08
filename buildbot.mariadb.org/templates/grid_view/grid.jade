@@ -10,6 +10,21 @@
         |  to be in the system.
     .form-inline(ng-show="C.dataReady()")
         .form-group
+            ul
+              li
+                | Grid View for main branches: 
+                a(href="#grid?branch=10.1") 10.1
+                | , 
+                a(href="#grid?branch=10.2") 10.2
+                | , 
+                a(href="#grid?branch=10.3") 10.3
+                | , 
+                a(href="#grid?branch=10.4") 10.4
+                | , 
+                a(href="#grid?branch=10.5") 10.5
+                | , 
+                a(href="#grid?branch=10.6") 10.6
+ 
             label Results
             select.form-control(ng-model="C.result", ng-change="C.changeResult(C.result)", ng-options="r.code as r.text for r in C.results")
                 option(value="") (all)
