@@ -122,44 +122,28 @@ copy_and_stage_files() {
     for dir in ${dir_build}/*;do
       echo ${dir}
       case $(basename ${dir}) in 
-        "linux_x86-connector_c")
-          echo
+        linux_x86-connector_c)
           cp -avi ${dir}/*.gz ${dir_c}/
           cp -avi ${dir}/*.zip ${dir_c}/
           ;;
-        "linux_x64-connector_c")
-          echo
-          cp -avi ${dir}/*x86_64.tar.gz ${dir_c}/
+        linux_x64-connector_c)
+          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
           ;;
-        "centos6_i386-connector_c")
-          echo
-          #cp -avi ${dir}/*i686.tar.gz ${dir_c}/
+        cc-*-amd64)
+          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
           ;;
-        "win-connector_c")
-          echo
-          #cp -avi ${dir}/*.msi ${dir_c}/
+        cc-*-x86)
+          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
           ;;
-        "win-connector_c_3")
+        win-connector_c_3)
           echo
           cp -avi ${dir}/*.msi ${dir_c}/
           ;;
-        "labrador")
-          #cp -avi ${dir}/*.gz ${dir_c}/
-          echo
-          echo "skipping ${dir}"
-          echo
-          ;;
-        "freebsd11_x64-connector_c")
+        freebsd11_x64-connector_c)
           cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
-          #echo
-          #echo "skipping ${dir}"
-          #echo
           ;;
-        "freebsd11_x86-connector_c")
+        freebsd11_x86-connector_c)
           cp -avi ${dir}/*i386.tar.gz ${dir_c}/
-          #echo
-          #echo "skipping ${dir}"
-          #echo
           ;;
         *)
           echo;line
