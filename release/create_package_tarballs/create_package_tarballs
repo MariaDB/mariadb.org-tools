@@ -68,7 +68,7 @@ case $1 in
     ;;
   *)
     debian_ver=( jessie stretch buster )
-    ubuntu_ver=( xenial bionic )
+    ubuntu_ver=( xenial bionic focal )
     rhel_ver=( 6 7 8 )
     sles_ver=( 12 15 )
     ;;
@@ -116,7 +116,7 @@ do_pkgs() {
 
 
 case $rel in
-  'bionic'|'xenial'|'7')
+  'focal'|'bionic'|'xenial'|'7')
     if [[ "${rel}" == "7" ]]; then
       altarchs="x86_64 aarch64"
     else

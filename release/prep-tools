@@ -32,7 +32,7 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="jessie stretch buster xenial bionic disco eoan"
+dists_apt="jessie stretch buster xenial bionic focal"
 dists_rhel="6 7 8"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
