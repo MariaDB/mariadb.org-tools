@@ -32,8 +32,8 @@ if [ -f ${dir_conf}/prep.conf ]; then
 fi
 
 dists="
-kvm-rpm-centos6-amd64:centos6-x86_64:rhel/6/x86_64
 kvm-rpm-centos6-x86:centos6-i686:rhel/6/i386
+kvm-rpm-centos6-amd64:centos6-x86_64:rhel/6/x86_64:1.el6.x86_64
 kvm-rpm-centos73-ppc64:centos73-ppc64:rhel/7/ppc64:1.el7.centos.ppc64
 kvm-rpm-centos73-ppc64le:centos73-ppc64le:rhel/7/ppc64le:1.el7.centos.ppc64le
 kvm-rpm-centos74-aarch64:centos74-aarch64:rhel/7/aarch64:1.el7.centos.aarch64
@@ -65,7 +65,7 @@ cd ${dir_rpm_shared}
 for dist_pair in ${dists}; do
   dist=(${dist_pair//:/ })
   case ${dist[2]} in
-    'rhel/7/x86_64'|'rhel/7/ppc64'|'rhel/7/ppc64le'|'rhel/7/aarch64'|'sles/12/x86_64')
+    'rhel/6/x86_64'|'rhel/7/x86_64'|'rhel/7/ppc64'|'rhel/7/ppc64le'|'rhel/7/aarch64'|'sles/12/x86_64')
       cp -av ${dir_release}/mariadb-${version}/yum/${dist[2]}/rpms/MariaDB-shared-${version}-${dist[3]}.rpm ./
       if [ -L "mariadb-shared-10.1-${dist[0]}.rpm" ]; then
         rm -v mariadb-shared-10.1-${dist[0]}.rpm
