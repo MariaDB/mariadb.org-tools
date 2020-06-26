@@ -43,7 +43,7 @@ cd libmariadb
 git fetch --all --tags --prune
 git log | head -n5
 cd ..
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ .
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off""" + cmake_params + """ .
 cmake --build . --config RelWithDebInfo --target package
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
@@ -113,7 +113,7 @@ git fetch --all --tags --prune
 #git checkout """+ tag + """
 git log | head -n5
 cd ..
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off""" + cmake_params + """ .
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off""" + cmake_params + """ .
 cmake --build . --config RelWithDebInfo --target package
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
@@ -207,7 +207,7 @@ git fetch --all --tags --prune
 #git checkout """+ tag + """
 git log | head -n5
 cd ..
-setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake .
+setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake .
 setarch i386 cmake --build . --config RelWithDebInfo --target package
 setarch i386 make package
 """),
