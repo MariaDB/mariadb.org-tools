@@ -11,7 +11,6 @@
 	liblz4.so.1 => /usr/lib/x86_64-linux-gnu/liblz4.so.1 
 	liblzma.so.5 => /lib/x86_64-linux-gnu/liblzma.so.5 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
-	libpcre2-8.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-8.so.0 
 	libpcre.so.3 => /lib/x86_64-linux-gnu/libpcre.so.3 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 
@@ -100,7 +99,6 @@
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	liblz4.so.1 => /usr/lib/x86_64-linux-gnu/liblz4.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
-	libpcre2-8.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-8.so.0 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libssl.so.1.0.0 => /lib/x86_64-linux-gnu/libssl.so.1.0.0 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
@@ -120,7 +118,6 @@
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/bin/mysqldump
 	/lib64/ld-linux-x86-64.so.2 
@@ -180,7 +177,6 @@
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/bin/mysqlrepair
 	/lib64/ld-linux-x86-64.so.2 
@@ -225,8 +221,6 @@
 	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
-	libpcre2-8.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-8.so.0 
-	libpcre2-posix.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-posix.so.0 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libssl.so.1.0.0 => /lib/x86_64-linux-gnu/libssl.so.1.0.0 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
@@ -242,8 +236,6 @@
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	liblz4.so.1 => /usr/lib/x86_64-linux-gnu/liblz4.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
-	libpcre2-8.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-8.so.0 
-	libpcre2-posix.so.0 => /usr/lib/x86_64-linux-gnu/libpcre2-posix.so.0 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libssl.so.1.0.0 => /lib/x86_64-linux-gnu/libssl.so.1.0.0 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
@@ -253,19 +245,16 @@
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/bin/mysql_upgrade
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/bin/mysql_waitpid
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/adt_null.so
 	/lib64/ld-linux-x86-64.so.2 
@@ -276,6 +265,19 @@
 === /usr/lib/mysql/plugin/auth_ed25519.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_gssapi_client.so
+	/lib64/ld-linux-x86-64.so.2 
+	libcom_err.so.2 => /lib/x86_64-linux-gnu/libcom_err.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
+	libgssapi_krb5.so.2 => /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/x86_64-linux-gnu/libkeyutils.so.1 
+	libkrb5.so.3 => /usr/lib/x86_64-linux-gnu/libkrb5.so.3 
+	libkrb5support.so.0 => /usr/lib/x86_64-linux-gnu/libkrb5support.so.0 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
+	libresolv.so.2 => /lib/x86_64-linux-gnu/libresolv.so.2 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/auth_gssapi.so
 	/lib64/ld-linux-x86-64.so.2 
@@ -309,6 +311,12 @@
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/client_ed25519.so
+	/lib64/ld-linux-x86-64.so.2 
+	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
+	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/cracklib_password_check.so
 	/lib64/ld-linux-x86-64.so.2 
 	libcrack.so.2 => /usr/lib/x86_64-linux-gnu/libcrack.so.2 
@@ -320,6 +328,10 @@
 === /usr/lib/mysql/plugin/debug_key_management.so
 	statically linked
 === /usr/lib/mysql/plugin/dialog_examples.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/dialog.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	linux-vdso.so.1 =>  
@@ -341,13 +353,6 @@
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/mysql/plugin/func_test.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
-	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/ha_archive.so
@@ -432,6 +437,7 @@
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libJudy.so.1 => /usr/lib/x86_64-linux-gnu/libJudy.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/ha_rocksdb.so
@@ -447,49 +453,6 @@
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	libzstd.so.0 => /usr/lib/x86_64-linux-gnu/libzstd.so.0 
-	linux-vdso.so.1 =>  
-=== /usr/lib/mysql/plugin/ha_s3.so
-	/lib64/ld-linux-x86-64.so.2 
-	libasn1.so.8 => /usr/lib/x86_64-linux-gnu/libasn1.so.8 
-	libcom_err.so.2 => /lib/x86_64-linux-gnu/libcom_err.so.2 
-	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
-	libcrypt.so.1 => /lib/x86_64-linux-gnu/libcrypt.so.1 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libcurl.so.4 => /usr/lib/x86_64-linux-gnu/libcurl.so.4 
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
-	libffi.so.6 => /usr/lib/x86_64-linux-gnu/libffi.so.6 
-	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
-	libgmp.so.10 => /usr/lib/x86_64-linux-gnu/libgmp.so.10 
-	libgnutls.so.30 => /usr/lib/x86_64-linux-gnu/libgnutls.so.30 
-	libgssapi_krb5.so.2 => /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2 
-	libgssapi.so.3 => /usr/lib/x86_64-linux-gnu/libgssapi.so.3 
-	libhcrypto.so.4 => /usr/lib/x86_64-linux-gnu/libhcrypto.so.4 
-	libheimbase.so.1 => /usr/lib/x86_64-linux-gnu/libheimbase.so.1 
-	libheimntlm.so.0 => /usr/lib/x86_64-linux-gnu/libheimntlm.so.0 
-	libhogweed.so.4 => /usr/lib/x86_64-linux-gnu/libhogweed.so.4 
-	libhx509.so.5 => /usr/lib/x86_64-linux-gnu/libhx509.so.5 
-	libidn.so.11 => /usr/lib/x86_64-linux-gnu/libidn.so.11 
-	libk5crypto.so.3 => /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 
-	libkeyutils.so.1 => /lib/x86_64-linux-gnu/libkeyutils.so.1 
-	libkrb5.so.26 => /usr/lib/x86_64-linux-gnu/libkrb5.so.26 
-	libkrb5.so.3 => /usr/lib/x86_64-linux-gnu/libkrb5.so.3 
-	libkrb5support.so.0 => /usr/lib/x86_64-linux-gnu/libkrb5support.so.0 
-	liblber-2.4.so.2 => /usr/lib/x86_64-linux-gnu/liblber-2.4.so.2 
-	libldap_r-2.4.so.2 => /usr/lib/x86_64-linux-gnu/libldap_r-2.4.so.2 
-	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
-	libnettle.so.6 => /usr/lib/x86_64-linux-gnu/libnettle.so.6 
-	libp11-kit.so.0 => /usr/lib/x86_64-linux-gnu/libp11-kit.so.0 
-	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libresolv.so.2 => /lib/x86_64-linux-gnu/libresolv.so.2 
-	libroken.so.18 => /usr/lib/x86_64-linux-gnu/libroken.so.18 
-	librtmp.so.1 => /usr/lib/x86_64-linux-gnu/librtmp.so.1 
-	libsasl2.so.2 => /usr/lib/x86_64-linux-gnu/libsasl2.so.2 
-	libsqlite3.so.0 => /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 
-	libssl.so.1.0.0 => /lib/x86_64-linux-gnu/libssl.so.1.0.0 
-	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
-	libtasn1.so.6 => /usr/lib/x86_64-linux-gnu/libtasn1.so.6 
-	libwind.so.0 => /usr/lib/x86_64-linux-gnu/libwind.so.0 
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/ha_sphinx.so
 	/lib64/ld-linux-x86-64.so.2 
@@ -514,6 +477,16 @@
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_tokudb.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
+	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
+	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/libdaemon_example.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
@@ -534,6 +507,14 @@
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/mypluglib.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/mysql_clear_password.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/qa_auth_client.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	linux-vdso.so.1 =>  
@@ -564,6 +545,12 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	linux-vdso.so.1 =>  
+=== /usr/lib/mysql/plugin/sha256_password.so
+	/lib64/ld-linux-x86-64.so.2 
+	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
+	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/simple_password_check.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
@@ -588,54 +575,3 @@
 	libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 =>  
 === /usr/lib/mysql/plugin/auth_pam_tool_dir/*
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/auth_gssapi_client.so
-	/lib64/ld-linux-x86-64.so.2 
-	libcom_err.so.2 => /lib/x86_64-linux-gnu/libcom_err.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
-	libgssapi_krb5.so.2 => /usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2 
-	libk5crypto.so.3 => /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 
-	libkeyutils.so.1 => /lib/x86_64-linux-gnu/libkeyutils.so.1 
-	libkrb5.so.3 => /usr/lib/x86_64-linux-gnu/libkrb5.so.3 
-	libkrb5support.so.0 => /usr/lib/x86_64-linux-gnu/libkrb5support.so.0 
-	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
-	libresolv.so.2 => /lib/x86_64-linux-gnu/libresolv.so.2 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/auth_test_plugin.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/caching_sha2_password.so
-	/lib64/ld-linux-x86-64.so.2 
-	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/client_ed25519.so
-	/lib64/ld-linux-x86-64.so.2 
-	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/dialog.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/mysql_clear_password.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/qa_auth_client.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/qa_auth_interface.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	linux-vdso.so.1 =>  
-=== /usr/lib/x86_64-linux-gnu/libmariadb3/plugin/sha256_password.so
-	/lib64/ld-linux-x86-64.so.2 
-	libcrypto.so.1.0.0 => /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 
-	linux-vdso.so.1 =>  
