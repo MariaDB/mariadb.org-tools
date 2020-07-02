@@ -1,0 +1,800 @@
+=== /usr/sbin/mysqld
+	libaio.so.1 => /lib/libaio.so.1 
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libcrypt.so.1 => /lib/libcrypt.so.1 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libfreebl3.so => /lib/libfreebl3.so 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libtinfo.so.5 => /lib/libtinfo.so.5 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqlaccess
+	not a dynamic executable
+=== /usr/bin/mysqladmin
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqlbinlog
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqlcheck
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_client_test
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_client_test_embedded
+	libaio.so.1 => /lib/libaio.so.1 
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libcrypt.so.1 => /lib/libcrypt.so.1 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libfreebl3.so => /lib/libfreebl3.so 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_config
+	not a dynamic executable
+=== /usr/bin/mysql_convert_table_format
+	not a dynamic executable
+=== /usr/bin/mysqld_multi
+	not a dynamic executable
+=== /usr/bin/mysqld_safe
+	not a dynamic executable
+=== /usr/bin/mysqld_safe_helper
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	librt.so.1 => /lib/librt.so.1 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqldump
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqldumpslow
+	not a dynamic executable
+=== /usr/bin/mysql_embedded
+	libaio.so.1 => /lib/libaio.so.1 
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libcrypt.so.1 => /lib/libcrypt.so.1 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libfreebl3.so => /lib/libfreebl3.so 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libtinfo.so.5 => /lib/libtinfo.so.5 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_find_rows
+	not a dynamic executable
+=== /usr/bin/mysql_fix_extensions
+	not a dynamic executable
+=== /usr/bin/mysqlhotcopy
+	not a dynamic executable
+=== /usr/bin/mysqlimport
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_install_db
+	not a dynamic executable
+=== /usr/bin/mysql_plugin
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_secure_installation
+	not a dynamic executable
+=== /usr/bin/mysql_setpermission
+	not a dynamic executable
+=== /usr/bin/mysqlshow
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqlslap
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqltest
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysqltest_embedded
+	libaio.so.1 => /lib/libaio.so.1 
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libcrypt.so.1 => /lib/libcrypt.so.1 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libfreebl3.so => /lib/libfreebl3.so 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_tzinfo_to_sql
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_upgrade
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	librt.so.1 => /lib/librt.so.1 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/bin/mysql_waitpid
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	librt.so.1 => /lib/librt.so.1 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/adt_null.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_0x0100.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_ed25519.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_gssapi_client.so
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_gssapi.so
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_pam.so
+	libaudit.so.1 => /lib/libaudit.so.1 
+	libcrypt.so.1 => /lib/libcrypt.so.1 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libfreebl3.so => /lib/libfreebl3.so 
+	/lib/ld-linux.so.2 
+	libpam.so.0 => /lib/libpam.so.0 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_socket.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_test_plugin.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/caching_sha2_password.so
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/client_ed25519.so
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/daemon_example.ini
+	not a dynamic executable
+=== /usr/lib/mysql/plugin/debug_key_management.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/dialog_examples.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/dialog.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/disks.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/example_key_management.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/file_key_management.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_archive.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_blackhole.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_cassandra.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_connect.so
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libltdl.so.7 => /usr/lib/libltdl.so.7 
+	libm.so.6 => /lib/libm.so.6 
+	libodbc.so.2 => /usr/lib/libodbc.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libxml2.so.2 => /usr/lib/libxml2.so.2 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_example.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_federated.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_federatedx.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_mroonga.so
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	librt.so.1 => /lib/librt.so.1 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/handlersocket.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_oqgraph.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	libJudy.so.1 => /usr/lib/libJudy.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_sphinx.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_spider.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/ha_test_sql_discovery.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/JavaWrappers.jar
+	not a dynamic executable
+=== /usr/lib/mysql/plugin/JdbcInterface.jar
+	not a dynamic executable
+=== /usr/lib/mysql/plugin/libdaemon_example.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/locales.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/metadata_lock_info.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/mypluglib.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/mysql_clear_password.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/qa_auth_client.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/qa_auth_interface.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/qa_auth_server.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/query_cache_info.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/query_response_time.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/semisync_master.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/semisync_slave.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/server_audit.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/sha256_password.so
+	libcom_err.so.2 => /lib/libcom_err.so.2 
+	libcrypto.so.10 => /usr/lib/libcrypto.so.10 
+	libc.so.6 => /lib/libc.so.6 
+	libdl.so.2 => /lib/libdl.so.2 
+	libgssapi_krb5.so.2 => /lib/libgssapi_krb5.so.2 
+	libk5crypto.so.3 => /lib/libk5crypto.so.3 
+	libkeyutils.so.1 => /lib/libkeyutils.so.1 
+	libkrb5.so.3 => /lib/libkrb5.so.3 
+	libkrb5support.so.0 => /lib/libkrb5support.so.0 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libresolv.so.2 => /lib/libresolv.so.2 
+	libselinux.so.1 => /lib/libselinux.so.1 
+	libssl.so.10 => /usr/lib/libssl.so.10 
+	libz.so.1 => /lib/libz.so.1 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/simple_password_check.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/sql_errlog.so
+	libc.so.6 => /lib/libc.so.6 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/wsrep_info.so
+	libc.so.6 => /lib/libc.so.6 
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/libm.so.6 
+	libpthread.so.0 => /lib/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 
+	linux-gate.so.1 =>  
