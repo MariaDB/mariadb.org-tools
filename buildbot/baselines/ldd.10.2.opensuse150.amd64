@@ -379,13 +379,9 @@
 	libpam.so.0 => /lib64/libpam.so.0 
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	linux-vdso.so.1 
-=== /usr/lib64/mysql/plugin/auth_pam_tool_dir
-=== /usr/lib64/mysql/plugin/auth_pam_v1.so
+=== /usr/lib64/mysql/plugin/auth_socket.so
 	/lib64/ld-linux-x86-64.so.2 
-	libaudit.so.1 => /usr/lib64/libaudit.so.1 
 	libc.so.6 => /lib64/libc.so.6 
-	libdl.so.2 => /lib64/libdl.so.2 
-	libpam.so.0 => /lib64/libpam.so.0 
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	linux-vdso.so.1 
 === /usr/lib64/mysql/plugin/auth_test_plugin.so
@@ -607,6 +603,10 @@
 	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
 	libz.so.1 => /lib64/libz.so.1 
 	linux-vdso.so.1 
+=== /usr/lib64/mysql/plugin/JavaWrappers.jar
+	not a dynamic executable
+=== /usr/lib64/mysql/plugin/JdbcInterface.jar
+	not a dynamic executable
 === /usr/lib64/mysql/plugin/libdaemon_example.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib64/libc.so.6 
@@ -672,6 +672,22 @@
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
 	linux-vdso.so.1 
+=== /usr/lib64/mysql/plugin/semisync_master.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib64/libc.so.6 
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 
+	libm.so.6 => /lib64/libm.so.6 
+	libpthread.so.0 => /lib64/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
+	linux-vdso.so.1 
+=== /usr/lib64/mysql/plugin/semisync_slave.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib64/libc.so.6 
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 
+	libm.so.6 => /lib64/libm.so.6 
+	libpthread.so.0 => /lib64/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
+	linux-vdso.so.1 
 === /usr/lib64/mysql/plugin/server_audit.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib64/libc.so.6 
@@ -696,14 +712,6 @@
 	libc.so.6 => /lib64/libc.so.6 
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	linux-vdso.so.1 
-=== /usr/lib64/mysql/plugin/test_versioning.so
-	/lib64/ld-linux-x86-64.so.2 
-	libc.so.6 => /lib64/libc.so.6 
-	libgcc_s.so.1 => /lib64/libgcc_s.so.1 
-	libm.so.6 => /lib64/libm.so.6 
-	libpthread.so.0 => /lib64/libpthread.so.0 
-	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
-	linux-vdso.so.1 
 === /usr/lib64/mysql/plugin/wsrep_info.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib64/libc.so.6 
@@ -712,4 +720,3 @@
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
 	linux-vdso.so.1 
-=== /usr/lib64/mysql/plugin/auth_pam_tool_dir/*
