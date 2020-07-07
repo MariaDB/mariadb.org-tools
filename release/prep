@@ -162,6 +162,7 @@ rsync_ubuntu_repo="no"
          revflag=false
          numflag=false
          tarflag=false
+    prev_release=""
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -723,6 +724,42 @@ upload_to_the_staging_mirror() {
 }
 
 #===  FUNCTION  ================================================================
+#          NAME:  copy_the_previous_release_to_the_current_release_on_the_mirrors
+#   DESCRIPTION:  There are a lot of duplicated files from previous releases in
+#                 every new release. These include previous package versions
+#                 that are included in the repositories, the galera folder, and
+#                 other stuff. This function copies old releases to the new
+#                 release so that we don't have to re-upload files that we
+#                 don't need to. When we then do the actual upload of the new
+#                 release, rsync takes care of deleting the files that actually
+#                 aren't part of the new release.
+#===============================================================================
+copy_the_previous_release_to_the_current_release_on_the_mirrors() {
+  if [ ! ${prev_release} ] ; then
+    set_prev_release
+  fi
+
+  echo;echo
+
+  message "Primary Mirror"
+  ssh -t -t ${primary_mirror} "set -x ; rsync -av --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists data/mariadb-${prev_release}/ data/${dir_name}/"
+
+  echo;echo
+
+  message "Corp Mirror Staging"
+  ssh -t -t ${corp_mirror} "set -x; rsync -av --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists ${corp_mirror_path}/mariadb-${prev_release}/ ${corp_mirror_path_staging}/${dir_name}/"
+
+  echo;echo
+
+  message "Yum Mirror"
+  ssh -t -t ${yum_primary_mirror} "set -x ; rsync -av --exclude=repodata --exclude=db --exclude=dists ${yum_mirror_path}/${prev_release}/ ${yum_mirror_path}/${num}/"
+
+  echo;echo
+
+  lowkey_message "Done!"
+}
+
+#===  FUNCTION  ================================================================
 #          NAME:  copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
 #   DESCRIPTION:  corp and org release dirs are similar, so copying from one to
 #                 the other before doing the corp upload saves bandwidth
@@ -919,6 +956,54 @@ bundles() {
 
 
 #===  FUNCTION  ================================================================
+#          NAME:  upload_to_the_corp_mirror_staging_dir
+#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
+#                 mirror staging directory
+#===============================================================================
+upload_to_the_corp_mirror_staging_dir() {
+  if [ "${skip_staging}" = "yes" ]; then
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+    else
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+    fi
+  else
+    if [ "${galera_suffix}" = "-galera" ]; then
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+    else
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+    fi
+  fi
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  activate_the_corp_staging_repos
+#   DESCRIPTION:  Run the commands necessary to make the repository files public
+#===============================================================================
+activate_the_corp_staging_repos() {
+  if [ "${galera_suffix}" = "-galera" ]; then
+    # Do nothing if this is a galera release
+    echo "This is a galera release, skipping this step..."
+  else
+    echo;echo;
+    set -x
+    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path_staging}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
+    set +x
+  fi
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  copy_corp_staging_to_prod
+#   DESCRIPTION:  No need to reupload everything if the corp staging dir already
+#                 has a lot of what we need
+#===============================================================================
+
+copy_the_corp_mirror_staging_dir_to_prod() {
+  ssh ${corp_mirror} "if [[ -d ${corp_mirror_path_staging}/${dir_name} ]]; then if [[ ! -d ${corp_mirror_path}/${dir_name} ]]; then set -x;cp -ail ${corp_mirror_path_staging}/${dir_name} ${corp_mirror_path}/;else echo '+ Found existing ${dir_name} under ${corp_mirror_path}/, not copying...';fi;else echo '+ ${dir_name} not found under ${corp_mirror_path_staging}/, not copying...';fi"
+}
+
+
+#===  FUNCTION  ================================================================
 #          NAME:  upload_to_the_corp_mirror
 #   DESCRIPTION:  Sync the release from the primary public mirror to the corp
 #                 mirror
@@ -1062,6 +1147,15 @@ update_the_docker_mariadb_version() {
   popd
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  set_prev_release
+#   DESCRIPTION:  set the ${prev_release} var
+#===============================================================================
+
+set_prev_release() {
+  userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
+  prev_release="${INPUT}"
+}
 
 #===  FUNCTION  ================================================================
 #          NAME:  generate_the_file_list_pickle_for_org_downloads
@@ -1741,8 +1835,9 @@ else
   fi
 
   if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || [ "${rsync_debian_repo}" != "no" ] || [ "${rsync_ubuntu_repo}" != "no" ]; then
-    userInput "What is the previous MariaDB release? (e.g. 10.1.1)"
-    prev_release="${INPUT}"
+    if [ ! ${prev_release} ] ; then
+      set_prev_release
+    fi
   fi
 
   #-------------------------------------------------------------------------------
@@ -1942,10 +2037,9 @@ shouldI create_package_tarballs
 
 echo;echo;echo;echo
 
-bundles
-
-echo;echo;echo;echo
-
+#bundles
+#
+#echo;echo;echo;echo
 
 shouldI use_the_staging_mirror
 
@@ -1958,7 +2052,25 @@ if [ "${skip_staging}" = "no" ]; then
   echo;echo;echo;echo
 fi
 
+echo;echo;echo;echo
+
+shouldI copy_the_previous_release_to_the_current_release_on_the_mirrors
+
+echo;echo;echo;echo
+
+shouldI upload_to_the_corp_mirror_staging_dir
+
+echo;echo;echo;echo
+
+shouldI activate_the_corp_staging_repos
+
+echo;echo;echo;echo
+
 shouldI upload_to_the_primary_mirror
+
+echo;echo;echo;echo
+
+shouldI copy_the_corp_mirror_staging_dir_to_prod
 
 echo;echo;echo;echo
 
