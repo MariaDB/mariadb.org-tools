@@ -67,10 +67,10 @@ case $1 in
     sles_ver=( 12 15 )
     ;;
   *)
-    debian_ver=( jessie stretch buster )
+    debian_ver=( stretch buster )
     ubuntu_ver=( xenial bionic focal )
     rhel_ver=( 6 7 8 )
-    sles_ver=( 12 15 )
+    sles_ver=( 15 )
     ;;
 esac
 
