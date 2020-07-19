@@ -35,7 +35,6 @@
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 
 === /usr/bin/mysqlaccess
-	not a dynamic executable
 === /usr/bin/mysqladmin
 	/lib64/ld-linux-x86-64.so.2 
 	libcrypto.so.1.1 => /lib/x86_64-linux-gnu/libcrypto.so.1.1 
@@ -105,11 +104,8 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	linux-vdso.so.1 
 === /usr/bin/mysql_convert_table_format
-	not a dynamic executable
 === /usr/bin/mysqld_multi
-	not a dynamic executable
 === /usr/bin/mysqld_safe
-	not a dynamic executable
 === /usr/bin/mysqld_safe_helper
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
@@ -126,13 +122,9 @@
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 
 === /usr/bin/mysqldumpslow
-	not a dynamic executable
 === /usr/bin/mysql_find_rows
-	not a dynamic executable
 === /usr/bin/mysql_fix_extensions
-	not a dynamic executable
 === /usr/bin/mysqlhotcopy
-	not a dynamic executable
 === /usr/bin/mysqlimport
 	/lib64/ld-linux-x86-64.so.2 
 	libcrypto.so.1.1 => /lib/x86_64-linux-gnu/libcrypto.so.1.1 
@@ -143,7 +135,6 @@
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 
 === /usr/bin/mysql_install_db
-	not a dynamic executable
 === /usr/bin/mysql_ldb
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
@@ -182,11 +173,8 @@
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 
 === /usr/bin/mysqlreport
-	not a dynamic executable
 === /usr/bin/mysql_secure_installation
-	not a dynamic executable
 === /usr/bin/mysql_setpermission
-	not a dynamic executable
 === /usr/bin/mysqlshow
 	/lib64/ld-linux-x86-64.so.2 
 	libcrypto.so.1.1 => /lib/x86_64-linux-gnu/libcrypto.so.1.1 
@@ -305,7 +293,6 @@
 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/daemon_example.ini
-	not a dynamic executable
 === /usr/lib/mysql/plugin/debug_key_management.so
 	statically linked
 === /usr/lib/mysql/plugin/dialog_examples.so
