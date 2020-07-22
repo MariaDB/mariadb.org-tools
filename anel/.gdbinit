@@ -4,6 +4,7 @@ set print pretty on
 set print array on
 set print array-indexes on
 set print elements 15000
+set print frame-arguments all
 set print sevenbit on
 set print static-members off
 handle SIGUSR1 nostop noprint
