@@ -154,7 +154,7 @@ buildbot-worker start --verbose ~/worker
 exit
 ```
 
-The other type of worker we use is [DockerLatentWorker](http://docs.buildbot.net/latest/manual/cfg-workers-docker.html). It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
+The other type of worker we use is [DockerLatentWorker](https://docs.buildbot.net/current/manual/configuration/workers-docker.html). It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
 
 Adding a Docker based worker is as simple as providing the IP address to the Docker server and everything else can be handled on the master side.
 
