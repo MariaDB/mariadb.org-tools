@@ -106,7 +106,7 @@ f_qa_linux.addStep(ShellCommand(
     name="rsync_VM",
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
-    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -169,13 +169,13 @@ git log -1
 #cd rqg
 #perl ./runall-new.pl --grammar=conf/mariadb/gtid_stress.yy --gendata=conf/mariadb/gtid_stress.zz --duration=600 --threads=8 --queries=100M --rpl_mode=mixed --use_gtid=current_pos --basedir=/home/buildbot/build --vardir=/home/buildbot/vardir_gtid
 #echo "----------------------------------------------"
-#echo "Master log"
+#echo "Main log"
 #echo "----------------------------------------------"
 #grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid/mysql.err | grep -v '\[Note\]'
 #echo "----------------------------------------------"
-#echo "Slave log"
+#echo "Subordinate log"
 #echo "----------------------------------------------"
-#grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_slave/mysql.err | grep -v '\[Note\]'
+#grep -v 'InnoDB: DEBUG' /home/buildbot/vardir_gtid_subordinate/mysql.err | grep -v '\[Note\]'
 #"""),
 #    ]))
 
@@ -232,7 +232,7 @@ perl mysql-test-run.pl  --verbose-restart --force --max-save-core=0 --max-save-d
 
 bld_kvm_qa_linux = {
         'name': "qa-kvm-linux",
-        'slavenames': ["bbm6"],
+        'subordinatenames': ["bbm6"],
         'builddir': "kvm-qa-linux",
         'factory': f_qa_linux,
         "nextBuild": myNextBuild,
@@ -254,7 +254,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_VM",
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
-    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -315,7 +315,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_10_0",
     description=["rsyncing", "10.0", "builds"],
     descriptionDone=["rsync", "10.0", "builds"],
-    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -343,7 +343,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_10_1",
     description=["rsyncing", "10.1", "builds"],
     descriptionDone=["rsync", "10.1", "builds"],
-    doStepIf=(lambda(step): branch_is_10_1_or_later(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_1_or_later(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -372,7 +372,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_10_2",
     description=["rsyncing", "10.2", "builds"],
     descriptionDone=["rsync", "10.2", "builds"],
-    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -401,7 +401,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_10_3",
     description=["rsyncing", "10.3", "builds"],
     descriptionDone=["rsync", "10.3", "builds"],
-    doStepIf=(lambda(step): branch_is_10_3_or_later(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_3_or_later(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -420,7 +420,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_5_6",
     description=["rsyncing", "5.6", "builds"],
     descriptionDone=["rsync", "5.6", "builds"],
-    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_x(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -439,7 +439,7 @@ f_qa_innodb.addStep(ShellCommand(
     name="rsync_5_7",
     description=["rsyncing", "5.7", "builds"],
     descriptionDone=["rsync", "5.7", "builds"],
-    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): branch_is_10_2_or_later(step) and step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     timeout=3600,
     command=["rsync", "-a", "-v", "-L",
@@ -456,7 +456,7 @@ f_qa_innodb.addStep(
 
 bld_kvm_qa_innodb = {
         'name': "qa-innodb-upgrade",
-        'slavenames': ["bbm6"],
+        'subordinatenames': ["bbm6"],
         'builddir': "kvm-qa-innodb",
         'factory': f_qa_innodb,
         "nextBuild": myNextBuild,
@@ -467,16 +467,16 @@ bld_kvm_qa_innodb = {
 #
 # RQG and storage engine tests on a Windows machine
 
-from buildbot.steps.slave import RemoveDirectory
+from buildbot.steps.subordinate import RemoveDirectory
 
 from buildbot import locks
 
 # This is a very strong lock, it will be used if the builder cannot proceed without killing mysqld,
 # and it will require waiting for all tests in other builder to finish
-#kill_mysqld_lock = locks.SlaveLock("mysqld_kill_license")
-git_rqg_lock = locks.SlaveLock("git_rqg");
-#release_build_lock = locks.SlaveLock("release_build")
-#debug_build_lock = locks.SlaveLock("debug_build")
+#kill_mysqld_lock = locks.SubordinateLock("mysqld_kill_license")
+git_rqg_lock = locks.SubordinateLock("git_rqg");
+#release_build_lock = locks.SubordinateLock("release_build")
+#debug_build_lock = locks.SubordinateLock("debug_build")
 
 def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 
@@ -690,7 +690,7 @@ def rqg_win_factory(mtr_build_thread="130",config="Debug"):
 
 bld_win_rqg_se = {
         'name': "qa-win-rel",
-        'slavenames': ["bbwin3"],
+        'subordinatenames': ["bbwin3"],
         'builddir': "win-rqg-se",
 #        'vsconfig': "Debug",
         'factory': rqg_win_factory(mtr_build_thread="140",config='RelWithDebInfo'),
@@ -701,7 +701,7 @@ bld_win_rqg_se = {
 
 bld_win_rqg_debug = {
         'name': "qa-win-debug",
-        'slavenames': ["bbwin3"],
+        'subordinatenames': ["bbwin3"],
         'builddir': "win-rqg-debug",
 #        'vsconfig': "Debug",
         'factory': rqg_win_factory(mtr_build_thread="150",config='Debug'),
@@ -738,7 +738,7 @@ f_bb_exp.addStep(ShellCommand(command=["echo",
 f_bb_exp.addStep(ShellCommand(
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
-#    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+#    doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
     doStepIf=False,
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
@@ -779,7 +779,7 @@ fi
 
 bld_qa_bb_experiments = {
         'name': "qa-buildbot-experiments",
-        'slavenames': ["bb03","bb02"],
+        'subordinatenames': ["bb03","bb02"],
         'builddir': "qa-buildbot-experiments",
         'factory': f_bb_exp,
         "nextBuild": myNextBuild,
