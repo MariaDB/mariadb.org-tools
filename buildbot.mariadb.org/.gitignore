@@ -1,3 +1,4 @@
 *.log*
 master-private.cfg
 workers
+*.pid
