@@ -22,8 +22,8 @@ RUN yum -y install epel-release && \
     python3-pip redhat-rpm-config curl wget
 
 # install MariaDB dependencies
-RUN [ $(arch) != ppc64le ] && dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/$(arch)/os/Packages/j/Judy-1.0.5-23.fc33.$(arch).rpm
-RUN [ $(arch) != ppc64le ] && dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/$(arch)/os/Packages/j/Judy-devel-1.0.5-23.fc33.$(arch).rpm
+RUN dnf -y install https://kojipkgs.fedoraproject.org//packages/Judy/1.0.5/24.fc33/$(arch)/Judy-1.0.5-24.fc33.$(arch).rpm
+RUN dnf -y install https://kojipkgs.fedoraproject.org//packages/Judy/1.0.5/24.fc33/$(arch)/Judy-devel-1.0.5-24.fc33.$(arch).rpm
 RUN yum-builddep -y mariadb-server
 
 # Create buildbot user
