@@ -22,8 +22,8 @@ RUN yum -y install epel-release && \
     python3-pip redhat-rpm-config curl wget
 
 # install MariaDB dependencies
-RUN dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/j/Judy-1.0.5-23.fc33.x86_64.rpm
-RUN dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/j/Judy-devel-1.0.5-23.fc33.x86_64.rpm
+RUN [ $(arch) != ppc64le ] && dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/$(arch)/os/Packages/j/Judy-1.0.5-23.fc33.$(arch).rpm
+RUN [ $(arch) != ppc64le ] && dnf -y install https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/$(arch)/os/Packages/j/Judy-devel-1.0.5-23.fc33.$(arch).rpm
 RUN yum-builddep -y mariadb-server
 
 # Create buildbot user
@@ -42,7 +42,7 @@ RUN pip3 install -U pip virtualenv && \
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
-RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1.1.3/17.el7/x86_64/dumb-init-1.1.3-17.el7.x86_64.rpm && yum -y localinstall /tmp/dumb.rpm
+RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1.2.2/6.el8/$(arch)/dumb-init-1.2.2-6.el8.$(arch).rpm && yum -y localinstall /tmp/dumb.rpm
 
 RUN subscription-manager unregister
 
