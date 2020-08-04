@@ -19,7 +19,7 @@ RUN apt-get update && \
     apt-get -y build-dep -q mariadb-server && \
     apt-get -y install -q \
     apt-utils build-essential python-dev sudo git \
-    devscripts equivs libcurl4-openssl-dev \
+    devscripts equivs libcurl4-openssl-dev flex \
     ccache python3 python3-pip curl wget libssl-dev libzstd-dev \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
