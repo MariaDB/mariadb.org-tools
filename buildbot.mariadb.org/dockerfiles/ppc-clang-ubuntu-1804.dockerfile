@@ -25,7 +25,7 @@ RUN apt-get update && \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
     unixodbc-dev uuid-dev fakeroot iputils-ping clang-6.0
 
-RUN wget -O clang-10.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-powerpc64le-linux-ubuntu-16.04.tar.xz
+RUN wget -O clang-10.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-powerpc64le-linux-ubuntu-16.04.tar.xz
 RUN tar xvf clang*
 RUN cd clang* && cp -R * /usr/local/
 RUN cd .. && rm -r clang*
