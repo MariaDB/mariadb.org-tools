@@ -1378,8 +1378,8 @@ if [ "${create_bintar}" != "no" ]; then
       echo
     else
       # Not skipping
-      if [ ! -d /run/shm/${dir_array[1]} ]; then
-        mkdir -v /run/shm/${dir_array[1]}
+      if [ ! -d /run/shm/${dir_name}/${dir_array[1]} ]; then
+        runCommand mkdir -vp /run/shm/${dir_name}/${dir_array[1]}
       fi
       case ${dir_array[1]} in
         'macOS')
@@ -1390,65 +1390,65 @@ if [ "${create_bintar}" != "no" ]; then
           ;;
       esac
       if [ "${dir_array[1]}" = "source" ]; then
-        if runCommand rsync ${rsync_opts} "${location}/mariadb-${num}.tar.gz" "/run/shm/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
-          pushd /run/shm/${dir_array[1]}
+        if runCommand rsync ${rsync_opts} "${location}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+          pushd /run/shm/${dir_name}/${dir_array[1]}
           # rename the source tarball for enterprise
           if [ "${is_ent}" = "yes" ];then
-            mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
+            runCommand mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
           fi
           echo "+ updating source tarball md5sum..."
           if [ -e md5sums.txt ]; then
-            rm -v md5sums.txt
+            runCommand rm -v md5sums.txt
           fi
           md5sum ./mariadb* >> md5sums.txt
 
           echo "+ updating source tarball sha1sum..."
           if [ -e sha1sums.txt ]; then
-            rm -v sha1sums.txt
+            runCommand rm -v sha1sums.txt
           fi
           sha1sum ./mariadb* >> sha1sums.txt
 
           echo "+ updating source tarball sha256sum..."
           if [ -e sha256sums.txt ]; then
-            rm -v sha256sums.txt
+            runCommand rm -v sha256sums.txt
           fi
           sha256sum ./mariadb* >> sha256sums.txt
 
           echo "+ updating source tarball sha512sum..."
           if [ -e sha512sums.txt ]; then
-            rm -v sha512sums.txt
+            runCommand rm -v sha512sums.txt
           fi
           sha512sum ./mariadb* >> sha512sums.txt
 
           echo "+ signing source tarball and sum files..."
           # remove any signature files before signing, if they exist
           for sig_file in $(ls ./*.asc); do
-            rm "${sig_file}"
+            runCommand rm -v "${sig_file}"
           done
           # sign the MariaDB source tarball
-          gpg2 ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
+          runCommand gpg2 ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
           # sign the sum files as well
-          gpg2 ${gpg_opts} md5sums.txt
-          gpg2 ${gpg_opts} sha1sums.txt
-          gpg2 ${gpg_opts} sha256sums.txt
-          gpg2 ${gpg_opts} sha512sums.txt
+          runCommand gpg2 ${gpg_opts} md5sums.txt
+          runCommand gpg2 ${gpg_opts} sha1sums.txt
+          runCommand gpg2 ${gpg_opts} sha256sums.txt
+          runCommand gpg2 ${gpg_opts} sha512sums.txt
           popd
-          mv -vi /run/shm/${dir_array[1]} ${dir_release}/${dir_name}/
+          mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
           echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
-          rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
+          runCommand rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
         fi
         echo "+ transfer of ${dir_array[1]} done"
         echo
-      elif runCommand rsync ${rsync_opts} "${location}/" "/run/shm/${dir_array[1]}/"; then
+      elif runCommand rsync ${rsync_opts} "${location}/" "/run/shm/${dir_name}/${dir_array[1]}/"; then
         echo "+ transfer of ${dir_array[1]} done"
-        pushd /run/shm/${dir_array[1]}/
+        pushd /run/shm/${dir_name}/${dir_array[1]}/
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
           # for the quantal bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
-            mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
+            runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
             galera_arch="x86_64"
           else
-            mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
+            runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
             galera_arch="i686"
           fi
 
@@ -1456,51 +1456,51 @@ if [ "${create_bintar}" != "no" ]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
             runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
-            mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
-            mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+            runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
           else
             echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
             runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
-            mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
-            mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+            runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
-            rm -rf ${version}-linux-glibc_214-${galera_arch}
+            runCommand rm -rf ${version}-linux-glibc_214-${galera_arch}
           fi
 
           # since we renamed them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
-            rm -v md5sums.txt
+            runCommand rm -v md5sums.txt
           fi
           md5sum ./${version}-*.tar.gz >> md5sums.txt
 
           if [ -e sha1sums.txt ]; then
-            rm -v sha1sums.txt
+            runCommand rm -v sha1sums.txt
           fi
           sha1sum ./${version}-*.tar.gz >> sha1sums.txt
 
           if [ -e sha256sums.txt ]; then
-            rm -v sha256sums.txt
+            runCommand rm -v sha256sums.txt
           fi
           sha256sum ./${version}-*.tar.gz >> sha256sums.txt
 
           if [ -e sha512sums.txt ]; then
-            rm -v sha512sums.txt
+            runCommand rm -v sha512sums.txt
           fi
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
         elif [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-systemd-x86" ]; then
           # for the systemd bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ]; then
-            mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
+            runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
             galera_arch="x86_64"
           else
-            mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
+            runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
             galera_arch="i686"
           fi
 
@@ -1508,14 +1508,14 @@ if [ "${create_bintar}" != "no" ]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
             runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
-            mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
-            mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+            runCommand mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
-            rm -rf ${version}-linux-systemd-${galera_arch}
+            runCommand rm -rf ${version}-linux-systemd-${galera_arch}
           else
             echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
             runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
@@ -1527,22 +1527,22 @@ if [ "${create_bintar}" != "no" ]; then
 
           # since we renamed them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
-            rm -v md5sums.txt
+            runCommand rm -v md5sums.txt
           fi
           md5sum ./${version}-*.tar.gz >> md5sums.txt
 
           if [ -e sha1sums.txt ]; then
-            rm -v sha1sums.txt
+            runCommand rm -v sha1sums.txt
           fi
           sha1sum ./${version}-*.tar.gz >> sha1sums.txt
 
           if [ -e sha256sums.txt ]; then
-            rm -v sha256sums.txt
+            runCommand rm -v sha256sums.txt
           fi
           sha256sum ./${version}-*.tar.gz >> sha256sums.txt
 
           if [ -e sha512sums.txt ]; then
-            rm -v sha512sums.txt
+            runCommand rm -v sha512sums.txt
           fi
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
@@ -1563,10 +1563,10 @@ if [ "${create_bintar}" != "no" ]; then
               galera_arch="i686"
             fi
             runCommand tar -zxf ${version}-linux-${galera_arch}.tar.gz
-            mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
+            runCommand mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
             # if the directory isn't named like we want, rename it
             if [ ! -d ${version}-linux-${galera_arch} ]; then
-              mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
+              runCommand mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
@@ -1579,7 +1579,7 @@ if [ "${create_bintar}" != "no" ]; then
             rm -rf ${version}-linux-${galera_arch}
             # since we repacked them, we also need to regenerate the sums
             if [ -e md5sums.txt ]; then
-              rm -v md5sums.txt
+              runCommand rm -v md5sums.txt
             fi
             md5sum ./${version}-*.tar.gz >> md5sums.txt
 
@@ -1637,14 +1637,14 @@ if [ "${create_bintar}" != "no" ]; then
         echo "+ signing files in ${dir_array[1]}..."
         # remove any signature files before signing, if they exist
         for sig_file in $(ls ./*.asc); do
-          rm -v "${sig_file}"
+          runCommand rm -v "${sig_file}"
         done
         # now that old signatures are gone, sign all files that remain
         for dir_file in $(find . -type f | grep -v orig); do
-          gpg2 ${gpg_opts} ${dir_file}
+          runCommand gpg2 ${gpg_opts} ${dir_file}
         done
         popd
-        mv -vi /run/shm/${dir_array[1]} ${dir_release}/${dir_name}/
+        mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
         echo "+ finished signing files in ${dir_array[1]}"
         echo
         echo
@@ -1658,7 +1658,8 @@ if [ "${create_bintar}" != "no" ]; then
         # if the transfer failed, the directory might be empty, if it is we want it
         # removed, so we run rmdir on it
         #rmdir ${dir_release}/${dir_name}/${dir_array[1]}
-        rmdir -v /run/shm/${dir_array[1]}
+        runCommand rmdir -v /run/shm/${dir_name}/${dir_array[1]}
+        runCommand rmdir -v /run/shm/${dir_name}
         echo
       fi
     fi
