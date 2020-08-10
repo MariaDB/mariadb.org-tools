@@ -68,7 +68,6 @@ if [[ "${ARCHDIR}" == *"5.5"* ]]; then
     sles114-amd64
 
     sles12-amd64
-    sles12-ppc64le
   "
 elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
   dists="
@@ -85,7 +84,6 @@ elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
     sles114-x86
 
     sles12-amd64
-    sles12-ppc64le
   "
 elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
   dists="
@@ -102,7 +100,6 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
     sles114-x86
 
     sles12-amd64
-    sles12-ppc64le
   "
 elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
   dists="
@@ -122,7 +119,6 @@ elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
     opensuse150-amd64
 
     sles12-amd64
-    sles12-ppc64le
     sles150-amd64
   "
 
@@ -146,7 +142,6 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
     opensuse150-amd64
 
     sles12-amd64
-    sles12-ppc64le
     sles150-amd64
   "
 
@@ -170,7 +165,6 @@ elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
     opensuse150-amd64
 
     sles12-amd64
-    sles12-ppc64le
     sles150-amd64
   "
 elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
@@ -187,7 +181,6 @@ elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
     opensuse150-amd64
 
     sles12-amd64
-    sles12-ppc64le
     sles150-amd64
   "
 fi
