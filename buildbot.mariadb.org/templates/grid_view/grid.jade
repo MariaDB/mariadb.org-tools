@@ -44,3 +44,6 @@
                     a(ng-repeat="build in b.builds[ch.changeid] | orderBy: 'buildid'", ui-sref="build({builder: b.builderid, build: build.number})")
                         span.badge-status(ng-class="results2class(build, 'pulse')")
                             | {{ build.state_string }}
+                            ul(ng-if="build.failed_tests.length > 0")
+                                 li(ng-repeat="test in build.failed_tests", class="ng-binding ng-scope", style="text-align:left")
+                                      | {{ test.test_name }}
