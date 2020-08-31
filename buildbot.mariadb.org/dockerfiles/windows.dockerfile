@@ -21,7 +21,7 @@ RUN powershell -Command `
     choco feature disable --name showDownloadProgress
 
 RUN choco install -y git.install  --params /NoAutoCrlf
-RUN choco install -y strawberryperl winflexbison windbg
+RUN choco install -y strawberryperl winflexbison
 RUN setx PATH "%PATH%;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\winflexbison\tools;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\10\Debuggers\x64"
 RUN git.exe config --global core.autocrlf input
 RUN choco install -y wixtoolset
