@@ -26,8 +26,8 @@ RUN apt-get update && \
     unixodbc-dev uuid-dev fakeroot iputils-ping dh-exec libpcre2-dev \
     libarchive-dev libedit-dev liblz4-dev dh-systemd flex libboost-atomic-dev \ 
     libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev \ 
-    libboost-regex-dev libboost-system-dev libboost-thread-dev
-
+    libboost-regex-dev libboost-system-dev libboost-thread-dev \
+    gcc-10 g++-10
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
