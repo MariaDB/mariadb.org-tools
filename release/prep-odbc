@@ -108,8 +108,8 @@ copy_and_stage_files() {
       mkdir -v ${dir_odbc}
     fi
     # Linux files
-    cp -avi ${dir_build}/*/*i686.tar.gz ${dir_odbc}/
-    cp -avi ${dir_build}/*/*x86_64.tar.gz ${dir_odbc}/
+    cp -avi ${dir_build}/*/*i386.tar.gz ${dir_odbc}/
+    cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_odbc}/
     # Windows files
     cp -avi ${dir_build}/win*/*msi ${dir_odbc}/
     # Mac file
