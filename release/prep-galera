@@ -113,8 +113,9 @@ shift $(($OPTIND - 1))
 
 deb_dists="
   bionic
-  eoan
   buster
+  eoan
+  focal
   jessie
   sid
   stretch
@@ -129,6 +130,10 @@ deb_dists_full="
   buster-amd64
 
   eoan-amd64
+
+  focal-aarch64
+  focal-amd64
+  focal-ppc64le
 
   jessie-amd64
   jessie-x86
@@ -164,8 +169,8 @@ rpm_dists="
   rhel8-ppc64le
 
   fedora30-amd64
-
   fedora31-amd64
+  fedora32-amd64
 
   opensuse150-amd64
 
@@ -173,8 +178,10 @@ rpm_dists="
   sles11-x86
 
   sles123-amd64
-  sles12-ppc64le
   sles150-amd64
+"
+old_rpm_dists="
+  sles12-ppc64le
 "
 
 #-------------------------------------------------------------------------------
@@ -418,7 +425,7 @@ case ${tree} in
     build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     ;;
   "mariadb-4.x")
-    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     ;;
 esac
 build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
@@ -535,27 +542,33 @@ if [ "${create_bintar}" != "no" ]; then
   line
   echo "+ transfering bintar packages..."
   line
-  if [ ! -d ${release_dir}/${dir_name}/bintar ]; then
+  if [ -d ${release_dir}/${dir_name}/bintar ] ; then
     line
-    echo "+ creating bintar dir..."
+    echo "+ remove old bintar dirs"
     line
-    mkdir -v ${release_dir}/${dir_name}/bintar
-    mkdir -v ${release_dir}/${dir_name}-signed/bintar
-    mkdir -v ${release_dir}/${dir_name}-signed-ent/bintar
+    runCommand rm -rf ${release_dir}/${dir_name}/bintar
+    runCommand rm -rf ${release_dir}/${dir_name}-signed/bintar
+    runCommand rm -rf ${release_dir}/${dir_name}-signed-ent/bintar
   fi
-  cd ${release_dir}/${dir_name}/bintar
+
+  runCommand mkdir -v ${release_dir}/${dir_name}/bintar
+  runCommand mkdir -v ${release_dir}/${dir_name}-signed/bintar
+  runCommand mkdir -v ${release_dir}/${dir_name}-signed-ent/bintar
+
+  runCommand cd ${release_dir}/${dir_name}/bintar
   echo
   for dir_pair in ${build_dirs}; do
     dir_array=(${dir_pair//:/ })
     # create the directory
     if [ "${dir_array[1]}" = "src" ]; then
       if [ ! -d ${release_dir}/${dir_name}/${dir_array[1]} ]; then
-        mkdir -v ${release_dir}/${dir_name}/${dir_array[1]}
+        runCommand mkdir -v ${release_dir}/${dir_name}/${dir_array[1]}
       fi
     else 
-      if [ ! -d ${release_dir}/${dir_name}/bintar/${dir_array[1]} ]; then
-        mkdir -v ${release_dir}/${dir_name}/bintar/${dir_array[1]}
+      if [ -d ${release_dir}/${dir_name}/bintar/${dir_array[1]} ]; then
+        runCommand rm -rf ${release_dir}/${dir_name}/bintar/${dir_array[1]}
       fi
+      runCommand mkdir -v ${release_dir}/${dir_name}/bintar/${dir_array[1]}
     fi
 
     # This is where we actually extract the binary files
@@ -563,34 +576,35 @@ if [ "${create_bintar}" != "no" ]; then
     case ${dir_array[1]} in
       "galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
           # we are dealing with an .rpm file
-          rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
-          cd usr
+          echo "+ rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv"
+                  rpm2cpio ${archive_dir}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
+          runCommand cd usr
           if [ -d lib64 ];then
             if [ -d lib ];then
               # what to do if we have BOTH lib and lib64 dirs
-              cd lib
-              ln -sv ../lib64/galera ./
-              cd ../lib64
-              ln -sv galera/libgalera_smm.so ./
-              cd ../
+              runCommand cd lib
+              runCommand ln -sv ../lib64/galera ./
+              runCommand cd ../lib64
+              runCommand ln -sv galera/libgalera_smm.so ./
+              runCommand cd ../
             else
               # if we have a lib64 dir and no lib dir
-              ln -sv lib64 lib
+              runCommand ln -sv lib64 lib
             fi
           fi
           cd lib
-          ln -sv galera/libgalera_smm.so ./
+          runCommand ln -sv galera/libgalera_smm.so ./
           ;;
       *)
           # we are dealing with .deb files
           case ${tree} in
             "mariadb-4.x")
-              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-4_*.deb ./
-              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-4_*.deb ./
+              runCommand dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-4_*.deb ./
+              runCommand dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-4_*.deb ./
               ;;
             *)
-              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
-              dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
+              runCommand dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
+              runCommand dpkg -X ${archive_dir}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
               ;;
           esac
           ;;
@@ -598,12 +612,15 @@ if [ "${create_bintar}" != "no" ]; then
 
     # create a tarball
     cd ${release_dir}/${dir_name}/bintar/
-    tar -czvf ${dir_array[1]}.tar.gz ${dir_array[1]}/
+    if [ -f ${dir_array[1]}.tar.gz ] ; then
+      runCommand rm -v ${dir_array[1]}.tar.gz
+    fi
+    runCommand tar -czvf ${dir_array[1]}.tar.gz ${dir_array[1]}/
     for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./${dir_array[1]}.tar.gz >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
     # copy the tarball over to -signed and -signed-ent directories
-    cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${release_dir}/${dir_name}-signed/bintar/
-    cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${release_dir}/${dir_name}-signed-ent/bintar/
+    runCommand cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${release_dir}/${dir_name}-signed/bintar/
+    runCommand cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${release_dir}/${dir_name}-signed-ent/bintar/
 
     #cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]} ${release_dir}/${dir_name}-signed/bintar/
     #cp -avi ${release_dir}/${dir_name}/bintar/${dir_array[1]} ${release_dir}/${dir_name}-signed-ent/bintar/
@@ -810,7 +827,7 @@ else
   line
 fi
 
-if [ "${create_repo}" != "no" ] || [ "${create_yum}" != "no" ]; then
+#if [ "${create_repo}" != "no" ] || [ "${create_yum}" != "no" ]; then
   case ${tree} in
     mariadb-3.x)
       repo="repo3"
@@ -824,7 +841,7 @@ if [ "${create_repo}" != "no" ] || [ "${create_yum}" != "no" ]; then
 #
 #  userInput "What galera-4 version should I use? (e.g. 26.4.4)"
 #  ver_galera4="${INPUT}"
-fi
+#fi
 
 
 #-------------------------------------------------------------------------------
@@ -867,7 +884,7 @@ SignWith: ${gpg_key}
 
 END
         ;;
-      'xenial'|'bionic') cat >>conf/distributions <<END
+      'xenial'|'bionic'|'focal') cat >>conf/distributions <<END
 Origin: Galera
 Label: Galera
 Codename: ${dist}
@@ -935,6 +952,18 @@ END
       'eoan-amd64')
         echo ${dist}
         reprepro --basedir=. include eoan ${release_dir}/${dir_name}-${suffix}/deb/galera*eoan*_amd64.changes
+        ;;
+      'focal-aarch64')
+        echo ${dist}
+        reprepro --basedir=. include focal ${release_dir}/${dir_name}-${suffix}/deb/galera*focal*_arm64.changes
+        ;;
+      'focal-amd64')
+        echo ${dist}
+        reprepro --basedir=. include focal ${release_dir}/${dir_name}-${suffix}/deb/galera*focal*_amd64.changes
+        ;;
+      'focal-ppc64le')
+        echo ${dist}
+        reprepro --basedir=. include focal ${release_dir}/${dir_name}-${suffix}/deb/galera*focal*_ppc64el.changes
         ;;
       'jessie-amd64')
         echo ${dist}
