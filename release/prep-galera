@@ -593,12 +593,7 @@ if [ "${create_bintar}" != "no" ]; then
             fi
           fi
           cd lib
-          # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
-          if [ -d galera-4 ];then
-            runCommand ln -sv galera-4/libgalera_smm.so ./
-          else
-            runCommand ln -sv galera/libgalera_smm.so ./
-          fi
+          runCommand ln -sv galera/libgalera_smm.so ./
           ;;
       *)
           # we are dealing with .deb files
