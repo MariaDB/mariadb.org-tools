@@ -583,6 +583,12 @@ if [ "${create_bintar}" != "no" ]; then
             if [ -d lib ];then
               # what to do if we have BOTH lib and lib64 dirs
               runCommand cd lib
+              # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
+              if [ -d ../lib64/galera-4 ];then
+                runCommand pushd ../lib64
+                  runCommand ln -sv galera-4 galera
+                runCommand popd
+              fi
               runCommand ln -sv ../lib64/galera ./
               runCommand cd ../lib64
               runCommand ln -sv galera/libgalera_smm.so ./
@@ -593,6 +599,10 @@ if [ "${create_bintar}" != "no" ]; then
             fi
           fi
           cd lib
+          # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
+          if [ -d galera-4 ];then
+            runCommand ln -sv galera-4 galera
+          fi
           runCommand ln -sv galera/libgalera_smm.so ./
           ;;
       *)
