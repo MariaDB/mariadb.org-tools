@@ -35,5 +35,5 @@ maxretries = 10
 
 s = Worker(buildmaster_host, port, workername, passwd, basedir,
            keepalive, umask=umask, maxdelay=maxdelay,
-           allow_shutdown=allow_shutdown, maxRetries=maxretries)
+           allow_shutdown=allow_shutdown, maxRetries=maxretries, unicode_encoding='utf-8')
 s.setServiceParent(application)
