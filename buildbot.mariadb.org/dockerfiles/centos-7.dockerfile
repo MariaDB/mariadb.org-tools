@@ -8,12 +8,16 @@ FROM       centos:7
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
-RUN yum -y --enablerepo=extras install epel-release && \
-    yum -y upgrade && \
+RUN yum -y --enablerepo=extras install epel-release
+RUN sed -i '/baseurl/s/^#//g' /etc/yum.repos.d/epel.repo
+RUN sed -i '/metalink/s/^/#/g' /etc/yum.repos.d/epel.repo
+RUN yum clean all && yum -y update
+
+RUN yum -y upgrade && \
     yum -y groupinstall 'Development Tools' && \
     yum -y install git ccache subversion \
-    python-devel libffi-devel openssl-devel \
-    python-pip redhat-rpm-config curl wget && \
+    python3 libffi-devel openssl-devel \
+    python3-pip redhat-rpm-config curl wget systemd-devel && \
     # install MariaDB dependencies
     yum-builddep -y mariadb-server
 
@@ -25,18 +29,16 @@ RUN useradd -ms /bin/bash buildbot && \
 WORKDIR /buildbot
 
 # upgrade pip and install buildbot
-RUN pip install -U pip virtualenv && \
-    pip install --upgrade setuptools && \
-    pip install buildbot-worker && \
-    pip --no-cache-dir install 'twisted[tls]'
+RUN pip3 install -U pip virtualenv && \
+    pip3 install --upgrade setuptools && \
+    pip3 install buildbot-worker && \
+    pip3 --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && \
     chmod +x /usr/local/bin/dumb-init
-
-RUN yum -y install systemd-devel
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

@@ -20,7 +20,7 @@ RUN apt-get update && \
     apt-get -y install -q \
     apt-utils build-essential python-dev sudo git \
     devscripts equivs libcurl4-openssl-dev hardening-wrapper \
-    ccache python3 python3-pip curl wget \
+    ccache python-dev python-pip curl wget \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
     unixodbc-dev uuid-dev fakeroot iputils-ping \
@@ -38,9 +38,9 @@ RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Upgrade pip and install packages
-RUN pip3 install -U pip virtualenv
-RUN pip3 install buildbot-worker && \
-    pip3 --no-cache-dir install 'twisted[tls]'
+RUN pip install -U pip virtualenv
+RUN pip install buildbot-worker && \
+    pip --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
