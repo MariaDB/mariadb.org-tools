@@ -253,7 +253,7 @@ case ${TREE} in
     ;;
   '10.5'|'bb-10.5-release')
     #debian_dists="stretch buster sid"
-    debian_dists="stretch buster"
+    debian_dists="stretch buster sid"
     ;;
   *)
     debian_dists="jessie stretch buster"
