@@ -18,6 +18,7 @@ run_script="no"
 out_dir=${PWD}
 output="${out_dir}/changelog.creole"              # Default output location
 src_dir="${HOME}/src/mariadb/server/"
+rev_flag=false
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -35,6 +36,7 @@ usage() {
   echo "  -t <tree> : [optional] tree of the release (used if tree is different from -v)"
   echo "  -x <exclude> : [optional] version to exclude, e.g. mariadb-10.0.30"
   echo "  -o <filename> : [optional] where to write the output, e.g. ~/changelog.creole"
+  echo "  -r <revision> : [optional] the release revision hash"
   echo "  -h : display this usage message"
   echo
   echo
@@ -86,7 +88,7 @@ delete_the_output_file() {
 #-------------------------------------------------------------------------------
 # Parse command-line options
 #-------------------------------------------------------------------------------
-while getopts 'hp:t:v:m:o:x:y' OPTION
+while getopts 'hp:t:v:m:o:r:x:y' OPTION
 do
   case $OPTION in
     h) # Display a helpful usage message
@@ -114,6 +116,10 @@ do
     m) # the minor version of the *previous* release, e.g. 29
       minor="${OPTARG}"
       minor_flag=true
+      ;;
+    r) # the revision of the release
+      release_rev="${OPTARG}"
+      rev_flag=true
       ;;
     x) # A release to exclude from the changelog, e.g. mariadb-10.0.30
       exclude="${OPTARG}"
@@ -194,6 +200,10 @@ pushd ${src_dir}
 git checkout ${tree}
 git pull
 git fetch --all --tags
+
+if ${rev_flag} ; then
+  git reset --hard ${release_rev}
+fi
 
 # Get a list of all the merges in this changeset
 git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${product}-${major}.${minor}.. > /tmp/merges.creole
