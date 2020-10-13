@@ -163,6 +163,7 @@ rsync_ubuntu_repo="no"
          numflag=false
          tarflag=false
     prev_release=""
+      win_remote=false
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -1095,6 +1096,15 @@ maybe_fix_permissions() {
 }
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  pull_the_win_packages_from_the_win_builder
+#   DESCRIPTION:  Should we pull the the Windows packages from the builder or
+#                 are they already on the local filesystem?
+#-------------------------------------------------------------------------------
+pull_the_win_packages_from_the_win_builder() {
+  win_remote=true
+}
+
 #===  FUNCTION  ================================================================
 #          NAME:  display_the_previous_yum_directory
 #   DESCRIPTION:  A simple function to list (using tree) the contents of the
@@ -1721,9 +1731,18 @@ if [ "${galera_suffix}" != "-galera" ]; then
         mkdir ${dir_release}/${dir_name}/${arch}-packages
       fi
       pushd ${dir_release}/${dir_name}/${arch}-packages
+
+      shouldI pull_the_win_packages_from_the_win_builder
+
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
+        if ${win_remote};then
+          message "Packages are on the Windows Builder"
         runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
+        else
+          message "Packages are on the local filesystem"
+          runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
+        fi
 
         # Download debugsymbols package for 10.2+ releases
         if [ "${pkgtype}" = "zip" ]; then
@@ -1733,14 +1752,26 @@ if [ "${galera_suffix}" != "-galera" ]; then
               ;;
             *)
               echo "+ tree=${tree}, so downloading debugsymbols package..."
+              if ${win_remote};then
+                # Win packages are on the remote builder
               runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
+              else
+                # Win packages are on the local filesystem
+                runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+              fi
               ;;
           esac
         fi
 
       done
       #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+      if ${win_remote} ; then
+        # Win packages are on the remote builder
       runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
+      else
+        # Win packages are on the local filesystem
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt .
+      fi
     done
     line
     echo "+ fixing Win md5sums..."
