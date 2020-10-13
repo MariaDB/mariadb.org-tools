@@ -217,7 +217,7 @@ do_rpms() {
       find . -name 'galera-*' -a '!' -name "galera-4-${ver_galera4}*" -exec rm -v {} +
       ;;
     *)
-      if [ "${rel}" != "11" ];then
+      if [ "${rel}" != "11" ] && [ "${rel}" != "6" ] ;then
         find . -name 'galera-*' -a '!' -name "galera-${ver_galera}*" -exec rm -v {} +
       fi
       ;;
