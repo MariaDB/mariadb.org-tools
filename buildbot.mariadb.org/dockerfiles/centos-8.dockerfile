@@ -18,9 +18,12 @@ RUN yum -y --enablerepo=extras install epel-release && \
     python3-devel libffi-devel openssl-devel \
     python3-pip redhat-rpm-config curl wget
 
+RUN wget http://yum.mariadb.org/10.5.6/centos8-amd64/srpms/MariaDB-10.5.6-1.el8.src.rpm
+RUN rpm -ivh ./MariaDB-10.5.6-1.el8.src.rpm
+
 # install MariaDB dependencies
-RUN curl -Lo judy-devel.rpm http://mirror.centos.org/centos/8/PowerTools/x86_64/os/Packages/Judy-devel-1.0.5-18.module_el8.1.0+217+4d875839.x86_64.rpm && yum -y localinstall judy-devel.rpm
-RUN yum-builddep -y mariadb-server
+#RUN curl -Lo judy-devel.rpm http://mirror.centos.org/centos/8/PowerTools/x86_64/os/Packages/Judy-devel-1.0.5-18.module_el8.1.0+217+4d875839.x86_64.rpm && yum -y localinstall judy-devel.rpm
+RUN yum-builddep -y ~/rpmbuild/SPECS/*
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
@@ -40,6 +43,8 @@ RUN pip3 install -U pip virtualenv && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && \
     chmod +x /usr/local/bin/dumb-init
+
+RUN yum -y install perl-Memoize perl-Time-HiRes
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
