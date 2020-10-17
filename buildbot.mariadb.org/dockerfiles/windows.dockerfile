@@ -27,13 +27,14 @@ RUN git.exe config --global core.autocrlf input
 RUN choco install -y wixtoolset
 
 RUN choco install -y diffutils
-RUN choco install -y python
+RUN choco install -y python --version 3.8
 
 RUN net user Buildbot /add
 SHELL ["cmd.exe", "/s", "/c"]
 RUN C:\VCTools\Common7\Tools\VsDevCmd.bat -arch=x64 && `
     python -m pip install --upgrade incremental
-RUN python -m pip install twisted
+RUN python -m pip install wheel --no-cache-dir
+RUN python -m pip install twisted --no-cache-dir
 RUN python -m pip install buildbot-worker
 RUN python -m pip install pypiwin32
 
