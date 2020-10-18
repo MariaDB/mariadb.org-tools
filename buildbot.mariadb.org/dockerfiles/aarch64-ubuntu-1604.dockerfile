@@ -28,7 +28,7 @@ RUN apt-get update && \
     libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev \
     libboost-regex-dev libboost-system-dev libboost-thread-dev
 
-RUN apt-get -y install libffi-dev
+RUN apt-get -y install libffi-dev libkrb5-dev libsystemd-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \

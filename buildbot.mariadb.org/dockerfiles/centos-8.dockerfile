@@ -45,7 +45,7 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
     chmod +x /usr/local/bin/dumb-init
 
 RUN yum -y install perl-Memoize perl-Time-HiRes perl
-RUN yum -y install cracklib
+RUN yum -y install cracklib cracklib-dicts
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
