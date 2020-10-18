@@ -6,9 +6,19 @@
 FROM registry.suse.com/suse/sle15:15.2
 LABEL maintainer="MariaDB Buildbot maintainers"
 
-ADD *.repo /etc/zypp/repos.d/
-ADD *.service /etc/zypp/services.d/
-RUN zypper -n --no-gpg-checks refs && zypper -n --no-gpg-checks refresh
+ENV ADDITIONAL_MODULES sle-module-development-tools,PackageHub
+
+RUN zypper --gpg-auto-import-keys ref -s
+
+#ADD *.repo /etc/zypp/repos.d/
+#ADD *.service /etc/zypp/services.d/
+#RUN zypper -n --no-gpg-checks refs && zypper -n --no-gpg-checks refresh
+
+#RUN zypper --non-interactive --no-gpg-checks addrepo https://download.opensuse.org/repositories/devel:tools:building/SLE_12/devel:tools:building.repo
+#RUN zypper --non-interactive --no-gpg-checks addrepo https://download.opensuse.org/repositories/server:monitoring/SLE_12_SP4/server:monitoring.repo
+#RUN zypper --non-interactive --no-gpg-checks addrepo https://download.opensuse.org/repositories/Cloud:Tools/SLE_12_SP4/Cloud:Tools.repo
+
+RUN zypper --non-interactive --no-gpg-checks refresh
 
 # Install updates and required packages
 RUN zypper update -y && \
@@ -38,6 +48,8 @@ RUN pip install -U pip virtualenv && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && \
     chmod +x /usr/local/bin/dumb-init
+
+RUN zypper install -y policycoreutils rpm-build
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
