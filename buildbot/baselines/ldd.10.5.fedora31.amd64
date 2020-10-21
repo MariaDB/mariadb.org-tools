@@ -703,6 +703,11 @@
 	libc.so.6 => /lib64/libc.so.6 
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	linux-vdso.so.1 
+=== /usr/lib64/mysql/plugin/test_sql_service.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib64/libc.so.6 
+	libpthread.so.0 => /lib64/libpthread.so.0 
+	linux-vdso.so.1 
 === /usr/lib64/mysql/plugin/test_versioning.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib64/libc.so.6 

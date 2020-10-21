@@ -557,6 +557,10 @@
 	/lib64/ld64.so.2 
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
 	linux-vdso64.so.1 =>  
+=== /usr/lib/mysql/plugin/test_sql_service.so
+	/lib64/ld64.so.2 
+	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
+	linux-vdso64.so.1 =>  
 === /usr/lib/mysql/plugin/test_versioning.so
 	/lib64/ld64.so.2 
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
