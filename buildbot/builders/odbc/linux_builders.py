@@ -64,6 +64,7 @@ bld_codbc_xenial_amd64= build_linux_connector_odbc("codbc-xenial-amd64", "vm-xen
 
 bld_codbc_bionic_amd64= build_linux_connector_odbc("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_focal_amd64= build_linux_connector_odbc("codbc-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_groovy_amd64= build_linux_connector_odbc("codbc-groovy-amd64", "vm-groovy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora30_amd64= build_linux_connector_odbc("codbc-fedora30-amd64", "vm-fedora30-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora31_amd64= build_linux_connector_odbc("codbc-fedora31-amd64", "vm-fedora31-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
