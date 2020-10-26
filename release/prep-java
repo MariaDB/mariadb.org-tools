@@ -78,7 +78,6 @@ line() {
 
 message() {
   message="${@}"
-  echo;echo;echo;
   echo;line;echo "${message}";line;
 }
 
@@ -250,6 +249,16 @@ generate_the_file_list_pickle_for_org_downloads() {
   ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_java}";
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  update_the_STATUS_file
+#   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
+#===============================================================================
+update_the_STATUS_file() {
+  echo "+ date +%s > ${dir_release}/STATUS"
+          date +%s > ${dir_release}/STATUS
+  message "STATUS file updated"
+}
+
 #-------------------------------------------------------------------------------
 # Main Script
 #-------------------------------------------------------------------------------
@@ -286,6 +295,8 @@ shouldI upload_to_the_primary_mirror
 shouldI upload_to_the_corp_mirror
 
 shouldI generate_the_file_list_pickle_for_org_downloads
+
+shouldI update_the_STATUS_file
 
 echo "+ All done!"
 echo;echo;echo

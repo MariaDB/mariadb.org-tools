@@ -76,6 +76,11 @@ line() {
   echo "-------------------------------------------------------------------------------"
 }
 
+message() {
+  message="${@}"
+  echo;line;echo "${message}";line;
+}
+
 shouldI() {
   local cont
   cont=""
@@ -227,6 +232,12 @@ generate_the_file_list_pickle_for_org_downloads() {
   ssh -t -t ${primary_mirror} "set -x; python generate_file_list.py data/ --release=${dir_odbc}";
 }
 
+update_the_STATUS_file() {
+  echo "+ date +%s > ${dir_release}/STATUS"
+          date +%s > ${dir_release}/STATUS
+  message "STATUS file updated"
+}
+
 #-------------------------------------------------------------------------------
 # Main Script
 #-------------------------------------------------------------------------------
@@ -269,6 +280,7 @@ shouldI upload_to_the_corp_mirror
 echo;echo
 shouldI generate_the_file_list_pickle_for_org_downloads
 echo;echo
+shouldI update_the_STATUS_file
 echo "+ All done!"
 line;line;line
 echo;echo;echo
