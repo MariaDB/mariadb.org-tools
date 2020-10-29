@@ -163,6 +163,7 @@ rpm_dists="
 
   fedora31-amd64
   fedora32-amd64
+  fedora33-amd64
 
   opensuse150-amd64
 

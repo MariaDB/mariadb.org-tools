@@ -114,6 +114,7 @@ elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
 
     fedora31-amd64
     fedora32-amd64
+    fedora33-amd64
 
     opensuse150-amd64
 
@@ -136,6 +137,7 @@ elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
 
     fedora31-amd64
     fedora32-amd64
+    fedora33-amd64
 
     opensuse150-amd64
 
@@ -473,21 +475,14 @@ for REPONAME in ${dists}; do
       done
 
       ;;
-    'fedora31-amd64')
-      runCommand mkdir -vp fedora/31/x86_64
-      maybe_make_symlink fedora/31/x86_64 fedora31-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'fedora32-amd64')
-      runCommand mkdir -vp fedora/32/x86_64
-      maybe_make_symlink fedora/32/x86_64 fedora32-amd64
+    fedora*)
+      case ${REPONAME} in
+        fedora31-amd64) fedora_ver=31 ;;
+        fedora32-amd64) fedora_ver=32 ;;
+        fedora33-amd64) fedora_ver=33 ;;
+      esac
+      runCommand mkdir -vp fedora/${fedora_ver}/x86_64
+      maybe_make_symlink fedora/${fedora_ver}/x86_64 ${REPONAME}
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
