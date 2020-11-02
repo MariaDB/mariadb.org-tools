@@ -561,6 +561,13 @@
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
+=== /usr/lib/mysql/plugin/type_mysql_json.so
+	/lib64/ld-linux-x86-64.so.2 
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
+	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/wsrep_info.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 

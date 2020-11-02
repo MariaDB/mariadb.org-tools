@@ -914,6 +914,14 @@
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	libstdc++.so.6 => /lib64/libstdc++.so.6 
 	linux-vdso.so.1 =>  
+=== /usr/lib64/mysql/plugin/type_mysql_json.so
+	libc.so.6 => /lib64/libc.so.6 
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 
+	/lib/ld-linux-aarch64.so.1 
+	libm.so.6 => /lib64/libm.so.6 
+	libpthread.so.0 => /lib64/libpthread.so.0 
+	libstdc++.so.6 => /lib64/libstdc++.so.6 
+	linux-vdso.so.1 =>  
 === /usr/lib64/mysql/plugin/type_test.so
 	libc.so.6 => /lib64/libc.so.6 
 	libgcc_s.so.1 => /lib64/libgcc_s.so.1 

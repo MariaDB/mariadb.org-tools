@@ -577,6 +577,13 @@
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
 	libstdc++.so.6 => /lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 
+=== /usr/lib/mysql/plugin/type_mysql_json.so
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libstdc++.so.6 => /lib/i386-linux-gnu/libstdc++.so.6 
+	linux-gate.so.1 
 === /usr/lib/mysql/plugin/wsrep_info.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 

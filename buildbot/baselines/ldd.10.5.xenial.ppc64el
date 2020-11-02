@@ -568,6 +568,13 @@
 	libm.so.6 => /lib/powerpc64le-linux-gnu/libm.so.6 
 	libstdc++.so.6 => /usr/lib/powerpc64le-linux-gnu/libstdc++.so.6 
 	linux-vdso64.so.1 =>  
+=== /usr/lib/mysql/plugin/type_mysql_json.so
+	/lib64/ld64.so.2 
+	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/powerpc64le-linux-gnu/libgcc_s.so.1 
+	libm.so.6 => /lib/powerpc64le-linux-gnu/libm.so.6 
+	libstdc++.so.6 => /usr/lib/powerpc64le-linux-gnu/libstdc++.so.6 
+	linux-vdso64.so.1 =>  
 === /usr/lib/mysql/plugin/wsrep_info.so
 	/lib64/ld64.so.2 
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
