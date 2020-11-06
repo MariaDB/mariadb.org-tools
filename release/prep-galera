@@ -111,6 +111,7 @@ deb_dists="
   bionic
   buster
   focal
+  groovy
   jessie
   sid
   stretch
@@ -122,11 +123,17 @@ deb_dists_full="
   bionic-amd64
   bionic-ppc64le
 
+  buster-aarch64
   buster-amd64
+  buster-ppc64le
 
   focal-aarch64
   focal-amd64
   focal-ppc64le
+
+  groovy-aarch64
+  groovy-amd64
+  groovy-ppc64le
 
   jessie-amd64
   jessie-x86
@@ -134,6 +141,7 @@ deb_dists_full="
   sid-amd64
   sid-x86
   
+  stretch-aarch64
   stretch-amd64
   stretch-ppc64le
   stretch-x86
@@ -627,93 +635,31 @@ END
   done
 
   for dist in ${deb_dists_full};do
+
+    # Set dist_name to appropriate value
+    dist_name=${dist%-*}
+
+    if [ "${dist_name}" = "" ]; then
+      echo ${dist}
+      echo 'We should not be here. Error with setting ${dist_name}'
+      exit 1
+    fi
+
+    # Set dist_arch to appropriate value
     case ${dist} in
-      'bionic-aarch64')
-        echo ${dist}
-        reprepro --basedir=. include bionic ${dir_release}/${dir_name}-${suffix}/deb/galera*bionic*_arm64.changes
-        ;;
-      'bionic-amd64')
-        echo ${dist}
-        reprepro --basedir=. include bionic ${dir_release}/${dir_name}-${suffix}/deb/galera*bionic*_amd64.changes
-        ;;
-      'bionic-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include bionic ${dir_release}/${dir_name}-${suffix}/deb/galera*bionic*_ppc64el.changes
-        ;;
-      'buster-amd64')
-        echo ${dist}
-        reprepro --basedir=. include buster ${dir_release}/${dir_name}-${suffix}/deb/galera*buster*_amd64.changes
-        ;;
-      'focal-aarch64')
-        echo ${dist}
-        reprepro --basedir=. include focal ${dir_release}/${dir_name}-${suffix}/deb/galera*focal*_arm64.changes
-        ;;
-      'focal-amd64')
-        echo ${dist}
-        reprepro --basedir=. include focal ${dir_release}/${dir_name}-${suffix}/deb/galera*focal*_amd64.changes
-        ;;
-      'focal-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include focal ${dir_release}/${dir_name}-${suffix}/deb/galera*focal*_ppc64el.changes
-        ;;
-      'jessie-amd64')
-        echo ${dist}
-        reprepro --basedir=. include jessie ${dir_release}/${dir_name}-${suffix}/deb/galera*jessie*_amd64.changes
-        ;;
-      'jessie-x86')
-        echo ${dist}
-        reprepro --basedir=. include jessie ${dir_release}/${dir_name}-${suffix}/deb/galera*jessie*_i386.changes
-        ;;
-      'sid-amd64')
-        echo ${dist}
-        reprepro --basedir=. include sid ${dir_release}/${dir_name}-${suffix}/deb/galera*sid*_amd64.changes
-        ;;
-      'sid-x86')
-        echo ${dist}
-        reprepro --basedir=. include sid ${dir_release}/${dir_name}-${suffix}/deb/galera*sid*_i386.changes
-        ;;
-      'stretch-amd64')
-        echo ${dist}
-        reprepro --basedir=. include stretch ${dir_release}/${dir_name}-${suffix}/deb/galera*stretch*_amd64.changes
-        ;;
-      'stretch-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include stretch ${dir_release}/${dir_name}-${suffix}/deb/galera*stretch*_ppc64el.changes
-        ;;
-      'stretch-x86')
-        echo ${dist}
-        reprepro --basedir=. include stretch ${dir_release}/${dir_name}-${suffix}/deb/galera*stretch*_i386.changes
-        ;;
-      'trusty-amd64')
-        echo ${dist}
-        reprepro --basedir=. include trusty ${dir_release}/${dir_name}-${suffix}/deb/galera*trusty*_amd64.changes
-        ;;
-      'trusty-x86')
-        echo ${dist}
-        reprepro --basedir=. include trusty ${dir_release}/${dir_name}-${suffix}/deb/galera*trusty*_i386.changes
-        ;;
-      'xenial-aarch64')
-        echo ${dist}
-        reprepro --basedir=. include xenial ${dir_release}/${dir_name}-${suffix}/deb/galera*xenial*_arm64.changes
-        ;;
-      'xenial-amd64')
-        echo ${dist}
-        reprepro --basedir=. include xenial ${dir_release}/${dir_name}-${suffix}/deb/galera*xenial*_amd64.changes
-        ;;
-      'xenial-ppc64le')
-        echo ${dist}
-        reprepro --basedir=. include xenial ${dir_release}/${dir_name}-${suffix}/deb/galera*xenial*_ppc64el.changes
-        ;;
-      'xenial-x86')
-        echo ${dist}
-        reprepro --basedir=. include xenial ${dir_release}/${dir_name}-${suffix}/deb/galera*xenial*_i386.changes
-        ;;
+      *amd64) dist_arch='amd64' ;;
+      *aarch64) dist_arch='arm64' ;;
+      *ppc64le) dist_arch='ppc64el' ;;
       *)
         echo ${dist}
-        echo "We should not be here. Error with processing changes file with reprepro"
+        echo 'We should not be here. Error with setting ${dist_arch}'
         exit 1
         ;;
     esac
+
+    echo ${dist}
+    reprepro --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
+
   done
   message "Finished preparing the deb repository"
   spacer
