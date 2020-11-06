@@ -623,9 +623,22 @@ upload_this_release_to_the_buildmaster() {
   message "Uploading release to ${buildmaster}..."
   rsync_wrapper "-av --delete-after ${dir_release}/${dir_name} ${buildmaster}:${dir_release}/"
 
+  shouldI update_the_STATUS_file
+
   message "Uploading corp release to ${buildmaster}..."
   rsync_wrapper "-av --delete-after ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp}/"
   # All done
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  update_the_STATUS_file
+#   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
+#===============================================================================
+update_the_STATUS_file() {
+  echo "+ date +%s > ${dir_release}/STATUS"
+          date +%s > ${dir_release}/STATUS
+  rsync_wrapper "-av --delete-after ${dir_release}/STATUS ${buildmaster}:${dir_release}/"
+  lowkey_message "STATUS file updated"
 }
 
 #===  FUNCTION  ================================================================
@@ -743,21 +756,21 @@ copy_the_previous_release_to_the_current_release_on_the_mirrors() {
   echo;echo
 
   message "Primary Mirror"
-  ssh -t -t ${primary_mirror} "set -x ; rsync -av --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists data/mariadb-${prev_release}/ data/${dir_name}/"
+  ssh -t -t ${primary_mirror} "set -x ; rsync -a --info=progress2 --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists data/mariadb-${prev_release}/ data/${dir_name}/"
 
   echo;echo
 
   message "Corp Mirror Staging"
-  ssh -t -t ${corp_mirror} "set -x; rsync -av --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists ${corp_mirror_path}/mariadb-${prev_release}/ ${corp_mirror_path_staging}/${dir_name}/"
+  ssh -t -t ${corp_mirror} "set -x; rsync -a --info=progress2 --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists ${corp_mirror_path}/mariadb-${prev_release}/ ${corp_mirror_path_staging}/${dir_name}/"
 
   echo;echo
 
   message "Yum Mirror"
-  ssh -t -t ${yum_primary_mirror} "set -x ; rsync -av --exclude=repodata --exclude=db --exclude=dists ${yum_mirror_path}/${prev_release}/ ${yum_mirror_path}/${num}/"
+  ssh -t -t ${yum_primary_mirror} "set -x ; rsync -a --info=progress2 --exclude=repodata --exclude=db --exclude=dists ${yum_mirror_path}/${prev_release}/ ${yum_mirror_path}/${num}/"
 
   echo;echo
 
-  lowkey_message "Done!"
+  message "Done copying previous release to the current release on the mirrors"
 }
 
 #===  FUNCTION  ================================================================
@@ -834,7 +847,7 @@ upload_to_the_yum_mirrors() {
 
   set -x
   for yum_mirror in ${yum_mirrors} ;do 
-    ssh -t -t ${yum_primary_mirror} "rsync -a --info=progress2 --delete-after --delay-updates ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
+    ssh -t -t ${yum_primary_mirror} "rsync -a --info=progress2 --delete-after ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
   done
   set +x
 }
@@ -1064,7 +1077,7 @@ maybe_fix_permissions() {
       # If we're fixing remote permissions, we want to to it with one ssh
       # connection, so everything goes on one line
 
-      ssh -t -t ${buildmaster} "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
+      ssh -t -t ${buildmaster} "if [ ! -d ${dir_archive_p8}/${tree}/${rev} ]; then sudo mkdir -vp ${dir_archive_p8}/${tree}/${rev};fi;" "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
 
     else
       # If we're here we are not fixing remote permissions, so we can do things
