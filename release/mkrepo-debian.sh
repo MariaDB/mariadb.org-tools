@@ -290,8 +290,15 @@ for dist in ${debian_dists}; do
 
   # add ppc64el files
   case ${builder} in
-    'stretch')
+    'stretch'|'buster')
       for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      ;;
+  esac
+
+  # add aarch64 files
+  case ${builder} in
+    'stretch'|'buster')
+      for i in $(find "$ARCHDIR/kvm-deb-${builder}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
 
@@ -345,9 +352,10 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "stretch")
+            "stretch"|"buster")
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
               ;;
             *) 
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
