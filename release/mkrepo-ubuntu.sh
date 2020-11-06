@@ -69,13 +69,13 @@ case ${ARCHDIR} in
     ubuntu_dists="xenial bionic"
     ;;
   *"10.3"*)
-    ubuntu_dists="xenial bionic focal"
+    ubuntu_dists="xenial bionic focal groovy"
     ;;
   *"10.4"*)
-    ubuntu_dists="xenial bionic focal"
+    ubuntu_dists="xenial bionic focal groovy"
     ;;
   *"10.5"*)
-    ubuntu_dists="xenial bionic focal"
+    ubuntu_dists="xenial bionic focal groovy"
     ;;
   *)
     line
@@ -179,7 +179,7 @@ for dist in ${ubuntu_dists}; do
 
   # First we import the amd64 files
   case ${dist} in 
-    'xenial'|'bionic'|'disco'|'focal')
+    'xenial'|'bionic'|'disco'|'focal'|'groovy')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
@@ -200,7 +200,7 @@ for dist in ${ubuntu_dists}; do
     'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
-    'bionic'|'focal')
+    'bionic'|'focal'|'groovy')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -212,7 +212,7 @@ for dist in ${ubuntu_dists}; do
     'xenial')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
-    'bionic'|'focal')
+    'bionic'|'focal'|'groovy')
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -276,14 +276,14 @@ for dist in ${ubuntu_dists}; do
 
         # include ppc64le
         case ${dist} in
-          'xenial'|'bionic'|'focal')
+          'xenial'|'bionic'|'focal'|'groovy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'xenial'|'bionic'|'focal')
+          'xenial'|'bionic'|'focal'|'groovy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
             ;;
         esac
