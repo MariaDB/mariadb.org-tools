@@ -14,8 +14,8 @@ RUN yum -y --enablerepo=extras install epel-release && \
     yum -y upgrade && \
     yum -y groupinstall 'Development Tools' && \
     yum -y install git ccache subversion \
-    python-devel libffi-devel openssl-devel \
-    python-pip redhat-rpm-config curl wget && \
+    python3-devel libffi-devel openssl-devel \
+    python3-pip redhat-rpm-config curl wget && \
     # install MariaDB dependencies
     yum-builddep -y mariadb-server
 
@@ -27,10 +27,10 @@ RUN useradd -ms /bin/bash buildbot && \
 WORKDIR /buildbot
 
 # upgrade pip and install buildbot
-RUN pip install -U pip virtualenv && \
-    pip install --upgrade setuptools && \
-    pip install buildbot-worker && \
-    pip --no-cache-dir install 'twisted[tls]'
+RUN pip3 install -U pip virtualenv && \
+    pip3 install --upgrade setuptools && \
+    pip3 install buildbot-worker && \
+    pip3 --no-cache-dir install 'twisted[tls]'
 
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),

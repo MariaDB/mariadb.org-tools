@@ -40,6 +40,7 @@ RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1
 
 RUN subscription-manager unregister
 
+ENV CRYPTOGRAPHY_ALLOW_OPENSSL_102=1
 
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
