@@ -53,7 +53,7 @@ tar ztf ./mariadb*src*tar.gz
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_src_connector_odbc= build_src_connector_odbc("src_connector_odbc", "vm-jessie-amd64");
+bld_src_connector_odbc= build_src_connector_odbc("src_connector_odbc", "vm-buster-amd64");
 #sudo apt-get update
 #sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
 
