@@ -4,7 +4,16 @@ cd /code
 [ -d PyMySQL ] || git clone https://github.com/PyMySQL/PyMySQL.git
 cd PyMySQL
 git clean -dfx
-git pull
+git pull --tags
+if [ -n "$1" ]
+then
+  if [ ! -d ../"$1" ]
+  then
+    git worktree add ../"$1" "$1"
+  fi
+  cd ../"$1"
+  git checkout origin/$1
+fi
 
 curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/eco-files/installdb.sh | bash -s
 
@@ -16,12 +25,15 @@ mysql -u root <<EOF
 /*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER nopass_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
 /*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER user_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
 
-create database IF NOT EXISTS test1 DEFAULT CHARACTER SET utf8mb4;
-create database IF NOT EXISTS test2 DEFAULT CHARACTER SET utf8mb4;
-create user IF NOT EXISTS test2           identified by 'some password'; grant all on test2.* to test2;
-create user IF NOT EXISTS test2@localhost identified by 'some password'; grant all on test2.* to test2@localhost;
+create database test1 DEFAULT CHARACTER SET utf8mb4;
+create database test2 DEFAULT CHARACTER SET utf8mb4;
+create user test2           identified by 'some password';
+grant all on test2.* to test2;
+create user test2@localhost identified by 'some password';
+grant all on test2.* to test2@localhost;
 EOF
 
+# Both passwd and password are aliased to the same, so this isn't an error in the below configuration.
 cat > pymysql/tests/databases.json <<EOF
 [
     {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "passwd": "", "db": "test1",  "use_unicode": true, "local_infile": true},
@@ -31,4 +43,7 @@ EOF
 
 pytest -v pymysql
 
-$(mysql -u root  --skip-column-names  -Be "SELECT IF(LEFT(VERSION(),4)!='10.2', 'pytest -v tests/test_mariadb_auth.py','')")
+if [ -f tests/test_mariadb_auth.py ]
+then
+  $(mysql -u root  --skip-column-names  -Be "SELECT IF(LEFT(VERSION(),4)!='10.2', 'pytest -v tests/test_mariadb_auth.py',';')")
+fi
