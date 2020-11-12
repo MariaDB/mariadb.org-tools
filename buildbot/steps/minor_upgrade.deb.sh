@@ -256,10 +256,10 @@ if [[ "$test_mode" == "server" ]] ; then
   sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
   sudo apt-get update
   sudo apt-get install -y debhelper dpkg-dev
-  for script in $script_home/3rd-party-client-tests/*.deb.sh; do
+  for script in $script_home/steps/3rd-party-client-tests/*.deb.sh; do
     script=`basename $script`
     if apt-get --assume-yes --only-source source ${script%.deb.sh}; then
-      $script_home/3rd-party-client-tests/${script} 2>&1 | tee /tmp/${script}.result.old
+      $script_home/steps/3rd-party-client-tests/${script} 2>&1 | tee /tmp/${script}.result.old
     fi
   done
 fi
@@ -527,7 +527,7 @@ if [[ "$test_mode" == "server" ]] ; then
   for script in /tmp/*.deb.sh.result.old; do
     script=${script%.result.old}
     script=`basename $script`
-    $script_home/3rd-party-client-tests/${script} 2>&1 | tee /tmp/${script}.result.new
+    $script_home/steps/3rd-party-client-tests/${script} 2>&1 | tee /tmp/${script}.result.new
     if ! diff -u /tmp/${script}.result.old /tmp/${script}.result.new ; then
       echo "ERROR: Results for ${script%.deb.sh} connector differ"
       res=1
