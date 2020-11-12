@@ -23,9 +23,13 @@ age=7200 # how old, in seconds, the file must be to auto-commit; 7200 = 2 hours
 files="maria-master.cfg
        builders/bld_xenial_valgrind.py
        builders/__init__.py
+       builders/conncpp/linux_builders.py
+       builders/conncpp/windows_builder.py
+       builders/conncpp/src_builder.py
        builders/odbc/__init__.py
        builders/odbc/linux_builders.py
        builders/odbc/windows_builder.py
+       builders/odbc/src_builder.py
        builders/qa/__init__.py
        builders/qa/qa_builders.py
        builders/qa/qa_schedulers.py"
