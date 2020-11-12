@@ -139,7 +139,7 @@ if [[ $res -ne 0 ]] ; then
   exit $res
 fi
 
-function get_columnstore_logs () {
+get_columnstore_logs () {
   if [[ "$test_mode" == "columnstore" ]] ; then
     echo "Storing Columnstore logs in columnstore_logs"
     set +ex
@@ -165,7 +165,7 @@ function get_columnstore_logs () {
 # and can be executed later or even omitted.
 # We will wait till they finish, to avoid any clashes with SQL we are going to execute
 
-function wait_for_mysql_upgrade () {
+wait_for_mysql_upgrade () {
   res=1
   for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ; do
     sleep 3
@@ -252,18 +252,30 @@ set +e
 # Run protocol (3rd-party connectors) tests and store results BEFORE upgrade
 #====================================================================================
 
+connectors_tests () {
+  # The function expects a parameter with a value either 'old' or 'new'
+  #
+  # Each runner script is expected to extract the important part
+  # of the test results into /tmp/test.out file
+
+  for script in $script_home/steps/3rd-party-client-tests/*.deb.sh; do
+    script=`basename $script`
+    # The outside directory is used to prevent too long socket paths in tests
+    rm -rf $HOME/3rd-party
+    mkdir $HOME/3rd-party
+    cd $HOME/3rd-party
+    if apt-get --assume-yes --only-source source ${script%.deb.sh}; then
+      $script_home/steps/3rd-party-client-tests/${script}
+      mv /tmp/test.out /tmp/${script}.test.out.$1
+    fi
+  done
+}
+
 if [[ "$test_mode" == "server" ]] ; then
   sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
   sudo apt-get update
   sudo apt-get install -y debhelper dpkg-dev
-  # The following copy is done to prevent too long socket paths in tests
-  cp -r $script_home/steps/3rd-party-client-tests $HOME/3rd-party
-  cd $HOME/3rd-party
-  for script in *.deb.sh; do
-    if apt-get --assume-yes --only-source source ${script%.deb.sh}; then
-      ./${script} 2>&1 | tee /tmp/${script}.result.old
-    fi
-  done
+  connectors_tests "old"
 fi
 
 #====================================================================================
@@ -526,17 +538,23 @@ esac
 #====================================================================================
 
 if [[ "$test_mode" == "server" ]] ; then
+  connectors_tests "new"
+fi
+
+if [[ "$test_mode" == "server" ]] ; then
   cd $HOME/3rd-party
-  for script in /tmp/*.deb.sh.result.old; do
-    script=${script%.result.old}
-    script=`basename $script`
-    ./${script} 2>&1 | tee /tmp/${script}.result.new
-    if ! diff -u /tmp/${script}.result.old /tmp/${script}.result.new ; then
+  for old_result in /tmp/*.deb.sh.test.out.old ; do
+    new_result=${old_result%.old}.new
+    if ! diff -u $old_result $new_result ; then
       echo "ERROR: Results for ${script%.deb.sh} connector differ"
       res=1
     fi
   done
 fi
+
+#====================================================================================
+# Check that the server version was modified by the server upgrade
+#====================================================================================
 
 diff -u /tmp/version.old /tmp/version.new
 if [[ $? -eq 0 ]] ; then
@@ -546,9 +564,7 @@ if [[ $? -eq 0 ]] ; then
   res=1
 fi
 
-# TODO: Restore exit $res
-#exit $res
-exit 0
+exit $res
 
 ########################################################################
 # End of debian minor package upgrade test

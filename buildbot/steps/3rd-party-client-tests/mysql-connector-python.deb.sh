@@ -8,4 +8,4 @@ sed -ie "s/\(matches = re\.match(r'\.\*Ver (\\\d\))/\1\+)/g" tests/mysqld.py
 
 dh build 2>&1 | tee build.log
 
-grep '^\(FAIL\|ERROR\):' build.log
+grep '^\(FAIL\|ERROR\):' build.log | tee /tmp/test.out
