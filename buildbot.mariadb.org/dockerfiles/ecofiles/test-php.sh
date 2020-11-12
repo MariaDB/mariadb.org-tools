@@ -32,9 +32,9 @@ export MYSQL_TEST_PASSWD=
 # ENGINE,SOCKET
 # CONNECT_FLAGS - integer for mysqli_real_connect
 
-export PDO_MYSQL_TEST_DSN=mysql:host=${MYSQL_TEST_HOST};dbname=${MYSQL_TEST_DB}
-export PDO_MYSQL_TEST_USER=${MYSQL_TEST_USER}
-export PDO_MYSQL_TEST_PASS=${MYSQL_TEST_PASSWD}
+export PDO_MYSQL_TEST_DSN="mysql:host=${MYSQL_TEST_HOST};dbname=${MYSQL_TEST_DB}"
+export PDO_MYSQL_TEST_USER="${MYSQL_TEST_USER}"
+export PDO_MYSQL_TEST_PASS="${MYSQL_TEST_PASSWD}"
 # 
 # ./ext/pdo_mysql/tests/mysql_pdo_test.inc
 # PDO_MYSQL_TEST_DSN, = mysql:host=localhost;dbname=test
@@ -85,4 +85,10 @@ echo
 echo Testing...
 echo
 
-TEST_PHP_EXECUTABLE=./sapi/cli/php ./sapi/cli/php "$codedir"/run-tests.php "$codedir"/ext/mysqli/tests/*phpt "$codedir"/ext/pdo_mysql/tests/*phpt
+mkdir -p /tmp/s /tmp/t
+
+# -j$(nproc) not in 7.3 - didn't significantly parallize anyway
+TEST_PHP_EXECUTABLE=./sapi/cli/php ./sapi/cli/php "$codedir"/run-tests.php \
+       --temp-source /tmp/s --temp-target /tmp/t  --show-diff \
+       "$codedir"/ext/mysqli/tests/*phpt \
+       "$codedir"/ext/pdo_mysql/tests/*phpt
