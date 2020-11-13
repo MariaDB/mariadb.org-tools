@@ -110,8 +110,7 @@ echo "Package_list: $package_list"
 # Prepare apt source configuration for installation of the last release
 #======================================================================
 
-#sudo sh -c "echo 'deb http://mirror.netinch.com/pub/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
-sudo sh -c "echo 'deb http://mirror.netinch.com/pub/mariadb/mariadb-10.2.34/repo/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
+sudo sh -c "echo 'deb http://mirror.netinch.com/pub/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
