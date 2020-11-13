@@ -537,6 +537,8 @@ esac
 #====================================================================================
 
 if [[ "$test_mode" == "server" ]] ; then
+  sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
+  sudo apt-get update
   connectors_tests "new"
 fi
 
