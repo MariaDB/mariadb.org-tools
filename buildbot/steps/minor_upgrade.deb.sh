@@ -45,9 +45,6 @@ echo "Current test mode: $test_mode"
 script_path=`readlink -f $0`
 script_home=`dirname $script_path`
 
-DEBIAN_FRONTEND=noninteractive
-MYSQLD_STARTUP_TIMEOUT=180
-
 #============
 # Environment
 #============
@@ -182,7 +179,7 @@ wait_for_mysql_upgrade () {
   fi
 }
 
-if ! sudo apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list ; then
+if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list" ; then
   echo "ERROR: Installation of a previous release failed, see the output above"
   exit 1
 fi
@@ -190,7 +187,7 @@ fi
 wait_for_mysql_upgrade
 
 if [ -n "$spider_package_list" ] ; then
-  if ! sudo apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list ; then
+  if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list" ; then
     echo "ERROR: Installation of Spider from the previous release failed, see the output above"
     exit 1
   fi
@@ -266,6 +263,8 @@ connectors_tests () {
     if apt-get --assume-yes --only-source source ${script%.deb.sh}; then
       $script_home/steps/3rd-party-client-tests/${script}
       mv /tmp/test.out /tmp/${script}.test.out.$1
+    else
+      echo "Upgrade warning: source package for connector ${script%.deb.sh} could not be installed with the $1 server"
     fi
   done
 }
@@ -273,7 +272,7 @@ connectors_tests () {
 if [[ "$test_mode" == "server" ]] ; then
   sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
   sudo apt-get update
-  sudo apt-get install -y debhelper dpkg-dev
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y debhelper dpkg-dev"
   connectors_tests "old"
 fi
 
@@ -357,7 +356,7 @@ fi
 # Install the new packages
 #=========================
 
-sudo apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list
+sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list"
 if [[ $? -ne 0 ]] ; then
   echo "ERROR: Installation of the new packages failed, see the output above"
   exit 1
@@ -365,7 +364,7 @@ fi
 wait_for_mysql_upgrade
 
 if [ -n "$spider_package_list" ] ; then
-  sudo apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list"
   if [[ $? -ne 0 ]] ; then
     echo "ERROR: Installation of the new Spider packages failed, see the output above"
     exit 1
@@ -545,10 +544,12 @@ fi
 if [[ "$test_mode" == "server" ]] ; then
   cd $HOME/3rd-party
   for old_result in /tmp/*.deb.sh.test.out.old ; do
-    new_result=${old_result%.old}.new
-    if ! diff -u $old_result $new_result ; then
-      echo "ERROR: Results for ${script%.deb.sh} connector differ"
-      res=1
+    if [ -f $old_result ] ; then
+      new_result=${old_result%.old}.new
+      if ! diff -u $old_result $new_result ; then
+        echo "ERROR: Results for ${script%.deb.sh} connector differ"
+        res=1
+      fi
     fi
   done
 fi
