@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 # python3-setuptools python-setuptools
-sudo apt-get install -y python python3 dh-python
+sudo apt-get install -y python3 dh-python
 cd mysql-connector-python-*/
 
 sed -ie "s/override_dh_auto_test/override_dh_auto_test_orig/g" debian/rules
