@@ -11,7 +11,7 @@ ln -s $PWD /usr/local/mysql
 ./scripts/mysql_install_db --basedir=$PWD --datadir=/data --user=buildbot
 bin/mysqld_safe --datadir=/data --user=buildbot &
 
-while [ ! -S /tmp/mysqld.sock ]
+while [ ! -S /tmp/mysql.sock ]
 do
 	echo waiting 3 seconds
 	sleep 3

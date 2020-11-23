@@ -39,19 +39,16 @@ RUN apt-get update -y && \
       libmysqlclient-dev   && \
    rm -rf /var/lib/apt/lists/*
 
-# MariaDB packages
-VOLUME /packages
-
-# PHP Source code
-VOLUME /code
-# PHP build cache
-VOLUME /build
-
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
     mkdir /buildbot && \
     chown -R buildbot /buildbot /usr/local && \
     curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
+
+# autobake-deb will need sudo rights
+RUN usermod -a -G sudo buildbot
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
 WORKDIR /buildbot
 
 # Upgrade pip and install packages
@@ -63,6 +60,8 @@ RUN pip3 install buildbot-worker && \
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_$(dpkg --print-architecture).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
+
+RUN apt-get update && apt-get install -y libsnappy-dev libnuma-dev
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
