@@ -61,7 +61,6 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_$(dpkg --print-architecture).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 
-RUN apt-get update && apt-get install -y libsnappy-dev libnuma-dev
+RUN apt-get update && apt-get install -y libsnappy-dev libnuma-dev wget
 
-USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
