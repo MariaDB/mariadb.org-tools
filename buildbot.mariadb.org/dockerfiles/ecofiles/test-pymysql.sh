@@ -15,8 +15,6 @@ then
   git checkout origin/$1
 fi
 
-curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/ecofiles/installdb.sh | bash -s
-
 mysql -u root <<EOF
 
 /*M!100301 INSTALL SONAME "auth_ed25519" */;

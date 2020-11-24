@@ -18,8 +18,6 @@ if [ -z "${buildopts[$opt]}" ]; then
    exit 1
 fi
 
-curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/ecofiles/installdb.sh | bash -s
-
 export MYSQL_TEST_DB=test
 export MYSQL_TEST_HOST=localhost
 export MYSQL_TEST_PORT=3306
