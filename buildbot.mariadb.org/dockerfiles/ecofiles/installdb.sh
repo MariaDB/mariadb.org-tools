@@ -2,9 +2,9 @@
 
 set -x -v
 
-tar -axvf /packages/mariadb-*.tar.gz -C /usr/local
-mkdir /data
-cd /usr/local/mariadb*
+tar -axvf /packages/mariadb-*.tar.gz -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
+mkdir -p /data
+cd /usr/local/mariadb-*
 ln -s $PWD /usr/local/mariadb
 # for server plugins
 ln -s $PWD /usr/local/mysql
