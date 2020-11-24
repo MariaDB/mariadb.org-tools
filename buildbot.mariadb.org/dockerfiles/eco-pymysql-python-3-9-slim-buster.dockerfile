@@ -14,6 +14,7 @@ RUN apt-get update -y && \
       curl               \
       gcc                \
       git                \
+      libsnappy1v5 libnuma1 wget \
       libaio1         && \
    rm -rf /var/lib/apt/lists/*
 

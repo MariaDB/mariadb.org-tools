@@ -9,12 +9,13 @@ LABEL maintainer="MariaDB Buildbot maintainers"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# libaio1 is for the mariadb tarall
+# libaio1, snappy/numa is for the mariadb tarall
 # curl, git used in intialization, rest are
 # for php.
 RUN apt-get update -y && \
     apt-get install -y \
       libaio1              \
+      libsnappy1v5 libnuma1 wget \
       python3 python3-pip  \
       curl                 \
       language-pack-de     \
@@ -45,7 +46,7 @@ RUN useradd -ms /bin/bash buildbot && \
     chown -R buildbot /buildbot /usr/local && \
     curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 
-# autobake-deb will need sudo rights
+# Hope to eventualy move away from needing sudo rights
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
@@ -60,7 +61,5 @@ RUN pip3 install buildbot-worker && \
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_$(dpkg --print-architecture).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
-
-RUN apt-get update && apt-get install -y libsnappy-dev libnuma-dev wget
 
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
