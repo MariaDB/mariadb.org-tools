@@ -28,8 +28,8 @@ VOLUME /code
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
-    mkdir /buildbot && \
-    chown -R buildbot /buildbot /usr/local && \
+    mkdir -p /buildbot /data && \
+    chown -R buildbot /buildbot /data /usr/local && \
     curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 WORKDIR /buildbot
 
