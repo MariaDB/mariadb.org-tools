@@ -112,7 +112,8 @@ echo
 mysqlifailtests=( 057.phpt bug34810.phpt bug74968.phpt bug75018.phpt mysqli_change_user.phpt \
   mysqli_change_user_old.phpt  mysqli_change_user_oo.phpt mysqli_class_mysqli_interface.phpt \
   mysqli_class_mysqli_properties_no_conn.phpt mysqli_open_bug74432.phpt mysqli_pconn_max_links.phpt \
-  mysqli_report.phpt mysqli_stmt_bind_param_many_columns.phpt mysqli_stmt_get_result_metadata_fetch_field.phpt )
+  mysqli_report.phpt mysqli_stmt_bind_param_many_columns.phpt mysqli_stmt_get_result_metadata_fetch_field.phpt \
+  mysqli_expire_password.phpt )
 
 for f in "${mysqlifailtests[@]}"
 do
