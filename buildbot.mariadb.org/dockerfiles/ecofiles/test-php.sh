@@ -19,7 +19,7 @@ if [ -z "${buildopts[$opt]}" ]; then
 fi
 
 # until bb master.cfg reloaded
-[ -f /data/test ] || curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/ecofiles/installdb.sh | bash -s
+[ -d /data/test ] || curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/ecofiles/installdb.sh | bash -s
 
 export MYSQL_TEST_DB=test
 export MYSQL_TEST_HOST=localhost
