@@ -43,15 +43,35 @@ export PDO_MYSQL_TEST_PASS="${MYSQL_TEST_PASSWD}"
 
 cd /code
 
+# https://stackoverflow.com/questions/3258243/check-if-pull-needed-in-git
+UPSTREAM='@{u}'
+git_update_refs()
+{
+  LOCAL=$(git rev-parse @)
+  REMOTE=$(git rev-parse "$UPSTREAM")
+  BASE=$(git merge-base @ "$UPSTREAM")
+  if [ $LOCAL = $REMOTE ]; then
+    echo "Up-to-date"
+  elif [ $LOCAL = $BASE ]; then
+    echo "Need to pull"
+    git pull
+    ./buildconf
+  elif [ $REMOTE = $BASE ]; then
+    echo "Need to push"
+  else
+    echo "Diverged"
+  fi
+}
+
 if [ -d master ]
 then
   cd master
-  git pull
+  git remote update
 else
   git clone https://github.com/php/php-src.git master
   cd master
 fi
-./buildconf
+git_update_refs
 
 codedir=/code/$branch
 
@@ -59,7 +79,7 @@ if [ "$branch" != "master" ]
 then
   if [ -d "$codedir" ]
   then
-    ( cd "$codedir"; git pull ; ./buildconf )
+    ( cd "$codedir"; git_update_refs )
   else
     mkdir -p "$codedir"
     git worktree add "$codedir" "$branch"
@@ -74,9 +94,12 @@ echo "BUILD: $opt"
 builddir="/build/${branch}-${opt}"
 mkdir -p "$builddir"
 cd "$builddir"
-"$codedir"/configure --enable-debug \
+if [ "$codedir"/configure -nt config.log ]
+then
+  "$codedir"/configure --enable-debug \
                  ${buildopts[$opt]} $@ \
                  --with-mysql-sock=/tmp/mysql.sock || cat config.log
+fi
 make -j $(nproc)
 
 echo
