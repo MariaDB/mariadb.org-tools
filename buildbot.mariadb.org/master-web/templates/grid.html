@@ -1,0 +1,63 @@
+<div class="container griddashboard">
+    <style>
+    /* only modify th from this dashboard! */
+    .griddashboard table th {
+        font-size 24pt;
+    }
+    p {
+        width: 100px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+    }
+    </style>
+    <!-- Create a table of builds organised by builders/revisions in columns -->
+    <table class="table table-hover table-striped table-condensed">
+        <tr>
+            <!-- Generate the table header with revisions -->
+            <th>
+                Builder v / Revision >
+            </th>
+            <th></th> {# can't figure out why there is an extra column, workaround is to add this header #}
+            {% for revision in revisions %}
+            <th>
+		    <p>{{revision}}</p>
+            </th>
+            {% endfor %} {# revisions #}
+        </tr>
+        {% for builder in builders %}
+            {# filter innactive builders #}
+            {% if builder.masterids|length > 0 %}
+                <tr>
+                    <td>
+                        <a href="#/builders/{{builder.builderid}}">
+                           {{builder.name}}
+                        </a>
+                    <td>
+                    {% for revision in revisions %}
+                        {# only print builds that have a revision which matches the revision in the header and matches the builder #}
+                        {% for build in builds if (build.properties.revision|length > 0) and (build.builderid == builder.builderid) and (build.properties.revision.0 == revision) %}
+                            <td>	    
+                        {% for build in builds if (build.properties.revision|length > 0) and (build.builderid == builder.builderid) and (build.properties.revision.0 == revision) %}
+                                    {# If this build is from this builderid/revision, then we render it in this cell #}
+                                    {# We use buildbot internal CSS styles display our builds, with links to the standard UI  #}
+                                    {% if build.results_text == "not finished" %}
+                                        {% set result = "PENDING pulse" %}
+                                    {% else %}
+                                        {% set result = build.results_text | upper %}
+                                    {% endif %}
+                                    <a class="badge-status badge results_{{result}}" href="#/builders/{{build.builderid}}/builds/{{build.number}}">
+					    {{build.state.state_string}}
+                                    </a>
+			{% endfor %}
+                            </td>
+                        {% else %}
+                            {# if there isn't a match, just print an empty cell #}
+                            <td></td>
+                        {% endfor %} {# builds #}
+                    {% endfor %} {# revisions #}
+                </tr>
+            {% endif %}
+        {% endfor %} {# builders #}
+    </table>
+</div>
