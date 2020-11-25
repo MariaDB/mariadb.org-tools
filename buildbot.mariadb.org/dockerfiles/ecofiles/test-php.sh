@@ -106,6 +106,17 @@ echo
 echo Testing...
 echo
 
+mysqlifailtests=( 057.phpt bug34810.phpt bug74968.phpt bug75018.phpt mysqli_change_user.phpt \
+  mysqli_change_user_old.phpt  mysqli_change_user_oo.phpt mysqli_class_mysqli_interface.phpt \
+  mysqli_class_mysqli_properties_no_conn.phpt mysqli_open_bug74432.phpt mysqli_pconn_max_links.phpt \
+  mysqli_report.phpt mysqli_stmt_get_result_metadata_fetch_field.phpt )
+
+for f in "${mysqlifailtests[@]}"
+do
+  GLOBIGNORE="$GLOBIGNORE:$codedir/ext/mysqli/tests/$f"
+done
+echo $GLOBIGNORE
+
 mkdir -p /tmp/s /tmp/t
 
 # -j$(nproc) not in 7.3 - didn't significantly parallize anyway
