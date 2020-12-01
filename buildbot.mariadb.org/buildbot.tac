@@ -6,7 +6,7 @@ from buildbot.master import BuildMaster
 basedir = '.'
 
 rotateLength = 10000000
-maxRotatedFiles = 10
+maxRotatedFiles = 30
 configfile = 'master.cfg'
 
 # Default umask for server
