@@ -33,7 +33,7 @@ export MYSQL_TEST_PASSWD=
 # ENGINE,SOCKET
 # CONNECT_FLAGS - integer for mysqli_real_connect
 
-export PDO_MYSQL_TEST_DSN="mysql:host=${MYSQL_TEST_HOST};dbname=${MYSQL_TEST_DB}"
+export PDO_MYSQL_TEST_DSN="mysql:host=127.0.0.1;dbname=${MYSQL_TEST_DB}"
 export PDO_MYSQL_TEST_USER="${MYSQL_TEST_USER}"
 export PDO_MYSQL_TEST_PASS="${MYSQL_TEST_PASSWD}"
 # 
@@ -109,15 +109,45 @@ echo
 echo Testing...
 echo
 
-mysqlifailtests=( 057.phpt bug34810.phpt bug74968.phpt bug75018.phpt mysqli_change_user.phpt \
-  mysqli_change_user_old.phpt  mysqli_change_user_oo.phpt mysqli_class_mysqli_interface.phpt \
-  mysqli_class_mysqli_properties_no_conn.phpt mysqli_open_bug74432.phpt mysqli_pconn_max_links.phpt \
-  mysqli_report.phpt mysqli_stmt_bind_param_many_columns.phpt mysqli_stmt_get_result_metadata_fetch_field.phpt \
-  mysqli_expire_password.phpt )
+declare -a mysqlifailtests
+declare -a pdofailtests
+
+case "${branch}" in
+	7\.[12])
+		mysqlifailtests+=( mysqli_get_client_stats ) # 7.3 fixed
+		mysqlifailtests+=( 057 )
+		mysqlifailtests+=( mysqli_pconn_max_links )
+		mysqlifailtests+=( mysqli_stmt_bind_param_many_columns )
+		mysqlifailtests+=( mysqli_report )
+		;&
+	7\.3)
+		pdofailtests+=( bug_38546 ) # fixed in at least 8.0
+		mysqlifailtests+=( mysqli_expire_password ) # not fixed in master
+		mysqlifailtests+=( mysqli_change_user_new ) # at least 8.0 (not 7.4)
+		;&
+	7\.4)
+		mysqlifailtests+=( 063 ) # fixed in 8.0 at least
+		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # not fixed in master
+		;&
+	8\.0)
+		# no new test failures. Yay
+		;&
+	master)
+		mysqlifailtests+=( mysqli_debug )
+		mysqlifailtests+=( mysqli_debug_append )
+		mysqlifailtests+=( mysqli_debug_control_string )
+		mysqlifailtests+=( mysqli_debug_mysqlnd_control_string )
+		mysqlifailtests+=( mysqli_debug_mysqlnd_only )
+
+esac
 
 for f in "${mysqlifailtests[@]}"
 do
-  GLOBIGNORE="$GLOBIGNORE:$codedir/ext/mysqli/tests/$f"
+  GLOBIGNORE="$GLOBIGNORE:$codedir/ext/mysqli/tests/$f.phpt"
+done
+for f in "${pdofailtests[@]}"
+do
+  GLOBIGNORE="$GLOBIGNORE:$codedir/ext/pdo_mysql/tests/$f.phpt"
 done
 echo $GLOBIGNORE
 
