@@ -2,7 +2,18 @@
 
 set -x -v
 
-tar -axvf /packages/mariadb-*.tar.gz -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
+# until bb reloaded
+if [ -z "$1" ]
+then
+	file="${1:-/packages/mariadb-*.tar.gz}"
+else
+	file=-
+fi
+
+if [ -n "$1" ]
+then
+	curl "$1"
+fi | tar -zxvf $file -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
 mkdir -p /data
 cd /usr/local/mariadb-*
 ln -s $PWD /usr/local/mariadb
