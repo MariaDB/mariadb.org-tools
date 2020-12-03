@@ -15,7 +15,7 @@ then
   git checkout origin/$1
 fi
 
-mysql -u root <<EOF
+/usr/local/mariadb/bin/mysql -u root <<EOF
 
 /*M!100301 INSTALL SONAME "auth_ed25519" */;
 /*M!100301 CREATE FUNCTION ed25519_password RETURNS STRING SONAME "auth_ed25519.so" */;
