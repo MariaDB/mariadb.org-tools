@@ -18,15 +18,20 @@ if [ -z "${buildopts[$opt]}" ]; then
    exit 1
 fi
 
-# until bb master.cfg reloaded
-[ -d /data/test ] || curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/ecofiles/installdb.sh | bash -s
+# variable needed to make mysqli_expire_password test pass
+# only exists on 10.4+
+/usr/local/mariadb/bin/mysql -u root -e 'set global disconnect_on_expired_password=1' \
+	|| :
+/usr/local/mariadb/bin/mysql -u root -e 'set password=password("letmein")' \
+	|| :
+
 
 export MYSQL_TEST_DB=test
 export MYSQL_TEST_HOST=localhost
 export MYSQL_TEST_PORT=3306
 export MYSQL_TEST_SOCKET=/tmp/mysql.sock
 export MYSQL_TEST_USER=root
-export MYSQL_TEST_PASSWD=
+export MYSQL_TEST_PASSWD=letmein
 
 # Controlling Environment variables from ./ext/mysqli/tests/connect.inc
 # MYSQL_TEST_{HOST,PORT,USER,PASSWD,DB
@@ -44,11 +49,6 @@ export PDO_MYSQL_TEST_PASS="${MYSQL_TEST_PASSWD}"
 # PDOTEST_ATTR
 # PDO_MYSQL_TEST_ENGINE
 
-
-# variable needed to make mysqli_expire_password test pass
-# only exists on 10.4+
-/usr/local/mariadb/bin/mysql -u root -e 'set global disconnect_on_expired_password=1' \
-	|| :
 
 cd /code
 
