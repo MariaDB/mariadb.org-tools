@@ -44,6 +44,12 @@ export PDO_MYSQL_TEST_PASS="${MYSQL_TEST_PASSWD}"
 # PDOTEST_ATTR
 # PDO_MYSQL_TEST_ENGINE
 
+
+# variable needed to make mysqli_expire_password test pass
+# only exists on 10.4+
+/usr/local/mariadb/bin/mysql -u root -e 'set global disconnect_on_expired_password=1' \
+	|| :
+
 cd /code
 
 # https://stackoverflow.com/questions/3258243/check-if-pull-needed-in-git
