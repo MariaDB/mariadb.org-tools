@@ -129,14 +129,13 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_class_mysqli_interface )
 		;&
 	PHP-7\.3)
-		pdofailtests+=( bug_38546 ) # fixed in at least 8.0
-		mysqlifailtests+=( mysqli_change_user_new ) # at least 8.0 (not 7.4)
 		;&
 	PHP-7\.4)
 		mysqlifailtests+=( 063 ) # fixed in 8.0 at least
+		mysqlifailtests+=( mysqli_change_user_new ) # at least 8.0 (not 7.4)
 		;&
 	PHP-8\.0)
-		# no new test failures. Yay
+		pdofailtests+=( bug_38546 )
 		;&
 	master)
 		mysqlifailtests+=( mysqli_expire_password ) # https://github.com/php/php-src/pull/6480
