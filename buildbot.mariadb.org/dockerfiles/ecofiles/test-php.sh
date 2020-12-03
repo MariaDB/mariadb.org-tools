@@ -113,23 +113,23 @@ declare -a mysqlifailtests
 declare -a pdofailtests
 
 case "${branch}" in
-	7\.[12])
+	PHP-7\.[12])
 		mysqlifailtests+=( mysqli_get_client_stats ) # 7.3 fixed
 		mysqlifailtests+=( 057 )
 		mysqlifailtests+=( mysqli_pconn_max_links )
 		mysqlifailtests+=( mysqli_stmt_bind_param_many_columns )
 		mysqlifailtests+=( mysqli_report )
 		;&
-	7\.3)
+	PHP-7\.3)
 		pdofailtests+=( bug_38546 ) # fixed in at least 8.0
 		mysqlifailtests+=( mysqli_expire_password ) # not fixed in master
 		mysqlifailtests+=( mysqli_change_user_new ) # at least 8.0 (not 7.4)
 		;&
-	7\.4)
+	PHP-7\.4)
 		mysqlifailtests+=( 063 ) # fixed in 8.0 at least
 		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # not fixed in master
 		;&
-	8\.0)
+	PHP-8\.0)
 		# no new test failures. Yay
 		;&
 	master)
