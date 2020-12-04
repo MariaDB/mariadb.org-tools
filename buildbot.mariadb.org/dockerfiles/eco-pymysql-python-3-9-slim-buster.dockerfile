@@ -14,12 +14,9 @@ RUN apt-get update -y && \
       curl               \
       gcc                \
       git                \
-      libsnappy1v5 libnuma1 wget \
-      libaio1         && \
+      libsnappy1v5 libnuma1 \
+      libaio1 libreadline5 && \
    rm -rf /var/lib/apt/lists/*
-
-# MariaDB packages
-VOLUME /packages
 
 # Source code
 VOLUME /code

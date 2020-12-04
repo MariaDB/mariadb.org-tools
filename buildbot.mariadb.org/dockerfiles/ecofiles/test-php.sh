@@ -1,5 +1,5 @@
 #!/bin/bash
-# wget url | bash -s [branch] [buildopt] [additional build options...]
+# curl url | bash -s [branch] [buildopt] [additional build options...]
 set -x -v
 
 declare -A buildopts=(
