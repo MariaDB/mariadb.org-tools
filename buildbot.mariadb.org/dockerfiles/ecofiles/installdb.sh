@@ -2,7 +2,7 @@
 
 set -xeuvo pipefail
 
-if [ -z "$1" ]
+if [ $# -eq 0 ]
 then
 	echo 'Error - URL of tarball required as argument'
 	exit 1
