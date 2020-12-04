@@ -5,7 +5,7 @@ set -x -v
 # until bb reloaded
 if [ -z "$1" ]
 then
-	file="${1:-/packages/mariadb-*.tar.gz}"
+	file=$(ls -ct /packages/mariadb-*.tar.gz | head -n 1)
 else
 	file=-
 fi
