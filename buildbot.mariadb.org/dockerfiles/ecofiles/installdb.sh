@@ -1,19 +1,14 @@
 #!/bin/bash
 
-set -x -v
+set -xeuvo pipefail
 
-# until bb reloaded
 if [ -z "$1" ]
 then
-	file=$(ls -ct /packages/mariadb-*.tar.gz | head -n 1)
-else
-	file=-
+	echo 'Error - URL of tarball required as argument'
+	exit 1
 fi
 
-if [ -n "$1" ]
-then
-	curl "$1"
-fi | tar -zxvf $file -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
+curl "$1" | tar -zxvf - -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
 mkdir -p /data
 cd /usr/local/mariadb-*
 ln -s $PWD /usr/local/mariadb
