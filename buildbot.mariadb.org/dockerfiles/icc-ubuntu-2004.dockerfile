@@ -61,5 +61,7 @@ RUN ln -s /opt/intel/sw_dev_tools/bin/* /usr/local/bin/
 
 WORKDIR /buildbot
 
+ENV LD_LIBRARY_PATH=/opt/intel/sw_dev_tools/lib/intel64_lin/
+
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
