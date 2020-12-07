@@ -15,11 +15,9 @@ RUN apt-get update -y && \
       gcc                \
       git                \
       libsnappy1v5 libnuma1 \
-      libaio1 libreadline5 && \
+      libaio1 libreadline5 libncurses6 && \
    rm -rf /var/lib/apt/lists/*
 
-
-RUN ln -s /lib/x86_64-linux-gnu/libreadline.so.5 /lib/x86_64-linux-gnu/libreadline.so.6
 # Source code
 VOLUME /code
 
