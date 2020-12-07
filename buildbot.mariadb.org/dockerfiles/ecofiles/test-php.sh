@@ -140,6 +140,10 @@ case "${branch}" in
 	master)
 		mysqlifailtests+=( mysqli_expire_password ) # https://github.com/php/php-src/pull/6480
 		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # https://github.com/php/php-src/pull/6484
+		mysqlifailtests+=( mysqli_change_user ) # will below 3 - fail on 7.1, not mdb-10.2. TODO
+		mysqlifailtests+=( mysqli_change_user_old )
+		mysqlifailtests+=( mysqli_change_user_oo )
+		mysqlifailtests+=( mysqli_class_mysqli_properties_no_conn )
 		mysqlifailtests+=( mysqli_debug )
 		mysqlifailtests+=( mysqli_debug_append )
 		mysqlifailtests+=( mysqli_debug_control_string )
