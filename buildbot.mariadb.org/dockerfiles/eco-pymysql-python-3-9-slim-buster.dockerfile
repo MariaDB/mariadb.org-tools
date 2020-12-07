@@ -18,6 +18,8 @@ RUN apt-get update -y && \
       libaio1 libreadline5 && \
    rm -rf /var/lib/apt/lists/*
 
+
+RUN ln -s /lib/x86_64-linux-gnu/libreadline.so.5 /lib/x86_64-linux-gnu/libreadline.so.6
 # Source code
 VOLUME /code
 
