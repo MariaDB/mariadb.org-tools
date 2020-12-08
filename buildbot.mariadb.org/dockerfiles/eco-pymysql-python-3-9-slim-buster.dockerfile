@@ -36,7 +36,7 @@ RUN pip3 install buildbot-worker && \
     pip3 --no-cache-dir install 'twisted[tls]' \
     cryptography \
     'PyNaCl>=1.4.0' \
-    pytest
+    pytest unittest2
 
 # https://github.com/PyMySQL/PyMySQL/blob/master/requirements-dev.txt
 
