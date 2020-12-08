@@ -43,5 +43,5 @@ pytest -v pymysql
 
 if [ -f tests/test_mariadb_auth.py ]
 then
-  $(/usr/local/mariadb/bin/mysql -u root  --skip-column-names  -Be "SELECT IF(LEFT(VERSION(),4)!='10.2', 'pytest -v tests/test_mariadb_auth.py',';')")
+  $(/usr/local/mariadb/bin/mysql -u root  --skip-column-names  -Be "SELECT IF(LEFT(VERSION(),4)!='10.2', 'pytest -v tests/test_mariadb_auth.py',':')")
 fi
