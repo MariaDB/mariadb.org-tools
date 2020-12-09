@@ -113,4 +113,4 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         'factory': f_win_connector_cpp,
         'category': "connectors" }
 
-bld_win_connector_cpp = bld_windows_connector_cpp("win_connector_cpp", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
+bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
