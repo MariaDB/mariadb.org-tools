@@ -69,6 +69,16 @@ bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-bus
 bld_codbc_fedora32_amd64= build_linux_connector_odbc("codbc-fedora32-amd64", "vm-fedora32-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora33_amd64= build_linux_connector_odbc("codbc-fedora33-amd64", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_sles12_amd64= build_linux_connector_odbc("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_linux_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos6-amd64", "vm-centos6-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_linux_x86_connector_odbc_new= build_linux_connector_odbc("codbc-centos6-i386", "vm-centos6-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_stretch_x64_connector_odbc= build_linux_connector_odbc("codbc-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
+######################## New (unstable) version builders ######################
+
+
+##################### New (unstable) version builders - END ###################
 
 ################################# bld_linux_connector_oddbc ################################
 def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_params, tag):
@@ -132,26 +142,9 @@ cmake --build . --config RelWithDebInfo --target package
 #sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
 #sudo yum --disablerepo=epel -y install git
 
-######################## Current GA/stable version builders ######################
-bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.7");
-bld_linux_x86_connector_odbc= bld_linux_connector_odbc("linux_x86-connector-odbc", "vm-centos6-i386", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.7");
-bld_centos7_x64_connector_odbc= bld_linux_connector_odbc("centos7_x64-connector-odbc", "vm-centos7-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");
+######################## Old 2.0 builder ######################
+#bld_linux_x64_connector_odbc= bld_linux_connector_odbc("linux_x64-connector-odbc", "vm-centos6-amd64", "", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel6 ", "v_2.3.7");
 
-bld_generic_x86_connector_odbc= bld_linux_connector_odbc("generic_x86-connector-odbc", "vm-centos5-i386", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7");
-bld_generic_x64_connector_odbc= bld_linux_connector_odbc("generic_x64-connector-odbc", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7");
-#################$### Current GA/stable version builders - END ###################
-
-######################## New (unstable) version builders ######################
-bld_linux_x64_connector_odbc_new= bld_linux_connector_odbc("linux_x64-connector-odbc-new", "vm-centos6-amd64", "", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.1.7");
-bld_linux_x86_connector_odbc_new= bld_linux_connector_odbc("linux_x86-connector-odbc-new", "vm-centos6-i386", "", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel6 ", "v3.1.7");
-bld_centos7_x64_connector_odbc_new= bld_linux_connector_odbc("centos7_x64-connector-odbc-new", "vm-centos7-amd64", "", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
-bld_centos8_x64_connector_odbc= bld_linux_connector_odbc("centos8_x64-connector-odbc", "vm-centos8-amd64", "", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel8 ", "v3.1.7");
-
-bld_stretch_x64_connector_odbc= bld_linux_connector_odbc("stretch_x64-connector-odbc", "vm-stretch-amd64", "", False, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=debian9 ", "v3.1.7");
-
-bld_generic_x86_connector_odbc_new= bld_linux_connector_odbc("generic_x86-connector-odbc-new", "vm-centos5-i386", " -D_GNU_SOURCE", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.1.7");
-bld_generic_x64_connector_odbc_new= bld_linux_connector_odbc("generic_x64-connector-odbc-new", "vm-centos5-amd64", " -D_GNU_SOURCE", True, "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", "v3.1.7");
-##################### New (unstable) version builders - END ###################
 
 
 def bld_xcomp_linux_connector_odbc(name, kvm_image, conc_branch, cmake_params, tag):
@@ -219,7 +212,7 @@ setarch i386 make package
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");
-bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc-new", "vm-centos7-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
-bld_centos8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos8_x86-connector-odbc", "vm-centos8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
+#bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");
+bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("codbc-centos7-x86", "vm-centos7-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
+bld_centos8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("codbc-centos8-x86", "vm-centos8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
 
