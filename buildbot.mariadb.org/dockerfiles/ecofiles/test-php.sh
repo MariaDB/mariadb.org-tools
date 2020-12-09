@@ -1,6 +1,7 @@
 #!/bin/bash
 # curl url | bash -s [branch] [buildopt] [additional build options...]
-set -x -v
+
+set -xeuvo pipefail
 
 declare -A buildopts=(
 	[mysqlnd]='--enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd'

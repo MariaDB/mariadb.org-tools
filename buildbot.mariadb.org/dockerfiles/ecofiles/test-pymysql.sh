@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xeuvo pipefail
+
 cd /code
 [ -d PyMySQL ] || git clone https://github.com/PyMySQL/PyMySQL.git
 cd PyMySQL
