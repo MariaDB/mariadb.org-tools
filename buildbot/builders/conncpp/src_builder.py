@@ -53,4 +53,4 @@ tar ztf ./mariadb*src*tar.gz
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_src_connector_cpp= build_src_connector_cpp("src_connector_cpp", "vm-stretch-amd64");
+bld_src_connector_cpp= build_src_connector_cpp("ccpp-source-package", "vm-stretch-amd64");
