@@ -34,7 +34,6 @@ create user if not exists test2@localhost identified by 'some password';
 grant all on test2.* to test2@localhost;
 EOF
 
-echo USER=$USER
 export USER=buildbot
 # Both passwd and password are aliased to the same, so this isn't an error in the below configuration.
 cat > pymysql/tests/databases.json <<EOF
