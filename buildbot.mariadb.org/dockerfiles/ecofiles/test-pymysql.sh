@@ -14,7 +14,8 @@ then
     git worktree add ../"$1" "$1"
   fi
   cd ../"$1"
-  git checkout origin/$1
+  # this is right for tags, not for branches yet
+  git checkout $1
 fi
 
 /usr/local/mariadb/bin/mysql -u root <<EOF
