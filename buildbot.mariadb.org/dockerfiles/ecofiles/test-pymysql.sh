@@ -26,11 +26,11 @@ fi
 /*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER nopass_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
 /*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER user_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
 
-create database test1 DEFAULT CHARACTER SET utf8mb4;
-create database test2 DEFAULT CHARACTER SET utf8mb4;
-create user test2           identified by 'some password';
+create database if not exists test1 DEFAULT CHARACTER SET utf8mb4;
+create database if not exists test2 DEFAULT CHARACTER SET utf8mb4;
+create user if not exists test2 identified by 'some password';
 grant all on test2.* to test2;
-create user test2@localhost identified by 'some password';
+create user if not exists test2@localhost identified by 'some password';
 grant all on test2.* to test2@localhost;
 EOF
 
