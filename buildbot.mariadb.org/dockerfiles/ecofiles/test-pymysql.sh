@@ -9,8 +9,6 @@ git clean -dfx
 git pull --tags
 if [ $# -gt 0 ]
 then
-  # pip install until docker file recreated
-  pip install unittest2
   if [ ! -d ../"$1" ]
   then
     git worktree add ../"$1" "$1"
