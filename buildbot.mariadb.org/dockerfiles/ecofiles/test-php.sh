@@ -153,6 +153,8 @@ case "${branch}" in
 
 esac
 
+GLOBIGNORE=
+
 for f in "${mysqlifailtests[@]}"
 do
   GLOBIGNORE="$GLOBIGNORE:$codedir/ext/mysqli/tests/$f.phpt"
