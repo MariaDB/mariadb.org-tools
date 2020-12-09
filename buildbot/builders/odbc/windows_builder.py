@@ -113,6 +113,6 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         'factory': f_win_connector_odbc,
         'category': "connectors" }
 
-bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
-bld_win_connector_odbc_new = bld_windows_connector_odbc("win_connector_odbc_new", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
-bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("win_connector_odbc_gnutls", "3.1", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", "05f70d2", True)
+#bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
+bld_win_connector_odbc_new = bld_windows_connector_odbc("codbc-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
+bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("codbc-windows-gnutls", "3.1", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", "05f70d2", True)
