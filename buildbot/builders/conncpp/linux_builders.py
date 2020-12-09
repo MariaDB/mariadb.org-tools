@@ -58,24 +58,24 @@ cmake --build . --config RelWithDebInfo --target package
 #################$### Current GA/stable version builders - END ###################
 
 ######################## New (unstable) version builders ######################
-bld_centos8_amd64_connector_cpp= bld_linux_connector_cpp("centos8_amd64-connector-cpp", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_stretch_amd64_connector_cpp= bld_linux_connector_cpp("stretch_amd64-connector-cpp", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos8-amd64", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_stretch_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 
-bld_sles15_amd64_connector_cpp= bld_linux_connector_cpp("sles15-amd64-connector-cpp", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_xenial_x86_connector_cpp= bld_linux_connector_cpp("xenial-x86-connector-cpp", "vm-xenial-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_xenial_amd64_connector_cpp= bld_linux_connector_cpp("xenial-amd64-connector-cpp", "vm-xenial-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_sles15_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles15-amd64", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_xenial_x86_connector_cpp= bld_linux_connector_cpp("ccpp-xenial-x86", "vm-xenial-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_xenial_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-xenial-amd64", "vm-xenial-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
-bld_bionic_amd64_connector_cpp= bld_linux_connector_cpp("bionic-amd64-connector-cpp", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_focal_amd64_connector_cpp= bld_linux_connector_cpp("focal-amd64-connector-cpp", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_groovy_amd64_connector_cpp= bld_linux_connector_cpp("groovy-amd64-connector-cpp", "vm-groovy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("buster-amd64-connector-cpp", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_fedora32_amd64_connector_cpp= bld_linux_connector_cpp("fedora32-amd64-connector-cpp", "vm-fedora32-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_fedora33_amd64_connector_cpp= bld_linux_connector_cpp("fedora33-amd64-connector-cpp", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp("sles12-amd64-connector-cpp", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_bionic_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_focal_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_groovy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-groovy-amd64", "vm-groovy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_fedora32_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora32-amd64", "vm-fedora32-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_fedora33_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora33-amd64", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ######################## New (unstable) version builders ######################
-bld_centos6_amd64_connector_cpp= bld_linux_connector_cpp("centos6_amd64-connector-cpp", "vm-centos6-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_centos6_x86_connector_cpp= bld_linux_connector_cpp("centos6_x86-connector-cpp", "vm-centos6-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_centos7_amd64_connector_cpp= bld_linux_connector_cpp("centos7_amd64-connector-cpp", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos6_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos6-amd64", "vm-centos6-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos6_x86_connector_cpp= bld_linux_connector_cpp("ccpp-centos6-x86", "vm-centos6-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_centos7_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 ##################### New (unstable) version builders - END ###################
 
