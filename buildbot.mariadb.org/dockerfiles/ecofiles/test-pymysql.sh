@@ -7,7 +7,7 @@ cd /code
 cd PyMySQL
 git clean -dfx
 git pull --tags
-if [ -n "$1" ]
+if [ $# -gt 0 ]
 then
   # pip install until docker file recreated
   pip install unittest2
