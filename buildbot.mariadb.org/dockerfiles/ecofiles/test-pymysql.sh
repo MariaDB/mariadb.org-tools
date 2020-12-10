@@ -23,11 +23,11 @@ fi
 SELECT c INTO @install_unix FROM (SELECT 'INSTALL SONAME "auth_socket"' AS c FROM DUAL WHERE NOT EXISTS (select 1 from information_schema.plugins where PLUGIN_NAME='unix_socket') UNION SELECT 'SELECT 1/* nothing */' FROM information_schema.plugins where PLUGIN_NAME='unix_socket') AS dodont ;
 execute immediate @install_unix;
 
-/*M!100301 INSTALL SONAME "auth_ed25519" */;
-/*M!100301 CREATE FUNCTION IF NOT EXISTS ed25519_password RETURNS STRING SONAME "auth_ed25519.so" */;
+/*M!100122 INSTALL SONAME "auth_ed25519" */;
+/*M!100122 CREATE FUNCTION IF NOT EXISTS ed25519_password RETURNS STRING SONAME "auth_ed25519.so" */;
 /* we need to pass the hashed password manually until 10.4, so hide it here */
-/*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS nopass_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
-/*M!100301 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS user_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
+/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS nopass_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
+/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS user_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
 
 create database if not exists test1 DEFAULT CHARACTER SET utf8mb4;
 create database if not exists test2 DEFAULT CHARACTER SET utf8mb4;
