@@ -35,6 +35,7 @@ create user if not exists test2 identified by 'some password';
 grant all on test2.* to test2;
 create user if not exists test2@localhost identified by 'some password';
 grant all on test2.* to test2@localhost;
+drop user if exists buildbot@locahost;
 EOF
 
 export USER=buildbot
