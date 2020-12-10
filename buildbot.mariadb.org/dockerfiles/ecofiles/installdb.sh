@@ -26,3 +26,5 @@ do
 done
 
 [ -S /tmp/mysql.sock ] || exit 1
+
+/usr/local/mariadb/bin/mysql -e 'create user if not exists root@localhost ; grant all on *.* TO root@locahost'
