@@ -26,8 +26,8 @@ execute immediate @install_unix;
 /*M!100122 INSTALL SONAME "auth_ed25519" */;
 /*M!100122 CREATE FUNCTION IF NOT EXISTS ed25519_password RETURNS STRING SONAME "auth_ed25519.so" */;
 /* we need to pass the hashed password manually until 10.4, so hide it here */
-/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS nopass_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
-/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS user_ed25519 IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
+/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS nopass_ed25519@localhost IDENTIFIED VIA ed25519 USING "', ed25519_password(""),'"') */;
+/*M!100122 EXECUTE IMMEDIATE CONCAT('CREATE USER IF NOT EXISTS user_ed25519@localhost IDENTIFIED VIA ed25519 USING "', ed25519_password("pass_ed25519"),'"') */;
 
 create database if not exists test1 DEFAULT CHARACTER SET utf8mb4;
 create database if not exists test2 DEFAULT CHARACTER SET utf8mb4;
