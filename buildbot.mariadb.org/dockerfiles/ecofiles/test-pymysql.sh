@@ -20,6 +20,9 @@ fi
 
 /usr/local/mariadb/bin/mysql -u root <<EOF
 
+SELECT c INTO @install_unix FROM (SELECT 'INSTALL SONAME "auth_socket"' AS c FROM DUAL WHERE NOT EXISTS (select 1 from information_schema.plugins where PLUGIN_NAME='unix_socket') UNION SELECT 'SELECT 1/* nothing */' FROM information_schema.plugins where PLUGIN_NAME='unix_socket') AS dodont ;
+execute immediate @install_unix;
+
 /*M!100301 INSTALL SONAME "auth_ed25519" */;
 /*M!100301 CREATE FUNCTION IF NOT EXISTS ed25519_password RETURNS STRING SONAME "auth_ed25519.so" */;
 /* we need to pass the hashed password manually until 10.4, so hide it here */
