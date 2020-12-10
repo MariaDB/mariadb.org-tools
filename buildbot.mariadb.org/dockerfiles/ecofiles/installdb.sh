@@ -15,7 +15,7 @@ ln -s $PWD /usr/local/mariadb
 # for server plugins
 ln -s $PWD /usr/local/mysql
 ./scripts/mysql_install_db --basedir=$PWD --datadir=/data --user=buildbot
-bin/mysqld_safe --datadir=/data --user=buildbot  --local-infile &
+bin/mysqld_safe --datadir=/data --user=buildbot  --local-infile --plugin-maturity=alpha &
 
 countdown=5
 while [ ! -S /tmp/mysql.sock ] && [ $countdown -gt 0 ]
