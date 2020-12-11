@@ -26,14 +26,41 @@ def build_src_connector_odbc(name, kvm_image):
 set -ex
 git --version
 rm -Rf build
-time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
+rm -Rf cc
+
+CCINSTDIR="${PWD}/cc"
+time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git" build
 cd build
 git reset --hard %(revision)s
 rm -rf ./test
+
+# Building and installing C/C to test build from source and against C/C installation
+# Directory for C/C installtaion
+mkdir ../cc
+git submodule init
+git submodule update
+cd libmariadb
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SSL=OFF -DWITH_UNIT_TESTS=Off -DCMAKE_INSTALL_PREFIX=$CCINSTDIR .
+make
+make install
+cd ..
+ls $CCINSTDIR
+echo $LIBRARY_PATH
+echo $CPATH
+export LIBRARY_PATH="${LIBRARY_PATH}:${CCINSTDIR}/lib:${CCINSTDIR}/lib/mariadb"
+export CPATH="${CPATH}:${CCINSTDIR}/include:${CCINSTDIR}/include/mariadb"
+# We need it deleted for source package generation
 rm -rf ./libmariadb
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=OFF -DGIT_BUILD_SRCPKG=1 .
 ls -l ./mariadb*odbc*src*tar.gz ./mariadb*odbc*src*.zip
-tar ztf ./mariadb*src*tar.gz
+SRC_PACK_NAME=`ls ./mariadb*src*tar.gz`
+tar ztf $SRC_PACK_NAME
+cd ..
+tar zxf build/$SRC_PACK_NAME
+ls
+cd mariadb*src*
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=OFF -DCONC_WITH_UNIT_TESTS=Off -DWITH_UNIT_TESTS=Off -DMARIADB_LINK_DYNAMIC=1 .
+make
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*odbc*src*.* .",
         ]))
