@@ -14,6 +14,7 @@ RUN apt-get update -y && \
       curl               \
       gcc                \
       git                \
+      python3-pip        \
       libsnappy1v5 libnuma1 \
       libaio1 libreadline5 libncurses6 && \
    rm -rf /var/lib/apt/lists/*
