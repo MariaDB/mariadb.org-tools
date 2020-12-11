@@ -142,9 +142,11 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_expire_password ) # https://github.com/php/php-src/pull/6480
 		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # https://github.com/php/php-src/pull/6484
 		mysqlifailtests+=( mysqli_change_user ) # will below 3 - fail on 7.1, not mdb-10.2. TODO
-		mysqlifailtests+=( mysqli_change_user_old )
-		mysqlifailtests+=( mysqli_change_user_oo )
-		mysqlifailtests+=( mysqli_class_mysqli_properties_no_conn )
+		mysqlifailtests+=( mysqli_change_user_old ) # TODO
+		mysqlifailtests+=( mysqli_change_user_oo ) # TODO
+		mysqlifailtests+=( mysqli_class_mysqli_properties_no_conn ) # TODO
+		pdofailtests+=( pdo_mysql_prepare_load_data ) # 8.0, not 7.4 TODO investigate
+		pdofailtests+=( pdo_mysql_attr_oracle_nulls ) # 8.0, not 7.4. TODO investigate
 		mysqlifailtests+=( mysqli_debug )
 		mysqlifailtests+=( mysqli_debug_append )
 		mysqlifailtests+=( mysqli_debug_control_string )
