@@ -29,7 +29,7 @@ case "${1}" in
                 rm "${file}"
 		;;
 	*)
-		./dbdeployer $@
+		./dbdeployer "$1" "${2/mariadb-/}"
 		;;
 esac
 
