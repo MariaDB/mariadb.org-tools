@@ -8,16 +8,10 @@ then
 	exit 1
 fi
 
-
-# Asset ID for download:
-# curl -L -s -H 'Accept: application/vnd.github.v3+json' https://api.github.com/repos/datacharmer/dbdeployer/releases/latest | grep -B 4 linux.tar.gz\"
 case "${1}" in
 	dbdeployerfetch)
-		f=dbdeployer-1.57.0.linux
-		[ -f "/dbdeployer/$f" ] || \
-			curl -L -s -H 'Accept: application/octet-stream' https://api.github.com/repos/datacharmer/dbdeployer/releases/assets/"${2}" \
-			| tar -zxf - -C /dbdeployer
-		ln -s /dbdeployer/"$f" dbdeployer
+		# todo - respect version
+		curl -sf https://gobinaries.com/datacharmer/dbdeployer | PREFIX=. sh
 		./dbdeployer --version
 		;;
 	init)
