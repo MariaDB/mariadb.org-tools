@@ -28,8 +28,11 @@ case "${1}" in
                 ./dbdeployer unpack --prefix=ma "${file}"
                 rm "${file}"
 		;;
+	deploy)
+		./dbdeployer "$1" "$2" "${3/mariadb-/}"
+		;;
 	*)
-		./dbdeployer "$1" "${2/mariadb-/}"
+		./dbdeployer $@
 		;;
 esac
 
