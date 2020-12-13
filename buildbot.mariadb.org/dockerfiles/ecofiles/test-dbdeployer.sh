@@ -14,10 +14,10 @@ fi
 case "${1}" in
 	dbdeployerfetch)
 		f=dbdeployer-"${2}".linux
-		[ -f "/dbdeployer/$f" ] || \
+		[ -f "/tmp/$f" ] || \
 			curl -L -s -H 'Accept: application/octet-stream' https://api.github.com/repos/datacharmer/dbdeployer/releases/assets/"${2}" \
-			| tar -zxf - -C /dbdeployer
-		ln -s /dbdeployer/dbdeployer-${2}.linux dbeployer
+			| tar -zxf - -C /tmp
+		ln -s /tmp/dbdeployer-${2}.linux dbeployer
 		;;
 	init)
 		mkdir /tmp/opt
