@@ -17,7 +17,8 @@ case "${1}" in
 		[ -f "/tmp/$f" ] || \
 			curl -L -s -H 'Accept: application/octet-stream' https://api.github.com/repos/datacharmer/dbdeployer/releases/assets/"${2}" \
 			| tar -zxf - -C /tmp
-		ln -s /tmp/"$f" dbeployer
+		ln -s /tmp/"$f" dbdeployer
+		./dbdeployer --version
 		;;
 	init)
 		mkdir /tmp/opt
