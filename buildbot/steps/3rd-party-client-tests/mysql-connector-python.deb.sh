@@ -1,8 +1,18 @@
 #!/bin/bash -x
 
+### Tests seen sporadically fail in MySQL:
+# ERROR: bugs.BugOra21947091.test_ssl_disabled_pure
+# FAIL: connection.MySQLConnectionTests.test_shutdown
+# ERROR: bugs.Bug551533and586003.test_select (using MySQLConnection)
+# ERROR: bugs.Bug865859.test_reassign_connection (using MySQLConnection)
+
+### Tests seen sporadically fail in MariaDB:
+# FAIL: bugs.BugOra18415927.test_auth_response
+# ERROR: connection.MySQLConnectionTests.test_cmd_stmt_execute
+
 cd mysql-connector-python-*/
 
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python3 dh-python"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python3 dh-python debhelper dpkg-dev mysql-server"
 
 sed -ie "s/override_dh_auto_test/override_dh_auto_test_orig/g" debian/rules
 
@@ -24,4 +34,4 @@ sed -ie "s/'--is-wheel'//" tests/__init__.py
 
 make -f debian/rules build 2>&1 | tee build.log
 
-grep '^\(FAIL\|ERROR\):' build.log | tee /tmp/test.out
+grep '^\(FAIL\|ERROR\):' build.log | grep -vE "bugs.BugOra21947091.test_ssl_disabled_pure|connection.MySQLConnectionTests.test_shutdown|bugs.Bug551533and586003.test_select|bugs.Bug865859.test_reassign_connection|bugs.BugOra18415927.test_auth_response|connection.MySQLConnectionTests.test_cmd_stmt_execute" | tee /tmp/test.out
