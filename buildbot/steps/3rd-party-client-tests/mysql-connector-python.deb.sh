@@ -12,7 +12,7 @@
 
 cd mysql-connector-python-*/
 
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python3 dh-python debhelper dpkg-dev mysql-server"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python3 dh-python debhelper dpkg-dev"
 
 sed -ie "s/override_dh_auto_test/override_dh_auto_test_orig/g" debian/rules
 
