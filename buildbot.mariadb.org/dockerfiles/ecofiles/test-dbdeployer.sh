@@ -2,11 +2,18 @@
 
 set -xeuvo pipefail
 
-if [ $# -lt 2 ]
-then
-	echo "insufficent arguments - two arguments minimum expected"
-	exit 1
-fi
+numargs=$#
+
+fail_ifnot()
+{
+	if [ $numargs -lt $1 ]
+	then
+		echo "insufficent arguments - $1 argument minimum expected"
+		exit 1
+	fi
+}
+
+fail_ifnot 1
 
 case "${1}" in
 	dbdeployerfetch)
@@ -15,6 +22,7 @@ case "${1}" in
 		./dbdeployer --version
 		;;
 	init)
+		fail_ifnot 2
 		mkdir /tmp/opt
 		./dbdeployer init --skip-all-downloads --skip-shell-completion --sandbox-home=/tmp/sandboxes --sandbox-binary=/tmp/opt
 		file=/tmp/$(basename "${2}")
@@ -23,6 +31,7 @@ case "${1}" in
                 rm "${file}"
 		;;
 	deploy)
+		fail_ifnot 3
 		./dbdeployer "$1" "$2" "${3/mariadb-/}"
 		;;
 	*)
