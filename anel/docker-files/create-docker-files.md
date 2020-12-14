@@ -74,6 +74,7 @@ anel-nodejs-connector-image          ver1                50578b10ed0a        50 
 $ docker inspect 50578b10ed0a
 # or docker inspect anel-nodejs-connector-image:ver1 => json object with info
 ```
+
 6. Create and run the container
 ```
 $ docker run -it anel-nodejs-connector-image:ver1 bash
@@ -82,7 +83,10 @@ CONTAINER ID        IMAGE                              COMMAND                  
 e40656147920        anel-nodejs-connector-image:ver1   "docker-entrypoint.s…"   40 seconds ago      Up 39 seconds                           optimistic_wilson
 
 ```
-
+- Inspect all packages using `apt list`
+```
+docker run -it <image-name> apt list
+```
 7. Errors
 ```
 Get:1 http://deb.debian.org/debian buster/main amd64 build-essential amd64 12.6 [7576 B]
