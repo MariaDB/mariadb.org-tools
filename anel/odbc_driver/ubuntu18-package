@@ -1,0 +1,50 @@
+FROM ubuntu:18.04
+LABEL maintainer="Anel Husakovic anel@mariadb.org"
+
+ARG DEBIAN_FRONTEND=noninteractive
+# Installing packages needed for the test
+RUN apt-get update -y && \
+    apt-get install -y libreoffice-base \
+      unixodbc \
+      unixodbc-dev \
+      odbcinst \
+      wget \
+      vim \
+      cmake \
+      build-essential \
+      git \
+      lsb-release \
+      cmake \
+      libncurses5-dev gnutls-dev bison ninja-build
+
+RUN mkdir /odbc_driver
+WORKDIR /odbc_driver
+RUN wget https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.7/mariadb-connector-odbc-3.1.7-ga-debian-x86_64.tar.gz && \
+    tar -xzvf mariadb-connector-odbc-3.1.7-ga-debian-x86_64.tar.gz && \
+    wget https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/anel/odbc_driver/MariaDB_odbc_data_source_template.ini && \
+    wget https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/anel/odbc_driver/MariaDB_odbc_driver_template.ini && \
+    wget https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/anel/odbc_driver/MariaDB_odbc_data_source_template-root.ini
+
+RUN cp ./lib/libmaodbc.so /usr/lib/x86_64-linux-gnu
+RUN odbcinst -i -d -f MariaDB_odbc_driver_template.ini && \
+    odbcinst -i -s -h -f MariaDB_odbc_data_source_template.ini
+# run /etc/init.d/mysql start
+
+#RUN useradd -ms /bin/bash anel && \
+#    cd /home/anel && mkdir mariadb && \
+#    chown -R anel mariadb
+
+#WORKDIR /home/anel/mariadb
+RUN mkdir /mariadb
+RUN mkdir /tmp/datadir && chown -R anel /tmp/datadir
+WORKDIR /mariadb
+RUN git clone --branch 10.5 https://github.com/MariaDB/server/
+WORKDIR ./server
+RUN cmake . -DCMAKE_BUILD_TYPE=RelWithDebugInfo -DCONC_WITH_{UNITTEST,SSL}=OFF \
+            -DWITH_EMBEDDED_SERVER=OFF -DWITH_UNIT_TESTS=OFF \
+            -DPLUGIN_{ARCHIVE,TOKUDB,MROONGA,OQGRAPH,ROCKSDB,CONNECT,PERFSCHEMA,SPIDER,SPHINX}=NO \
+            -DWITH_SAFEMALLOC=OFF -DMYSQL_MAINTAINER_MODE=OFF -G Ninja && \
+            ninja
+RUN ./scripts/mysql_install_db --no-defaults --datadir=/tmp/datadir --lc_messages_dir=./sql/share/
+#run./sql/mysqld --no-defaults --datadir=/tmp/datadir --lc_messages_dir=./sql/share/ --user=root
+#run lobase
