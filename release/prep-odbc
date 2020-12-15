@@ -116,9 +116,9 @@ copy_and_stage_files() {
     cp -avi ${dir_build}/*/*i386.tar.gz ${dir_odbc}/
     cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_odbc}/
     # Windows files
-    cp -avi ${dir_build}/win*/*msi ${dir_odbc}/
+    cp -avi ${dir_build}/*/*msi ${dir_odbc}/
     # Mac file
-    if cp -avi ${dir_build}/osx*/*pkg ${dir_odbc}/;then
+    if cp -avi ${dir_build}/*/*pkg ${dir_odbc}/;then
       echo "+ copied MacOS files"
     else
       echo "+ no MacOS files"
