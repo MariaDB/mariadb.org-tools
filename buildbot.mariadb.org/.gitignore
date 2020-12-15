@@ -3,3 +3,4 @@ master-private.cfg
 workers
 master-protected-branches
 *.pid
+prof*
