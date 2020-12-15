@@ -925,6 +925,47 @@ rsync_wrapper() {
   done
 }
 
+update_galera_version_in_conf_file() {
+  message "Updating Galera version in prep.conf..."
+  runCommand cp -avi ${dir_conf}/prep.conf ${dir_conf}/prep.conf.bak
+  case ${tree} in
+    mariadb-3.x)
+      runCommand sed -i "s/ver_galera=\"${ver_galera}\"/ver_galera=\"${num}\"/" ${dir_conf}/prep.conf
+      runCommand sed -i "s/ver_galera_preferred=\"${ver_galera}\"/ver_galera_preferred=\"${num}\"/" ${dir_conf}/prep.conf
+      ;;
+    mariadb-4.x)
+      runCommand sed -i "s/ver_galera4=\"${ver_galera4}\"/ver_galera4=\"${num}\"/" ${dir_conf}/prep.conf
+      runCommand sed -i "s/ver_galera4_preferred=\"${ver_galera4}\"/ver_galera4_preferred=\"${num}\"/" ${dir_conf}/prep.conf
+      ;;
+  esac
+  runCommand diff -u ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
+  local cont
+  cont=""
+  while [ -z ${cont} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        lowkey_message "Cleaning up and continuing..."
+        runCommand rm -v ${dir_conf}/prep.conf.bak
+        cont="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        lowkey_message "Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        lowkey_message "Please answer [y]es or [n]o."
+        echo
+        cont=""
+        ;;
+    esac
+  done
+
+}
+
 #===  FUNCTION  ================================================================
 #          NAME:  upload_this_release_to_the_buildmaster
 #   DESCRIPTION:  Transfer files from the local host to the buildmaster
@@ -1103,6 +1144,7 @@ shouldI prepare_the_deb_repository
 shouldI prepare_the_yum_repository
 shouldI upload_the_test_repos
 shouldI upload_this_release_to_the_buildmaster
+shouldI update_galera_version_in_conf_file
 
 if [ ${log} = "yes" ]; then
   logSettings
