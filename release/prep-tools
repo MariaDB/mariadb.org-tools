@@ -32,7 +32,7 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="jessie stretch buster xenial bionic focal"
+dists_apt="bionic buster focal stretch xenial"
 dists_rhel="6 7 8"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
@@ -206,6 +206,15 @@ upload_to_the_corp_mirror() {
   rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_tools}/ ${corp_mirror}:${corp_tools_path}/"
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  upload_this_release_to_the_buildmaster
+#   DESCRIPTION:  Transfer files from the local host to the buildmaster
+#===============================================================================
+upload_this_release_to_the_buildmaster() {
+  rsync_wrapper "-av --delete-after --exclude=exclude ${dir_tools}/ ${buildmaster}:${dir_tools}/"
+}
+
+
 
 update_xtrabackup_23() {
   userInput "Which version of XtraBackup 2.3 should I fetch and add? (e.g. 2.3.10)"
@@ -333,6 +342,10 @@ shouldI update_socat
 div
 
 shouldI upload_to_the_corp_mirror
+
+div
+
+shouldI upload_this_release_to_the_buildmaster
 
 pushd ${HOME}
   echo
