@@ -9,6 +9,8 @@
 ### Tests seen sporadically fail in MariaDB:
 # FAIL: bugs.BugOra18415927.test_auth_response
 # ERROR: connection.MySQLConnectionTests.test_cmd_stmt_execute
+# ERROR: tests.issues.test_bug21449207.Bug21449207.test_16M_compressed (using MySQLConnection)
+# FAIL: cursor.MySQLCursorPreparedTests.test_execute
 
 cd mysql-connector-python-*/
 
@@ -33,4 +35,4 @@ sed -ie "s/'--is-wheel'//" tests/__init__.py
 
 make -f debian/rules build 2>&1 | tee build.log
 
-grep '^\(FAIL\|ERROR\):' build.log | grep -vE "bugs.BugOra21947091.test_ssl_disabled_pure|connection.MySQLConnectionTests.test_shutdown|bugs.Bug551533and586003.test_select|bugs.Bug865859.test_reassign_connection|bugs.BugOra18415927.test_auth_response|connection.MySQLConnectionTests.test_cmd_stmt_execute" | tee /tmp/test.out
+grep '^\(FAIL\|ERROR\):' build.log | grep -vE "bugs.BugOra21947091.test_ssl_disabled_pure|connection.MySQLConnectionTests.test_shutdown|bugs.Bug551533and586003.test_select|bugs.Bug865859.test_reassign_connection|bugs.BugOra18415927.test_auth_response|connection.MySQLConnectionTests.test_cmd_stmt_execute|tests.issues.test_bug21449207.Bug21449207.test_16M_compressed|cursor.MySQLCursorPreparedTests.test_execute" | tee /tmp/test.out
