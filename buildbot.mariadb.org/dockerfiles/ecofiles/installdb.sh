@@ -28,5 +28,5 @@ done
 [ -S /tmp/mysql.sock ] || exit 1
 
 /usr/local/mariadb/bin/mysql -e 'create user if not exists root@localhost; set password for root@localhost = password("") ; grant all on *.* TO root@localhost with grant option; show create user root@localhost; show grants for root@localhost' \
-	|| /usr/local/mariadb/bin/mysql -u root -e 'show create user root@locahost; show grants for root@localhost'
+	|| /usr/local/mariadb/bin/mysql -u root -e 'show create user root@localhost; show grants for root@localhost'
 # second option above is for MariaDB-10.2, 10.3 where root is the default user.
