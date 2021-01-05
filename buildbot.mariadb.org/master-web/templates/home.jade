@@ -45,6 +45,48 @@
             | If you have any more questions please contact us on 
             a(href="https://mariadb.zulipchat.com/") Zulip
             | .
+          li
+            | We are currently running 100 different configurations for the following platforms:
+            ul
+              li
+                | x64 and x86
+              li
+                | aarch64
+              li
+                | ppc64le
+            | and operating systems:
+            ul
+              li
+                | Debian 9, 10 and Sid
+              li
+                | Ubuntu 14.04, 16.04, 18.04 and 20.04
+              li
+                | Fedora 31, 32 and 33
+              li
+                | CentOS 7 and 8
+              li
+                | RHEL 7 and 8
+              li
+                | SLES 12 and 15
+              li
+                | OpenSUSE 15 and 42
+              li
+                | Windows
+            li
+              | Moreover, we run other ecosystem tests for:
+              ul
+                li
+                  | PHP
+                li
+                  | DBdeployer
+                li
+                  | MySqlJS
+                li
+                  | PyMySQL
+            li
+              | Packages built by buildbot can be downloaded from 
+              a(href="https://ci.mariadb.org") here
+              | .
         h4 {{ buildsRunning.length }} Build{{ buildsRunning.length > 1 ? 's' : '' }} running currently
         ul
           li.unstyled(ng-repeat="build in buildsRunning | filter:complete:false")
@@ -59,3 +101,16 @@
                     .panel-body
                         span(ng-repeat="build in builder.builds | orderBy:'-number'")
                             buildsticker(build="build", builder="builder")
+        h4 Sponsors
+        .row
+          .col-md-4
+            img(class="center-block", src="https://buildbot.mariadb.org/wsgi_dashboards/sponsor/static/hetzner.png", width="90%")
+          .col-md-4
+            img(class="center-block", src="https://buildbot.mariadb.org/wsgi_dashboards/sponsor/static/IBM-Logo.svg", width="60%")
+          .col-md-4
+            img(class="center-block", src="https://buildbot.mariadb.org/wsgi_dashboards/sponsor/static/Huawei-Logo.png", width="50%")
+        .row
+          .col-md-6
+            img(class="center-block", src="https://buildbot.mariadb.org/wsgi_dashboards/sponsor/static/bytemark.png", width="50%")
+          .col-md-6
+            img(class="center-block", src="https://buildbot.mariadb.org/wsgi_dashboards/sponsor/static/tarsnap.png", width="50%")
