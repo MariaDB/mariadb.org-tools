@@ -43,7 +43,7 @@ export USER=buildbot
 cat > pymysql/tests/databases.json <<EOF
 [
     {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "passwd": "", "database": "test1",  "use_unicode": true, "local_infile": true},
-    {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "db": "test2" }
+    {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "database": "test2" }
 ]
 EOF
 
