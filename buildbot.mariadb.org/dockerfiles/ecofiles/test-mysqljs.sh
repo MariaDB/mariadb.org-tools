@@ -17,7 +17,7 @@ then
   # this is right for tags, not for branches yet
   git checkout $1
 fi
-git checkout --
+git checkout -- .
 
 
 # Unit tests
