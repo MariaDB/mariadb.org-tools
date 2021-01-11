@@ -24,7 +24,8 @@ sed -i -e '/flush_tables/d' test/integration/connection/test-statistics.js
 # fix for ERR_SSL_EE_KEY_TOO_SMALL (1024 bit test/fixtures/server.key)
 rm -f test/unit/connection/test-connection-ssl-reject.js \
 	 test/unit/connection/test-connection-ssl-ignore.js \
-	 test/unit/connection/test-connection-ssl-ciphers.js
+	 test/unit/connection/test-connection-ssl-ciphers.js \
+	 test/unit/connection/test-connection-ssl.js
 
 npm install
 # Run the unit tests (probably should be controlled with worker variable)
