@@ -31,8 +31,7 @@ rm -f test/unit/connection/test-connection-ssl-reject.js \
 	 test/unit/connection/test-connection-ssl-ciphers.js \
 	 test/unit/connection/test-connection-ssl.js
 
-# Replace last occurance on error test only
-sed -i -e '20,+5 s/PROTOCOL_CONNECTION_LOST/ECONNRESET/' test/integration/connection/test-server-timeout-disconnect.js
+sed -i -e 's/PROTOCOL_CONNECTION_LOST/ECONNRESET/g' test/integration/connection/test-server-timeout-disconnect.js
 
 sed -i -e 's/ER_ACCESS_DENIED_ERROR/ER_ACCESS_DENIED_NO_PASSWORD_ERROR/' test/integration/connection/test-bad-credentials.js
 
