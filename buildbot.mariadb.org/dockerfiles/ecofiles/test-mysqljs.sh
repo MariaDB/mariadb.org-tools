@@ -21,6 +21,10 @@ fi
 # awaiting fix https://github.com/mysqljs/mysql/pull/2442
 sed -i -e '/flush_tables/d' test/integration/connection/test-statistics.js
 
+# From https://github.com/mysqljs/mysql/pull/2442/files#diff-5979044946698d18a2cdc979898085cdddf5f9911974e8e7a4476efd25c07d82R35
+# ER_LOAD_INFILE_CAPABILITY_DISABLED
+sed -i -e "s/err.code, 'ER_NOT_ALLOWED_COMMAND'/err.errno, 4166/" test/integration/connection/test-load-data-infile-disable.js
+
 # fix for ERR_SSL_EE_KEY_TOO_SMALL (1024 bit test/fixtures/server.key)
 rm -f test/unit/connection/test-connection-ssl-reject.js \
 	 test/unit/connection/test-connection-ssl-ignore.js \
@@ -28,9 +32,11 @@ rm -f test/unit/connection/test-connection-ssl-reject.js \
 	 test/unit/connection/test-connection-ssl.js
 
 # Replace last occurance on error test only
-sed -i -e '$ s/PROTOCOL_CONNECTION_LOST/ECONNRESET/' test/integration/connection/test-server-timeout-disconnect.js
+sed -i -e '20,+5 s/PROTOCOL_CONNECTION_LOST/ECONNRESET/' test/integration/connection/test-server-timeout-disconnect.js
 
-sed -i -e 's/ER_ACCESS_DENIED_NO_PASSWORD_ERROR/ER_ACCESS_DENIED_ERROR/' test/integration/connection/test-bad-credentials.js
+sed -i -e 's/ER_ACCESS_DENIED_ERROR/ER_ACCESS_DENIED_NO_PASSWORD_ERROR/' test/integration/connection/test-bad-credentials.js
+
+
 
 npm install
 # Run the unit tests (probably should be controlled with worker variable)
