@@ -43,6 +43,7 @@ VERSION=$(/usr/local/mariadb/bin/mysql -u root --column-names=0 -B -e "SELECT VE
 case "${VERSION}" in
 10\.5\.*)
 # awaiting fix https://github.com/mysqljs/mysql/pull/2442
+	sed -i -e '/flush_tables/d' test/integration/connection/test-statistics.js
 # From https://github.com/mysqljs/mysql/pull/2442/files#diff-5979044946698d18a2cdc979898085cdddf5f9911974e8e7a4476efd25c07d82R35
 # ER_LOAD_INFILE_CAPABILITY_DISABLED
 	sed -i -e "s/err.code, 'ER_NOT_ALLOWED_COMMAND'/err.errno, 4166/" test/integration/connection/test-load-data-infile-disable.js
