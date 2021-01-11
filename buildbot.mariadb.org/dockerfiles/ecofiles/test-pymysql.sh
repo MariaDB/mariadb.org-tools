@@ -40,12 +40,24 @@ EOF
 
 export USER=buildbot
 # Both passwd and password are aliased to the same, so this isn't an error in the below configuration.
+# passwd and db where deprecated in PyMySQL f5cbb6dea0a77c5e3055a299ed9a5b458c29cb12 (v1.0.1)
+if [ $# -gt 0 ]
+then
+	# assume versioned tests are the old one(s)
 cat > pymysql/tests/databases.json <<EOF
 [
-    {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "passwd": "", "database": "test1", "db": "test1", "use_unicode": true, "local_infile": true},
-    {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "database": "test2", "db": "test2" }
+    {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "passwd": "", "db": "test1", "use_unicode": true, "local_infile": true},
+    {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "db": "test2" }
 ]
 EOF
+else
+cat > pymysql/tests/databases.json <<EOF
+[
+    {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "password": "", "database": "test1", "use_unicode": true, "local_infile": true},
+    {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "database": "test2" }
+]
+EOF
+fi
 
 # Socket auth failing due to user existing?
 pytest -v -k 'not testSocketAuth' pymysql
