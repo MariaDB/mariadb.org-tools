@@ -5,6 +5,7 @@ set -xeuvo pipefail
 cd /code
 [ -d mysql ] || git clone https://github.com/mysqljs/mysql
 cd mysql
+git checkout --
 git clean -dfx
 git pull --tags
 if [ $# -gt 0 ]
@@ -17,6 +18,24 @@ then
   # this is right for tags, not for branches yet
   git checkout $1
 fi
+
+
+# Unit tests
+
+# fix for ERR_SSL_EE_KEY_TOO_SMALL (1024 bit test/fixtures/server.key)
+rm -f test/unit/connection/test-connection-ssl-reject.js \
+	 test/unit/connection/test-connection-ssl-ignore.js \
+	 test/unit/connection/test-connection-ssl-ciphers.js \
+	 test/unit/connection/test-connection-ssl.js
+
+npm install
+# Run the unit tests (probably should be controlled with worker variable)
+# If unit==1 run unit test else run integration test
+cd ./test
+FILTER=unit npm test
+
+
+# Integration tests
 
 VERSION=$(/usr/local/mariadb/bin/mysql -u root --column-names=0 -B -e "SELECT VERSION()")
 
@@ -36,18 +55,6 @@ case "${VERSION}" in
 10\.2\.*)
 	# no changes
 esac
-
-# fix for ERR_SSL_EE_KEY_TOO_SMALL (1024 bit test/fixtures/server.key)
-rm -f test/unit/connection/test-connection-ssl-reject.js \
-	 test/unit/connection/test-connection-ssl-ignore.js \
-	 test/unit/connection/test-connection-ssl-ciphers.js \
-	 test/unit/connection/test-connection-ssl.js
-
-npm install
-# Run the unit tests (probably should be controlled with worker variable)
-# If unit==1 run unit test else run integration test
-cd ./test
-FILTER=unit npm test
 
 # Run integration test - we are more interested in this!
 /usr/local/mariadb/bin/mysql -u root -e "CREATE DATABASE IF NOT EXISTS node_mysql_test"
