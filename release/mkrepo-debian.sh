@@ -44,6 +44,13 @@ TREE="$3"                         # source tree
 REPONAME="$4"                     # name of the dir, usually 'debian'
 ARCHDIR="$5"                      # path to the packages
 
+# if the ${ARCHDIR} var has a 'ci' directory in it then we are using a ci
+# build, otherwise we are using bb
+case ${ARCHDIR} in
+  */ci/*) build_type=ci ;;
+  *) build_type=bb ;;
+esac
+
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
@@ -225,6 +232,18 @@ fi
 # Remove packages from deprecated distros (if they are present)
 #reprepro --basedir=. --delete clearvanished
 
+declare -A builder_dir_ci_amd64=([stretch]=debian-9-deb-autobake [buster]=debian-10-deb-autobake)
+declare -A builder_dir_bb_amd64=([stretch]=kvm-deb-stretch-amd64 [buster]=kvm-deb-buster-amd64)
+
+declare -A builder_dir_ci_aarch64=([stretch]=aarch64-debian-9-deb-autobake [buster]=aarch64-debian-10-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
+declare -A builder_dir_bb_aarch64=([stretch]=kvm-deb-stretch-aarch64 [buster]=kvm-deb-buster-aarch64 [sid]=kvm-deb-sid-aarch64)
+
+declare -A builder_dir_ci_ppc64le=([stretch]=pc9-debian-9-deb-autobake [buster]=pc9-debian-10-deb-autobake [sid]=pc9-debian-sid-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([stretch]=kvm-deb-stretch-ppc64le [buster]=kvm-deb-buster-ppc64le [sid]=kvm-deb-sid-ppc64le)
+
+declare -A builder_dir_ci_x86=([stretch]=32bit-debian-9-deb-autobake [buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
+declare -A builder_dir_bb_x86=([stretch]=kvm-deb-stretch-x86 [buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
+
 case ${TREE} in 
   '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
     #debian_dists='"squeeze debian6" "wheezy wheezy"'
@@ -253,7 +272,7 @@ case ${TREE} in
     ;;
   '10.5'|'bb-10.5-release')
     #debian_dists="stretch buster sid"
-    debian_dists="stretch buster sid"
+    debian_dists="stretch buster"
     ;;
   *)
     debian_dists="jessie stretch buster"
@@ -274,35 +293,40 @@ for dist in ${debian_dists}; do
     builder="${dist}"
   fi
 
+
   # add amd64 files
+  builder_dir="builder_dir_${build_type}_amd64[${builder}]"
   case ${builder} in 
     'jessie')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     'stretch'|'buster'|'sid')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${builder}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} $i ; done
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} $i ; done
       ;;
   esac
 
   # add ppc64el files
+  builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
     'stretch'|'buster')
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
 
   # add aarch64 files
+  builder_dir="builder_dir_${build_type}_aarch64[${builder}]"
   case ${builder} in
     'stretch'|'buster')
-      for i in $(find "$ARCHDIR/kvm-deb-${builder}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
 
   # add x86 files
+  builder_dir="builder_dir_${build_type}_x86[${builder}]"
   if [ "${ENTERPRISE}" != "yes" ]; then
     case ${builder} in
       #'sid')
@@ -313,7 +337,7 @@ for dist in ${debian_dists}; do
         echo "+ no x86 packages for ${builder}"
         ;;
       * )
-        for i in $(find "$ARCHDIR/kvm-deb-${builder}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+        for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
         ;;
     esac
   fi

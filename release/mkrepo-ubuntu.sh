@@ -44,6 +44,14 @@ REPONAME="$3"                     # name of the dir, usually 'ubuntu'
 ARCHDIR="$4"                      # path to the packages
 P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 
+# if the ${ARCHDIR} var has a 'ci' directory in it then we are using a ci
+# build, otherwise we are using bb
+case ${ARCHDIR} in
+  */ci/*) build_type=ci ;;
+  *) build_type=bb ;;
+esac
+
+
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
@@ -53,6 +61,17 @@ P8_ARCHDIR="$5"                   # path to p8 packages (optional)
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
+declare -A builder_dir_ci_amd64=([xenial]=ubuntu-1604-deb-autobake [bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_amd64=([xenial]=kvm-deb-xenial-amd64 [bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64)
+
+declare -A builder_dir_ci_aarch64=([xenial]=aarch64-ubuntu-1604-deb-autobake [bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_aarch64=([xenial]=kvm-deb-xenial-aarch64 [bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64)
+
+declare -A builder_dir_ci_ppc64le=([xenial]=pc9-ubuntu-1604-deb-autobake [bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([xenial]=kvm-deb-xenial-ppc64le [bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le)
+
+declare -A builder_dir_ci_x86=([xenial]=32bit-ubuntu-1604-deb-autobake [bionic]=32bit-ubuntu-1804-deb-autobake [focal]=32bit-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_x86=([xenial]=kvm-deb-xenial-x86 [bionic]=kvm-deb-bionic-x86 [focal]=kvm-deb-focal-x86)
 
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
@@ -75,7 +94,8 @@ case ${ARCHDIR} in
     ubuntu_dists="xenial bionic focal groovy"
     ;;
   *"10.5"*)
-    ubuntu_dists="xenial bionic focal groovy"
+    #ubuntu_dists="xenial bionic focal groovy"
+    ubuntu_dists="xenial bionic focal"
     ;;
   *)
     line
@@ -178,43 +198,47 @@ for dist in ${ubuntu_dists}; do
   line
 
   # First we import the amd64 files
+  builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
     'xenial'|'bionic'|'disco'|'focal'|'groovy')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/kvm-deb-${dist}-amd64/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-amd64/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
       ;;
   esac
 
   # Include i386 debs
+  builder_dir="builder_dir_${build_type}_x86[${dist}]"
   case ${dist} in
     'xenial')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-x86/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
 
   # Include ppc64le debs
+  builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
     'xenial')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
     'bionic'|'focal'|'groovy')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-ppc64le/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
   esac
 
 
   # Include aarch64 debs
+  builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
     'xenial')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
     'bionic'|'focal'|'groovy')
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/kvm-deb-${dist}-aarch64/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
+      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
   esac
 

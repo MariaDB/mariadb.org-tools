@@ -43,6 +43,13 @@ ENTERPRISE="$2"                   # is this an enterprise release? 'yes' or 'no'
 ARCHDIR="$3"                      # path to x86 & x86_64 packages
 P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 
+# if the ${ARCHDIR} var has a 'ci' directory in it then we are using a ci
+# build, otherwise we are using bb
+case ${ARCHDIR} in
+  */ci/*) build_type=ci ;;
+  *) build_type=bb ;;
+esac
+
 #-------------------------------------------------------------------------------
 #  Variables which are not set dynamically (because they don't change often)
 #-------------------------------------------------------------------------------
@@ -51,6 +58,58 @@ P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
 # create them if they don't exist
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+declare -A builder_dir_ci_amd64=(
+  [centos7]=centos-7-rpm-autobake [centos8]=centos-8-rpm-autobake
+  [rhel7]=rhel-7-rpm-autobake [rhel8]=rhel-8-rpm-autobake
+  [fedora31]=fedora-31-rpm-autobake [fedora32]=fedora-32-rpm-autobake [fedora33]=fedora-33-rpm-autobake
+  [sles12]=sles-12-rpm-autobake [sles15]=sles-15-rpm-autobake
+  [opensuse15]=opensuse-15-rpm-autobake [opensuse42]=opensuse-42-rpm-autobake
+)
+
+declare -A builder_dir_bb_amd64=(
+  [centos7]=kvm-rpm-centos74-amd64 [centos8]=kvm-rpm-centos8-amd64
+  [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
+  [fedora31]=kvm-rpm-fedora31-amd64 [fedora32]=kvm-rpm-fedora32-amd64 [fedora33]=kvm-rpm-fedora33-amd64
+  [sles12]=kvm-zyp-sles123-amd64 [sles15]=kvm-zyp-sles150-amd64
+  [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
+)
+
+# - - - - - - - - -
+
+declare -A builder_dir_ci_aarch64=(
+  [centos7]=aarch64-centos-7-rpm-autobake [centos8]=aarch64-centos-8-rpm-autobake
+  [rhel7]=aarch64-rhel-7-rpm-autobake [rhel8]=aarch64-rhel-8-rpm-autobake
+  [fedora31]=aarch64-fedora-31-rpm-autobake [fedora32]=aarch64-fedora-32-rpm-autobake [fedora33]=aarch64-fedora-33-rpm-autobake
+  [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
+  [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
+)
+
+declare -A builder_dir_bb_aarch64=(
+  [centos7]=kvm-rpm-centos74-aarch64 [centos8]=kvm-rpm-centos8-aarch64
+  [rhel7]=kvm-rpm-rhel7-aarch64 [rhel8]=kvm-rpm-rhel8-aarch64
+  [fedora31]=kvm-rpm-fedora31-aarch64 [fedora32]=kvm-rpm-fedora32-aarch64 [fedora33]=kvm-rpm-fedora33-aarch64
+  [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles150-aarch64
+  [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
+)
+
+# - - - - - - - - -
+
+declare -A builder_dir_ci_ppc64le=(
+  [centos7]=pc9-centos-7-rpm-autobake [centos8]=pc9-centos-8-rpm-autobake
+  [rhel7]=pc9-rhel-7-rpm-autobake [rhel8]=pc9-rhel-8-rpm-autobake
+  [fedora31]=pc9-fedora-31-rpm-autobake [fedora32]=pc9-fedora-32-rpm-autobake [fedora33]=fedora-33-rpm-autobake
+  [sles12]=pc9-sles-12-rpm-autobake [sles15]=pc9-sles-15-rpm-autobake
+  [opensuse15]=pc9-opensuse-15-rpm-autobake [opensuse42]=pc9-opensuse-42-rpm-autobake
+)
+
+declare -A builder_dir_bb_ppc64le=(
+  [centos7]=kvm-rpm-centos73-ppc64le [centos8]=kvm-rpm-centos8-ppc64le
+  [rhel7]=kvm-rpm-rhel7-ppc64le [rhel8]=kvm-rpm-rhel8-ppc64le
+  [fedora31]=kvm-rpm-fedora31-ppc64le [fedora32]=kvm-rpm-fedora32-ppc64le [fedora33]=kvm-rpm-fedora33-ppc64le
+  [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles150-ppc64le
+  [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
+)
 
 
 if [[ "${ARCHDIR}" == *"5.5"* ]]; then
@@ -103,6 +162,24 @@ elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
   "
 elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
   dists="
+    centos7-amd64
+
+    rhel7-aarch64
+    rhel8-aarch64
+    rhel8-amd64
+
+    fedora31-amd64
+    fedora32-amd64
+    fedora32-aarch64
+    fedora33-amd64
+
+    opensuse15-amd64
+    opensuse42-amd64
+
+    sles12-amd64
+    sles15-amd64
+  "
+  old_dists="
     centos73-ppc64
     centos73-ppc64le
 
@@ -254,6 +331,12 @@ copy_files() {
 
 }
 
+set_builder_dir() {
+  local builder_dist=${1}
+  local builder_arch=${2}
+
+  builder_dir="builder_dir_${build_type}_${builder_arch}[${builder_dist}]"
+}
 
 
 #-------------------------------------------------------------------------------
@@ -289,16 +372,19 @@ case ${ARCHDIR} in
     ;;
 esac
 
+
+
 # Copy over the packages
 for REPONAME in ${dists}; do
   case "${REPONAME}" in
     'centos6-x86')
+      set_builder_dir centos6 x86
       runCommand mkdir -vp rhel/6/i386
       maybe_make_symlink rhel/6/i386 rhel6-x86
       maybe_make_symlink rhel6-x86 centos6-x86
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in Galera files
       for gv in ${ver_galera_real}; do
@@ -311,6 +397,7 @@ for REPONAME in ${dists}; do
 
       ;;
     'centos6-amd64')
+      set_builder_dir centos6 amd64
       runCommand mkdir -vp rhel/6/x86_64
       pushd rhel/
         for i in $(seq 0 9); do
@@ -323,7 +410,7 @@ for REPONAME in ${dists}; do
       maybe_make_symlink rhel6-amd64 centos6-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -334,7 +421,8 @@ for REPONAME in ${dists}; do
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
-    'centos74-amd64')
+    'centos74-amd64'|'centos7-amd64')
+      set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
       pushd rhel/
         for i in $(seq 0 7); do
@@ -351,18 +439,19 @@ for REPONAME in ${dists}; do
       maybe_make_symlink centos7-amd64 centos73-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/centos74-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
 
       # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_jemalloc}/jemalloc-centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-amd64')
+      set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
       pushd rhel/
         for i in $(seq 0 5); do
@@ -379,7 +468,7 @@ for REPONAME in ${dists}; do
       maybe_make_symlink centos7-amd64 centos73-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -391,6 +480,7 @@ for REPONAME in ${dists}; do
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64')
+      set_builder_dir centos7 ppc64
       runCommand mkdir -vp rhel/7/ppc64
       maybe_make_symlink rhel/7/ppc64 rhel7-ppc64
       maybe_make_symlink rhel7-ppc64 rhel73-ppc64
@@ -398,7 +488,7 @@ for REPONAME in ${dists}; do
       maybe_make_symlink centos7-ppc64 centos73-ppc64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -410,6 +500,7 @@ for REPONAME in ${dists}; do
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64le')
+      set_builder_dir centos7 ppc64le
       runCommand mkdir -vp rhel/7/ppc64le
       maybe_make_symlink rhel/7/ppc64le rhel7-ppc64le
       maybe_make_symlink rhel7-ppc64le rhel73-ppc64le
@@ -417,7 +508,7 @@ for REPONAME in ${dists}; do
       maybe_make_symlink centos7-ppc64le centos73-ppc64le
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -427,7 +518,8 @@ for REPONAME in ${dists}; do
       # Copy in other files
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
-    'centos74-aarch64')
+    'centos74-aarch64'|'centos7-aarch64'|'rhel7-aarch64')
+      set_builder_dir rhel7 aarch64
       runCommand mkdir -vp rhel/7/aarch64
       maybe_make_symlink rhel/7/aarch64 rhel7-aarch64
       maybe_make_symlink rhel7-aarch64 rhel74-aarch64
@@ -435,24 +527,42 @@ for REPONAME in ${dists}; do
       maybe_make_symlink centos7-aarch64 centos74-aarch64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/centos74-aarch64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      copy_files "${dir_libzstd}/centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+      ;;
+    'rhel8-aarch64')
+      set_builder_dir rhel8 aarch64
+      runCommand mkdir -vp rhel/8/aarch64
+      maybe_make_symlink rhel/8/aarch64 rhel8-aarch64
+      maybe_make_symlink rhel8-aarch64 rhel8-aarch64
+      maybe_make_symlink rhel8-aarch64 centos8-aarch64
+      maybe_make_symlink centos8-aarch64 centos8-aarch64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'rhel8-amd64')
+      set_builder_dir rhel8 amd64
       runCommand mkdir -vp rhel/8/x86_64
       maybe_make_symlink rhel/8/x86_64 rhel8-amd64
       maybe_make_symlink rhel8-amd64 centos8-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -461,13 +571,14 @@ for REPONAME in ${dists}; do
 
       ;;
     'rhel8-ppc64le')
+      set_builder_dir rhel8 ppc64le
       runCommand mkdir -vp rhel/8/ppc64le/rpms
       runCommand mkdir -vp rhel/8/ppc64le/srpms
       maybe_make_symlink rhel/8/ppc64le rhel8-ppc64le
       maybe_make_symlink rhel8-ppc64le centos8-ppc64le
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -477,27 +588,54 @@ for REPONAME in ${dists}; do
       ;;
     fedora*)
       case ${REPONAME} in
-        fedora31-amd64) fedora_ver=31 ;;
-        fedora32-amd64) fedora_ver=32 ;;
-        fedora33-amd64) fedora_ver=33 ;;
+        fedora31-amd64) fedora_ver=31 ; fedora_arch=amd64 ;;
+        fedora32-amd64) fedora_ver=32 ; fedora_arch=amd64 ;;
+        fedora33-amd64) fedora_ver=33 ; fedora_arch=amd64 ;;
+
+        fedora31-aarch64) fedora_ver=31 ; fedora_arch=aarch64 ;;
+        fedora32-aarch64) fedora_ver=32 ; fedora_arch=aarch64 ;;
+        fedora33-aarch64) fedora_ver=33 ; fedora_arch=aarch64 ;;
+
+        fedora31-ppc64le) fedora_ver=31 ; fedora_arch=ppc64le ;;
+        fedora32-ppc64le) fedora_ver=32 ; fedora_arch=ppc64le ;;
+        fedora33-ppc64le) fedora_ver=33 ; fedora_arch=ppc64le ;;
       esac
-      runCommand mkdir -vp fedora/${fedora_ver}/x86_64
-      maybe_make_symlink fedora/${fedora_ver}/x86_64 ${REPONAME}
+      case ${fedora_arch} in
+        amd64) fedora_arch_real=x86_64 ;;
+        *) fedora_arch_real=${fedora_arch} ;;
+      esac
+      set_builder_dir fedora${fedora_ver} ${fedora_arch}
+      runCommand mkdir -vp fedora/${fedora_ver}/${fedora_arch_real}
+      maybe_make_symlink fedora/${fedora_ver}/${fedora_arch_real} ${REPONAME}
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-rpm-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
-    'opensuse150-amd64')
+    'opensuse150-amd64'|'opensuse15-amd64')
+      set_builder_dir opensuse15 amd64
       runCommand mkdir -vp opensuse/15.0/x86_64
       maybe_make_symlink opensuse/15.0/x86_64 opensuse150-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse150-amd64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'opensuse42-amd64')
+      set_builder_dir opensuse42 amd64
+      runCommand mkdir -vp opensuse/42/x86_64
+      maybe_make_symlink opensuse/42/x86_64 opensuse42-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -505,13 +643,14 @@ for REPONAME in ${dists}; do
       done
       ;;
     'sles114-x86')
+      set_builder_dir sles11 x86
       runCommand mkdir -vp sles/11/i386
       maybe_make_symlink sles/11/i386 sles11-x86
       maybe_make_symlink sles11-x86 sles114-x86
 
       # Copy in MariaDB files
-      echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
-              rsync -av --keep-dirlinks ${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/
+      echo "+ rsync -av --keep-dirlinks ${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+              rsync -av --keep-dirlinks ${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -519,12 +658,13 @@ for REPONAME in ${dists}; do
       done
       ;;
     'sles114-amd64')
+      set_builder_dir sles11 amd64
       runCommand mkdir -vp sles/11/x86_64
       maybe_make_symlink sles/11/x86_64 sles11-amd64
       maybe_make_symlink sles11-amd64 sles114-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-zyp-${REPONAME}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -532,11 +672,12 @@ for REPONAME in ${dists}; do
       done
       ;;
     'sles12-amd64')
+      set_builder_dir sles12 amd64
       runCommand mkdir -vp sles/12/x86_64
       maybe_make_symlink sles/12/x86_64 sles12-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-zyp-sles123-amd64/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -547,6 +688,7 @@ for REPONAME in ${dists}; do
       copy_files "${dir_nmap}/x86_64/${ver_nmap}-${suffix}/rpms/*.rpm ./${REPONAME}/rpms/"
       ;;
     'sles12-ppc64le')
+      set_builder_dir sles12 ppc64le
       runCommand mkdir -vp sles/12/ppc64le
       maybe_make_symlink sles/12/ppc64le sles12-ppc64le
 
@@ -558,16 +700,17 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
-    'sles150-amd64')
+    'sles150-amd64'|'sles15-amd64')
+      set_builder_dir sles15 amd64
       runCommand mkdir -vp sles/15.0/x86_64
       maybe_make_symlink sles/15.0/x86_64 sles150-amd64
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/kvm-zyp-sles150-amd64/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles150-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     *)

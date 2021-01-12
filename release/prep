@@ -83,6 +83,49 @@ set_build_dirs_variables() {
         kvm-tarbake-jaunty-x86:source
         mac-1012-pkg:macOS
         "
+      ci_build_dirs_x86="
+        32bit-debian-9:bintar-debian-9-x86
+        32bit-debian-sid:bintar-debian-sid-x86
+        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
+        "
+      ci_build_dirs_x86_64="
+        centos-7:bintar-centos-7-amd64
+        centos-8:bintar-centos-8-amd64
+        debian-10:bintar-debian-10-amd64
+        debian-9:bintar-debian-9-amd64
+        debian-sid:bintar-debian-sid-amd64
+        fedora-32:bintar-fedora-32-amd64
+        fedora-33:bintar-fedora-33-amd64
+        opensuse-15:bintar-opensuse-15-amd64
+        opensuse-42:bintar-opensuse-42-amd64
+        rhel-8:bintar-rhel-8-amd64
+        sles-12:bintar-sles-12-amd64
+        sles-15:bintar-sles-15-amd64
+        ubuntu-1604:bintar-ubuntu-1604-amd64
+        ubuntu-1804:bintar-ubuntu-1804-amd64
+        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
+        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
+        ubuntu-2004:bintar-ubuntu-2004-amd64
+        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
+        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
+        "
+      ci_build_dirs_aarch64="
+        aarch64-centos-7:bintar-centos-7-aarch64
+        aarch64-debian-10:bintar-debian-10-aarch64
+        aarch64-debian-9:bintar-debian-9-aarch64
+        aarch64-fedora-32:bintar-fedora-32-aarch64
+        aarch64-rhel-7:bintar-rhel-7-aarch64
+        aarch64-rhel-8:bintar-rhel-8-aarch64
+        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
+        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
+        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
+        "
+      ci_build_dirs_ppc64le="
+        pc9-centos-7:bintar-centos-7-ppc64le
+        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        "
       ;;
     10.4|10.3)
       build_dirs_x86="
@@ -97,8 +140,94 @@ set_build_dirs_variables() {
         kvm-tarbake-jaunty-x86:source
         mac-1012-pkg:macOS
         "
+      ci_build_dirs_x86="
+        32bit-debian-9:bintar-debian-9-x86
+        32bit-debian-sid:bintar-debian-sid-x86
+        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
+        "
+      ci_build_dirs_x86_64="
+        centos-7:bintar-centos-7-amd64
+        centos-8:bintar-centos-8-amd64
+        debian-10:bintar-debian-10-amd64
+        debian-9:bintar-debian-9-amd64
+        debian-sid:bintar-debian-sid-amd64
+        fedora-32:bintar-fedora-32-amd64
+        fedora-33:bintar-fedora-33-amd64
+        opensuse-15:bintar-opensuse-15-amd64
+        opensuse-42:bintar-opensuse-42-amd64
+        rhel-8:bintar-rhel-8-amd64
+        sles-12:bintar-sles-12-amd64
+        sles-15:bintar-sles-15-amd64
+        ubuntu-1604:bintar-ubuntu-1604-amd64
+        ubuntu-1804:bintar-ubuntu-1804-amd64
+        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
+        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
+        ubuntu-2004:bintar-ubuntu-2004-amd64
+        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
+        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
+        "
+      ci_build_dirs_aarch64="
+        aarch64-centos-7:bintar-centos-7-aarch64
+        aarch64-debian-10:bintar-debian-10-aarch64
+        aarch64-debian-9:bintar-debian-9-aarch64
+        aarch64-fedora-32:bintar-fedora-32-aarch64
+        aarch64-rhel-7:bintar-rhel-7-aarch64
+        aarch64-rhel-8:bintar-rhel-8-aarch64
+        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
+        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
+        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
+        "
+      ci_build_dirs_ppc64le="
+        pc9-centos-7:bintar-centos-7-ppc64le
+        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        "
       ;;
     *)
+      ci_build_dirs_x86="
+        32bit-debian-9:bintar-debian-9-x86
+        32bit-debian-sid:bintar-debian-sid-x86
+        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
+        "
+      ci_build_dirs_x86_64="
+        centos-7:bintar-centos-7-amd64
+        centos-8:bintar-centos-8-amd64
+        debian-10:bintar-debian-10-amd64
+        debian-9:bintar-debian-9-amd64
+        debian-sid:bintar-debian-sid-amd64
+        fedora-32:bintar-fedora-32-amd64
+        fedora-33:bintar-fedora-33-amd64
+        opensuse-15:bintar-opensuse-15-amd64
+        opensuse-42:bintar-opensuse-42-amd64
+        rhel-8:bintar-rhel-8-amd64
+        sles-12:bintar-sles-12-amd64
+        sles-15:bintar-sles-15-amd64
+        ubuntu-1604:bintar-ubuntu-1604-amd64
+        ubuntu-1804:bintar-ubuntu-1804-amd64
+        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
+        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
+        ubuntu-2004:bintar-ubuntu-2004-amd64
+        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
+        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
+        "
+      ci_build_dirs_aarch64="
+        aarch64-centos-7:bintar-centos-7-aarch64
+        aarch64-debian-10:bintar-debian-10-aarch64
+        aarch64-debian-9:bintar-debian-9-aarch64
+        aarch64-fedora-32:bintar-fedora-32-aarch64
+        aarch64-rhel-7:bintar-rhel-7-aarch64
+        aarch64-rhel-8:bintar-rhel-8-aarch64
+        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
+        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
+        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
+        "
+      ci_build_dirs_ppc64le="
+        pc9-centos-7:bintar-centos-7-ppc64le
+        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        "
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
                 kvm-bintar-centos6-x86:bintar-linux-x86
                 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
@@ -164,6 +293,7 @@ rsync_ubuntu_repo="no"
          tarflag=false
     prev_release=""
       win_remote=false
+      ci_release=false
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -657,6 +787,7 @@ pull_this_release_from_the_buildmaster() {
   # First set the remote_prep variable to yes so that other parts of the script
   # know what is going on
   remote_prep="yes"
+  ci_release=false
 
   important_message "Transferring files on ${buildmaster} to here"
 
@@ -694,6 +825,32 @@ pull_this_release_from_the_buildmaster() {
 
   # We should be done now
 
+}
+
+pull_this_release_from_ci() {
+  remote_prep="yes"
+  ci_release=true
+
+  important_message "Transferring files on ${ci} to here"
+
+  lowkey_message "Making sure local directories exist..."
+
+  if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum} ]; then
+    mkdir -vp ${dir_archive}/ci/${tree}/${tarbuildnum}
+  fi
+
+  runCommand pushd ${dir_archive}/ci/${tree}
+
+    message "Transferring builds from ${ci}..."
+    runCommand wget --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/
+    runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
+
+  runCommand popd
+  runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
+}
+
+mark_this_release_as_a_ci_release() {
+  ci_release=true
 }
 
 use_the_staging_mirror() {
@@ -1303,6 +1460,10 @@ fi
 
 shouldI pull_this_release_from_the_buildmaster
 
+shouldI pull_this_release_from_ci
+
+shouldI mark_this_release_as_a_ci_release
+
 important_message "Creating the ${version} Release"
 
 shouldI prepare_bintar_and_source_packages
@@ -1354,7 +1515,11 @@ if [ "${is_ent}" = "yes" ];then
   fi
 else
   suffix="signed"
+  if ${ci_release}; then
+    build_dirs="source:source ${ci_build_dirs_x86} ${ci_build_dirs_x86_64} ${ci_build_dirs_aarch64} ${ci_build_dirs_ppc64le}"
+  else
   build_dirs="${build_dirs_x86} ${build_dirs_x86_64}" # Default dirs for MariaDB
+  fi
   if [ "${tree}" = "10.0-FusionIO" ]; then
     dir_name="${version}-FusionIO" # FusionIO releases get a custom directory
   else
@@ -1384,7 +1549,9 @@ eval $(gpg-agent --daemon)
 #-------------------------------------------------------------------------------
 if [ "${create_bintar}" != "no" ]; then
   maybe_create_release_dir      # Create release dirs if they don't exist
+  if ${ci_release}; then
   maybe_fix_permissions         # fix permissions if needed
+  fi
   pushd ${dir_release}/${dir_name}
   line
   echo "+ transfering bintar & source packages..."
@@ -1409,11 +1576,17 @@ if [ "${create_bintar}" != "no" ]; then
           location="${dir_archive_p8}/${tree}/${rev}/${dir_array[0]}"
           ;;
         *)
+          if ${ci_release}; then
+            location="${dir_archive}/ci/${tree}/${tarbuildnum}/${dir_array[0]}"
+            location_source="${dir_archive}/ci/${tree}/${tarbuildnum}"
+          else
           location="${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}"
+            location_source="${location}"
+          fi
           ;;
       esac
       if [ "${dir_array[1]}" = "source" ]; then
-        if runCommand rsync ${rsync_opts} "${location}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+        if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
           pushd /run/shm/${dir_name}/${dir_array[1]}
           # rename the source tarball for enterprise
           if [ "${is_ent}" = "yes" ];then
@@ -1745,18 +1918,32 @@ if [ "${galera_suffix}" != "-galera" ]; then
       fi
       pushd ${dir_release}/${dir_name}/${arch}-packages
 
+
+      if ${ci_release}; then
+        message "Packages are on the local filesystem"
+      else
       shouldI pull_the_win_packages_from_the_win_builder
+      fi
 
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
         if ${win_remote};then
           message "Packages are on the Windows Builder"
         runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
+        elif ${ci_release}; then
+          if [ "${pkgtype}" = "msi" ];then
+          case ${arch} in
+            winx64) windir=windows ;;
+            win32) windir=win32 ;;
+          esac
+          runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
+          fi
         else
           message "Packages are on the local filesystem"
           runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
         fi
 
+        if ! ${ci_release};then
         # Download debugsymbols package for 10.2+ releases
         if [ "${pkgtype}" = "zip" ]; then
           case ${tree} in
@@ -1775,9 +1962,11 @@ if [ "${galera_suffix}" != "-galera" ]; then
               ;;
           esac
         fi
+        fi
 
       done
       #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+      if ! ${ci_release};then
       if ${win_remote} ; then
         # Win packages are on the remote builder
       runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
@@ -1785,13 +1974,15 @@ if [ "${galera_suffix}" != "-galera" ]; then
         # Win packages are on the local filesystem
         runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt .
       fi
+      fi
     done
-    line
-    echo "+ fixing Win md5sums..."
-    line
+    message "Generating Windows Checksums and Signatures..."
     for arch in win32 winx64; do
       pushd ${dir_release}/${dir_name}/${arch}-packages
       pwd
+      if ${ci_release};then
+        md5sum ./mariadb* > md5sums.txt
+      else
       runCommand dos2unix md5sums.txt
       grep ${arch} md5sums.txt > md5sums.txt.tmp
       mv -v md5sums.txt.tmp md5sums.txt
@@ -1804,6 +1995,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       #cat md5sums.txt
       #echo
       md5sum -c md5sums.txt
+      fi
       sha1sum ./mariadb* > sha1sums.txt
       sha1sum -c sha1sums.txt
       sha256sum ./mariadb* > sha256sums.txt
@@ -1902,8 +2094,12 @@ else
     line
     echo "+ creating Debian repos..."
     line
+    if ${ci_release}; then
+      runCommand ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
+    else
     echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
      ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
+    fi
 
     # copy the repo to the corp release dir
     echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/"
@@ -1958,7 +2154,11 @@ else
     if [ "${is_ent}" = "yes" ];then
       ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     else
+      if ${ci_release}; then
+        runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
+      else
       ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      fi
     fi
 
     # copy the repo to the corp release dir
@@ -2027,7 +2227,11 @@ else
 
     pushd ${dir_yum_prep}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
+      if ${ci_release}; then
+        runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
+      else
       ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      fi
     popd
 
     # move the yum dir to where it needs to go
