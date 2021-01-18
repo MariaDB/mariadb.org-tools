@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o posix
+
+err() {
+  echo >&2 "ERROR: $*"
+  exit 1
+}
+
+for cmd in youtube-dl dos2unix; do
+  command -v $cmd &>/dev/null || err "$cmd command not found"
+done
+
+[[ -n $1 ]] || {
+  echo "Usage: $0 <youtube_video_url>"
+  exit 0
+}
+
+youtube-dl --write-auto-sub --write-sub --sub-format vtt --convert-subtitles srt "$1" || err "Unable to get subtitles"
+dos2unix -- *.srt || "dos2unix"
+# remove timestamps
+sed -r '/^[0-9]+$/{N;d}' -- *.srt >subtitles.txt
+# remove duplicates //TEMP to be tested
+# awk '!seen[$0]++' >subtitles.txt
