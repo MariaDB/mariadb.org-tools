@@ -1,2 +1,2 @@
-FROM vladbogo/sles:sles-12SP5
+FROM vladbogo/sles:sles-15SP2
 LABEL maintainer="MariaDB Buildbot maintainers"

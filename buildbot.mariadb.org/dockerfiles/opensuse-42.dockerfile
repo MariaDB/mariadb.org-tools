@@ -38,5 +38,10 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 RUN zypper install -y policycoreutils rpm-build
 
+RUN wget https://cmake.org/files/v3.19/cmake-3.19.0-Linux-x86_64.sh
+RUN mkdir -p /opt/cmake
+RUN sh cmake-3.19.0-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
+RUN ln -sf /opt/cmake/bin/cmake /usr/local/bin/cmake
+
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

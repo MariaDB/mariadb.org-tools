@@ -42,5 +42,10 @@ RUN subscription-manager unregister
 
 ENV CRYPTOGRAPHY_ALLOW_OPENSSL_102=1
 
+RUN wget https://cmake.org/files/v3.19/cmake-3.19.3-Linux-aarch64.sh
+RUN mkdir -p /opt/cmake
+RUN sh cmake-3.19.3-Linux-aarch64.sh --prefix=/opt/cmake --skip-license
+RUN ln -sf /opt/cmake/bin/cmake /usr/local/bin/cmake
+
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
