@@ -13,6 +13,8 @@ for cmd in youtube-dl dos2unix; do
   command -v $cmd &>/dev/null || err "$cmd command not found"
 done
 
+command -v ffmpeg &>/dev/null || command -v avconv &>/dev/null || err "ffmpeg or avconv required"
+
 [[ -n $1 ]] || {
   echo "Usage: $0 <youtube_video_url>"
   exit 0
