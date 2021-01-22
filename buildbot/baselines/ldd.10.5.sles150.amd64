@@ -17,7 +17,6 @@
 	libpcre2-8.so.0 => /usr/lib64/libpcre2-8.so.0 
 	libpcre.so.1 => /usr/lib64/libpcre.so.1 
 	libpthread.so.0 => /lib64/libpthread.so.0 
-	libresolv.so.2 => /lib64/libresolv.so.2 
 	librt.so.1 => /lib64/librt.so.1 
 	libselinux.so.1 => /lib64/libselinux.so.1 
 	libssl.so.1.1 => /usr/lib64/libssl.so.1.1 
@@ -108,7 +107,6 @@
 	libpcre2-8.so.0 => /usr/lib64/libpcre2-8.so.0 
 	libpcre.so.1 => /usr/lib64/libpcre.so.1 
 	libpthread.so.0 => /lib64/libpthread.so.0 
-	libresolv.so.2 => /lib64/libresolv.so.2 
 	librt.so.1 => /lib64/librt.so.1 
 	libselinux.so.1 => /lib64/libselinux.so.1 
 	libssl.so.1.1 => /usr/lib64/libssl.so.1.1 
@@ -168,7 +166,6 @@
 	libpcre2-8.so.0 => /usr/lib64/libpcre2-8.so.0 
 	libpcre.so.1 => /usr/lib64/libpcre.so.1 
 	libpthread.so.0 => /lib64/libpthread.so.0 
-	libresolv.so.2 => /lib64/libresolv.so.2 
 	librt.so.1 => /lib64/librt.so.1 
 	libselinux.so.1 => /lib64/libselinux.so.1 
 	libssl.so.1.1 => /usr/lib64/libssl.so.1.1 
@@ -285,7 +282,6 @@
 	libpcre2-posix.so.2 => /usr/lib64/libpcre2-posix.so.2 
 	libpcre.so.1 => /usr/lib64/libpcre.so.1 
 	libpthread.so.0 => /lib64/libpthread.so.0 
-	libresolv.so.2 => /lib64/libresolv.so.2 
 	librt.so.1 => /lib64/librt.so.1 
 	libselinux.so.1 => /lib64/libselinux.so.1 
 	libssl.so.1.1 => /usr/lib64/libssl.so.1.1 
