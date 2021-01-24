@@ -43,5 +43,7 @@ RUN mkdir -p /opt/cmake
 RUN sh cmake-3.19.0-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
 RUN ln -sf /opt/cmake/bin/cmake /usr/local/bin/cmake
 
+RUN zypper install -y boost-devel libcurl-devel cracklib-devel libxml2-devel snappy-devel scons check-devel liblz4-devel
+
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

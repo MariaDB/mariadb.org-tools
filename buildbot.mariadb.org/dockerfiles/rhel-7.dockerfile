@@ -44,14 +44,16 @@ RUN pip install -U pip virtualenv && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1.1.3/17.el7/x86_64/dumb-init-1.1.3-17.el7.x86_64.rpm && yum -y localinstall /tmp/dumb.rpm
 
-RUN subscription-manager unregister
-
 ENV CRYPTOGRAPHY_ALLOW_OPENSSL_102=1
 
 RUN wget https://cmake.org/files/v3.19/cmake-3.19.0-Linux-x86_64.sh
 RUN mkdir -p /opt/cmake
 RUN sh cmake-3.19.0-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
 RUN ln -sf /opt/cmake/bin/cmake /usr/local/bin/cmake
+
+RUN yum -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
+
+RUN subscription-manager unregister
 
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

@@ -34,5 +34,7 @@ RUN pip install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /tmp/dumb.rpm http://rpmfind.net/linux/fedora/linux/releases/32/Everything/aarch64/os/Packages/d/dumb-init-1.2.2-6.fc32.aarch64.rpm && dnf -y localinstall /tmp/dumb.rpm
 
+RUN dnf -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
+
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

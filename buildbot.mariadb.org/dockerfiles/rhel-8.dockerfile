@@ -44,6 +44,8 @@ RUN pip3 install -U pip virtualenv && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1.2.2/6.el8/$(arch)/dumb-init-1.2.2-6.el8.$(arch).rpm && yum -y localinstall /tmp/dumb.rpm
 
+RUN yum -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel python3-scons
+
 RUN subscription-manager unregister
 
 

@@ -1,3 +1,3 @@
-FROM vladbogo/sles:centos-7-ppc64le
+FROM vladbogo/sles:rhel-7-aarch64
 LABEL maintainer="MariaDB Buildbot maintainers"
 
