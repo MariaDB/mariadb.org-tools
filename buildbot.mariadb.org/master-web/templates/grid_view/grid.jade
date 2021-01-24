@@ -38,7 +38,7 @@
         tbody
             tr(ng-repeat="b in builders | orderBy: 'name'")
                 th
-                    a(ui-sref="builder({builder: b.builderid})")
+                    a(ui-sref="builder({builder: b.builderid})", style="white-space:nowrap")
                         | {{ b.name }}
                 td(ng-repeat="ch in changes track by ch.changeid")
                     a(ng-repeat="build in b.builds[ch.changeid] | orderBy: 'buildid'", ui-sref="build({builder: b.builderid, build: build.number})")
