@@ -1,0 +1,909 @@
+Datetime,Name,Organization,Email,Files Changed,Insertions,Deletions
+2020-12-11T19:04:47+02:00,xzhangxian1008,No Organization,xzhangxian@foxmail.com,1,2,2
+2020-12-11T18:38:18+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,3,45,3
+2020-12-09T16:49:52+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,18
+2020-12-09T09:22:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,79,42
+2020-12-08T19:07:36+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,12,3
+2020-12-08T19:07:36+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,18,32
+2020-12-08T17:58:22+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,5,73,4
+2020-12-07T10:35:57+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,2,9
+2020-12-04T17:52:23+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,45,22
+2020-12-04T14:11:48+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,23,
+2020-12-03T17:42:07+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,4,4
+2020-12-03T15:58:19+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,91,65
+2020-12-03T15:28:53+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,23,46,533
+2020-12-03T15:28:53+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,28,104,313
+2020-12-03T15:27:50+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,31,33,561
+2020-12-03T15:27:50+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,16,36
+2020-12-03T15:19:49+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,74,1289,4493
+2020-12-03T15:17:16+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,220,20
+2020-12-03T15:15:47+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,6,3
+2020-12-03T09:55:53+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,16,110,69
+2020-12-03T09:11:31+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,45,25
+2020-12-03T07:45:48+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,3,5
+2020-12-02T22:04:57+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,
+2020-12-02T21:46:01+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,6,1
+2020-12-02T21:28:18+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-12-02T16:16:29+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,15,22,22
+2020-12-01T18:33:10+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,1,2,2
+2020-12-01T17:19:53+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,19,25
+2020-12-01T16:23:28+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,2,2
+2020-12-01T15:24:49+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,57,7
+2020-12-01T12:04:32+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,8
+2020-12-01T08:08:57+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,15,1204,128
+2020-11-30T22:21:43+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,21,164,84
+2020-11-30T19:57:50+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,1,
+2020-11-30T19:53:58+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,2,
+2020-11-30T19:49:06+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,1,
+2020-11-30T16:46:06+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,25,5
+2020-11-30T16:46:05+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,109,10
+2020-11-30T15:02:33+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,5,
+2020-11-30T15:19:25+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,39,2
+2020-11-30T13:59:20+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,15,3
+2020-11-30T17:16:43+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,9,215,28
+2020-11-30T11:52:10+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,2
+2020-11-30T11:47:09+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,233,187
+2020-11-30T11:15:31+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,8,58,155
+2020-11-27T10:43:47-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,3,66,
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,7,6
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,2,
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,2,2
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,43,36
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,6,1
+2020-11-26T19:13:37+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,12,4
+2020-11-26T18:10:40+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,3,30,1
+2020-11-25T22:19:59+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,16,13
+2020-11-25T22:19:59+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,12,42,64
+2020-11-25T18:28:40+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,1,1
+2020-11-25T16:54:00+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,33,67
+2020-11-25T16:09:47+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,52,4
+2020-11-25T16:08:26+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,21,10
+2020-11-25T13:07:49+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,11,11
+2020-11-25T13:07:08+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,,1
+2020-11-25T13:07:08+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,10,2
+2020-11-25T13:07:08+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,5,10,7
+2020-11-25T13:13:47+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,
+2020-11-25T11:32:49+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,8,8
+2020-11-25T11:28:26+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,3,5
+2020-11-25T10:54:38+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,8,5
+2020-11-25T09:42:38+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,10,12
+2020-11-25T09:40:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,79,82
+2020-11-24T21:01:22+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,14,8
+2020-11-24T15:44:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,49,85
+2020-11-24T15:44:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,4,9
+2020-11-24T15:43:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,66,168
+2020-11-24T15:43:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,23,201,175
+2020-11-24T15:43:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,14,77,108
+2020-11-24T15:43:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,17,74,113
+2020-11-24T15:43:10+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,10,53,53
+2020-11-24T15:43:09+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,10,30
+2020-11-24T15:41:03+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,20,379,202
+2020-11-24T14:01:00+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,20,22
+2020-11-24T08:45:37+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,1,2
+2020-11-24T09:09:40+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-11-23T20:18:29+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,2,1
+2020-11-23T19:28:29+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,8,450,19
+2020-11-23T15:45:03+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,6,53
+2020-11-23T14:12:30+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,8,114,46
+2020-11-23T12:16:45+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,3,74,
+2020-11-23T07:39:23+02:00,Seppo Jaakola,Codership,seppo.jaakola@iki.fi,1,8,
+2020-11-23T07:39:23+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,306,
+2020-11-20T08:55:41+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,4,117
+2020-11-20T08:49:46+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-11-20T08:06:24+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,4,
+2020-11-20T07:59:46+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,2
+2020-11-20T07:59:41+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-11-19T07:47:43-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,4,95,2
+2020-11-19T13:52:33+00:00,Roman Nozdrin,MariaDB Corporation,roman.nozdrin@mariadb.com,3,4,6
+2020-11-19T12:42:54+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,,4
+2020-11-19T12:42:54+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,6,25,16
+2020-11-19T12:42:54+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,2,59,26
+2020-11-19T12:42:54+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,
+2020-11-19T12:42:54+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,26,
+2020-11-19T16:30:17+11:00,Daniel Black,No Organization,daniel@mariadb.org,4,6,
+2020-11-18T12:31:41+00:00,Rasmus Johansson,MariaDB Corporation,razze@iki.fi,1,7,3
+2020-11-18T13:52:37+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-11-18T10:27:18+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,78,27
+2020-11-17T14:29:53-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,3,46,
+2020-11-17T20:11:39+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,152,
+2020-11-17T18:13:47+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,
+2020-11-17T17:56:50+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,13,11
+2020-11-17T15:49:36+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,1,1
+2020-11-17T19:23:33+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,7,1
+2020-11-17T13:00:44+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,2,2,2
+2020-11-17T16:08:32+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,2,10,10
+2020-11-17T08:52:47+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,3,
+2020-11-17T08:51:04+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,4,2
+2020-11-17T08:36:38+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,8,
+2020-11-17T07:53:55+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,7,3
+2020-11-17T07:53:55+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,,6
+2020-11-17T07:41:57+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,1
+2020-11-16T13:23:39+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,6,
+2020-11-16T12:32:08+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,2,8,
+2020-11-16T14:49:46+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,1,1,1
+2020-11-16T14:31:44+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,20,350,114
+2020-11-16T09:47:19+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,4,
+2020-11-14T19:09:34+00:00,Roman Nozdrin,MariaDB Corporation,roman.nozdrin@mariadb.com,8,8,221
+2020-11-14T15:49:36+00:00,Roman Nozdrin,MariaDB Corporation,roman.nozdrin@mariadb.com,8,8,221
+2020-11-14T12:28:28+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,2,2,1
+2020-11-14T09:55:09+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,1,1
+2020-11-13T20:16:39+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,97,58
+2020-11-13T08:07:20-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,5,309,25
+2020-11-12T21:26:34+00:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,2,7,
+2020-11-12T15:37:10+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,
+2020-11-12T13:04:39+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,4,27,10
+2020-11-12T08:31:56+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-11-12T07:31:17+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,26,11
+2020-11-11T17:46:50+02:00,Seppo Jaakola,Codership,seppo.jaakola@iki.fi,5,207,25
+2020-11-11T17:46:50+02:00,Seppo Jaakola,Codership,seppo.jaakola@iki.fi,7,512,80
+2020-11-11T10:20:34-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-11T10:19:27-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-11T10:18:33-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-11T10:17:22-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-11T15:48:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,1,161
+2020-11-11T15:48:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,10,12
+2020-11-11T15:48:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,50,90
+2020-11-11T11:15:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,45,275,1690
+2020-11-11T11:15:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,65,396,192
+2020-11-11T09:11:34+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,7,6
+2020-11-11T07:37:05+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,3,34,6
+2020-11-10T21:27:25+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,2,1
+2020-11-10T21:20:44+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,3,
+2020-11-10T13:24:45+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,143,99
+2020-11-10T14:19:33+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,1,24
+2020-11-10T12:29:20+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,3,3
+2020-11-10T07:56:04+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-11-09T23:35:21+01:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,20,22
+2020-11-09T13:51:32-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,5,194,4
+2020-11-09T19:36:10+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,,5
+2020-11-09T19:29:34+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,112,
+2020-11-09T19:29:21+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,5,11,201
+2020-11-09T15:50:37+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,18
+2020-11-09T09:33:08+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,21,14
+2020-11-05T18:59:00+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,1,1
+2020-11-05T18:59:00+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,2,22,6
+2020-11-05T11:41:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,3,26
+2020-11-04T16:55:36+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,78,64
+2020-11-04T16:54:25+02:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,1,1
+2020-11-04T13:23:06+01:00,Alice Sherepa,No Organization,alice.sherepa@gmail.com,2,4,10
+2020-11-04T22:17:05+11:00,Daniel Black,No Organization,daniel@mariadb.org,3,69,14
+2020-11-04T22:17:04+11:00,Daniel Black,No Organization,daniel@mariadb.org,3,18,3
+2020-11-04T12:33:13+03:00,Nayuta Yanagisawa,No Organization,nayuta.yanagisawa@gmail.com,3,16,
+2020-11-04T09:28:02+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,10,1
+2020-11-03T19:47:17+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,3,29,1
+2020-11-03T19:40:06+02:00,Seppo Jaakola,Codership,seppo.jaakola@iki.fi,8,495,34
+2020-11-03T11:00:36-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-03T10:59:26-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-03T10:58:05-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-03T10:56:50-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-11-03T14:48:08+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,6,6
+2020-11-03T12:41:41+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,6,1
+2020-11-03T10:47:25+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,1,1
+2020-11-03T11:29:45+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,2,80,
+2020-11-03T09:12:06+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,3,136
+2020-11-03T09:11:04+02:00,Teemu Ollakka,Codership,teemu.ollakka@galeracluster.com,1,20,
+2020-11-03T08:49:10+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,,66
+2020-11-02T17:15:36+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,6,91,26
+2020-11-02T16:07:06+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,27,1
+2020-11-02T16:01:32+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-11-02T14:19:21+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,22,89,48
+2020-11-02T14:17:09+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,2
+2020-11-02T12:21:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,16,18
+2020-11-02T11:11:05+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,2,5,2
+2020-11-02T14:21:08+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,1,8,8
+2020-11-02T14:21:05+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,2,107,89
+2020-11-02T14:11:43+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,3,15,1
+2020-11-02T14:11:43+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,2,18,
+2020-11-02T14:11:43+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,3,19,5
+2020-11-02T14:11:42+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,3,32,6
+2020-11-02T14:11:42+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,1,3,2
+2020-11-02T04:15:13+02:00,Elena Stepanova,MariaDB Corporation,elenst@mariadb.com,1,393,491
+2020-11-02T01:29:52+02:00,Elena Stepanova,MariaDB Corporation,elenst@mariadb.com,1,456,583
+2020-11-01T14:33:57+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,107,
+2020-11-01T02:56:29+02:00,Elena Stepanova,MariaDB Corporation,elenst@mariadb.com,1,373,464
+2020-11-01T08:04:36+11:00,Daniel Black,No Organization,daniel@mariadb.org,5,1406,19
+2020-10-31T19:49:24+02:00,Elena Stepanova,MariaDB Corporation,elenst@mariadb.com,1,352,384
+2020-10-31T09:14:37+11:00,Daniel Black,No Organization,daniel@mariadb.org,5,57,1
+2020-10-30T19:06:50+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-10-30T13:47:56+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-30T13:47:56+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,8,5
+2020-10-30T13:07:42+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-10-30T12:58:16+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,
+2020-10-30T11:46:12+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,1
+2020-10-30T12:22:23+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-30T12:22:01+02:00,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,6,61,1
+2020-10-30T10:32:59+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,23,19
+2020-10-30T11:04:16+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,23,5
+2020-10-30T09:19:29+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,23,5
+2020-10-30T08:54:05+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,2,1
+2020-10-30T08:52:10+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,,77
+2020-10-30T15:09:25+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,1
+2020-10-29T22:20:21+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,2,5
+2020-10-29T22:19:32+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,2,1
+2020-10-29T19:20:10+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,42,
+2020-10-29T18:34:26+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,34,
+2020-10-29T17:36:49+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,2,2
+2020-10-29T16:27:04+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,5,20
+2020-10-29T16:22:30+02:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,82,8
+2020-10-29T15:55:07+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,9,1
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,4,4
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,1,13,
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,1,1,
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,22,4
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,4,4,3
+2020-10-29T15:01:33+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,8,
+2020-10-29T13:47:50+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,15,1
+2020-10-29T10:06:32+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,1
+2020-10-29T10:03:15+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,1
+2020-10-29T09:35:39+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,1,5
+2020-10-29T09:27:56+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,12,47,24
+2020-10-29T09:27:05+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,,12
+2020-10-29T08:29:03+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,0,0
+2020-10-29T09:15:35+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,41,1
+2020-10-29T08:04:32+01:00,Lawrin Novitsky,MariaDB Corporation,lawrin.novitsky@mariadb.com,2,336,12
+2020-10-29T07:39:43+01:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,5,21,3
+2020-10-29T07:39:43+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,1,1
+2020-10-29T08:16:44+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-29T08:02:33+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-10-28T18:48:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,550,272
+2020-10-28T14:24:10+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,59,7
+2020-10-28T13:37:49+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,5,
+2020-10-28T14:00:37+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,2,1
+2020-10-28T11:38:14+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,19,1224,2
+2020-10-28T11:38:14+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,3,3
+2020-10-28T09:51:35+02:00,Teemu Ollakka,Codership,teemu.ollakka@galeracluster.com,6,240,2
+2020-10-28T08:30:31+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,38,21
+2020-10-28T08:13:06+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,2
+2020-10-28T07:27:18+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-28T10:53:22+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,4,188,13
+2020-10-28T06:49:56+02:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,3,77,1
+2020-10-27T22:39:21+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,57,13
+2020-10-27T19:09:20+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,21,289,280
+2020-10-27T16:45:35+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,2,2
+2020-10-27T15:17:54+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,2,12,
+2020-10-27T15:47:18+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,47,16
+2020-10-27T16:44:11+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,7,
+2020-10-27T18:30:00+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,16,262,165
+2020-10-27T18:55:22+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,4,43,
+2020-10-27T11:28:45+02:00,Mario Karuza,Codership,mario.karuza@galeracluster.com,3,82,
+2020-10-27T09:24:15+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,34,
+2020-10-27T09:24:15+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,4,8,14
+2020-10-27T09:24:15+01:00,Karthik Kamath,Oracle,karthik.kamath@oracle.com,1,,1
+2020-10-27T09:24:15+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,322,
+2020-10-27T09:24:14+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,17,18
+2020-10-27T09:52:42+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,
+2020-10-26T21:02:13+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,1,18,9
+2020-10-26T17:53:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,15,149,183
+2020-10-26T17:53:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,93,48
+2020-10-26T17:53:54+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,77,62
+2020-10-26T17:53:54+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,108,259
+2020-10-26T17:53:54+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,31,578,770
+2020-10-26T17:09:01+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,39,1303,1900
+2020-10-26T17:09:01+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,31,834,1189
+2020-10-26T17:09:01+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,9,4
+2020-10-26T17:39:52+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,3,114,15
+2020-10-26T15:06:32+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,
+2020-10-26T15:05:41+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,32,62
+2020-10-26T13:32:30+02:00,Sachin Agarwal,Oracle,sachin.z.agarwal@oracle.com,1,5,3
+2020-10-26T12:21:29+02:00,Sachin Agarwal,Oracle,sachin.z.agarwal@oracle.com,1,17,14
+2020-10-26T14:59:42+11:00,Daniel Black,No Organization,daniel@mariadb.org,2,5,1
+2020-10-25T19:38:43+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,12,17
+2020-10-25T15:53:17+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,8,68,399
+2020-10-25T11:48:34+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,8,6
+2020-10-24T16:32:07+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,7,104,8
+2020-10-24T14:57:57+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,10,
+2020-10-24T22:43:21+11:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,3,25,2
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,6,9
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,9,6
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,4,16
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,6,3
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,6,5
+2020-10-24T11:15:51+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,8,5
+2020-10-24T11:10:37+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-24T00:16:56+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,4,12,6
+2020-10-23T22:36:47+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,6,3946,7
+2020-10-23T19:41:27+03:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,1,1,1
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,17,
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,16,343,1484
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,3,4
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,4,5
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,12893,
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,8,61,51
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,28,1
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,3,3
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,
+2020-10-23T15:53:41+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,5,2
+2020-10-23T20:01:50+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,,4
+2020-10-23T19:15:22+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,1,1
+2020-10-23T18:42:26+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,2,6,1
+2020-10-23T13:37:26+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,8,99,128
+2020-10-23T13:37:26+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,11,10,12
+2020-10-23T13:37:26+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,4,29,45
+2020-10-23T18:10:16+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,5,
+2020-10-23T17:22:35+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,2,1,12
+2020-10-23T17:18:39+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,2,45,11
+2020-10-23T12:28:42+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,136,2
+2020-10-23T12:20:17+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,12,1
+2020-10-23T10:07:40+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,3,
+2020-10-23T11:02:25+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,5,203,51
+2020-10-23T09:06:56+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,4,279,31
+2020-10-23T10:47:48+04:00,Roman Nozdrin,MariaDB Corporation,roman.nozdrin@mariadb.com,1,1,1
+2020-10-23T09:17:36+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,136,2
+2020-10-22T22:02:22+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,2,1,4
+2020-10-22T22:00:45+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,1,1,1
+2020-10-22T19:26:58+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,1
+2020-10-22T15:51:14+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,8,
+2020-10-22T14:40:11+03:00,Stepan Patryshev,No Organization,stepan.patryshev@mariadb.com,1,1,
+2020-10-22T13:52:45+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,
+2020-10-22T13:50:06+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,
+2020-10-22T13:19:18+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,9,8
+2020-10-22T10:14:17+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,6,
+2020-10-22T07:16:29+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,2,21,27
+2020-10-22T00:18:33+03:00,Rinat Ibragimov,No Organization,ri@tempesta-tech.com,10,277,4
+2020-10-22T05:29:03+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,299,19
+2020-10-22T05:25:53+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,299,19
+2020-10-22T05:21:35+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,320,29
+2020-10-21T16:29:07+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,5,95,1
+2020-10-21T17:43:23+07:00,Dmitry Shulga,No Organization,dmitry.shulga@mariadb.com,1,2,2
+2020-10-21T19:11:02+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,3,3
+2020-10-21T10:56:26+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,8,4
+2020-10-21T10:53:55+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,19,15
+2020-10-21T10:04:44+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,75,34
+2020-10-21T03:09:30+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,3,12
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,,1
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,1,1
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,5,32,19
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,3,3
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,9,94,37
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,24,539,82
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,12,5
+2020-10-21T03:09:29+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,7,
+2020-10-20T19:55:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,65,25
+2020-10-20T19:55:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,13,23
+2020-10-20T17:35:33+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,1,1
+2020-10-20T17:33:42+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,2,2
+2020-10-20T22:32:12+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,320,29
+2020-10-20T13:11:47+00:00,Roman Nozdrin,MariaDB Corporation,roman.nozdrin@mariadb.com,2,2,1
+2020-10-20T12:41:06+02:00,Julius Goryavsky,No Organization,julius.goryavsky@mariadb.com,5,127,2
+2020-10-20T12:01:37+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,6,
+2020-10-20T10:57:57+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,7,70,21
+2020-10-20T11:55:52+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,1,,2
+2020-10-20T11:16:40+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,4,52,18
+2020-10-20T10:49:54+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,5,120,9
+2020-10-20T10:49:54+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,7,39,15
+2020-10-20T10:49:54+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,43,
+2020-10-20T12:34:06+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,16,15
+2020-10-20T12:15:59+05:30,Rucha Deodhar,No Organization,rucha.deodhar@mariadb.com,2,5,7
+2020-10-20T12:12:12+05:30,Rucha Deodhar,No Organization,rucha.deodhar@mariadb.com,3,29,
+2020-10-20T12:08:19+05:30,Rucha Deodhar,No Organization,rucha.deodhar@mariadb.com,3,35,
+2020-10-19T20:36:05+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-19T19:37:03+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,9,1
+2020-10-19T19:36:00+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,3,34,1
+2020-10-19T15:15:04+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,5,162,54
+2020-10-19T16:51:52+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,2,4,
+2020-10-18T17:20:44+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,16,848,373
+2020-10-17T13:07:57+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,19,35
+2020-10-17T13:13:01+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,101,84
+2020-10-16T22:02:54+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,1
+2020-10-16T19:48:36+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,38,1
+2020-10-16T19:09:26+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,7,
+2020-10-16T07:51:37+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-16T09:44:03+11:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,9,176,6
+2020-10-15T17:06:17+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,46,443,606
+2020-10-15T17:06:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,1,4
+2020-10-15T17:06:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,4,5
+2020-10-15T17:05:55+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-10-15T17:04:56+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,73,2023,3835
+2020-10-15T13:49:34+02:00,Julius Goryavsky,No Organization,julius.goryavsky@mariadb.com,1,,5
+2020-10-15T13:49:22+02:00,Julius Goryavsky,No Organization,julius.goryavsky@mariadb.com,3,83,31
+2020-10-15T12:56:06+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,14,11
+2020-10-15T20:11:29+11:00,Daniel Black,No Organization,daniel@mariadb.org,6,211,6
+2020-10-15T10:33:23+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,8,245
+2020-10-15T10:33:20+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,11,18,230
+2020-10-15T09:49:20+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,23,183
+2020-10-15T09:41:15+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,9
+2020-10-15T06:00:20+03:00,Nayuta Yanagisawa,No Organization,nayuta.yanagisawa@gmail.com,3,19,
+2020-10-15T07:56:16+11:00,Otto Kekäläinen,No Organization,otto@kekalainen.net,1,33,33
+2020-10-15T07:55:45+11:00,Otto Kekäläinen,No Organization,otto@kekalainen.net,1,33,33
+2020-10-14T23:32:20+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,1,1
+2020-10-14T19:18:39+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,20,73
+2020-10-14T18:16:57+02:00,Alice Sherepa,No Organization,alice.sherepa@gmail.com,6,21,5
+2020-10-14T15:14:46+03:00,Daniel Black,No Organization,daniel@mariadb.org,1,8,3
+2020-10-14T15:14:46+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,14,359,8
+2020-10-14T15:14:46+03:00,Daniel Black,No Organization,daniel@mariadb.org,4,77,2
+2020-10-14T21:57:58+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,6,75,1
+2020-10-14T14:42:54+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,3,28,7
+2020-10-14T12:14:08+02:00,unki,No Organization,unki@users.noreply.github.com,1,13,13
+2020-10-10T11:06:59+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,9,
+2020-10-10T08:50:50+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,,2
+2020-10-10T08:50:50+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,40,32
+2020-10-10T08:50:50+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,35,18
+2020-10-09T12:47:58+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,4,3
+2020-10-08T21:54:11+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,5,
+2020-10-08T19:41:03+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,10,212,70
+2020-10-08T11:13:47+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,16,3
+2020-10-08T07:41:55+11:00,Daniel Black,No Organization,daniel@mariadb.org,4,101,15
+2020-10-08T07:41:43+11:00,Nisha Gopalakrishnan,Oracle,nisha.gopalakrishnan@oracle.com,1,5,3
+2020-10-07T11:28:28-04:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-10-07T11:27:00-04:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-10-07T11:25:40-04:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-10-07T11:23:43-04:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-10-07T11:22:10-04:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-10-07T11:14:20+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,1,1
+2020-10-07T12:09:00+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,3,45,1
+2020-10-07T08:10:36+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,138,
+2020-10-06T13:12:11-07:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,5,201,11
+2020-10-06T22:35:43+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,8,4
+2020-10-06T15:07:06+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,14,3
+2020-10-06T13:50:28+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,27,
+2020-10-06T22:22:03+11:00,Daniel Black,No Organization,daniel@mariadb.org,1,6,
+2020-10-06T13:51:06+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,4,11,10
+2020-10-06T12:50:12+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,1,33,15
+2020-10-06T12:03:13+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,17,3
+2020-10-06T07:47:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,6,
+2020-10-05T20:02:22+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,4,1
+2020-10-05T17:52:00+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,1
+2020-10-05T17:42:00+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,46,5
+2020-10-05T15:21:58+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,1,20,17
+2020-10-05T12:29:51+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,8,64,16
+2020-10-05T13:05:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,4
+2020-10-05T10:34:01+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,,3
+2020-10-05T10:30:26+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,19,32,702
+2020-10-05T09:34:27+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,14,7
+2020-10-05T09:12:12+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,11
+2020-10-03T19:06:05+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,2,26,17
+2020-10-03T14:38:01+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,9,164,17
+2020-10-03T12:38:43+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,2,3
+2020-10-03T00:24:53+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,3,22,3
+2020-10-02T14:04:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,13
+2020-10-02T10:19:00+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,10,630,3
+2020-10-02T08:40:06+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,3
+2020-10-02T08:36:50+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,2,25
+2020-10-02T07:11:53+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,11
+2020-10-02T07:10:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,4,81
+2020-10-02T05:28:58+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,1,1
+2020-10-01T19:18:26+02:00,Olivier Bertrand,No Organization,bertrandop@gmail.com,12,108,82
+2020-10-01T14:35:42+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,14
+2020-10-01T13:51:31+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,4,31
+2020-10-01T16:10:14+10:00,Daniel Black,No Organization,daniel@mariadb.org,2,4,
+2020-09-30T17:22:43+02:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,1,1
+2020-09-30T18:02:29+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,7,3
+2020-09-30T14:28:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,20,25,247
+2020-09-30T13:50:00+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,8
+2020-09-30T13:48:20+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,2,12
+2020-09-30T13:37:15+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,5,15
+2020-09-30T13:37:15+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,17,22
+2020-09-30T13:35:05+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,9
+2020-09-30T13:26:46+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,,12
+2020-09-30T17:51:29+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,13,
+2020-09-29T11:07:34+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,6,41
+2020-09-29T11:04:12+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,4,1
+2020-09-29T09:39:08+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,14
+2020-09-28T15:16:28-07:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,3,102,3
+2020-09-28T14:40:00+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,5,6
+2020-09-28T17:04:02+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,4,37,
+2020-09-28T12:17:05+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,2,7,
+2020-09-28T11:05:09+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,6,
+2020-09-28T09:49:46+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,3,26,
+2020-09-28T12:52:09+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,3,80,7
+2020-09-27T10:30:23+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,5,60,80
+2020-09-27T01:02:22+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,5,1
+2020-09-26T08:57:56+10:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,3,3
+2020-09-25T21:42:24+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,3,35,2
+2020-09-25T17:29:33+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,11
+2020-09-25T17:28:54+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,14,13
+2020-09-25T15:58:08+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,3,3
+2020-09-25T13:38:48+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,6,1
+2020-09-25T13:07:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,41,
+2020-09-25T13:07:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,7,173,4
+2020-09-25T13:07:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,118,4
+2020-09-25T13:07:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,4,63,15
+2020-09-25T13:07:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,3,3
+2020-09-25T13:07:03+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,6,134,59
+2020-09-25T12:44:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,1,1
+2020-09-25T12:44:04+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,1,
+2020-09-24T16:16:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-24T14:12:22+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,15,
+2020-09-24T13:08:43+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,2,2
+2020-09-24T12:06:53+03:00,Mario Karuza,Codership,mario.karuza@galeracluster.com,1,3,6
+2020-09-24T13:58:29+10:00,Daniel Black,No Organization,daniel@mariadb.org,16,118,701
+2020-09-24T08:16:30+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,1
+2020-09-24T08:09:56+10:00,Daniel Black,No Organization,daniel@mariadb.org,13,13,13
+2020-09-23T15:42:11+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,2,1
+2020-09-23T12:47:49+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,10,6
+2020-09-23T12:42:30+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-09-23T12:27:56+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,14,21
+2020-09-23T12:14:05+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,4,3
+2020-09-23T09:29:05+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,3
+2020-09-22T15:13:17+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,9,1
+2020-09-22T13:55:36+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,6,
+2020-09-22T13:40:05+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,30,9
+2020-09-22T13:09:51+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-22T13:08:09+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,7,4
+2020-09-22T11:30:37+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,,2
+2020-09-22T11:29:24+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,5,5,68
+2020-09-22T11:13:51+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,23,1
+2020-09-22T10:41:06+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,6
+2020-09-22T15:37:44+10:00,Daniel Black,IBM,daniel@linux.ibm.com,1,5,
+2020-09-21T23:15:58+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,,7
+2020-09-21T16:35:28+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,101,
+2020-09-21T16:29:29+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-21T16:14:35+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,2,65
+2020-09-21T15:55:27+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,6,
+2020-09-21T14:01:56+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,
+2020-09-21T13:59:13+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,91,5
+2020-09-21T12:52:44+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,1,,16
+2020-09-21T12:29:52+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,5,117,3
+2020-09-21T12:10:27+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-20T17:26:15+03:00,Elena Stepanova,MariaDB Corporation,elenst@mariadb.com,3,13,
+2020-09-20T16:10:02+10:00,Vicențiu Ciorbaru,MariaDB Foundation,cvicentiu@gmail.com,1,2,2
+2020-09-20T16:10:02+10:00,Vicențiu Ciorbaru,MariaDB Foundation,cvicentiu@gmail.com,1,2,
+2020-09-20T16:10:01+10:00,Vicențiu Ciorbaru,MariaDB Foundation,cvicentiu@gmail.com,4,37,12
+2020-09-20T16:10:01+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,4,233,93
+2020-09-20T16:10:00+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,3,3
+2020-09-20T16:09:57+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,7,36,1
+2020-09-20T16:08:40+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,3,3
+2020-09-20T16:08:40+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,6,331,3
+2020-09-20T16:08:36+10:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,7,73,20
+2020-09-20T00:07:37+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,148,2
+2020-09-18T14:09:24+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,10,8
+2020-09-18T07:33:37+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,10,10
+2020-09-17T22:27:45+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,3,71,3
+2020-09-17T18:05:53+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,2,15,5
+2020-09-17T16:07:37+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,24,2087,1147
+2020-09-17T14:09:24+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,3,19
+2020-09-17T14:08:41+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,,56
+2020-09-17T14:08:41+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,16,259,577
+2020-09-17T14:08:34+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,7,63
+2020-09-17T12:55:06+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,25,60,48
+2020-09-17T08:25:07+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,28,3
+2020-09-16T15:23:41+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,98,33
+2020-09-16T14:03:32+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,4,61,6
+2020-09-14T18:21:48+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,,1
+2020-09-14T18:21:17+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,8,9
+2020-09-14T18:17:07+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,14,11
+2020-09-14T14:31:50+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,1,2
+2020-09-14T21:19:56+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,2,2
+2020-09-14T11:48:36+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,17,14
+2020-09-14T11:14:50+03:00,Vlad Lesin,No Organization,vlad_lesin@mail.ru,3,125,1
+2020-09-14T18:08:56+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,3,79,23
+2020-09-12T09:37:40+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,1
+2020-09-11T15:35:32+01:00,Sachin,No Organization,sachinsetia1001@gmail.com,1,1,1
+2020-09-11T14:49:42+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,5,6
+2020-09-11T16:37:13+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,1,1
+2020-09-11T12:24:29+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,4,3
+2020-09-11T02:45:44+02:00,Erol Guven,No Organization,erol.guven@appian.com,1,11,
+2020-09-10T13:32:27+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,4,3,5
+2020-09-10T13:32:27+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,3,3
+2020-09-10T13:32:27+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,3,3,3
+2020-09-10T13:28:09+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,5,3
+2020-09-10T13:18:12+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,6,168,156
+2020-09-10T15:26:43+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,6,111,60
+2020-09-10T14:10:26+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,11,285,1449
+2020-09-10T08:45:54+02:00,Geert Hendrickx,No Organization,geert@hendrickx.be,2,2,2
+2020-09-09T16:31:05+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,20,1
+2020-09-09T16:31:05+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,23,6
+2020-09-09T16:31:05+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,27,22
+2020-09-09T16:03:15+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,67,99
+2020-09-09T14:46:17+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,1
+2020-09-09T14:16:07+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,3,
+2020-09-09T13:04:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,3
+2020-09-09T13:02:25+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-09T12:26:51+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-09T12:04:42+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,29,1
+2020-09-09T12:01:03+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,8,17
+2020-09-09T11:58:15+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,12,240,157
+2020-09-08T13:42:55+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,1,1
+2020-09-08T13:42:55+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,1,1
+2020-09-08T13:42:55+03:00,Daniel Black,No Organization,daniel@mariadb.org,2,2,2
+2020-09-08T13:42:55+03:00,Daniel Black,No Organization,daniel@mariadb.org,2,3,
+2020-09-08T13:42:55+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,6,49,
+2020-09-08T11:14:37+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,88,
+2020-09-07T21:54:08+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,21,
+2020-09-07T18:25:24+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,1,3,
+2020-09-07T15:31:54+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,70,12
+2020-09-07T17:23:45+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,4,23,5
+2020-09-07T12:08:26+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,3,12,1
+2020-09-07T10:26:23+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,7,1534,539
+2020-09-07T10:18:43+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,7,1534,539
+2020-09-07T10:09:44+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,8,1622,543
+2020-09-07T10:07:55+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,8,1658,545
+2020-09-07T09:56:52+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,8,1673,598
+2020-09-07T09:54:09+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,8,1673,598
+2020-09-04T23:07:49+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,3,340,520
+2020-09-04T13:07:45+03:00,xdavidwu,No Organization,xdavidwuph@gmail.com,2,2,
+2020-09-04T12:17:35+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,8,8
+2020-09-04T12:14:24+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,3
+2020-09-04T09:12:27+00:00,Sergei Petrunia,MariaDB Corporation,sergey@mariadb.com,1,1,1
+2020-09-04T11:40:17+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-09-04T10:31:41+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,4,
+2020-09-03T15:26:55+00:00,Sergei Petrunia,MariaDB Corporation,sergey@mariadb.com,1,3,
+2020-09-03T16:40:42+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,12,11,107
+2020-09-03T15:37:04+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,13,
+2020-09-03T14:49:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,128,118
+2020-09-03T14:10:42+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,6,3
+2020-09-03T14:20:06+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,6,63,3
+2020-09-03T09:05:56+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,17,9
+2020-09-03T08:41:47+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-09-03T06:03:54+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,1,49,36
+2020-09-02T14:57:48+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,4,3
+2020-09-02T16:16:45+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,3,100,9
+2020-09-02T13:12:23+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,5,46,14
+2020-09-02T16:28:55+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,
+2020-09-02T11:23:18+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,1,1
+2020-09-02T09:32:56+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,,2
+2020-09-02T09:29:57+10:00,Daniel Black,No Organization,daniel@mariadb.org,1,,2
+2020-09-01T21:30:52+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,14,46,3349
+2020-09-01T15:53:47+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,16,23
+2020-09-01T15:53:47+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,9,7
+2020-09-01T15:52:36+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,10,439,683
+2020-09-01T11:34:03+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,2,2
+2020-09-01T18:27:09+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,11,280,59
+2020-09-01T18:27:09+10:00,Nikita Malyavin,Tempesta,nikitamalyavin@gmail.com,10,135,175
+2020-08-31T18:45:14+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,9,89,24
+2020-08-31T18:38:57+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,10,88,51
+2020-08-31T18:37:44+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,9,96,49
+2020-08-31T14:40:34+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,11,601,30
+2020-08-31T13:04:00+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,3,3
+2020-08-31T10:27:58+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,15,24
+2020-08-28T16:40:12+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,74,1
+2020-08-28T14:44:36+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,7,13
+2020-08-28T14:55:24+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,1,149,24
+2020-08-28T13:13:35+03:00,Seppo Jaakola,Codership,seppo.jaakola@iki.fi,5,200,17
+2020-08-28T15:03:43+10:00,Brad Smith,No Organization,brad@comstyle.com,3,16,
+2020-08-28T06:45:12+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,1,6
+2020-08-27T17:58:13+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,3,34,
+2020-08-27T15:00:25+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,26,3
+2020-08-27T14:58:55+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,4,
+2020-08-27T14:56:13+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,
+2020-08-27T14:52:12+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,
+2020-08-27T14:51:06+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,
+2020-08-27T14:50:21+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,7,1
+2020-08-27T14:49:17+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,2,1
+2020-08-27T14:30:12+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,7,,211
+2020-08-27T11:47:28+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,3,1
+2020-08-26T22:26:51+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,1,1,
+2020-08-27T09:34:53+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,4,6
+2020-08-26T22:25:26+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,1,1,
+2020-08-26T13:34:51+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,7,1
+2020-08-26T04:16:55+03:00,Stepan Patryshev,No Organization,stepan.patryshev@mariadb.com,1,19,
+2020-08-26T06:39:14+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,3,70,
+2020-08-26T06:54:00+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,10,193,294
+2020-08-26T06:53:48+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,4,10,10
+2020-08-26T06:52:33+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,10,193,294
+2020-08-26T06:52:20+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,4,10,10
+2020-08-25T22:21:08+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,1,1,2
+2020-08-25T22:21:07+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,15,
+2020-08-25T20:47:52+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,4,51,6
+2020-08-25T15:32:15+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,78,85
+2020-08-25T15:25:22+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,1
+2020-08-25T15:23:29+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,2
+2020-08-25T12:12:44+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,5,27,42
+2020-08-25T10:15:04+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,5,7,6
+2020-08-25T06:53:52+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,3,3
+2020-08-25T06:53:52+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,42,3
+2020-08-24T20:54:19+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,1,1
+2020-08-24T19:09:37+10:00,Daniel Black,No Organization,daniel@mariadb.org,2,3,3
+2020-08-24T06:12:15+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,335,
+2020-08-24T22:55:39+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,3,24,1
+2020-08-24T14:27:32+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,1,9,2
+2020-08-24T09:17:47+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,8,205,80
+2020-08-24T06:11:01+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,335,
+2020-08-24T06:09:40+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,335,
+2020-08-22T15:22:20+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,5,88,
+2020-08-22T07:53:44+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,10,364,4
+2020-08-21T23:00:56+03:00,Ian Gilfillan,MariaDB Foundation,ian@mariadb.org,2,2,2
+2020-08-21T20:41:35+03:00,Yuqi Gu,No Organization,yuqi.gu@arm.com,3,193,245
+2020-08-21T18:23:28+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,149,176
+2020-08-21T14:48:53+03:00,Andrei Elkin,MariaDB Corporation,andrei.elkin@mariadb.com,32,52,50
+2020-08-21T11:54:16+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,55,51
+2020-08-21T11:53:30+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-08-21T10:37:52+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,21,15
+2020-08-21T08:52:45+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,4,16
+2020-08-20T19:34:11+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,3,9,4
+2020-08-20T19:34:11+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,8,1
+2020-08-20T19:34:11+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,1,5,
+2020-08-20T19:34:11+03:00,Michael Widenius,MariaDB Corporation and MariaDB Foundation,monty@mariadb.org,2,9,3
+2020-08-20T13:35:26+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,8,6
+2020-08-20T11:38:10+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,2,
+2020-08-20T11:34:53+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,1,16,6
+2020-08-20T08:34:55+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,20,13
+2020-08-19T15:47:11+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-08-19T13:12:00+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,4,28,3
+2020-08-19T13:12:00+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,4,49,
+2020-08-19T13:12:00+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,4,24,1
+2020-08-19T11:18:56+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,11,170,35
+2020-08-19T10:34:25+03:00,Daniele Sciascia,Codership,daniele.sciascia@galeracluster.com,3,126,
+2020-08-18T17:30:34+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,11,58
+2020-08-18T16:46:07+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,11,23,104
+2020-08-18T15:14:12+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,15,2
+2020-08-18T15:05:23+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,5,61,3
+2020-08-18T14:59:16+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,2,6,2
+2020-08-18T08:56:35+02:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,84,107
+2020-08-18T03:13:46+02:00,Julius Goryavsky,No Organization,julius.goryavsky@mariadb.com,1,16,4
+2020-08-17T21:04:02+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,213,33
+2020-08-17T21:02:09+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,213,33
+2020-08-17T20:56:29+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,9,213,33
+2020-08-15T23:05:09+03:00,Eugene Kosov,No Organization,eugene.kosov@mariadb.com,2,51,7
+2020-08-15T17:57:27+02:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,,4
+2020-08-15T14:02:05+10:00,Daniel Black,No Organization,daniel@mariadb.org,4,17,
+2020-08-14T01:54:24+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,191,4
+2020-08-14T13:34:19+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,2,
+2020-08-14T08:32:36+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,5,109,9
+2020-08-14T01:47:48+09:00,Kentoku Shiba,No Organization,kentokushiba@gmail.com,6,193,4
+2020-08-14T21:04:25+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,15,744,344
+2020-08-14T14:45:36+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,2,12,
+2020-08-14T14:43:26+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,5,
+2020-08-14T13:35:42+03:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,5,111,9
+2020-08-14T11:33:06+03:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-02-21T08:26:02+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,18,19
+2020-02-21T08:25:51+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,10,5
+2020-02-21T08:25:40+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,61,61
+2020-02-21T08:25:20+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,21,3,1440
+2020-02-20T22:00:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,16,62
+2020-02-20T18:24:21+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,4,44,34
+2020-02-20T13:35:19+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,2,16,4
+2020-02-20T14:04:27+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,2,2,
+2020-02-20T09:25:11+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,3,,4
+2020-02-20T08:44:20+01:00,Daniel Black,IBM,daniel@linux.ibm.com,4,37,1
+2020-02-19T21:29:49+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,133,
+2020-02-19T16:42:38+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,125,57
+2020-02-19T15:52:16+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,95,39
+2020-02-19T16:39:02+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,1,1
+2020-02-19T16:37:06+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,2,3,6
+2020-02-19T14:57:47+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,1,1,
+2020-02-19T12:51:08+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,,21
+2020-02-19T12:21:59+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,33,637,775
+2020-02-19T09:35:48+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,1,1
+2020-02-18T22:51:07-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,6,516,21
+2020-02-18T22:53:29+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,4,35,9
+2020-02-18T22:53:28+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,5,120,63
+2020-02-18T12:08:33+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,38,25
+2020-02-18T10:54:56+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,1,2
+2020-02-18T10:54:28+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,216,140
+2020-02-17T15:32:24+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,62,5
+2020-02-17T15:32:24+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-02-17T15:32:24+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,189,193
+2020-02-17T15:32:24+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,26,7
+2020-02-17T14:01:16+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,22,16
+2020-02-17T13:56:41+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,12,
+2020-02-17T13:32:36+02:00,Ian Gilfillan,MariaDB Foundation,ian@mariadb.org,2,2,2
+2020-02-17T10:13:32+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,56,136
+2020-02-16T17:22:28+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,7,3
+2020-02-16T15:45:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,52,51
+2020-02-16T15:09:01+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,3,16
+2020-02-16T14:10:26+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,70,23
+2020-02-16T13:50:18+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,8,,134
+2020-02-16T13:48:35+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,32,30
+2020-02-16T13:48:35+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,418,7
+2020-02-16T13:48:35+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,20,29
+2020-02-16T13:48:35+02:00,Alexander E. Patrakov,No Organization,patrakov@gmail.com,1,1,2
+2020-02-16T13:48:34+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,18,19
+2020-02-16T13:48:34+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,10,5
+2020-02-16T13:48:34+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,61,61
+2020-02-16T13:48:34+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,32,3,2439
+2020-02-14T20:28:20+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,3,133,
+2020-02-14T10:46:08-05:00,Daniel Bartholomew,MariaDB Corporation,dbart@mariadb.com,1,1,1
+2020-02-14T14:46:44+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,208,2
+2020-02-14T15:45:18+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,1,1
+2020-02-14T14:11:10+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,3,272,51
+2020-02-14T10:32:45+01:00,Daniel Black,IBM,daniel@linux.ibm.com,3,,210
+2020-02-14T11:03:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-02-14T10:57:52+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,5,13
+2020-02-14T08:49:18+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,5,19,26
+2020-02-13T20:47:23+02:00,Otto Kekäläinen,No Organization,otto@kekalainen.net,6,10,10
+2020-02-13T20:47:23+02:00,Otto Kekäläinen,No Organization,otto@kekalainen.net,2,,2
+2020-02-13T18:59:38+01:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,2,2,2
+2020-02-13T19:13:45+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,37,296,5222
+2020-02-13T19:12:17+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,49,3660,1820
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,18,24
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,2,143
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,16,177,379
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,100,258
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,18,331,397
+2020-02-13T18:19:15+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,137
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,24,986,1467
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,56,56
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,18,615,561
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,7,138,126
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,15,244,495
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,5,92,82
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,53,77
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,18,375,304
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,8,99,148
+2020-02-13T18:19:14+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,26,62
+2020-02-13T18:19:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,37,66
+2020-02-13T18:19:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,14,23
+2020-02-13T18:19:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,4,24,27
+2020-02-13T18:19:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,11,73,171
+2020-02-13T18:19:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,10,34,114
+2020-02-13T16:26:47+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,3,2
+2020-02-13T15:10:25+03:00,Eugene Kosov,Tempesta,claprix@yandex.ru,5,33,5
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,282,324
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,1,1,1
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,10,3,499
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,7,15,15
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,3,3,5
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,15,8,429
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,6,35,1
+2020-02-13T13:42:01+02:00,Sergei Golubchik,MariaDB Corporation,serg@mariadb.com,1,14,11
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,2,13,2
+2020-02-13T13:42:01+02:00,Vicențiu Ciorbaru,MariaDB Foundation,vicentiu@mariadb.org,260,802,768
+2020-02-13T12:51:50+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,4,28,11
+2020-02-13T09:54:22+00:00,Otto Kekäläinen,No Organization,otto@kekalainen.net,1,2,2
+2020-02-13T10:30:40+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,4,1
+2020-02-13T01:27:14+04:00,Sergey Vojtovich,MariaDB Foundation,svoj@mariadb.org,5,16,53
+2020-02-12T20:54:59+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,10,118,101
+2020-02-12T20:16:23+05:30,Varun Gupta,MariaDB Corporation,varun.gupta@mariadb.com,3,55,1
+2020-02-12T15:39:36+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,12,
+2020-02-12T14:45:21+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,47,2072,4956
+2020-02-12T11:32:09+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,4
+2020-02-12T11:32:09+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,3,7
+2020-02-12T10:32:30+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,8,9
+2020-02-11T18:44:26+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,46,127,964
+2020-02-11T18:03:19+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,46,80
+2020-02-11T17:18:26+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,26,5
+2020-02-11T15:17:50+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,21,690,87
+2020-02-10T21:20:17-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,4,66,6
+2020-02-11T08:10:26+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,41,781,546
+2020-02-11T00:19:37+04:00,Alexey Botchkov,MariaDB Corporation,holyfoot@mariadb.com,3,4,4
+2020-02-10T21:57:27+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,20,1
+2020-02-10T14:32:10+01:00,Anel Husakovic,MariaDB Foundation,anel@mariadb.org,1,2,
+2020-02-10T12:44:53+01:00,Vladislav Vaintroub,MariaDB Corporation,wlad@mariadb.com,1,,1
+2020-02-09T13:03:35+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,96,24
+2020-02-09T13:03:28+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,20,,1244
+2020-02-09T08:55:26+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,2,96,24
+2020-02-09T08:55:26+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,20,,1244
+2020-02-08T21:35:35+04:00,Alexander Barkov,MariaDB Corporation,bar@mariadb.com,13,813,317
+2020-02-08T18:58:28+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,2,4
+2020-02-08T14:12:59+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,78,149
+2020-02-08T11:47:42+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,11,4
+2020-02-08T11:40:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
+2020-02-08T05:50:01+01:00,Martin Liska,No Organization,mliska@suse.cz,1,11,2
+2020-02-07T19:48:35-08:00,Igor Babaev,MariaDB Corporation,igor@mariadb.com,3,142,1
+2020-02-07T13:40:08+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,2,2
+2020-02-07T13:40:08+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,1,14,13
+2020-02-07T13:44:13+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-02-07T13:29:08+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,,1
+2020-02-07T13:15:33+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-02-07T16:01:31+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,3,18,1
+2020-02-07T12:07:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,51,66
+2020-02-07T15:22:23+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,4,19,2
+2020-02-07T08:12:58+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,6,103,92
+2020-02-06T20:42:29+05:30,Thirunarayanan Balathandayuthapani,MariaDB Corporation,thiru@mariadb.com,2,29,
+2020-02-06T14:52:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,
+2020-02-06T10:50:04+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,6,2
+2020-02-06T09:00:19+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,142,109
+2020-02-06T07:48:37+01:00,Aurélien LEQUOY,No Organization,pmacontrol@68koncept.com,1,1,1
+2020-02-05T17:22:26+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,103,2124,1997
+2020-02-05T15:34:02+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,13,5
+2020-02-05T13:37:12+01:00,Oleksandr "Sanja" Byelkin,MariaDB Corporation,sanja@mariadb.com,3,26,
+2020-02-05T11:12:10+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,61,4
+2020-02-05T10:02:33+02:00,mkaruza,No Organization,mkaruza@users.noreply.github.com,4,42,28
+2020-02-05T00:54:16+03:00,Sergei Petrunia,MariaDB Corporation,psergey@mariadb.com,2,90,3
+2020-02-04T23:23:50+04:00,Sergey Vojtovich,MariaDB Foundation,svoj@mariadb.org,4,39,1
+2020-02-04T16:36:58+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,23,1
+2020-02-04T18:16:21+05:30,Sujatha,No Organization,sujatha.sivakumar@mariadb.com,5,392,
+2020-02-04T11:14:21+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,3,14,11
+2020-02-04T08:56:03+02:00,Julius Goryavsky,No Organization,julius.goryavsky@mariadb.com,3,21,
+2020-02-03T19:45:30+02:00,Jan Lindström,MariaDB Corporation,jan.lindstrom@mariadb.com,1,68,48
+2020-02-03T12:34:08+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,2,46
+2020-02-03T12:34:08+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,15,8
+2020-02-03T17:59:14+08:00,Eugene Kosov,Tempesta,claprix@yandex.ru,1,2,2
+2020-02-03T12:44:31+05:30,Sachin Setiya,MariaDB Corporation,sachin.setiya@mariadb.com,9,79,70
+2020-02-02T17:13:58+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,39,2
+2020-02-02T15:13:29+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,5,116,6
+2020-02-02T15:13:29+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,1,1,1
+2020-02-02T15:13:29+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,2,5,3
+2020-02-02T15:13:29+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,3,34,2
+2020-02-02T15:13:29+03:00,Aleksey Midenkov,Tempesta,midenok@gmail.com,2,6,
+2020-02-02T13:53:26+05:30,Sachin Setiya,MariaDB Corporation,sachin.setiya@mariadb.com,3,13,
+2020-02-01T23:58:24+08:00,Eugene Kosov,Tempesta,claprix@yandex.ru,4,39,53
+2020-02-01T15:06:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,6,7
+2020-02-01T14:56:05+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,3,10,5
+2020-01-31T22:14:18+08:00,Eugene Kosov,Tempesta,claprix@yandex.ru,2,16,4
+2020-01-31T13:16:11+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,2,2
+2020-01-31T11:33:07+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,4,3
+2020-01-31T10:06:55+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,2,6,84
+2020-01-31T09:54:43+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,15,
+2020-01-31T09:17:12+02:00,Marko Mäkelä,MariaDB Corporation,marko.makela@mariadb.com,1,1,1
