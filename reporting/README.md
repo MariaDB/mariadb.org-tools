@@ -1,4 +1,4 @@
-[![Try it on Nbviewer](https://img.shields.io/badge/MariaDB_Statistics_2019-jupyter_notebook-blue?logo=jupyter)](https://nbviewer.jupyter.org/github/robertbindar/mariadb.org-tools/blob/master/reporting/MDBF_Statistics_2019.ipynb?flush_cache=true)
+[![Try it on Nbviewer](https://img.shields.io/badge/MariaDB_Statistics_2019-jupyter_notebook-blue?logo=jupyter)](https://nbviewer.jupyter.org/github/MariaDB/mariadb.org-tools/blob/master/reporting/MDBF_Statistics.ipynb?flush_cache=true)
 
 # Common workflows
 
