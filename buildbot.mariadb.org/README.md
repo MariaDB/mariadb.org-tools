@@ -192,3 +192,10 @@ http://docs.buildbot.net/latest/manual/cfg-builders.html
 http://docs.buildbot.net/latest/manual/cfg-buildsteps.html
 
 -TBD-
+
+## Special Thanks
+
+This project would not have gotten off the ground without the help and support
+of Rasmus Johansson. We thank him for his many contributions to the community,
+and remember him for his kindness, level headedness, and as an example for us
+all.
