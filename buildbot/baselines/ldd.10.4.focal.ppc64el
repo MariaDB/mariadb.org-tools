@@ -295,6 +295,13 @@
 	/lib64/ld64.so.2 
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
 	linux-vdso64.so.1 
+=== /usr/lib/mysql/plugin/caching_sha2_password.so
+	/lib64/ld64.so.2 
+	libcrypto.so.1.1 => /lib/powerpc64le-linux-gnu/libcrypto.so.1.1 
+	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/powerpc64le-linux-gnu/libdl.so.2 
+	libpthread.so.0 => /lib/powerpc64le-linux-gnu/libpthread.so.0 
+	linux-vdso64.so.1 
 === /usr/lib/mysql/plugin/client_ed25519.so
 	/lib64/ld64.so.2 
 	libcrypto.so.1.1 => /lib/powerpc64le-linux-gnu/libcrypto.so.1.1 

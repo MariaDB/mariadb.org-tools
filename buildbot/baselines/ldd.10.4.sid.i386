@@ -280,6 +280,13 @@
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	/lib/ld-linux.so.2 
 	linux-gate.so.1 
+=== /usr/lib/mysql/plugin/caching_sha2_password.so
+	libcrypto.so.1.1 => /lib/i386-linux-gnu/libcrypto.so.1.1 
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	linux-gate.so.1 
 === /usr/lib/mysql/plugin/client_ed25519.so
 	libcrypto.so.1.1 => /lib/i386-linux-gnu/libcrypto.so.1.1 
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
