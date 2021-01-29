@@ -23,6 +23,6 @@ command -v ffmpeg &>/dev/null || command -v avconv &>/dev/null || err "ffmpeg or
 youtube-dl --write-auto-sub --write-sub --sub-format vtt --convert-subtitles srt "$1" || err "Unable to get subtitles"
 dos2unix -- *.srt || "dos2unix"
 # remove timestamps
-sed -r '/^[0-9]+$/{N;d}' -- *.srt >subtitles.txt
+sed -r '/^[0-9]+$/{N;d}' -- *.srt >subtitles_duplicates.txt
 # remove duplicates //TEMP to be tested
-# awk '!seen[$0]++' >subtitles.txt
+#awk '!seen[$0]++' subtitles_duplicates.txt >subtitles.txt
