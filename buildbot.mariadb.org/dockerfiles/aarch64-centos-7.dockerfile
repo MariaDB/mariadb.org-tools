@@ -46,7 +46,7 @@ RUN alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake3 20 \
 --family cmake
 
 RUN yum -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
-RUN yum -y install gnutls-devel
+RUN yum -y install gnutls-devel systemd-devel
 
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

@@ -36,6 +36,7 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
     chmod +x /usr/local/bin/dumb-init
 
 RUN dnf -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
+RUN dnf -y install flex readline-devel
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

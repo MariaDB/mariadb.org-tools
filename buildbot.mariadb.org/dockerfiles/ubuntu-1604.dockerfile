@@ -51,5 +51,8 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 
+RUN apt-get -y install libboost-dev scons
+RUN apt-get -y install check debhelper libasio-dev libboost-program-options-dev debhelper/xenial-backports
+
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
