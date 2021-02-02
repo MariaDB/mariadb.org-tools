@@ -49,6 +49,7 @@ RUN alternatives --install /usr/local/bin/cmake cmake /usr/bin/cmake3 20 \
 --family cmake
 
 RUN yum -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
+RUN yum -y install which Judy-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel flex gawk gcc gcc-c++ git glibc-common glibc-devel groff-base java-1.8.0-openjdk-devel java-1.8.0-openjdk java-1.8.0-openjdk-headless krb5-devel libaio-devel libcurl-devel libevent-devel libxml2 libxml2-devel libzstd-devel make ncurses-devel openssl-devel pam-devel pcre2-devel pkgconfig policycoreutils-python readline-devel ruby snappy-devel systemd-devel systemtap-sdt-devel tar thrift-devel unixODBC unixODBC-devel xz-devel zlib-devel which
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

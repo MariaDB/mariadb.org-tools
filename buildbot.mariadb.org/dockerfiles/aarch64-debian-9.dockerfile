@@ -47,6 +47,7 @@ RUN pip3 install buildbot-worker && \
 RUN apt-get -y install dumb-init
 
 RUN apt-get -y install gnutls-dev
+RUN apt-get -y install debhelper libboost-all-dev check scons libboost-program-options-dev
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

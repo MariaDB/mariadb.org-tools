@@ -46,6 +46,7 @@ RUN pip3 install buildbot-worker && \
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN apt-get -y install dumb-init
+RUN apt-get -y install debhelper libboost-all-dev check scons libboost-program-options-dev
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

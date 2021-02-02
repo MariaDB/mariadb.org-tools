@@ -42,7 +42,7 @@ RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Upgrade pip and install packages
-RUN pip3 install -U pip virtualenv
+RUN pip3 install -U "pip < 21.0" virtualenv
 RUN pip3 install buildbot-worker && \
     pip3 --no-cache-dir install 'twisted[tls]'
 
@@ -51,8 +51,10 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 
-RUN apt-get -y install libboost-dev scons
-RUN apt-get -y install check debhelper libasio-dev libboost-program-options-dev debhelper/xenial-backports
+RUN apt-get -y install libboost-all-dev scons check libasio-dev libboost-program-options-dev debhelper/xenial-backports
+RUN apt-get -y install dh-systemd/xenial-backports
 
 USER buildbot
+# Required as OPENSSL 1.0.2 won't run from now on without it.
+ENV CRYPTOGRAPHY_ALLOW_OPENSSL_102 1
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
