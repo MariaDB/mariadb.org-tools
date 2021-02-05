@@ -9,13 +9,14 @@ then
 fi
 
 curl "$1" | tar -zxvf - -C /usr/local --exclude '*/include/mysql/server' --exclude '*/mysql-test' --exclude '*/sql-bench' --exclude '*/man' --exclude '*/support-files'
+shift
 mkdir -p /data
 cd /usr/local/mariadb-*
 ln -s $PWD /usr/local/mariadb
 # for server plugins
 ln -s $PWD /usr/local/mysql
 ./scripts/mysql_install_db --basedir=$PWD --datadir=/data --user=buildbot
-bin/mysqld_safe --datadir=/data --user=buildbot  --local-infile --plugin-maturity=unknown &
+bin/mysqld_safe --datadir=/data --user=buildbot  --local-infile --plugin-maturity=unknown "$@" &
 
 countdown=5
 while [ ! -S /tmp/mysql.sock ] && [ $countdown -gt 0 ]

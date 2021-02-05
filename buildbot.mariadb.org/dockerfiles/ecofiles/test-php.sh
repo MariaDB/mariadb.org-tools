@@ -25,6 +25,9 @@ fi
 	|| :
 /usr/local/mariadb/bin/mysql -u root -e 'set password=password("letmein")' \
 	|| :
+# pam test - https://github.com/php/php-src/pull/6667
+/usr/local/mariadb/bin/mysql -u root -e "INSTALL SONAME 'auth_pam'" \
+	|| :
 
 
 export MYSQL_TEST_DB=test

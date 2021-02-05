@@ -47,6 +47,10 @@ RUN useradd -ms /bin/bash buildbot && \
     chown -R buildbot /buildbot /data /usr/local && \
     curl -o /buildbot/buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 
+# pam tests
+RUN for t in auth account; do echo "$t required pam_unix.so audit"; done >> /etc/pam.d/mysql
+RUN useradd -m pamtest --password pamtest
+
 # Hope to eventualy move away from needing sudo rights
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
