@@ -27,8 +27,7 @@ RUN apt-get update && \
 
 RUN apt-get -y install dh-systemd flex libboost-atomic-dev \
     libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev \
-    libboost-regex-dev libboost-system-dev libboost-thread-dev \
-    libreadline-gplv2-dev
+    libboost-regex-dev libboost-system-dev libboost-thread-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \

@@ -45,7 +45,7 @@ RUN pip3 install -U pip virtualenv && \
 RUN curl -Lo /tmp/dumb.rpm https://cbs.centos.org/kojifiles/packages/dumb-init/1.2.2/6.el8/$(arch)/dumb-init-1.2.2-6.el8.$(arch).rpm && yum -y localinstall /tmp/dumb.rpm
 
 RUN yum -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel python3-scons
-RUN yum -y install Judy-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel gcc gcc-c++ git glibc-common glibc-devel groff-base java-1.8.0-openjdk java-1.8.0-openjdk-headless krb5-devel libaio-devel libcurl-devel libevent-devel libxml2 libxml2-devel libzstd-devel make ncurses-devel openssl-devel pam-devel pcre2-devel pkgconfig policycoreutils readline-devel ruby snappy-devel systemd-devel systemtap-sdt-devel tar thrift-devel unixODBC unixODBC-devel xz-devel zlib-devel which python3 --allowerasing
+RUN yum -y install Judy-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel gcc gcc-c++ git glibc-common glibc-devel groff-base java-1.8.0-openjdk java-1.8.0-openjdk-headless krb5-devel libaio-devel libcurl-devel libevent-devel libxml2 libxml2-devel libzstd-devel make ncurses-devel openssl-devel pam-devel pcre2-devel pkgconfig policycoreutils readline-devel ruby snappy-devel systemd-devel systemtap-sdt-devel tar unixODBC unixODBC-devel xz-devel zlib-devel which python3 --allowerasing
 
 RUN subscription-manager unregister
 

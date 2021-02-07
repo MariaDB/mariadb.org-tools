@@ -11,7 +11,7 @@ LABEL maintainer="MariaDB Buildbot maintainers"
 RUN yum -y --enablerepo=extras install epel-release && \
     yum -y upgrade && \
     yum -y install dnf-plugins-core && \
-    yum config-manager --set-enabled PowerTools && \
+    yum config-manager --set-enabled powertools && \
     yum -y upgrade && \
     yum -y groupinstall 'Development Tools' && \
     yum -y install git ccache subversion yum-utils \
