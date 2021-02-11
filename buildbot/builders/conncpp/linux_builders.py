@@ -27,19 +27,39 @@ set -ex
 if [ -e ~/libssl-dev*.deb ] ; then sudo dpkg -i ~/libssl-dev*.deb ; fi
 git --version
 rm -Rf build
+rm -Rf src
+rm -Rf install_test
 export CFLAGS="${CFLAGS}"""+ cflags + """"
-time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git" build
+time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git" src
+cd src
 [-z "%(revision)s"] && git checkout %(revision)s
-cd build
 rm -rf ./test
 git submodule init
 git submodule update
 cd libmariadb
 git fetch --all --tags --prune
 git log | head -n5
-cd ..
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ .
+cd ../..
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 cmake --build . --config RelWithDebInfo --target package
+ls -l mariadb-connector-cpp*
+cd ..
+if [ -d "./src/install_test" ]; then
+  cat ./src/install_test/CMakeLists.txt
+  mkdir ./install_test
+  cd install_test
+  cmake ../src/install_test
+  cmake --build . --config RelWithDebInfo
+  cat ./CMakeFiles/example.dir/link.txt
+  PACKLIBS=$(ls $PWD/mariadb-connector-cpp*/lib*/mariadb/libmariadb.*)
+  PACKLIBS=$(dirname $PACKLIBS)
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PACKLIBS
+  ldd ./example
+  ./example
+fi
+
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
