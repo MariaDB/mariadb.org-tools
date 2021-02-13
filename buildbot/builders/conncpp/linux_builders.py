@@ -33,7 +33,7 @@ export CFLAGS="${CFLAGS}"""+ cflags + """"
 time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git" src
 cd src
 [-z "%(revision)s"] && git checkout %(revision)s
-rm -rf ./test
+
 git submodule init
 git submodule update
 cd libmariadb
@@ -42,10 +42,51 @@ git log | head -n5
 cd ../..
 mkdir build
 cd build
+
+# At least uid has to be exported before cmake run
+export TEST_UID=root
+export TEST_PASSWORD=
+export TEST_SERVER=localhost
+export TEST_SCHEMA=test
+
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 cmake --build . --config RelWithDebInfo --target package
 ls -l mariadb-connector-cpp*
+ls
+
+# Installing server to run tests
+if [ -e /usr/bin/apt ] ; then
+  sudo apt update
+# This package is required to run following script
+  sudo apt install -y apt-transport-https
+fi
+curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+
+if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
+  sudo dnf install -y MariaDB-server
+  sudo systemctl start mariadb
+fi
+
+if [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
+#  export TEST_PASSWORD=rootpass
+  sudo apt update
+  sudo apt install -y apt-transport-https
+  sudo apt install -y mariadb-server
+fi
+
+if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
+  sudo zypper install -y MariaDB-server
+  sudo systemctl start mariadb
+fi
+
+sudo mariadb -u root -e "select version(),@@port, @@socket"
+
+sudo mariadb -u root -e "set password=\\"\\""
+
+sudo mariadb -u root -e "SELECT * FROM mysql.user"
+
 cd ..
+
 if [ -d "./src/install_test" ]; then
   cat ./src/install_test/CMakeLists.txt
   mkdir ./install_test
@@ -57,9 +98,13 @@ if [ -d "./src/install_test" ]; then
   PACKLIBS=$(dirname $PACKLIBS)
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PACKLIBS
   ldd ./example
-  ./example
+  readelf -d $PACKLIBS/libmariadbcpp.so*
+  ./example "$TEST_UID" "$TEST_PASSWORD" /var/lib/mysql/mysql.sock
 fi
 
+cd ../build/test
+ls
+ctest -VV
 """),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
