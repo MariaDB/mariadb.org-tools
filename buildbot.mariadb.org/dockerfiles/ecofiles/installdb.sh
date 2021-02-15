@@ -26,7 +26,11 @@ do
 	countdown=$(( $countdown - 1 ))
 done
 
-[ -S /tmp/mysql.sock ] || exit 1
+if [ ! -S /tmp/mysql.sock ]
+then
+	cat /data/*err
+	exit 1
+fi
 
 /usr/local/mariadb/bin/mysql -e 'create user if not exists root@localhost; set password for root@localhost = password("") ; grant all on *.* TO root@localhost with grant option; show create user root@localhost; show grants for root@localhost' \
 	|| /usr/local/mariadb/bin/mysql -u root -e 'show create user root@localhost; show grants for root@localhost'
