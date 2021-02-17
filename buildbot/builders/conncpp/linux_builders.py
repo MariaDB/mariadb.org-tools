@@ -41,14 +41,39 @@ if [ -e /usr/bin/apt ] ; then
   sudo apt install -y apt-transport-https
   sudo apt install -y curl
 fi
-curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+
+if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash ; then
+  if [ -e /etc/fedora-release ]; then
+    source /etc/os-release
+    sudo sh -c "echo \\"#MariaDB.Org repo
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.5/$ID$VERSION_ID-amd64
+gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
+    sudo rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    sudo dnf remove -y mariadb-connector-c-config
+  fi
+  if grep -i xenial /etc/os-release ; then
+    USEAPT=1
+    sudo apt-get install -y software-properties-common gnupg-curl
+    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu xenial main'
+  fi
+  if grep -i groovy /etc/os-release ; then
+    USEAPT=1
+    sudo apt-get install -y software-properties-common
+    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu groovy main'
+  fi
+fi
 
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
   sudo dnf install -y MariaDB-server
   sudo systemctl start mariadb
 fi
 
-if [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
+if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
 #  export TEST_PASSWORD=rootpass
   sudo apt update
   sudo apt install -y apt-transport-https
@@ -157,8 +182,6 @@ bld_fedora33_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora33-amd64",
 bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ######################## New (unstable) version builders ######################
-bld_centos6_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos6-amd64", "vm-centos6-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_centos6_x86_connector_cpp= bld_linux_connector_cpp("ccpp-centos6-x86", "vm-centos6-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_centos7_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 ##################### New (unstable) version builders - END ###################
 
