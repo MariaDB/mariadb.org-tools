@@ -191,6 +191,38 @@ upload_to_the_primary_mirror() {
   done
 }
 
+upload_to_the_corp_mirror_staging_dir() {
+  local upload
+  upload=""
+  echo;echo;echo;
+  echo;line;echo "Doing a dry-run...";line;
+  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/"
+          rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        echo "+ rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/"
+                rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+
 upload_to_the_corp_mirror() {
   local upload
   upload=""
@@ -273,6 +305,8 @@ echo;echo
 shouldI prep_org_files
 echo;echo
 shouldI prep_com_files
+echo;echo
+shouldI upload_to_the_corp_mirror_staging_dir
 echo;echo
 shouldI upload_to_the_primary_mirror
 echo;echo

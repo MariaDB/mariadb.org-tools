@@ -206,6 +206,39 @@ upload_to_the_primary_mirror() {
   done
 }
 
+upload_to_the_corp_mirror_staging_dir() {
+  local upload
+  upload=""
+  message "Doing a dry-run..."
+  set -x
+  rsync --dry-run -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp_staging}/
+  set +x
+  echo;echo;echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        message "Uploading for real..."
+        set -x
+        rsync -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp_staging}/
+        set +x
+        echo;echo;echo
+        upload="yes"
+        return 0
+        ;;
+      "n")
+        echo "Something went wrong..."
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
 upload_to_the_corp_mirror() {
   local upload
   upload=""
@@ -289,6 +322,8 @@ shouldI prep_org_files
 shouldI update_org_current_to_this_release
 
 shouldI prep_com_files
+
+shouldI upload_to_the_corp_mirror_staging_dir
 
 shouldI upload_to_the_primary_mirror
 
