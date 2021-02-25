@@ -138,6 +138,7 @@ case "${branch}" in
 	PHP-7\.4)
 		mysqlifailtests+=( 063 ) # fixed in 8.0 at least
 		mysqlifailtests+=( mysqli_change_user_new ) # at least 8.0 (not 7.4)
+		mysqlifailtests+=( mysqli_auth_pam ) # Access denied for user 'pamtest'@'localhost' (using password: NO) - but password is.
 		;&
 	PHP-8\.0)
 		pdofailtests+=( bug_38546 )
