@@ -1,0 +1,84 @@
+#===============================================================================
+#
+#          FILE: bb-new-to-old
+# 
+#         USAGE: manual select/paste
+# 
+#   DESCRIPTION: This is NOT a proper shell script, if you try to run it as one
+#                then BAD THINGS WILL HAPPEN!!!
+#
+#                What this actually _IS_ is a file with various commands to
+#                help during the transition period when we are using _some_
+#                packages from the new buildbot: https://buildbot.mariadb.org,
+#                but we are still mostly continuing to use packages from the
+#                old buildbot: https://buildbot.askmonty.org.
+#   
+#                The general idea is that after downloading a given release
+#                from both CI systems, we switch over here, put in the correct
+#                information, and then manually run a set of move and copy
+#                commands to transfer the "new into the old", hence the name of
+#                this file.
+#
+#                Will this ever be turned into a "proper" script? Maybe, but
+#                currently there is no plan to do so.
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+#-------------------------------------------------------------------------------
+# Load the config file for the prep script (to set needed path vars)
+#-------------------------------------------------------------------------------
+dir_conf=${XDG_CONFIG_HOME:-~/.config} && . ${dir_conf}/prep.conf
+
+
+#-------------------------------------------------------------------------------
+# Set the following groups of vars for the current round of releases, then go
+# through the move and copy commands to put the files from ci.mariadb.org where
+# they go in the old buildbot.askmonty.org structure
+#-------------------------------------------------------------------------------
+tree='bb-10.2-release'
+tarbuildnum_bb='37968'
+tarbuildnum_ci='12851'
+
+tree='bb-10.3-release'
+tarbuildnum_bb='37970'
+tarbuildnum_ci='12853'
+
+tree='bb-10.4-release'
+tarbuildnum_bb='37971'
+tarbuildnum_ci='12854'
+
+tree='bb-10.5-release'
+tarbuildnum_bb='37974'
+tarbuildnum_ci='12857'
+
+
+#-------------------------------------------------------------------------------
+# Go through each of the following, depending on the tree
+#
+# Sid builds (10.5-only) are not represented here, don't forget about them! 
+#-------------------------------------------------------------------------------
+
+# stretch-aarch64 (10.2, 10.3, 10.4, 10.5)
+mv -vi ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64-orig
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-9-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64
+
+# rhel8-aarch64 (10.3, 10.4, 10.5)
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-rhel-8-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64/
+
+# fedora33-amd64 (10.4, 10.5)
+mv -vi ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-amd64 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-amd64-orig
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/amd64-fedora-33-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-amd64/
+
+# fedora33-aarch64 (10.5)
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-33-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-aarch64/
+
+# fedora32-aarch64 (10.5)
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64/
+
+# sid-aarch64 (10.5)
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-sid-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-aarch64
+
+
+
+# vim: filetype=sh
