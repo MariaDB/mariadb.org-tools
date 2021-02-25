@@ -12,7 +12,7 @@ RUN dnf -y upgrade && \
     dnf -y install @development-tools git wget ccache \
     subversion python-devel libffi-devel \
     openssl-devel python-pip redhat-rpm-config \
-    dnf-plugins-core rpm-build && \
+    dnf-plugins-core rpm-build liburing-devel && \
     # install MariaDB dependencies
     dnf -y builddep mariadb-server
 

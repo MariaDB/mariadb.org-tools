@@ -23,7 +23,7 @@ RUN apt-get update && \
     ccache python3 python3-pip curl wget libssl-dev libzstd-dev \
     libevent-dev dpatch gawk gdb libboost-dev libcrack2-dev \
     libjudy-dev libnuma-dev libsnappy-dev libxml2-dev \
-    unixodbc-dev uuid-dev fakeroot iputils-ping
+    unixodbc-dev uuid-dev fakeroot iputils-ping liburing-dev
 
 RUN apt-get -y install dh-systemd flex libboost-atomic-dev \
     libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev \
