@@ -45,25 +45,25 @@ case $1 in
   *10.0*)
     debian_ver=""
     ubuntu_ver=( xenial )
-    rhel_ver=( 6 7 )
+    rhel_ver=( 7 )
     sles_ver=( 11 12 )
     ;;
   *10.1*)
     debian_ver=( stretch )
     ubuntu_ver=( xenial bionic )
-    rhel_ver=( 6 7 )
+    rhel_ver=( 7 )
     sles_ver=( 11 12 )
     ;;
   *10.2*)
     debian_ver=( stretch )
     ubuntu_ver=( xenial bionic )
-    rhel_ver=( 6 7 )
+    rhel_ver=( 7 )
     sles_ver=( 12 15 )
     ;;
   *)
     debian_ver=( stretch buster )
     ubuntu_ver=( xenial bionic focal )
-    rhel_ver=( 6 7 8 )
+    rhel_ver=( 7 8 )
     sles_ver=( 15 )
     ;;
 esac
