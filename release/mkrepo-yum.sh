@@ -60,11 +60,11 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=(
-  [centos7]=centos-7-rpm-autobake [centos8]=centos-8-rpm-autobake
-  [rhel7]=rhel-7-rpm-autobake [rhel8]=rhel-8-rpm-autobake
-  [fedora31]=fedora-31-rpm-autobake [fedora32]=fedora-32-rpm-autobake [fedora33]=fedora-33-rpm-autobake
-  [sles12]=sles-12-rpm-autobake [sles15]=sles-15-rpm-autobake
-  [opensuse15]=opensuse-15-rpm-autobake [opensuse42]=opensuse-42-rpm-autobake
+  [centos7]=amd64-centos-7-rpm-autobake [centos8]=amd64-centos-8-rpm-autobake
+  [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
+  [fedora31]=amd64-fedora-31-rpm-autobake [fedora32]=amd64-fedora-32-rpm-autobake [fedora33]=amd64-fedora-33-rpm-autobake
+  [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
+  [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
 )
 
 declare -A builder_dir_bb_amd64=(
@@ -87,7 +87,7 @@ declare -A builder_dir_ci_aarch64=(
 
 declare -A builder_dir_bb_aarch64=(
   [centos7]=kvm-rpm-centos74-aarch64 [centos8]=kvm-rpm-centos8-aarch64
-  [rhel7]=kvm-rpm-rhel7-aarch64 [rhel8]=kvm-rpm-rhel8-aarch64
+  [rhel7]=kvm-rpm-centos74-aarch64 [rhel8]=kvm-rpm-rhel8-aarch64
   [fedora31]=kvm-rpm-fedora31-aarch64 [fedora32]=kvm-rpm-fedora32-aarch64 [fedora33]=kvm-rpm-fedora33-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles150-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
@@ -96,11 +96,11 @@ declare -A builder_dir_bb_aarch64=(
 # - - - - - - - - -
 
 declare -A builder_dir_ci_ppc64le=(
-  [centos7]=pc9-centos-7-rpm-autobake [centos8]=pc9-centos-8-rpm-autobake
-  [rhel7]=pc9-rhel-7-rpm-autobake [rhel8]=pc9-rhel-8-rpm-autobake
-  [fedora31]=pc9-fedora-31-rpm-autobake [fedora32]=pc9-fedora-32-rpm-autobake [fedora33]=fedora-33-rpm-autobake
-  [sles12]=pc9-sles-12-rpm-autobake [sles15]=pc9-sles-15-rpm-autobake
-  [opensuse15]=pc9-opensuse-15-rpm-autobake [opensuse42]=pc9-opensuse-42-rpm-autobake
+  [centos7]=ppc64le-centos-7-rpm-autobake [centos8]=ppc64le-centos-8-rpm-autobake
+  [rhel7]=ppc64le-rhel-7-rpm-autobake [rhel8]=ppc64le-rhel-8-rpm-autobake
+  [fedora31]=ppc64le-fedora-31-rpm-autobake [fedora32]=ppc64le-fedora-32-rpm-autobake [fedora33]=fedora-33-rpm-autobake
+  [sles12]=ppc64le-sles-12-rpm-autobake [sles15]=ppc64le-sles-15-rpm-autobake
+  [opensuse15]=ppc64le-opensuse-15-rpm-autobake [opensuse42]=ppc64le-opensuse-42-rpm-autobake
 )
 
 declare -A builder_dir_bb_ppc64le=(
@@ -111,154 +111,104 @@ declare -A builder_dir_bb_ppc64le=(
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
 )
 
+declare -A builder_dir_bb_ppc64=(
+  [centos7]=kvm-rpm-centos73-ppc64
+)
 
-if [[ "${ARCHDIR}" == *"5.5"* ]]; then
-  dists="
-    centos6-x86
-    centos6-amd64
 
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
-
-    sles114-x86
-    sles114-amd64
-
-    sles12-amd64
-  "
-elif [[ "${ARCHDIR}" == *"10.0"* ]]; then
-  dists="
-    centos6-amd64
-    centos6-x86
-
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
-
-    sles114-amd64
-    sles114-x86
-
-    sles12-amd64
-  "
-elif [[ "${ARCHDIR}" = *"10.1"* ]]; then
-  dists="
-    centos6-amd64
-    centos6-x86
-
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
-
-    sles114-amd64
-    sles114-x86
-
-    sles12-amd64
-  "
-elif [[ "${ARCHDIR}" = *"10.5"* ]]; then
-  dists="
+if [[ "${ARCHDIR}" = *"10.5"* ]]; then
+  dists_bb="
     centos7-amd64
+    centos7-ppc64
+    centos7-ppc64le
+    centos7-aarch64
 
-    rhel7-aarch64
-    rhel8-aarch64
     rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
 
-    fedora31-amd64
     fedora32-amd64
     fedora32-aarch64
     fedora33-amd64
+    fedora33-aarch64
 
     opensuse15-amd64
-    opensuse42-amd64
 
     sles12-amd64
     sles15-amd64
   "
-  old_dists="
-    centos73-ppc64
-    centos73-ppc64le
+  dists_ci="
+    rhel8-aarch64
 
-    centos74-amd64
-    centos74-aarch64
-
-    rhel8-amd64
-    rhel8-ppc64le
-
-    fedora31-amd64
-    fedora32-amd64
+    fedora32-aarch64
     fedora33-amd64
-
-    opensuse150-amd64
-
-    sles12-amd64
-    sles150-amd64
+    fedora33-aarch64
   "
+  dists=${dists_bb}
 
 elif [[ "${ARCHDIR}" = *"10.4"* ]]; then
-  dists="
-    centos6-amd64
-
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
+  dists_bb="
+    centos7-amd64
+    centos7-ppc64
+    centos7-ppc64le
+    centos7-aarch64
 
     rhel8-amd64
+    rhel8-aarch64
     rhel8-ppc64le
 
-    fedora31-amd64
     fedora32-amd64
     fedora33-amd64
 
-    opensuse150-amd64
+    opensuse15-amd64
 
     sles12-amd64
-    sles150-amd64
+    sles15-amd64
   "
+  dists_ci="
+    rhel8-aarch64
+
+    fedora33-amd64
+  "
+  dists=${dists_bb}
 
 elif [[ "${ARCHDIR}" = *"10.3"* ]]; then
-  dists="
-    centos6-amd64
-    centos6-x86
-
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
+  dists_bb="
+    centos7-amd64
+    centos7-ppc64
+    centos7-ppc64le
+    centos7-aarch64
 
     rhel8-amd64
+    rhel8-aarch64
     rhel8-ppc64le
 
-    fedora31-amd64
-
-    opensuse150-amd64
+    opensuse15-amd64
 
     sles12-amd64
-    sles150-amd64
+    sles15-amd64
   "
+  dists_ci="
+    rhel8-aarch64
+  "
+  dists=${dists_bb}
+
 elif [[ "${ARCHDIR}" = *"10.2"* ]]; then
-  dists="
-    centos6-amd64
-    centos6-x86
+  dists_bb="
+    centos7-amd64
+    centos7-ppc64
+    centos7-ppc64le
+    centos7-aarch64
 
-    centos73-ppc64
-    centos73-ppc64le
-
-    centos74-amd64
-    centos74-aarch64
-
-    opensuse150-amd64
+    opensuse15-amd64
 
     sles12-amd64
-    sles150-amd64
+    sles15-amd64
   "
+  dists_ci="
+  "
+  dists=${dists_bb}
+
 fi
 
 suffix="signed"
@@ -479,7 +429,7 @@ for REPONAME in ${dists}; do
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
-    'centos73-ppc64')
+    'centos73-ppc64'|'centos7-ppc64')
       set_builder_dir centos7 ppc64
       runCommand mkdir -vp rhel/7/ppc64
       maybe_make_symlink rhel/7/ppc64 rhel7-ppc64
@@ -499,7 +449,7 @@ for REPONAME in ${dists}; do
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
-    'centos73-ppc64le')
+    'centos73-ppc64le'|'centos7-ppc64le')
       set_builder_dir centos7 ppc64le
       runCommand mkdir -vp rhel/7/ppc64le
       maybe_make_symlink rhel/7/ppc64le rhel7-ppc64le
@@ -553,6 +503,9 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       
       ;;
     'rhel8-amd64')
@@ -569,6 +522,8 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
 
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'rhel8-ppc64le')
       set_builder_dir rhel8 ppc64le
@@ -584,6 +539,9 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in other files
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
 
       ;;
     fedora*)
