@@ -135,9 +135,6 @@ deb_dists_full="
   groovy-amd64
   groovy-ppc64le
 
-  jessie-amd64
-  jessie-x86
-
   sid-amd64
   sid-x86
   
@@ -156,9 +153,6 @@ deb_dists_full="
 "
 
 rpm_dists="
-  centos6-x86
-  centos6-amd64
-
   centos73-ppc64
   centos73-ppc64le
 
@@ -169,14 +163,10 @@ rpm_dists="
   rhel8-amd64
   rhel8-ppc64le
 
-  fedora31-amd64
   fedora32-amd64
   fedora33-amd64
 
   opensuse150-amd64
-
-  sles11-amd64
-  sles11-x86
 
   sles123-amd64
   sles150-amd64
@@ -650,6 +640,7 @@ END
       *amd64) dist_arch='amd64' ;;
       *aarch64) dist_arch='arm64' ;;
       *ppc64le) dist_arch='ppc64el' ;;
+      *x86) dist_arch='i386' ;;
       *)
         echo ${dist}
         echo 'We should not be here. Error with setting ${dist_arch}'
@@ -1113,13 +1104,13 @@ dir_archive="${dir_archive_galera}"
 
 case ${tree} in
   "mariadb-3.x")
-    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     ;;
   "mariadb-4.x")
-    build_dirs_x86="kvm-rpm-centos6-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     ;;
 esac
-build_dirs_x86_64="kvm-rpm-centos6-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
+build_dirs_x86_64="kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
 build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64 kvm-rpm-centos74-aarch64-gal:galera-${num}-aarch64"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
