@@ -133,6 +133,7 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_class_mysqli_interface )
 		;&
 	PHP-7\.3)
+		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # https://github.com/php/php-src/pull/6484 - fixed 7.4
 		;&
 	PHP-7\.4)
 		mysqlifailtests+=( 063 ) # fixed in 8.0 at least
