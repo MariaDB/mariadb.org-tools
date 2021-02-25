@@ -89,25 +89,25 @@ set_build_dirs_variables() {
         32bit-ubuntu-1604:bintar-ubuntu-1604-x86
         "
       ci_build_dirs_x86_64="
-        centos-7:bintar-centos-7-amd64
-        centos-8:bintar-centos-8-amd64
-        debian-10:bintar-debian-10-amd64
-        debian-9:bintar-debian-9-amd64
-        debian-sid:bintar-debian-sid-amd64
-        fedora-32:bintar-fedora-32-amd64
-        fedora-33:bintar-fedora-33-amd64
-        opensuse-15:bintar-opensuse-15-amd64
-        opensuse-42:bintar-opensuse-42-amd64
-        rhel-8:bintar-rhel-8-amd64
-        sles-12:bintar-sles-12-amd64
-        sles-15:bintar-sles-15-amd64
-        ubuntu-1604:bintar-ubuntu-1604-amd64
-        ubuntu-1804:bintar-ubuntu-1804-amd64
-        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
-        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
-        ubuntu-2004:bintar-ubuntu-2004-amd64
-        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
-        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
+        amd64-centos-7:bintar-centos-7-amd64
+        amd64-centos-8:bintar-centos-8-amd64
+        amd64-debian-10:bintar-debian-10-amd64
+        amd64-debian-9:bintar-debian-9-amd64
+        amd64-debian-sid:bintar-debian-sid-amd64
+        amd64-fedora-32:bintar-fedora-32-amd64
+        amd64-fedora-33:bintar-fedora-33-amd64
+        amd64-opensuse-15:bintar-opensuse-15-amd64
+        amd64-opensuse-42:bintar-opensuse-42-amd64
+        amd64-rhel-8:bintar-rhel-8-amd64
+        amd64-sles-12:bintar-sles-12-amd64
+        amd64-sles-15:bintar-sles-15-amd64
+        amd64-ubuntu-1604:bintar-ubuntu-1604-amd64
+        amd64-ubuntu-1804:bintar-ubuntu-1804-amd64
+        amd64-ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
+        amd64-ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
+        amd64-ubuntu-2004:bintar-ubuntu-2004-amd64
+        amd64-ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
+        amd64-ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
         "
       ci_build_dirs_aarch64="
         aarch64-centos-7:bintar-centos-7-aarch64
@@ -121,10 +121,10 @@ set_build_dirs_variables() {
         aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
         "
       ci_build_dirs_ppc64le="
-        pc9-centos-7:bintar-centos-7-ppc64le
-        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        ppc64le-centos-7:bintar-centos-7-ppc64le
+        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
         "
       ;;
     10.4|10.3)
@@ -178,10 +178,10 @@ set_build_dirs_variables() {
         aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
         "
       ci_build_dirs_ppc64le="
-        pc9-centos-7:bintar-centos-7-ppc64le
-        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        ppc64le-centos-7:bintar-centos-7-ppc64le
+        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
         "
       ;;
     *)
@@ -191,25 +191,25 @@ set_build_dirs_variables() {
         32bit-ubuntu-1604:bintar-ubuntu-1604-x86
         "
       ci_build_dirs_x86_64="
-        centos-7:bintar-centos-7-amd64
-        centos-8:bintar-centos-8-amd64
-        debian-10:bintar-debian-10-amd64
-        debian-9:bintar-debian-9-amd64
-        debian-sid:bintar-debian-sid-amd64
-        fedora-32:bintar-fedora-32-amd64
-        fedora-33:bintar-fedora-33-amd64
-        opensuse-15:bintar-opensuse-15-amd64
-        opensuse-42:bintar-opensuse-42-amd64
-        rhel-8:bintar-rhel-8-amd64
-        sles-12:bintar-sles-12-amd64
-        sles-15:bintar-sles-15-amd64
-        ubuntu-1604:bintar-ubuntu-1604-amd64
-        ubuntu-1804:bintar-ubuntu-1804-amd64
-        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
-        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
-        ubuntu-2004:bintar-ubuntu-2004-amd64
-        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
-        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
+        amd64-centos-7:bintar-centos-7-amd64
+        amd64-centos-8:bintar-centos-8-amd64
+        amd64-debian-10:bintar-debian-10-amd64
+        amd64-debian-9:bintar-debian-9-amd64
+        amd64-debian-sid:bintar-debian-sid-amd64
+        amd64-fedora-32:bintar-fedora-32-amd64
+        amd64-fedora-33:bintar-fedora-33-amd64
+        amd64-opensuse-15:bintar-opensuse-15-amd64
+        amd64-opensuse-42:bintar-opensuse-42-amd64
+        amd64-rhel-8:bintar-rhel-8-amd64
+        amd64-sles-12:bintar-sles-12-amd64
+        amd64-sles-15:bintar-sles-15-amd64
+        amd64-ubuntu-1604:bintar-ubuntu-1604-amd64
+        amd64-ubuntu-1804:bintar-ubuntu-1804-amd64
+        amd64-ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
+        amd64-ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
+        amd64-ubuntu-2004:bintar-ubuntu-2004-amd64
+        amd64-ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
+        amd64-ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
         "
       ci_build_dirs_aarch64="
         aarch64-centos-7:bintar-centos-7-aarch64
@@ -223,10 +223,10 @@ set_build_dirs_variables() {
         aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
         "
       ci_build_dirs_ppc64le="
-        pc9-centos-7:bintar-centos-7-ppc64le
-        pc9-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        pc9-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        pc9-ubuntu-2004:bintar-ubuntu-2004-ppc64le
+        ppc64le-centos-7:bintar-centos-7-ppc64le
+        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
+        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
+        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
         "
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
                 kvm-bintar-centos6-x86:bintar-linux-x86
@@ -847,10 +847,27 @@ pull_this_release_from_ci() {
 
   runCommand popd
   runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
+  message "Done downloading release to ${dir_archive}/ci/${tree}/${tarbuildnum}"
 }
 
 mark_this_release_as_a_ci_release() {
   ci_release=true
+}
+
+verify_the_ci_download() {
+  message "Verifying files downloaded from ${ci}..."
+  for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -name sha256sums.txt) ; do
+    runCommand pushd $(dirname ${shafile})
+    case $shafile in
+      *windows*)
+        dos2unix sha256sums.txt
+        sed -i 's/[ \t]*$//' sha256sums.txt
+        sed -i '/^$/d' sha256sums.txt
+        ;;
+    esac
+    runCommand sha256sum --quiet -c sha256sums.txt
+    runCommand popd
+  done
 }
 
 use_the_staging_mirror() {
@@ -1461,6 +1478,8 @@ fi
 shouldI pull_this_release_from_the_buildmaster
 
 shouldI pull_this_release_from_ci
+
+shouldI verify_the_ci_download
 
 shouldI mark_this_release_as_a_ci_release
 
@@ -2207,7 +2226,7 @@ else
 
     # We can't create the yum dir on an nfs server, so we create it in our home
     # dir first
-    # mkdir -v ${dir_yum_prep}/yum
+    mkdir -vp ${dir_yum_prep}/${dir_name}
 
     echo "Before rsyncing the yum release..."
 
@@ -2217,15 +2236,15 @@ else
 
     # Rsync a copy of the previous release to ${HOME}
     if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/"
+      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/"
+      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
     echo
 
-    pushd ${dir_yum_prep}/yum
+    pushd ${dir_yum_prep}/${dir_name}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
       if ${ci_release}; then
         runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
@@ -2235,8 +2254,9 @@ else
     popd
 
     # move the yum dir to where it needs to go
-    echo "+ mv -i ${dir_yum_prep}/yum ${dir_release}/${dir_name}/"
-            mv -i ${dir_yum_prep}/yum ${dir_release}/${dir_name}/
+    echo "+ mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/"
+            mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/
+            rmdir -v ${dir_yum_prep}/${dir_name}
     pushd ${dir_release}/${dir_name}/
 
     # copy the yum dir to the corp release dir
@@ -2362,6 +2382,7 @@ echo;echo;echo;echo
   shouldI upload_this_release_to_the_buildmaster
   echo;echo;echo;echo
 #fi
+  shouldI update_the_STATUS_file
 
 echo "+ all done!"
 echo;echo;echo;echo

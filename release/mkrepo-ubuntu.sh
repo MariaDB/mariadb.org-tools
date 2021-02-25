@@ -62,13 +62,13 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=([xenial]=ubuntu-1604-deb-autobake [bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_amd64=([xenial]=kvm-deb-xenial-amd64 [bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64)
+declare -A builder_dir_bb_amd64=([xenial]=kvm-deb-xenial-amd64 [bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [groovy]=kvm-deb-groovy-amd64)
 
 declare -A builder_dir_ci_aarch64=([xenial]=aarch64-ubuntu-1604-deb-autobake [bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_aarch64=([xenial]=kvm-deb-xenial-aarch64 [bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64)
+declare -A builder_dir_bb_aarch64=([xenial]=kvm-deb-xenial-aarch64 [bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [groovy]=kvm-deb-groovy-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([xenial]=pc9-ubuntu-1604-deb-autobake [bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([xenial]=kvm-deb-xenial-ppc64le [bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le)
+declare -A builder_dir_bb_ppc64le=([xenial]=kvm-deb-xenial-ppc64le [bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [groovy]=kvm-deb-groovy-ppc64le)
 
 declare -A builder_dir_ci_x86=([xenial]=32bit-ubuntu-1604-deb-autobake [bionic]=32bit-ubuntu-1804-deb-autobake [focal]=32bit-ubuntu-2004-deb-autobake)
 declare -A builder_dir_bb_x86=([xenial]=kvm-deb-xenial-x86 [bionic]=kvm-deb-bionic-x86 [focal]=kvm-deb-focal-x86)
@@ -201,7 +201,7 @@ for dist in ${ubuntu_dists}; do
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
     'xenial'|'bionic'|'disco'|'focal'|'groovy')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done

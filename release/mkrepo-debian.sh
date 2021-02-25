@@ -232,8 +232,8 @@ fi
 # Remove packages from deprecated distros (if they are present)
 #reprepro --basedir=. --delete clearvanished
 
-declare -A builder_dir_ci_amd64=([stretch]=debian-9-deb-autobake [buster]=debian-10-deb-autobake)
-declare -A builder_dir_bb_amd64=([stretch]=kvm-deb-stretch-amd64 [buster]=kvm-deb-buster-amd64)
+declare -A builder_dir_ci_amd64=([stretch]=debian-9-deb-autobake [buster]=debian-10-deb-autobake [sid]=debian-sid-deb-autobake)
+declare -A builder_dir_bb_amd64=([stretch]=kvm-deb-stretch-amd64 [buster]=kvm-deb-buster-amd64 [sid]=kvm-deb-sid-amd64)
 
 declare -A builder_dir_ci_aarch64=([stretch]=aarch64-debian-9-deb-autobake [buster]=aarch64-debian-10-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
 declare -A builder_dir_bb_aarch64=([stretch]=kvm-deb-stretch-aarch64 [buster]=kvm-deb-buster-aarch64 [sid]=kvm-deb-sid-aarch64)
@@ -301,7 +301,7 @@ for dist in ${debian_dists}; do
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     'stretch'|'buster'|'sid')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
       ;;
     * )
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
@@ -320,27 +320,21 @@ for dist in ${debian_dists}; do
   # add aarch64 files
   builder_dir="builder_dir_${build_type}_aarch64[${builder}]"
   case ${builder} in
-    'stretch'|'buster')
+    'stretch'|'buster'|'sid')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
 
   # add x86 files
   builder_dir="builder_dir_${build_type}_x86[${builder}]"
-  if [ "${ENTERPRISE}" != "yes" ]; then
     case ${builder} in
-      #'sid')
-      #  # use stretch packages for sid, for now - 2017-08-01 dbart
-      #  for i in $(find "$ARCHDIR/kvm-deb-stretch-x86/" -name '*_i386.deb'); do reprepro --ignore=wrongdistribution --ignore=surprisingbinary --basedir=. includedeb ${dist} $i ; done
-      #  ;;
       'buster')
         echo "+ no x86 packages for ${builder}"
         ;;
-      * )
+      'stretch'|'sid')
         for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
         ;;
     esac
-  fi
 
   # Add in custom jemalloc packages for distros that need them
   case  ${builder} in
@@ -376,7 +370,7 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "stretch"|"buster")
+            "stretch"|"buster"|"sid")
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
