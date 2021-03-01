@@ -516,7 +516,7 @@ case "$branch" in
   set -o pipefail
   if [ "$test_mode" == "all" ] ; then
     set -o pipefail
-    if -e $script_home/baselines/ldd.${major_version}.${version_name}.${arch} ; then
+    if [ -e $script_home/baselines/ldd.${major_version}.${version_name}.${arch} ]; then
       ldd_baseline=$script_home/baselines/ldd.${major_version}.${version_name}.${arch}
     else
       ldd_baseline=/home/buildbot/ldd.old
