@@ -52,6 +52,7 @@ RUN pip3 install buildbot-worker && \
 #RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_i386.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 RUN apt-get install -y dumb-init
 RUN apt-get update && apt-get -y install debhelper libasio-dev libboost-all-dev check scons libboost-program-options-dev
+RUN apt-get install -y liburing-dev
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
