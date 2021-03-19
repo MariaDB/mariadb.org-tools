@@ -93,6 +93,9 @@ columnstore)
   if ! grep columnstore Packages > /dev/null ; then
     echo "Upgrade warning: Columnstore was not found in packages, the test will not be run"
     exit
+  elif [[ "$version_name" == "sid" ]] ; then
+    echo "Upgrade warning: Columnstore isn't necessarily built on Sid, thte test will be skipped"
+    exit
   fi
   package_list="mariadb-server "`grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
   ;;
@@ -523,8 +526,12 @@ case "$branch" in
     fi
     diff -U1000 $ldd_baseline /home/buildbot/ldd.new | ( grep -E '^[-+]|^ =' || true )
     if [[ $? -ne 0 ]] ; then
-      echo "ERROR: something has changed in the dependencies of binaries or libraries. See the diff above"
-      res=1
+      if [[ "$version_name" == "sid" ]] ; then
+        echo "Upgrade warning: something has changed in the dependencies of binaries or libraries. See the diff"
+      else
+        echo "ERROR: something has changed in the dependencies of binaries or libraries. See the diff above"
+        res=1
+      fi
     fi
   fi
   set +o pipefail
