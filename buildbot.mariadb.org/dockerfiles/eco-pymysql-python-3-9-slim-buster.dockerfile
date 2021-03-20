@@ -14,7 +14,7 @@ RUN apt-get update -y && \
       curl               \
       gcc                \
       git                \
-      libsnappy1v5 libnuma1 \
+      libsnappy1v5 libnuma1 libpmem1 \
       libaio1 libreadline5 libncurses6 && \
    rm -rf /var/lib/apt/lists/*
 

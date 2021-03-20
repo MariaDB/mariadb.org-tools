@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
       libaio1              \
-      libsnappy1v5 libnuma1 libreadline5 \
+      libsnappy1v5 libnuma1 libreadline5 libpmem1 \
       python3 python3-pip  \
       curl                 \
       language-pack-de     \
