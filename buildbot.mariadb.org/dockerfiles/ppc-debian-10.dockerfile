@@ -37,6 +37,7 @@ WORKDIR /buildbot
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 # Upgrade pip and install packages
 RUN pip3 install -U pip virtualenv
 RUN pip3 install buildbot-worker && \
@@ -47,5 +48,6 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN apt-get -y install dumb-init
 RUN apt-get -y install debhelper libasio-dev libboost-all-dev check scons libboost-program-options-dev
+
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

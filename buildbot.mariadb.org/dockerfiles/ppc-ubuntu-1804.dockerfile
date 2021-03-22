@@ -39,6 +39,7 @@ WORKDIR /buildbot
 RUN usermod -a -G sudo buildbot
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 # Upgrade pip and install packages
 RUN pip3 install -U pip virtualenv
 RUN pip3 install buildbot-worker && \
