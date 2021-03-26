@@ -1988,6 +1988,9 @@ if [ "${galera_suffix}" != "-galera" ]; then
       if ! ${ci_release};then
       if ${win_remote} ; then
         # Win packages are on the remote builder
+        if [ -e md5sums.txt ]; then # if md5sums.txt exists, delete it before downloading
+          runCommand rm -v md5sums.txt*
+        fi
       runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
       else
         # Win packages are on the local filesystem
