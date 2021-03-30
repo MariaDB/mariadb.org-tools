@@ -1,3 +1,11 @@
+# The default build steps used here are defined in the builders/connectors-buildsteps.py
+connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git")
+connodbc_linux_step1_build= step1_build
+connodbc_linux_step2_serverinstall= linux_serverinstall
+#Step 3 - package quality test step - to add
+connodbc_linux_step3_packagetest= ""
+connodbc_linux_step4_testsrun= step4_testsrun
+
 def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
@@ -21,31 +29,14 @@ def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
-#sudo zypper install unixODBC-devel
-#sudo zypper install libopenssl1_1
-#sudo zypper install libopenssl-devel
-#sudo yum --disablerepo=epel -y install unixODBC
-#sudo yum -y install unixODBC-devel
-#sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
-#sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m openssl libssl-dev"
-set -ex
-if [ -e ~/libssl-dev*.deb ] ; then sudo dpkg -i ~/libssl-dev*.deb ; fi
-git --version
-rm -Rf build
-export CFLAGS="${CFLAGS}"""+ cflags + """"
-time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB/mariadb-connector-odbc.git" build
-[-z "%(revision)s"] && git checkout %(revision)s
-cd build
-rm -rf ./test
-git submodule init
-git submodule update
-cd libmariadb
-git fetch --all --tags --prune
-git log | head -n5
-cd ..
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off""" + cmake_params + """ .
-cmake --build . --config RelWithDebInfo --target package
-"""),
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build +
+connodbc_linux_step2_serverinstall +
+connodbc_linux_step3_packagetest +
+connodbc_linux_step4_testsrun
+),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
