@@ -1,102 +1,9 @@
 
 ################################# bld_linux_connector_oddbc ################################
 
-conncpp_linux_step0_checkout= """
-set -ex
-if [ -e ~/libssl-dev*.deb ] ; then sudo dpkg -i ~/libssl-dev*.deb ; fi
-git --version
-rm -Rf build
-rm -Rf src
-rm -Rf install_test
-time git clone --depth 1 -b %(branch)s "https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git" src
-cd src
-[-z "%(revision)s"] && git checkout %(revision)s
-
-git submodule init
-git submodule update
-cd libmariadb
-git fetch --all --tags --prune
-git log | head -n5
-cd ../..
-mkdir build
-cd build
-
-# At least uid has to be exported before cmake run
-export TEST_UID=root
-export TEST_PASSWORD=
-export TEST_SERVER=localhost
-export TEST_SCHEMA=test
-
-"""
-conncpp_linux_step1_build= """
-cmake --build . --config RelWithDebInfo --target package
-ls -l mariadb-connector-cpp*
-ls
-"""
-conncpp_linux_step2_serverinstall= """
-# Installing server to run tests
-if [ -e /usr/bin/apt ] ; then
-  sudo apt update
-# This package is required to run following script
-  sudo apt install -y apt-transport-https
-  sudo apt install -y curl
-fi
-
-if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash ; then
-  if [ -e /etc/fedora-release ]; then
-    source /etc/os-release
-    sudo sh -c "echo \\"#MariaDB.Org repo
-[mariadb]
-name = MariaDB
-baseurl = http://yum.mariadb.org/10.5/$ID$VERSION_ID-amd64
-gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
-    sudo rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-    sudo dnf remove -y mariadb-connector-c-config
-  fi
-  if grep -i xenial /etc/os-release ; then
-    USEAPT=1
-    sudo apt-get install -y software-properties-common gnupg-curl
-    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu xenial main'
-  fi
-  if grep -i groovy /etc/os-release ; then
-    USEAPT=1
-    sudo apt-get install -y software-properties-common
-    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu groovy main'
-  fi
-fi
-
-if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
-  if ! sudo dnf install -y MariaDB-server ; then
-    sudo yum install -y MariaDB-server
-  fi
-  sudo systemctl start mariadb
-fi
-
-if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
-#  export TEST_PASSWORD=rootpass
-  sudo apt update
-  sudo apt install -y apt-transport-https
-  sudo apt install -y mariadb-server
-fi
-
-if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
-  sudo zypper install -y MariaDB-server
-  sudo systemctl start mariadb
-fi
-
-sudo mariadb -u root -e "select version(),@@port, @@socket"
-sudo mariadb -u root -e "set password=\\"\\""
-sudo mariadb -u root -e "DROP DATABASE IF EXISTS test"
-sudo mariadb -u root -e "CREATE DATABASE test"
-sudo mariadb -u root -e "SELECT * FROM mysql.user"
-SOCKETPATH=$(mariadb -u root test -N -B -e "select @@socket")
-echo $SOCKETPATH
-
-cd ..
-"""
+conncpp_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git")
+conncpp_linux_step1_build= step1_build
+conncpp_linux_step2_serverinstall= linux_serverinstall
 conncpp_linux_step3_packagetest= """
 if [ -d "./src/install_test" ]; then
   cat ./src/install_test/CMakeLists.txt
@@ -114,11 +21,7 @@ if [ -d "./src/install_test" ]; then
 fi
 cd ..
 """
-conncpp_linux_step4_testsrun= """
-cd ./build/test
-ls
-ctest -VV
-"""
+conncpp_linux_step4_testsrun= step4_testsrun
 
 def bld_linux_connector_cpp(name, kvm_image, cflags, cmake_params):
     linux_connector_cpp= BuildFactory()
