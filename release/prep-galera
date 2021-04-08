@@ -496,16 +496,6 @@ prepare_the_rpm_packages() {
           runCommand rmdir -v ${dir_release}/${dir_name}/rpm/${dist}
         fi
         ;;
-      'sles123-amd64')
-        case ${tree} in
-          mariadb-3.x*)
-            runCommand cp -avi ${dir_archive}/${tree}/${rev}/kvm-*-${dist}-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
-            ;;
-          *)
-            runCommand cp -avi ${dir_release}/galera-26.4.4/rpm/${dist}/galera*rpm ${dir_release}/${dir_name}/rpm/${dist}/
-            ;;
-        esac
-        ;;
       'sles12-ppc64le')
         if [ "${tree}" = "mariadb-3.x" ];then
           runCommand cp -avi ${dir_archive}/${tree}/${rev}/p8-suse12-rpm-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
@@ -695,20 +685,6 @@ prepare_the_yum_repository() {
         createrepo -s sha --database --pretty ${dist}
         mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
         runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
-        ;;
-      'sles123-amd64')
-        case ${tree} in 
-          mariadb-4.x*)
-            # sles123 does not support galera newer than 26.4.4
-            rsync_wrapper "-av ${dir_release}/galera-26.4.4/${repo}/rpm/${dist} ${dir_release}/${dir_name}/${repo}/rpm/"
-            ;;
-          *)
-            mv -vi ${dist} ~/ && cd ~/
-            createrepo --database --pretty ${dist}
-            mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
-            runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
-            ;;
-        esac
         ;;
       *)
         mv -vi ${dist} ~/ && cd ~/
