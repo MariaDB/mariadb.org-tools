@@ -425,6 +425,7 @@ UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb.org-tools/release/mkrepo-yum.sh"
    CPT="/path/to/mariadb.org-tools/release/create_package_tarballs"
  BNDLS="/path/to/mariadb.org-tools/release/prep-bundles"
+GEN_UPDATEINFO="/path/to/mariadb.org-tools/release/gen-updateinfo.sh"
 
 # Full path to the galera-* scripts
 GALERA_NEW="/path/to/mariadb.org-tools/release/galera-new"

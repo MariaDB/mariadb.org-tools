@@ -716,6 +716,41 @@ for DIR in ${dists}; do
       runCommand createrepo --update --database --pretty ${DIR}
       ;;
   esac
+
+  # MDEV-22638 - Provide updateinfo.xml repository info for yum / dnf
+
+  case ${DIR} in
+    centos7*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name RedHat --platform-version 7
+      ;;
+    rhel8*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name RedHat --platform-version 8
+      ;;
+    fedora32*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name Fedora --platform-version 32
+      ;;
+    fedora33*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name Fedora --platform-version 33
+      ;;
+    sles12*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name SUSE --platform-version 12
+      ;;
+    sles15*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name SUSE --platform-version 15
+      ;;
+    opensuse15*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR} --platform-name openSUSE --platform-version 15
+      ;;
+    *)
+      thickline
+      echo "+ Unexpected repository value of ${DIR}"
+      thickline
+      exit 1
+      ;;
+  esac
+
+  runCommand modifyrepo /tmp/updateinfo.xml ${DIR}/repodata
+  runCommand rm -v /tmp/updateinfo.xml
   
   echo 
 
