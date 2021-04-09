@@ -25,7 +25,6 @@ PLATFORM_NAME=""
 PLATFORM_VER=""
 
 UPDATEINFO='/tmp/updateinfo.xml'
-EMAIL="maria-developers@mariadb.org"
 REPOPATH=$(dirname $0)
 # SEVERITY may be critical, important, moderate, bugfix, enhancement
 # script doesn't check for correct value, please be careful!
@@ -83,17 +82,28 @@ fi
 #
 # ref package is needed to get required metadata before any file
 # is processed in directory. Cannot be empty
-[[ -z "${REFPACKAGE}" ]] && REFPACKAGE="$(find ${REPOPATH} -type f -name 'MariaDB-server*.rpm' ! -name '*debuginfo*')"
-echo "=> Reference package is set to ${REFPACKAGE}..."
+[[ -z "${REFPACKAGE}" ]] && REFPACKAGE="$(find ${REPOPATH} -type f -name 'MariaDB-server*.rpm' ! -name '*debuginfo*' | tail -n 1)"
+[[ -n "${REFPACKAGE}" ]] && echo "=> Reference package is set to ${REFPACKAGE}..."
 
 RPMS=$(find ${REPOPATH} -type f -name '*.rpm')
 [[ -z "${RPMS}" ]] && echo "No RPM files found!" && exit 1
 
 # getting metadata from ref package
 VERSION=$(rpm -qp --qf "%{version}" ${REFPACKAGE})
+SHORTVER=${VERSION%_*}
+RNVER=${SHORTVER//[\._]/}
+RNURL=https://mariadb.com/kb/en/mariadb-${RNVER}-release-notes/
 REFVENDOR=$(rpm -qp --qf "%{vendor}" ${REFPACKAGE})
+EMAIL="MariaDB Developers <maria-developers@mariadb.org>"
 PRODUCT="MariaDB"
-[[ "${REFVENDOR}" =~ "MariaDB Corporation" ]] && PRODUCT="MariaDB-Enterprise"
+
+if [[ "${REFVENDOR}" =~ "MariaDB Corporation" ]]; then
+  PRODUCT="MariaDB-Enterprise"
+  EMAIL="MariaDB Corporation <pkg-maintainer@mariadb.com>"
+  RNVER=${VERSION//[\._]/-}
+  RNURL="https://mariadb.com/docs/release-notes/mariadb-enterprise-server-${RNVER}/"
+fi
+
 echo '<?xml version="1.0" encoding="UTF-8"?>' > ${UPDATEINFO}
 echo '<updates>' >> ${UPDATEINFO}
 echo "  <update from=\"${EMAIL}\" status=\"stable\" type=\"${UPDATETYPE}\" version=\"2.0\">" >> ${UPDATEINFO}
@@ -105,6 +115,7 @@ echo "    <rights>Copyright (C) $(date +%Y) ${REFVENDOR}.</rights>" >> ${UPDATEI
 echo "    <release>${PRODUCT} ${VERSION} release</release>" >> ${UPDATEINFO}
 echo "    <references>" >> ${UPDATEINFO}
 echo "      <reference href=\"https://mariadb.com/kb/en/library/security/\" id=\"\" title=\"List of CVEs fixed in ${PRODUCT}\" type=\"other\"/>" >> ${UPDATEINFO}
+echo "      <reference href=\"${RNURL}\" id=\"${RNVER//-/}-rn\" title=\"Issues fixed in ${PRODUCT} ${SHORTVER}\" type=\"self\"/>" >> ${UPDATEINFO}
 echo "    </references>" >> ${UPDATEINFO}
 echo "    <pkglist>" >> ${UPDATEINFO}
 echo "      <collection short=\"${PRODUCT}-${VERSION}\">" >> ${UPDATEINFO}
@@ -120,8 +131,8 @@ for _package in ${RPMS}; do
   EPOCH=$(rpm -qp --qf "%{epochnum}" ${_package})
   ARCH=$(rpm -qp --qf "%{arch}" ${_package})
   if [[ "${VENDOR}" =~ "${REFVENDOR}" ]] && [[ "${NAME}" =~ MariaDB ]]; then
-    SRC="MariaDB-${VERSION}-${RELEASE}.src.rpm" 
-  else 
+    SRC="MariaDB-${VERSION}-${RELEASE}.src.rpm"
+  else
     SRC=$(rpm -qp --qf "%{sourcerpm}" ${_package})
   fi
   SHA256=$(sha256sum ${_package} | awk '{print $1}')
