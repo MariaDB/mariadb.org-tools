@@ -260,12 +260,14 @@
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
 	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	linux-gate.so.1 =>  
 === /usr/lib/i386-linux-gnu/libmariadb3/plugin/client_ed25519.so
 	libcrypto.so.1.0.0 => /lib/i386-linux-gnu/libcrypto.so.1.0.0 
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
 	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	linux-gate.so.1 =>  
 === /usr/lib/i386-linux-gnu/libmariadb3/plugin/dialog.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
@@ -288,6 +290,7 @@
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
 	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/adt_null.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
@@ -350,6 +353,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/example_key_management.so
@@ -370,6 +374,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/ha_archive.so
@@ -454,6 +459,7 @@
 	libJudy.so.1 => /usr/lib/i386-linux-gnu/libJudy.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/ha_s3.so
@@ -520,6 +526,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/libdaemon_example.so
@@ -532,6 +539,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/metadata_lock_info.so
@@ -539,6 +547,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/mypluglib.so
@@ -558,6 +567,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/query_response_time.so
@@ -565,6 +575,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/server_audit.so
@@ -589,6 +600,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/type_mysql_json.so
@@ -596,6 +608,7 @@
 	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
 	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/wsrep_info.so
