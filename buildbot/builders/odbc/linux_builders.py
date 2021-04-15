@@ -1,10 +1,19 @@
 # The default build steps used here are defined in the builders/connectors-buildsteps.py
-connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git")
+connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git") + """
+export TEST_DRIVER=maodbc_test
+export TEST_DSN=maodbc_test
+"""
 connodbc_linux_step1_build= step1_build
 connodbc_linux_step2_serverinstall= linux_serverinstall
 #Step 3 - package quality test step - to add
 connodbc_linux_step3_packagetest= ""
-connodbc_linux_step4_testsrun= step4_testsrun
+connodbc_linux_step4_testsrun= """cd ./build/test
+cat odbcinst.ini
+cat odbc.ini
+export ODBCINI="$PWD/odbc.ini"
+export ODBCSYSINI=$PWD
+cd ../..
+""" + step4_testsrun
 
 def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
