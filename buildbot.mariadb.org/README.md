@@ -14,32 +14,45 @@
 
 buildbot.mariadb.org is our continuous integration testing platform, based on the Buildbot.net open-source testing framework.
 
-This installation sports version 1.3.0 at time of initial deployment running with Python 3 on a Ubuntu 18.04 decently tuned (performance wise) machine for a more speedy, modern and responsive UI in contrast to the existing Buildbot v0.8.8 running at buildbot.askmonty.org.
+This installation uses a custom version 2.7.1 at time of initial deployment running with Python 3 on a Ubuntu 18.04 decently tuned (performance wise) machine for a more speedy, modern and responsive UI in contrast to the existing Buildbot v0.8.8 running at buildbot.askmonty.org.
 
 This directory contains all the configuration needed to deploy a new installation of Buildbot master to a new machine, as well as all the information needed to add new builder configurations, extra worker machines to extend our building capability and platform support and specific steps you can take to reproduce the exact environment in which a build failure occurred so you can debug without much effort.
 
-Quick layout of the current directory structure:
+Quick layout of the main components of the current directory structure:
 
 ```
 buildbot.mariadb.org/
 ├── buildbot.tac
 ├── dockerfiles
 │   ├── buildbot.tac
-│   ├── debian.dockerfile
-│   ├── ubuntu1404.dockerfile
-│   ├── ubuntu1604.dockerfile
 │   └── ...
+│   └── ecofiles
+│       ├── installdb.sh
+│       ├── test-php.sh
+│       └── test-pymysql.sh
 ├── master.cfg
-├── readme.md
+├── master-private.cfg-sample
+├── master-web
+│   ├── buildbot.tac
+│   ├── master.cfg
+│   ├── static
+│   │   └── (sponsor logos)
+│   ├── templates
+│   │   ├── console_view
+│   │   │   └── console.jade
+│   │   ├── grid.html
+│   │   ├── grid_view
+│   │   │   └── grid.jade
+│   │   ├── home.jade
+│   │   └── sponsor.html
+│   └── twistd.pid
+├── README.md
 ├── sponsor.py
 ├── static
-│   └── (sponsor logos)
-├── templates
-│   └── sponsor.html
 └── util
     ├── buildbot-master.service
-    └── nginx.conf
-4 directories, 14 files
+    ├── buildbot-worker.service
+    └── nginx.conf
 ```
 
 * __buildbot.tac__: the only application configuration file Buildbot needs to get up and running in master mode, this one can remain largely unchanged
@@ -50,6 +63,7 @@ buildbot.mariadb.org/
 * __static__: image logos for the donors HTML presentation of the dashboard plugin
 * __templates__: HTML templates for dashboard plugins, currently only *sponsor.html* for the Sponsors plugin
 * __util__: various associated config files and tools, like the systemd service file and nginx configuration
+* __master-web__: a separate master configuration for handling the UI
 
 ## A word on Docker
 ===================
@@ -65,8 +79,6 @@ Using Buildbot's DockerLatentWorker to connect to docker instances, the worker r
 Starting with version 1.0, Buildbot interface changed in a significant and positive manner. The new UI is a fresh rewrite with responsive, lazy loading and modern web conveniences that makes it easy to follow running builds as well as convenient to browse build history.
 
 Grid View and MTRLogObserver plugin are usable out of the box and behave in a similar fashion as in the current Buildbot instance.
-
-One notable change is that, by default, new Buildbot does not load massive build/revision/branch/change historical data unless you increase the default numbers in _Settings_ -> _Grid related settings_ in your current browser session. 40 revisions, 1000 for changes & builds are good for a start. Play around with the values you see in Settings pane, they enable some of the behavior from current Buildbot, that you might be used to.
 
 # Debugging build failures
 ==========================  
