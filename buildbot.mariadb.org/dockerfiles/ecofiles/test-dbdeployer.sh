@@ -19,6 +19,7 @@ case "${1}" in
 	dbdeployerfetch)
 		# todo - respect version
 		curl -s https://raw.githubusercontent.com/datacharmer/dbdeployer/master/scripts/dbdeployer-install.sh | bash
+		ln -s dbdeployer*linux dbdeployer
 		./dbdeployer --version
 		;;
 	init)
