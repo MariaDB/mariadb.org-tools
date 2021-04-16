@@ -18,7 +18,7 @@ fail_ifnot 1
 case "${1}" in
 	dbdeployerfetch)
 		# todo - respect version
-		curl -sf https://gobinaries.com/datacharmer/dbdeployer | PREFIX=. sh
+		curl -s https://raw.githubusercontent.com/datacharmer/dbdeployer/master/scripts/dbdeployer-install.sh | bash
 		./dbdeployer --version
 		;;
 	init)
