@@ -12,6 +12,7 @@ cat odbcinst.ini
 cat odbc.ini
 export ODBCINI="$PWD/odbc.ini"
 export ODBCSYSINI=$PWD
+export TEST_SKIP_UNSTABLE_TEST=1
 cd ../..
 """ + step4_testsrun
 
