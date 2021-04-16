@@ -25,6 +25,7 @@ cd build
 # At least uid has to be exported before cmake run
 export TEST_UID=root
 export TEST_PASSWORD=
+export TEST_PORT=3306
 export TEST_SERVER=localhost
 export TEST_SCHEMA=test
 
