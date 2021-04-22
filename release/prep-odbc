@@ -107,6 +107,15 @@ shouldI() {
 }
 
 copy_and_stage_files() {
+  echo;line;echo "fixing permissions";line;
+
+  for dir in $(sudo find ${dir_build} -type d);do
+    sudo chmod -c 755 "${dir}"
+  done
+  for file in $(sudo find ${dir_build} -type f);do
+    sudo chmod -c 644 "${file}"
+  done
+
   echo;line;echo "Copying and staging files";line;
   pushd ${co_home}
     if [[ ! -d "${dir_odbc}" ]];then
