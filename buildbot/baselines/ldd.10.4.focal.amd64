@@ -330,6 +330,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/example_key_management.so
@@ -466,6 +467,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/ha_tokudb.so
@@ -488,6 +490,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/metadata_lock_info.so
@@ -495,6 +498,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/mypluglib.so
@@ -522,6 +526,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/query_response_time.so
@@ -529,6 +534,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/server_audit.so
@@ -556,6 +562,7 @@
 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 
 	linux-vdso.so.1 
 === /usr/lib/mysql/plugin/wsrep_info.so

@@ -330,6 +330,7 @@
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/powerpc64le-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/powerpc64le-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/powerpc64le-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/powerpc64le-linux-gnu/libstdc++.so.6 
 	linux-vdso64.so.1 
 === /usr/lib/mysql/plugin/example_key_management.so
@@ -466,6 +467,7 @@
 	libc.so.6 => /lib/powerpc64le-linux-gnu/libc.so.6 
 	libgcc_s.so.1 => /lib/powerpc64le-linux-gnu/libgcc_s.so.1 
 	libm.so.6 => /lib/powerpc64le-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/powerpc64le-linux-gnu/libpthread.so.0 
 	libstdc++.so.6 => /lib/powerpc64le-linux-gnu/libstdc++.so.6 
 	linux-vdso64.so.1 
 === /usr/lib/mysql/plugin/libdaemon_example.so

@@ -194,9 +194,12 @@
 	libcrypto.so.1.0.0 => /lib/i386-linux-gnu/libcrypto.so.1.0.0 
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
 	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
 	libssl.so.1.0.0 => /lib/i386-linux-gnu/libssl.so.1.0.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	libz.so.1 => /lib/i386-linux-gnu/libz.so.1 
 	linux-gate.so.1 =>  
 === /usr/bin/mysqltest_embedded
@@ -266,16 +269,19 @@
 	libresolv.so.2 => /lib/i386-linux-gnu/libresolv.so.2 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/auth_pam.so
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
+	/lib/ld-linux.so.2 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_pam_tool_dir
+=== /usr/lib/mysql/plugin/auth_pam_v1.so
 	libaudit.so.1 => /lib/i386-linux-gnu/libaudit.so.1 
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 
 	/lib/ld-linux.so.2 
 	libpam.so.0 => /lib/i386-linux-gnu/libpam.so.0 
 	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
-	linux-gate.so.1 =>  
-=== /usr/lib/mysql/plugin/auth_socket.so
-	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
-	/lib/ld-linux.so.2 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/auth_test_plugin.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
@@ -450,10 +456,20 @@
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/locales.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/metadata_lock_info.so
-	statically linked
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
+	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
+	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/mypluglib.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
 	/lib/ld-linux.so.2 
@@ -476,11 +492,19 @@
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/query_cache_info.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/query_response_time.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/server_audit.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
@@ -512,6 +536,10 @@
 	linux-gate.so.1 =>  
 === /usr/lib/mysql/plugin/wsrep_info.so
 	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 
 	/lib/ld-linux.so.2 
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 
 	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 
 	linux-gate.so.1 =>  
+=== /usr/lib/mysql/plugin/auth_pam_tool_dir/*
