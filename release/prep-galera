@@ -568,6 +568,19 @@ prepare_the_rpm_packages() {
   ln -sv .rpmmacros-std .rpmmacros
   cd ${dir_release}/${dir_name}-signed-ent/rpm/
 
+  # Create symlinks
+  for dir in ${dir_release}/${dir_name}-signed/rpm/ ${dir_release}/${dir_name}-signed-ent/rpm/ ; do
+    pushd ${dir}
+      ln -sv centos74-aarch64 centos7-aarch64
+      ln -sv centos74-amd64 centos7-amd64
+      ln -sv centos73-ppc64 centos7-ppc64
+      ln -sv centos73-ppc64le centos7-ppc64le
+      ln -sv opensuse150-amd64 opensuse15-amd64
+      ln -sv sles123-amd64 sles12-amd64
+      ln -sv sles150-amd64 sles15-amd64
+    popd
+  done
+
   runCommand tree "${dir_release}/${dir_name}/rpm" "${dir_release}/${dir_name}-signed/rpm" "${dir_release}/${dir_name}-signed-ent/rpm"
   message "Done preparing rpm packages"
   spacer
