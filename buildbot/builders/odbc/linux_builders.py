@@ -26,7 +26,7 @@ def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc.addStep(ShellCommand(
         description=["rsyncing", "VMs"],
         descriptionDone=["rsync", "VMs"],
-        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
         haltOnFailure=True,
         command=["rsync", "-a", "-v", "-L",
                  "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
@@ -56,7 +56,7 @@ connodbc_linux_step4_testsrun
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "subordinatenames": connector_subordinates,
             "category": "connectors"}
 
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
@@ -90,7 +90,7 @@ def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_pa
     linux_connector_odbc.addStep(ShellCommand(
         description=["rsyncing", "VMs"],
         descriptionDone=["rsync", "VMs"],
-        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
         haltOnFailure=True,
         command=["rsync", "-a", "-v", "-L",
                  "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
@@ -135,7 +135,7 @@ cmake --build . --config RelWithDebInfo --target package
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "subordinatenames": connector_subordinates,
             "category": "connectors"}
 ######################## bld_linux_connector_oddbc - END #####################
 #sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y git"
@@ -156,7 +156,7 @@ def bld_xcomp_linux_connector_odbc(name, kvm_image, conc_branch, cmake_params, t
     linux_connector_odbc.addStep(ShellCommand(
         description=["rsyncing", "VMs"],
         descriptionDone=["rsync", "VMs"],
-        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
         haltOnFailure=True,
         command=["rsync", "-a", "-v", "-L",
                  "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
@@ -208,7 +208,7 @@ setarch i386 make package
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "subordinatenames": connector_subordinates,
             "category": "connectors"}
 
 #bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");

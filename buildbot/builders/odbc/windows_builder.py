@@ -107,8 +107,8 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
   ))
 
   return { 'name': name,
-#        'slavename': "bb-win32",
-        'slavename': "win-connectors",
+#        'subordinatename': "bb-win32",
+        'subordinatename': "win-connectors",
         'builddir': name,
         'factory': f_win_connector_odbc,
         'category': "connectors" }

@@ -11,7 +11,7 @@ f_valgrind.addStep(ShellCommand(
 f_valgrind.addStep(ShellCommand(
     description=["rsyncing", "VMs"],
     descriptionDone=["rsync", "VMs"],
-    doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+    doStepIf=(lambda(step): step.getProperty("subordinatename") != "bb01"),
     haltOnFailure=True,
     command=["rsync", "-a", "-v", "-L",
              "bb01.mariadb.net::kvm/vms/vm-centos74-amd64-serial.qcow2",
@@ -158,7 +158,7 @@ fi
     parallel=4))
 
 bld_vm_valgrind = {'name': "vm-amd64-valgrind",
-                'slavenames': [ "bbm5" ],
+                'subordinatenames': [ "bbm5" ],
                 'builddir': "vm-amd64-valgrind",
                 'factory': f_valgrind,
                 "nextBuild": myNextBuild,
