@@ -418,7 +418,9 @@ dir_at="/path/to/advance-toolchain" # Location of at pkgs
 dir_rpm_shared="/path/to/shared/rpm/dir"
 dir_judy="/path/to/judy" # Location of judy pkgs
 dir_libzstd="/path/to/libzstd" # Location of libzstd pkgs
-dir_docker="/path/to/docker/repo" # Location of docker repo
+dir_docker="/path/to/docker/repo" # Location of corporation docker repo
+dir_docker_library="/path/to/docker/repo2" # Location of docker library repo
+dir_docker_library_official_images="/path/to/docker/repo3" # Location of official images path
 
 dir_maxscale="/path/to/maxscale" # Location of maxscale pkgs
 
@@ -1333,11 +1335,11 @@ exclude_an_old_release_from_the_yum_dir() {
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  update_the_docker_mariadb_version
+#          NAME:  update_the_docker_corporation_mariadb_version
 #   DESCRIPTION:  This function updates the version file for 10.1+
 #                 Docker scripts
 #===============================================================================
-update_the_docker_mariadb_version() {
+update_the_docker_corporation_mariadb_version() {
   if [ ! -d ${dir_docker} ]; then
     set -x
     git clone git@github.com:mariadb-corporation/mariadb-server-docker ${dir_docker}
@@ -1358,6 +1360,61 @@ update_the_docker_mariadb_version() {
   popd
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  update_the_docker_library_mariadb_version
+#   DESCRIPTION:  This function creates a pull request to the Docker Library
+#                 people to do a release, after Ubuntu focus has been pushed
+#                 to the osuosl mirrors.
+#===============================================================================
+update_the_docker_library_mariadb_version() {
+  if command -v bashbrew
+  then
+    wget https://github.com/docker-library/bashbrew/releases/download/v0.1.1/bashbrew-amd64 -O ~/bin/bashbrew
+    chmod a+x ~/bin/bashbrew
+  fi
+  if [ ! -d ${dir_docker_library_official_images} ]; then
+    # fork from https://github.com/docker-library/official-images
+    set -x
+    git clone git@github.com:dbart/official-images ${dir_docker_offical_images}
+    set +x
+  fi
+  export BASHBREW_LIBRARY=${dir_docker_library_offical_images}
+  if [ ! -d ${dir_docker_library} ]; then
+    set -x
+    git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
+    set +x
+  fi
+  pushd ${dir_docker_library}
+    git checkout ${major}
+    git pull
+    if test -d ${major}; then       # only update version if the dir exists
+      set -x
+      ./update.sh
+      # This should show the new release in all versions
+      git add ${major}
+      git commit -m "MariaDB Server $num" ${major}/version
+      git push
+      # Check https://github.com/MariaDB/mariadb-docker
+      # Top commit about the directoy listing should have a dot for the CI that will eventually
+      # Run though to be green.
+      set +x
+    fi
+  popd
+  # prepare the release
+  pushd ${dir_docker_library_official_images}
+    git pull
+    ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
+    # note non-GA releases shouldn't have the latest or 10 tag
+    reldate=$(date +%Y%m%d)
+    git checkout -b mariadb-release-$reldate
+    git commit -m "MariaDB releases ${major}" library/mariadb
+    git push
+    # Follow Create a pull request for 'mariadb-release-20210429' on GitHub by visiting link
+    # e.g.: https://github.com/dbar/official-images/pull/new/mariadb-release-20210429
+    # This should be a pull request against the https://github.com/docker-library/official-images
+    # repository. Write some covering text e.g. https://github.com/docker-library/official-images/pull/10070
+  popd
+}
 #===  FUNCTION  ================================================================
 #          NAME:  set_prev_release
 #   DESCRIPTION:  set the ${prev_release} var
@@ -2385,7 +2442,8 @@ case $tree in
     echo "+ no Docker for 5.5"
     ;;
   *)
-    shouldI update_the_docker_mariadb_version
+    shouldI update_the_docker_corporation_mariadb_version
+    shouldI update_the_docker_library_mariadb_version
     ;;
 esac
 
