@@ -43,5 +43,7 @@ WORKDIR C:\\Buildbot
 SHELL ["powershell", "-command"]
 RUN Start-BitsTransfer -Source 'https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac' -Destination buildbot.tac
 
+RUN New-SelfSignedCertificate -DNSName "mariadb.org" -CertStoreLocation Cert:\CurrentUser\My -Type CodeSigningCert -Subject "MariaDB"
+
 SHELL ["cmd.exe", "/s", "/c"]
 CMD C:\\Python38\\Scripts\\twistd.exe -noy C:\\Buildbot\\buildbot.tac
