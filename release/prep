@@ -72,6 +72,17 @@ fi
 
 set_build_dirs_variables() {
   case ${major} in
+    10.6)
+      build_dirs_x86=""
+      build_dirs_x86_64="
+        kvm-bintar-centos8-amd64:bintar-linux-systemd-x86_64
+        kvm-tarbake-jaunty-x86:source
+      "
+      ci_build_dirs_x86=""
+      ci_build_dirs_x86_64=""
+      ci_build_dirs_aarch64=""
+      ci_build_dirs_ppc64le=""
+      ;;
     10.5)
       build_dirs_x86="
         kvm-bintar-centos6-x86:bintar-linux-x86
@@ -843,7 +854,9 @@ pull_this_release_from_ci() {
   runCommand pushd ${dir_archive}/ci/${tree}
 
     message "Transferring builds from ${ci}..."
-    runCommand wget --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/
+    set +e
+    runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/
+    set -e
     runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
   runCommand popd
@@ -1454,7 +1467,7 @@ major=${num%.*}
 
 # Set the real version of galera to use
 case ${major} in
-  10.4|10.5)
+  10.4|10.5|10.6)
     ver_galera_real=${ver_galera4}
     ver_galera_preferred_real=${ver_galera4_preferred}
     ;;
