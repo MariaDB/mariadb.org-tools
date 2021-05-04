@@ -27,6 +27,8 @@ def checkoutUsingGitWorktree():
       cd ..
   fi
 
+  rm -rf %(prop:tarbuildnum)s
+  ln -s mariadb-server-$basebranch %(prop:tarbuildnum)s
   cd mariadb-server-$basebranch
   git fetch origin
   git clean -dfx
