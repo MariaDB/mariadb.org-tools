@@ -1369,50 +1369,59 @@ update_the_docker_corporation_mariadb_version() {
 update_the_docker_library_mariadb_version() {
   if command -v bashbrew
   then
-    wget https://github.com/docker-library/bashbrew/releases/download/v0.1.1/bashbrew-amd64 -O ~/bin/bashbrew
-    chmod a+x ~/bin/bashbrew
+    runCommand wget https://github.com/docker-library/bashbrew/releases/download/v0.1.1/bashbrew-amd64 -O ~/bin/bashbrew
+    runCommand chmod a+x ~/bin/bashbrew
   fi
   if [ ! -d ${dir_docker_library_official_images} ]; then
     # fork from https://github.com/docker-library/official-images
-    set -x
-    git clone git@github.com:dbart/official-images ${dir_docker_offical_images}
-    set +x
+    runCommand git clone git@github.com:dbart/official-images ${dir_docker_offical_images}
   fi
   export BASHBREW_LIBRARY=${dir_docker_library_offical_images}
   if [ ! -d ${dir_docker_library} ]; then
-    set -x
-    git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
-    set +x
+    runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
   pushd ${dir_docker_library}
-    git checkout ${major}
-    git pull
+    runCommand git checkout ${major}
+    runCommand git pull
     if test -d ${major}; then       # only update version if the dir exists
-      set -x
-      ./update.sh
+      runCommand ./update.sh
       # This should show the new release in all versions
-      git add ${major}
-      git commit -m "MariaDB Server $num" ${major}/version
-      git push
-      # Check https://github.com/MariaDB/mariadb-docker
-      # Top commit about the directoy listing should have a dot for the CI that will eventually
-      # Run though to be green.
-      set +x
+      runCommand git add ${major}
+      runCommand git commit -m "MariaDB Server $num" ${major}/version
+      runCommand git push
+      message "Check https://github.com/MariaDB/mariadb-docker
+the top commit about the directoy listing should have a dot for the CI that
+will eventually Run though to be green."
     fi
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
-    git pull
+    runCommand git pull
+    # The ${dir_docker_library_official_images} git repo is linked upstream to
+    # the github.com/docker-library/official-images git repository. It was
+    # added with:
+    # git remote add upstream git@github.com:docker-library/official-images.git
+    # use the git remote command to check:
+    # git remote -v
+    # Anyway, before doing anything else, let's merge with upstream to make
+    # sure we have the latest from there before doing anything else:
+    runCommand git fetch upstream
+    runCommand git merge upstream/master
+    runCommand git push
+    # now we can continue
     ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
     reldate=$(date +%Y%m%d)
-    git checkout -b mariadb-release-$reldate
-    git commit -m "MariaDB releases ${major}" library/mariadb
-    git push
-    # Follow Create a pull request for 'mariadb-release-20210429' on GitHub by visiting link
-    # e.g.: https://github.com/dbar/official-images/pull/new/mariadb-release-20210429
-    # This should be a pull request against the https://github.com/docker-library/official-images
-    # repository. Write some covering text e.g. https://github.com/docker-library/official-images/pull/10070
+    runCommand git checkout -b mariadb-release-$reldate
+    runCommand git commit -m "MariaDB releases ${major}" library/mariadb
+    runCommand git push
+    message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
+visiting link
+e.g.: https://github.com/dbar/official-images/pull/new/mariadb-release-${reldate}
+This should be a pull request against the
+https://github.com/docker-library/official-images repository. Write some
+covering text e.g. see
+https://github.com/docker-library/official-images/pull/10070 for an example"
   popd
 }
 #===  FUNCTION  ================================================================
