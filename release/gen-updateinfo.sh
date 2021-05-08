@@ -94,7 +94,7 @@ SHORTVER=${VERSION%_*}
 RNVER=${SHORTVER//[\._]/}
 RNURL=https://mariadb.com/kb/en/mariadb-${RNVER}-release-notes/
 REFVENDOR=$(rpm -qp --qf "%{vendor}" ${REFPACKAGE})
-EMAIL="MariaDB Developers <maria-developers@mariadb.org>"
+EMAIL="MariaDB Developers &lt;maria-developers@mariadb.org&gt;"
 PRODUCT="MariaDB"
 
 if [[ "${REFVENDOR}" =~ "MariaDB Corporation" ]]; then
