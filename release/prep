@@ -240,12 +240,10 @@ set_build_dirs_variables() {
         ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
         "
 build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
-                kvm-bintar-centos6-x86:bintar-linux-x86
                 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
                 kvm-bintar-trusty-x86:bintar-linux-systemd-x86"
 
 build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
-                   kvm-bintar-centos6-amd64:bintar-linux-x86_64
                    kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
                    kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
                    kvm-tarbake-jaunty-x86:source
@@ -1374,9 +1372,9 @@ update_the_docker_library_mariadb_version() {
   fi
   if [ ! -d ${dir_docker_library_official_images} ]; then
     # fork from https://github.com/docker-library/official-images
-    runCommand git clone git@github.com:dbart/official-images ${dir_docker_offical_images}
+    runCommand git clone git@github.com:dbart/official-images ${dir_docker_official_images}
   fi
-  export BASHBREW_LIBRARY=${dir_docker_library_offical_images}
+  export BASHBREW_LIBRARY=${dir_docker_library_official_images}
   if [ ! -d ${dir_docker_library} ]; then
     runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
@@ -1387,11 +1385,13 @@ update_the_docker_library_mariadb_version() {
       runCommand ./update.sh
       # This should show the new release in all versions
       runCommand git add ${major}
-      runCommand git commit -m "MariaDB Server $num" ${major}/version
+      echo "+ git commit -m \"MariaDB Server $num\" ${major}/Dockerfile"
+              git commit -m "MariaDB Server $num" ${major}/Dockerfile
       runCommand git push
       message "Check https://github.com/MariaDB/mariadb-docker
 the top commit about the directoy listing should have a dot for the CI that
-will eventually Run though to be green."
+will eventually run through to be green."
+      pressAnyKeyToContinue
     fi
   popd
   # prepare the release
@@ -1409,15 +1409,19 @@ will eventually Run though to be green."
     runCommand git merge upstream/master
     runCommand git push
     # now we can continue
-    ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
+    echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
+            ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
     reldate=$(date +%Y%m%d)
-    runCommand git checkout -b mariadb-release-$reldate
-    runCommand git commit -m "MariaDB releases ${major}" library/mariadb
+    #runCommand git checkout -b mariadb-release-$reldate # this needs to be done once, fails if run again
+    runCommand git checkout mariadb-release-$reldate
+    runCommand git push --set-upstream origin mariadb-release-$reldate
+    echo "+ git commit -m \"MariaDB releases ${major}\" library/mariadb"
+           git commit -m "MariaDB releases ${major}" library/mariadb
     runCommand git push
     message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
 visiting link
-e.g.: https://github.com/dbar/official-images/pull/new/mariadb-release-${reldate}
+e.g.: https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
 This should be a pull request against the
 https://github.com/docker-library/official-images repository. Write some
 covering text e.g. see
@@ -1865,8 +1869,8 @@ if [ "${create_bintar}" != "no" ]; then
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-*-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-*-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
