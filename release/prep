@@ -1416,8 +1416,8 @@ will eventually run through to be green."
     #runCommand git checkout -b mariadb-release-$reldate # this needs to be done once, fails if run again
     runCommand git checkout mariadb-release-$reldate
     runCommand git push --set-upstream origin mariadb-release-$reldate
-    echo "+ git commit -m \"MariaDB releases ${major}\" library/mariadb"
-           git commit -m "MariaDB releases ${major}" library/mariadb
+    echo "+ git commit -m \"MariaDB releases ${reldate}\" library/mariadb"
+           git commit -m "MariaDB releases ${reldate}" library/mariadb
     runCommand git push
     message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
 visiting link
