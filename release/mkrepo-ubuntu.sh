@@ -61,49 +61,17 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([xenial]=ubuntu-1604-deb-autobake [bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_amd64=([xenial]=kvm-deb-xenial-amd64 [bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [groovy]=kvm-deb-groovy-amd64)
+declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [groovy]=kvm-deb-groovy-amd64 [hirsute]=kvm-deb-hirsute-amd64)
 
-declare -A builder_dir_ci_aarch64=([xenial]=aarch64-ubuntu-1604-deb-autobake [bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_aarch64=([xenial]=kvm-deb-xenial-aarch64 [bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [groovy]=kvm-deb-groovy-aarch64)
+declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [groovy]=kvm-deb-groovy-aarch64 [hirsute]=kvm-deb-hirsute-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([xenial]=pc9-ubuntu-1604-deb-autobake [bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([xenial]=kvm-deb-xenial-ppc64le [bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [groovy]=kvm-deb-groovy-ppc64le)
+declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [groovy]=kvm-deb-groovy-ppc64le [hirsute]=kvm-deb-hirsute-ppc64le)
 
-declare -A builder_dir_ci_x86=([xenial]=32bit-ubuntu-1604-deb-autobake [bionic]=32bit-ubuntu-1804-deb-autobake [focal]=32bit-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_x86=([xenial]=kvm-deb-xenial-x86 [bionic]=kvm-deb-bionic-x86 [focal]=kvm-deb-focal-x86)
-
-# Set the appropriate dists based on the ${ARCHDIR} of the packages
-case ${ARCHDIR} in
-  *"5.5"*)
-    ubuntu_dists=""
-    ;;
-  *"10.0"*)
-    ubuntu_dists="xenial"
-    ;;
-  *"10.1"*)
-    ubuntu_dists="xenial bionic"
-    ;;
-  *"10.2"*)
-    ubuntu_dists="xenial bionic"
-    ;;
-  *"10.3"*)
-    ubuntu_dists="xenial bionic focal groovy"
-    ;;
-  *"10.4"*)
-    ubuntu_dists="xenial bionic focal groovy"
-    ;;
-  *"10.5"*)
-    #ubuntu_dists="xenial bionic focal groovy"
-    ubuntu_dists="xenial bionic focal"
-    ;;
-  *)
-    line
-    echo "+ ARCHDIR=${ARCHDIR}, can't determine dist, giving up"
-    line
-    exit 5
-    ;;
-esac
+declare -A builder_dir_ci_x86=([bionic]=32bit-ubuntu-1804-deb-autobake [focal]=32bit-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_x86=([bionic]=kvm-deb-bionic-x86 [focal]=kvm-deb-focal-x86)
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -138,6 +106,29 @@ loadDefaults() {
   fi
 }
 
+# Set the appropriate dists based on the ${ARCHDIR} of the packages
+case ${ARCHDIR} in
+  *10.2*)
+    ubuntu_dists="bionic"
+    ;;
+  *10.3*)
+    ubuntu_dists="bionic focal groovy"
+    ;;
+  *10.4*)
+    ubuntu_dists="bionic focal groovy"
+    ;;
+  *10.5*|*10.6*)
+    ubuntu_dists="bionic focal groovy hirsute"
+    ;;
+  *)
+    line
+    echo "+ ARCHDIR=${ARCHDIR}, can't determine dist, giving up"
+    line
+    exit 5
+    ;;
+esac
+
+
 #-------------------------------------------------------------------------------
 #  Main Script
 #-------------------------------------------------------------------------------
@@ -161,16 +152,6 @@ set -u
   #     An error message will be written to the standard error, and a
   #     non-interactive shell will exit.
 
-# If this is an "Enterprise" MariaDB release, sign with the mariadb.com key,
-# otherwise, sign with the mariadb.org key
-if [ "${ENTERPRISE}" = "yes" ]; then
-  origin="MariaDB Enterprise"
-  description="MariaDB Enterprise Repository"
-  gpg_key="signing-key@mariadb.com"            # new enterprise key (2014-12-18)
-  #gpg_key="0xce1a3dd5e3c94f49"                # new enterprise key (2014-12-18)
-  ubuntu_dists="xenial"
-  suffix="signed-ent"
-else
   origin="MariaDB"
   description="MariaDB Repository"
   #gpg_key="package-signing-key@mariadb.org"    # mariadb.org signing key
@@ -178,7 +159,6 @@ else
   gpg_key_2016="0xF1656F24C74CD1D8"             # 2016-03-30 mariadb.org signing key
   #gpg_key="0xcbcb082a1bb943db 0xF1656F24C74CD1D8" # both keys
   suffix="signed"
-fi
 
 if [ ! -d ${REPONAME} ]; then
   mkdir "$REPONAME"
@@ -200,29 +180,14 @@ for dist in ${ubuntu_dists}; do
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'xenial'|'bionic'|'disco'|'focal'|'groovy')
+    'bionic'|'focal'|'groovy'|'hirsute')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
-      ;;
-    * )
-      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*.dsc'); do runCommand reprepro --basedir=. includedsc ${dist} ${file} ; done
-      ;;
-  esac
-
-  # Include i386 debs
-  builder_dir="builder_dir_${build_type}_x86[${dist}]"
-  case ${dist} in
-    'xenial')
-      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       ;;
   esac
 
   # Include ppc64le debs
   builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
-    'xenial')
-      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      ;;
     'bionic'|'focal'|'groovy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
@@ -233,85 +198,41 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'xenial')
-      for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      ;;
     'bionic'|'focal'|'groovy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
   esac
 
-  # Add in custom jemalloc packages for distros that need them
-  case ${dist} in
-    "lucid")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      fi
-      ;;
-    "precise")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      fi
-      ;;
-    "quantal")
-      for file in $(find "${dir_jemalloc}/${dist}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      if [ "${ENTERPRISE}" != "yes" ]; then
-        for file in $(find "${dir_jemalloc}/${dist}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
-      fi
-      ;;
-  esac
-
-
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     case ${ARCHDIR} in
-      *10.4*|*10.5*)
-        ver_galera_real=${ver_galera4}
-        galera_name='galera-4'
-        ;;
-      *)
+      *10.2*|*10.3*)
         ver_galera_real=${ver_galera}
         galera_name='galera-3'
         ;;
+      *)
+        ver_galera_real=${ver_galera4}
+        galera_name='galera-4'
+        ;;
     esac
     for gv in ${ver_galera_real}; do
-      if [ "${ENTERPRISE}" = "yes" ]; then
-        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*amd64.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
-        if [ "${dist}" = "xenial" ]; then
-          runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
-        fi
-      else
-
-        #for file in $(find "${dir_galera}/galera-${gv}-${suffix}/" -name "*${dist}*.deb"); do reprepro -S optional -P misc --basedir=. includedeb ${dist} ${file} ; done
-
         # include amd64
         runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
 
-        # include i386
-        case ${dist} in
-          'xenial')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_i386.changes
-            ;;
-        esac
-
         # include ppc64le
         case ${dist} in
-          'xenial'|'bionic'|'focal'|'groovy')
+          'bionic'|'focal'|'groovy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'xenial'|'bionic'|'focal'|'groovy')
+          'bionic'|'focal'|'groovy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
             ;;
         esac
-      fi
     done
   fi
 done
