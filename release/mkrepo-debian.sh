@@ -238,7 +238,7 @@ declare -A builder_dir_bb_amd64=([stretch]=kvm-deb-stretch-amd64 [buster]=kvm-de
 declare -A builder_dir_ci_aarch64=([stretch]=aarch64-debian-9-deb-autobake [buster]=aarch64-debian-10-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
 declare -A builder_dir_bb_aarch64=([stretch]=kvm-deb-stretch-aarch64 [buster]=kvm-deb-buster-aarch64 [sid]=kvm-deb-sid-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([stretch]=pc9-debian-9-deb-autobake [buster]=pc9-debian-10-deb-autobake [sid]=pc9-debian-sid-deb-autobake)
+declare -A builder_dir_ci_ppc64le=([stretch]=pc9-debian-9-deb-autobake [buster]=pc9-debian-10-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
 declare -A builder_dir_bb_ppc64le=([stretch]=kvm-deb-stretch-ppc64le [buster]=kvm-deb-buster-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
 declare -A builder_dir_ci_x86=([stretch]=32bit-debian-9-deb-autobake [buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
@@ -270,8 +270,7 @@ case ${TREE} in
   '10.4'|'bb-10.4-release')
     debian_dists="stretch buster"
     ;;
-  '10.5'|'bb-10.5-release')
-    #debian_dists="stretch buster sid"
+  '10.5'|'bb-10.5-release'|'10.6'|'bb-10.6-release')
     debian_dists="stretch buster sid"
     ;;
   *)
@@ -312,7 +311,7 @@ for dist in ${debian_dists}; do
   # add ppc64el files
   builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
-    'stretch'|'buster')
+    'stretch'|'buster'|'sid')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
@@ -352,13 +351,13 @@ for dist in ${debian_dists}; do
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
     case ${TREE} in
-      *10.4*|*10.5*)
-        ver_galera_real=${ver_galera4}
-        galera_name='galera-4'
-        ;;
-      *)
+      *10.2*|*10.3*)
         ver_galera_real=${ver_galera}
         galera_name='galera-3'
+        ;;
+      *)
+        ver_galera_real=${ver_galera4}
+        galera_name='galera-4'
         ;;
     esac
     for gv in ${ver_galera_real}; do
