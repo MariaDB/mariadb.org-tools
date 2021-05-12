@@ -60,15 +60,14 @@ connodbc_linux_step4_testsrun
             "category": "connectors"}
 
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_xenial_x86= build_linux_connector_odbc("codbc-xenial-x86", "vm-xenial-i386", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_xenial_amd64= build_linux_connector_odbc("codbc-xenial-amd64", "vm-xenial-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_codbc_bionic_amd64= build_linux_connector_odbc("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_focal_amd64= build_linux_connector_odbc("codbc-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_groovy_amd64= build_linux_connector_odbc("codbc-groovy-amd64", "vm-groovy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_hirsute_amd64= build_linux_connector_odbc("codbc-hirsute-amd64", "vm-hirsute-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_fedora32_amd64= build_linux_connector_odbc("codbc-fedora32-amd64", "vm-fedora32-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora33_amd64= build_linux_connector_odbc("codbc-fedora33-amd64", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_fedora34_amd64= build_linux_connector_odbc("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_sles12_amd64= build_linux_connector_odbc("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
