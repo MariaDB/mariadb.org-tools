@@ -21,3 +21,6 @@ private["gh_mdbauth"]= {
     "client":"",
     "secret":""
 }
+
+# Token for sending test results to the Visualizer
+private["visualizer_token"] = ""
