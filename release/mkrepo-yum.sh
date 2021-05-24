@@ -374,6 +374,11 @@ for REPONAME in ${dists}; do
     'centos74-amd64'|'centos7-amd64')
       set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
+      case ${ARCHDIR} in
+        *10.6*)
+          echo "+ no symlinks for ${ARCHDIR}"
+          ;;
+        *)
       pushd rhel/
         for i in $(seq 0 7); do
           maybe_make_symlink 7 7.${i}
@@ -381,6 +386,8 @@ for REPONAME in ${dists}; do
         maybe_make_symlink 7 7Server
         maybe_make_symlink 7 7Client
       popd
+          ;;
+      esac
       maybe_make_symlink rhel/7/x86_64 rhel7-amd64
       maybe_make_symlink rhel7-amd64 rhel74-amd64
       maybe_make_symlink rhel7-amd64 rhel73-amd64
@@ -397,12 +404,24 @@ for REPONAME in ${dists}; do
       done
 
       # Copy in other files
+      case ${ARCHDIR} in
+        *10.5*|*10.6*)
+          echo "+ no jemalloc for ${ARCHDIR}"
+          ;;
+        *)
       copy_files "${dir_jemalloc}/jemalloc-centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          ;;
+      esac
       copy_files "${dir_libzstd}/centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-amd64')
       set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
+      case ${ARCHDIR} in
+        *10.6*)
+          echo "+ no symlinks for ${ARCHDIR}"
+          ;;
+        *)
       pushd rhel/
         for i in $(seq 0 5); do
           maybe_make_symlink 7 7.${i}
@@ -410,6 +429,8 @@ for REPONAME in ${dists}; do
         maybe_make_symlink 7 7Server
         maybe_make_symlink 7 7Client
       popd
+          ;;
+      esac
       maybe_make_symlink rhel/7/x86_64 rhel7-amd64
       maybe_make_symlink rhel7-amd64 rhel73-amd64
       maybe_make_symlink rhel7-amd64 rhel74-amd64
@@ -426,7 +447,14 @@ for REPONAME in ${dists}; do
       done
       
       # Copy in other files
+      case ${ARCHDIR} in
+        *10.5*|*10.6*)
+          echo "+ no jemalloc for ${ARCHDIR}"
+          ;;
+        *)
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          ;;
+      esac
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64'|'centos7-ppc64')
@@ -446,7 +474,14 @@ for REPONAME in ${dists}; do
       done
       
       # Copy in other files
+      case ${ARCHDIR} in
+        *10.5*|*10.6*)
+          echo "+ no jemalloc for ${ARCHDIR}"
+          ;;
+        *)
       copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          ;;
+      esac
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'centos73-ppc64le'|'centos7-ppc64le')
@@ -485,7 +520,14 @@ for REPONAME in ${dists}; do
       done
       
       # Copy in other files
+      case ${ARCHDIR} in
+        *10.5*|*10.6*)
+          echo "+ no jemalloc for ${ARCHDIR}"
+          ;;
+        *)
       copy_files "${dir_jemalloc}/jemalloc-centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          ;;
+      esac
       copy_files "${dir_libzstd}/centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'rhel8-aarch64')
@@ -503,10 +545,6 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
-
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      
       ;;
     'rhel8-amd64')
       set_builder_dir rhel8 amd64
@@ -521,9 +559,6 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
-
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
       ;;
     'rhel8-ppc64le')
       set_builder_dir rhel8 ppc64le
@@ -539,10 +574,6 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
-
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-
       ;;
     fedora*)
       case ${REPONAME} in
@@ -573,8 +604,9 @@ for REPONAME in ${dists}; do
       ;;
     'opensuse150-amd64'|'opensuse15-amd64')
       set_builder_dir opensuse15 amd64
-      runCommand mkdir -vp opensuse/15.0/x86_64
-      maybe_make_symlink opensuse/15.0/x86_64 opensuse150-amd64
+      runCommand mkdir -vp opensuse/15/x86_64
+      maybe_make_symlink opensuse/15/x86_64 opensuse150-amd64
+      maybe_make_symlink opensuse/15/x86_64 opensuse15-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -657,8 +689,9 @@ for REPONAME in ${dists}; do
       ;;
     'sles150-amd64'|'sles15-amd64')
       set_builder_dir sles15 amd64
-      runCommand mkdir -vp sles/15.0/x86_64
-      maybe_make_symlink sles/15.0/x86_64 sles150-amd64
+      runCommand mkdir -vp sles/15/x86_64
+      maybe_make_symlink sles/15/x86_64 sles150-amd64
+      maybe_make_symlink sles/15/x86_64 sles15-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
