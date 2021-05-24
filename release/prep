@@ -75,7 +75,7 @@ set_build_dirs_variables() {
     10.6)
       build_dirs_x86=""
       build_dirs_x86_64="
-        kvm-bintar-centos8-amd64:bintar-linux-systemd-x86_64
+        kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
         kvm-tarbake-jaunty-x86:source
       "
       ci_build_dirs_x86=""
@@ -1365,7 +1365,7 @@ update_the_docker_corporation_mariadb_version() {
 #                 to the osuosl mirrors.
 #===============================================================================
 update_the_docker_library_mariadb_version() {
-  if command -v bashbrew
+  if ! command -v bashbrew
   then
     runCommand wget https://github.com/docker-library/bashbrew/releases/download/v0.1.1/bashbrew-amd64 -O ~/bin/bashbrew
     runCommand chmod a+x ~/bin/bashbrew
@@ -1385,9 +1385,10 @@ update_the_docker_library_mariadb_version() {
       runCommand ./update.sh
       # This should show the new release in all versions
       runCommand git add ${major}
-      echo "+ git commit -m \"MariaDB Server $num\" ${major}/Dockerfile"
-              git commit -m "MariaDB Server $num" ${major}/Dockerfile
-      runCommand git push
+      if git commit -m "MariaDB Server $num" ${major}/Dockerfile ; then
+        echo "+ git commit -m \"MariaDB Server $num\" ${major}/Dockerfile"
+        runCommand git push
+      fi
       message "Check https://github.com/MariaDB/mariadb-docker
 the top commit about the directoy listing should have a dot for the CI that
 will eventually run through to be green."
@@ -1396,6 +1397,15 @@ will eventually run through to be green."
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
+    reldate=$(date +%Y%m%d)
+    if git checkout -b mariadb-release-$reldate ; then
+      echo "+ git checkout -b mariadb-release-$reldate"
+    else 
+      # if the checkout -b command fails that means the branch already exists,
+      # so we can simply check it out with:
+      runCommand git checkout mariadb-release-$reldate
+    fi
+    runCommand git remote prune origin
     runCommand git pull
     # The ${dir_docker_library_official_images} git repo is linked upstream to
     # the github.com/docker-library/official-images git repository. It was
@@ -1412,9 +1422,6 @@ will eventually run through to be green."
     echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
             ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
-    reldate=$(date +%Y%m%d)
-    #runCommand git checkout -b mariadb-release-$reldate # this needs to be done once, fails if run again
-    runCommand git checkout mariadb-release-$reldate
     runCommand git push --set-upstream origin mariadb-release-$reldate
     echo "+ git commit -m \"MariaDB releases ${reldate}\" library/mariadb"
            git commit -m "MariaDB releases ${reldate}" library/mariadb
