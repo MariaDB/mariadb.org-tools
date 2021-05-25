@@ -620,10 +620,6 @@
 	libpthread.so.0 => /lib64/libpthread.so.0 
 	libstdc++.so.6 => /lib64/libstdc++.so.6 
 	linux-vdso.so.1 
-=== /usr/lib64/mysql/plugin/JavaWrappers.jar
-	not a dynamic executable
-=== /usr/lib64/mysql/plugin/JdbcInterface.jar
-	not a dynamic executable
 === /usr/lib64/mysql/plugin/libdaemon_example.so
 	/lib64/ld-linux-x86-64.so.2 
 	libc.so.6 => /lib64/libc.so.6 
