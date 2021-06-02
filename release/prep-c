@@ -121,6 +121,10 @@ copy_and_stage_files() {
     for dir in ${dir_build}/*;do
       echo ${dir}
       case $(basename ${dir}) in 
+        cc-centos7-amd64)
+          cp -avi ${dir}/*.gz ${dir_c}/
+          cp -avi ${dir}/*.zip ${dir_c}/
+          ;;
         linux_x86-connector_c)
           cp -avi ${dir}/*.gz ${dir_c}/
           cp -avi ${dir}/*.zip ${dir_c}/
