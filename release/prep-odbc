@@ -122,15 +122,28 @@ copy_and_stage_files() {
       mkdir -v ${dir_odbc}
     fi
     # Linux files
-    cp -avi ${dir_build}/*/*i386.tar.gz ${dir_odbc}/
-    cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_odbc}/
-    # Windows files
-    cp -avi ${dir_build}/*/*msi ${dir_odbc}/
-    # Mac file
-    if cp -avi ${dir_build}/*/*pkg ${dir_odbc}/;then
-      echo "+ copied MacOS files"
+    if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_odbc}/ ; then
+      message "Copied Linux x86 files"
     else
-      echo "+ no MacOS files"
+      message "No Linux x86 files"
+    fi
+    if cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_odbc}/ ; then
+      message "Copied Linux amd64 files"
+    else
+      message "ERROR: Linux amd64 files not found"
+      exit 3
+    fi
+    # Windows files
+    if cp -avi ${dir_build}/*/*msi ${dir_odbc}/ ; then
+      message "Copied Windows files"
+    else
+      message "ERROR: Windows files not Found"
+    fi
+    # Mac files
+    if cp -avi ${dir_build}/*/*pkg ${dir_odbc}/;then
+      message "Copied MacOS files"
+    else
+      message "No MacOS files"
     fi
     # Src files
     cp -avi ${dir_build}/*/*src.zip ${dir_odbc}/
