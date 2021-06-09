@@ -99,7 +99,7 @@ PRODUCT="MariaDB"
 
 if [[ "${REFVENDOR}" =~ "MariaDB Corporation" ]]; then
   PRODUCT="MariaDB-Enterprise"
-  EMAIL="MariaDB Corporation <pkg-maintainer@mariadb.com>"
+  EMAIL="MariaDB Corporation &lt;pkg-maintainer@mariadb.com&gt;"
   RNVER=${VERSION//[\._]/-}
   RNURL="https://mariadb.com/docs/release-notes/mariadb-enterprise-server-${RNVER}/"
 fi
