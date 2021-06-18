@@ -1364,8 +1364,8 @@ update_the_docker_library_mariadb_version() {
         runCommand git push
       fi
       message "Check https://github.com/MariaDB/mariadb-docker
-the top commit about the directoy listing should have a dot for the CI that
-will eventually run through to be green."
+the top commit above the directoy listing should have a dot for the CI that
+will eventually run through to be green"
       pressAnyKeyToContinue
     fi
   popd
