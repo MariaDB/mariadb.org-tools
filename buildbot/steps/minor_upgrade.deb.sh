@@ -225,6 +225,10 @@ else
   mysql -uroot -e "set password = password('rootpass')" >> /dev/null 2>&1
 fi
 
+# Print "have_xx" capabilitites for the old server
+
+mysql -uroot -prootpass -e "select 'Stat' t, variable_name name, variable_value val from information_schema.global_status where variable_name like '%have%' union select 'Vars' t, variable_name name, variable_value val from information_schema.global_variables where variable_name like '%have%' order by t, name"
+
 # All the commands below should succeed
 
 set -e
@@ -421,6 +425,10 @@ fi
 #=====================================================================================
 # Check that the server is functioning and previously created structures are available
 #=====================================================================================
+
+# Print "have_xx" capabilitites for the new server
+
+mysql -uroot -prootpass -e "select 'Stat' t, variable_name name, variable_value val from information_schema.global_status where variable_name like '%have%' union select 'Vars' t, variable_name name, variable_value val from information_schema.global_variables where variable_name like '%have%' order by t, name"
 
 # All the commands below should succeed
 
