@@ -1353,12 +1353,12 @@ update_the_docker_library_mariadb_version() {
     runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
   pushd ${dir_docker_library}
-    runCommand git checkout ${major}
+    #runCommand git checkout ${major}
     runCommand git pull
     if test -d ${major}; then       # only update version if the dir exists
       runCommand ./update.sh
       # This should show the new release in all versions
-      runCommand git add ${major}
+      #runCommand git add ${major}
       if git commit -m "MariaDB Server $num" ${major}/Dockerfile ; then
         echo "+ git commit -m \"MariaDB Server $num\" ${major}/Dockerfile"
         runCommand git push
@@ -1380,7 +1380,6 @@ will eventually run through to be green"
       runCommand git checkout mariadb-release-$reldate
     fi
     runCommand git remote prune origin
-    runCommand git pull
     # The ${dir_docker_library_official_images} git repo is linked upstream to
     # the github.com/docker-library/official-images git repository. It was
     # added with:
@@ -1391,7 +1390,7 @@ will eventually run through to be green"
     # sure we have the latest from there before doing anything else:
     runCommand git fetch upstream
     runCommand git merge upstream/master
-    runCommand git push
+    #runCommand git push --set-upstream origin mariadb-release-$reldate
     # now we can continue
     echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
             ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
@@ -1402,11 +1401,12 @@ will eventually run through to be green"
     runCommand git push
     message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
 visiting link
-e.g.: https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
+e.g. https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
 This should be a pull request against the
 https://github.com/docker-library/official-images repository. Write some
 covering text e.g. see
-https://github.com/docker-library/official-images/pull/10070 for an example"
+https://github.com/docker-library/official-images/pull/10414 -and-
+https://github.com/docker-library/official-images/pull/10070 for examples"
   popd
 }
 #===  FUNCTION  ================================================================
@@ -2239,12 +2239,12 @@ else
 
     # This is where the repository is actually updated
     if [ "${is_ent}" = "yes" ];then
-      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     else
       if ${ci_release}; then
         runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
       else
-      ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+        runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
       fi
     fi
 
@@ -2317,7 +2317,7 @@ else
       if ${ci_release}; then
         runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
       else
-      ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
       fi
     popd
 
