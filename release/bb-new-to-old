@@ -36,25 +36,25 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config} && . ${dir_conf}/prep.conf
 # through the move and copy commands to put the files from ci.mariadb.org where
 # they go in the old buildbot.askmonty.org structure
 #-------------------------------------------------------------------------------
-tree='bb-10.2-release'
-tarbuildnum_bb='39934'
-tarbuildnum_ci='15029'
+tree='10.2'
+tarbuildnum_bb='40790'
+tarbuildnum_ci='16329'
 
-tree='bb-10.3-release'
-tarbuildnum_bb='39967'
-tarbuildnum_ci='15069'
+tree='10.3'
+tarbuildnum_bb='40814'
+tarbuildnum_ci='16330'
 
-tree='bb-10.4-release'
-tarbuildnum_bb='39971'
-tarbuildnum_ci='15073'
+tree='10.4'
+tarbuildnum_bb='40815'
+tarbuildnum_ci='16327'
 
-tree='bb-10.5-release'
-tarbuildnum_bb='39973'
-tarbuildnum_ci='15075'
+tree='10.5'
+tarbuildnum_bb='41002'
+tarbuildnum_ci='16229'
 
 tree='10.6'
-tarbuildnum_bb=''
-tarbuildnum_ci=''
+tarbuildnum_bb='40992'
+tarbuildnum_ci='16233'
 
 
 #-------------------------------------------------------------------------------
@@ -62,15 +62,19 @@ tarbuildnum_ci=''
 #-------------------------------------------------------------------------------
 
 # stretch-aarch64 (10.2, 10.3, 10.4, 10.5, 10.6)
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64* # it will exist, so rename next
 mv -vi ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64-orig
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-9-deb-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-9-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-stretch-aarch64
 
 # rhel8-aarch64 (10.3, 10.4, 10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64/
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-rhel-8-rpm-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-rhel-8-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64/
 
 # fedora32-aarch64 (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64/
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64/
 
 # fedora33-amd64 (10.4, 10.5, 10.6)
@@ -79,7 +83,8 @@ cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autoba
 #cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/amd64-fedora-33-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-amd64/
 
 # fedora33-aarch64 (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-aarch64/
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-33-rpm-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-33-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-aarch64/
 
 # fedora34-amd64 (10.4, 10.5, 10.6)
@@ -88,20 +93,24 @@ cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-33-rpm-autoba
 #cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/amd64-fedora-34-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora34-amd64/
 
 # fedora34-aarch64 (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora34-aarch64/
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora34-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-34-rpm-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-34-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora34-aarch64/
 
 # sid-amd64 (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-amd64
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-amd64* # it will exist, so rename it next
 mv -vi ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-amd64 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-amd64-orig
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/amd64-debian-sid-deb-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/amd64-debian-sid-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-amd64
 
 # sid-aarch64 (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-aarch64
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-sid-deb-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-sid-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-aarch64
 
 # sid-ppc64le (10.5, 10.6)
-ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-ppc64le
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-ppc64le* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-sid-deb-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-sid-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-ppc64le
 
 
