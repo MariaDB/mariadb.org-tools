@@ -1359,8 +1359,8 @@ update_the_docker_library_mariadb_version() {
       runCommand ./update.sh "$num"
       # This should show the new release in all versions
       #runCommand git add ${major}
-      if git commit -m "MariaDB Server $num" ${major}/Dockerfile ; then
-        echo "+ git commit -m \"MariaDB Server $num\" ${major}/Dockerfile"
+      if git commit -m "MariaDB Server $num" "${major}" ; then
+        echo "+ git commit -m \"MariaDB Server $num\" ${major}"
         runCommand git push
       fi
       message "Check https://github.com/MariaDB/mariadb-docker
