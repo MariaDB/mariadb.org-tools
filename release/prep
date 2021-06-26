@@ -1356,7 +1356,7 @@ update_the_docker_library_mariadb_version() {
     #runCommand git checkout ${major}
     runCommand git pull
     if test -d ${major}; then       # only update version if the dir exists
-      runCommand ./update.sh
+      runCommand ./update.sh "$num"
       # This should show the new release in all versions
       #runCommand git add ${major}
       if git commit -m "MariaDB Server $num" ${major}/Dockerfile ; then
