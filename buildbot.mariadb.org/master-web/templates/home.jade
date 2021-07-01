@@ -89,6 +89,9 @@
               | Packages built by buildbot can be downloaded from 
               a(href="https://ci.mariadb.org") here
               | .
+            li
+              a(href="https://buildbot.mariadb.org/cr") Cross-reference
+              |  allows to search for test failures in previous test runs.
         h4 {{ buildsRunning.length }} Build{{ buildsRunning.length > 1 ? 's' : '' }} running currently
         ul
           li.unstyled(ng-repeat="build in buildsRunning | filter:complete:false")
