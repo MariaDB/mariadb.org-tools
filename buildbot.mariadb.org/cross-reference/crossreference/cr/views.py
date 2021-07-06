@@ -14,7 +14,7 @@ def index(request):
                 qd = request.POST
 
         if qd == {}:
-                return render(request, "crossreference/index.html", {})
+                return render(request, "cr/index.html", {})
 
         all_failures_list = select_test_failures(qd)
 
@@ -24,4 +24,4 @@ def index(request):
         for f in available_filters:
                 if f in qd:
                         context[f] = qd[f]
-        return render(request, "crossreference/index.html", context)
+        return render(request, "cr/index.html", context)
