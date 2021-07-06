@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'cr/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'cr/font-awesome/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'cr/font-awesome/css/solid.min.css' %}">
+    <link rel="stylesheet" href="{% static 'cr/font-awesome/css/brands.min.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+
+
+<body>
+  <div class="body-container">
+    <div class="scroll-up-arrow-container">
+      <i id="top-arrow" class="fa fa-chevron-circle-up" aria-hidden="true"></i>
+    </div>
+    <div class="section form-section">
+      <form action="#" method="get">
+          <div class="field-container">
+              <label for="branch">Branch: </label>
+              <input id="branch" type="text" name="branch" value="{{ branch }}">
+          </div>
+          <div class="field-container">
+              <label for="revision">Revision: </label>
+              <input id="revision" type="text" name="revision" value="{{ revision }}">
+          </div>
+          <div class="field-container">
+              <label for="platform">Platform: </label>
+              <input id="platform" type="text" name="platform" value="{{ platform }}">
+          </div>
+          <div class="field-container">
+              <label for="dt">Date: </label>
+              <input id="dt" type="text" name="dt" value="{{ dt }}">
+          </div>
+          <div class="field-container">
+              <label for="bbnum">Build Number: </label>
+              <input id="bbnum" type="text" name="bbnum" value="{{ bbnum }}">
+          </div>
+          <div class="field-container">
+              <label for="typ">Type: </label>
+              <input id="typ" type="text" name="typ" value="{{ typ }}">
+          </div>
+          <div class="field-container">
+              <label for="info">Run Info: </label>
+              <input id="info" type="text" name="info" value="{{ info }}">
+          </div>
+          <div class="field-container">
+              <label for="test_name">Test Name: </label>
+              <input id="test_name" type="text" name="test_name" value="{{ test_name }}">
+          </div>
+          <div class="field-container">
+              <label for="test_variant">Test Variant: </label>
+              <input id="test_variant" type="text" name="test_variant" value="{{ test_variant }}">
+          </div>
+          <div class="field-container">
+              <label for="info_text">Fail Info: </label>
+              <input id="info_text" type="text" name="info_text" value="{{ info_text }}">
+          </div>
+          <div class="field-container">
+              <label for="failure_text">Failure Output: </label>
+              <input id="failure_text" type="text" name="failure_text" value="{{ failure_text }}">
+          </div>
+          <div class="field-container">
+              <label for="Limit">Limit: </label>
+              <select id="limit" type="text" name="limit" value="{{ limit }}">
+                <option value="5" {% if limit == "5" %} selected {% endif %} >5</option>
+                <option value="10" {% if limit == "10" %} selected {% endif %} >10</option>
+                <option value="25" {% if limit == "25" %} selected {% endif %} >25</option>
+                <option value="50" {% if limit == "50" %} selected {% endif %} >50</option>
+                <option value="100" {% if limit == "100" %} selected {% endif %} >100</option>
+                <option value="500" {% if limit == "500" %} selected {% endif %} >500</option>
+              </select>
+          </div>
+          <div class="submit-container">
+              <input type="submit" value="Search">
+          </div>
+      </form>
+    </div>
+    <div class="section table-section">
+      <h2 style="color: #4e629a;">Results</h2>
+      <div class="table-container">
+        {% if all_failures_list %}
+            <table class="results-table">
+        	<thead>
+        		<tr>
+        		    <th>Build Details</th>
+        		    <th>Branch</th>
+
+        		    <th>Revision</th>
+        		    <th>Platform Id</th>
+        		    <th>Platform</th>
+
+        		    <th>Time</th>
+        		    <th>Build Number</th>
+        		    <th>Type</th>
+
+        		    <th>Run Info</th>
+        		    <th>Test Name</th>
+        		    <th>Test Variant</th>
+                <th class="extra-info-column-header"></th>
+
+        		</tr>
+        	</thead>
+            {% for f in all_failures_list %}
+                <tr class="expandable">
+                    <td> [<a href="https://buildbot.mariadb.org/#/builders/{{ f.2 }}/builds/{{ f.5 }}" > Build details </a>] </td>
+                      {% for el in f %}
+                          {% if not forloop.last %}
+                          <td> {{ el }} </td>
+                          {% endif %}
+                      {% endfor %}
+                </tr>
+                <tr class="info-row">
+                    <td style="border-right: 0px;" class="info-column" colspan=10>
+                      <div class="info-column-container">
+                        <div class="content">
+                          {{ f.11 }}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="fill-column" colspan=2></td>
+                </tr>
+
+            {% endfor %}
+            </table>
+        {% else %}
+            <p>No failures found.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+
+{% block footer %}
+<script type="text/javascript" src="{% static 'cr/js/script.js' %}"></script>
+{% endblock %}
+</html>
