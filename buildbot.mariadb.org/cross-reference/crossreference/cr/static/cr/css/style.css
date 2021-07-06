@@ -1,0 +1,221 @@
+/* ------- Fonts --------- */
+@font-face {
+  font-family: 'roboto';
+  src: url('fonts/Roboto-Light.ttf') format('truetype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'roboto';
+  src: url('fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'roboto';
+  src: url('fonts/Roboto-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'roboto';
+  src: url('fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'roboto-monospace';
+  src: url('fonts/RobotoMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+body {
+  font-size:  16px;
+  font-family: 'roboto', arial, sans-serif;
+}
+
+code,
+pre,
+kbd,
+tt,
+var {
+ font-family: 'monospace';
+ font-weight: 400;
+}
+
+/* ------------------------------ */
+
+
+
+/* ------- Section --------- */
+html {
+  scroll-behavior: smooth;
+}
+
+.body-container{
+  display: flex;
+  flex-flow: column;
+}
+
+/*Sections*/
+.section {
+  margin: 30px 2%;
+}
+/* ------------------------------ */
+
+/* ------- Links --------- */
+a {
+  color: #4e629a;
+}
+
+a:hover {
+  color: #94adf3;
+}
+/* ------------------------------ */
+
+
+
+/* ------- Inputs --------- */
+
+/* Divs that contain the inputs */
+.form-section form {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.field-container {
+  display: flex;
+  flex-flow: column;
+  color: #4e629a;
+  font-weight: 700;
+  margin: 10px 5px 0  5px;
+}
+.field-container label {
+  margin-bottom: 2px;
+}
+
+.field-container input, select {
+  height: 20px;
+  border: 1px solid #4e629a;
+  border-radius: 5px;
+  width: 250px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.field-container select {
+  height: 24px;
+  width: 256px;
+}
+
+/* Submit button */
+.submit-container {
+  margin-top: 10px;
+  flex-basis: 100%;
+}
+
+input[type=button], input[type=submit] {
+  background-color: #94adf3;
+  border-radius: 10px;
+  text-align: center;
+  border: none;
+  color: white;
+  padding: 20px 60px;
+  font-size: 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+input[type=button]:hover, input[type=submit]:hover {
+  background-color: #7d94d5;
+}
+/* ------------------------------ */
+
+/* ------- Table --------- */
+.table-container {
+  display: block;
+  overflow-x: auto;
+  border: 5px solid #4e629a;
+}
+
+.results-table {
+  border-collapse: collapse;
+  font-size: 14px;
+  white-space: nowrap;
+  border: 1px solid #4e629a;
+}
+
+.results-table th {
+  padding: 0 5px;
+  border: 0;
+  color: #FFFFFF;
+  background-color: #4e629a;
+  padding: 5px;
+}
+
+.results-table td {
+  border: 1px solid #E5E5E5;
+  padding: 5px 8px;
+  text-align: left;
+}
+
+/* Expandable row */
+.expandable:hover {
+  background-color: #dddd;
+  cursor: pointer;
+}
+
+.expandable.active {
+  background-color: #94adf3;
+}
+
+/* Info row and cell */
+.info-row {
+  display: none;
+  background-color: #f1f1f1;
+}
+
+.info-column-container {
+  overflow-y: auto;
+  max-height: 600px;
+  padding-right: 10px;
+  display: flex;
+}
+
+.info-column {
+  white-space: pre-wrap;
+  border-right: 0px;
+}
+
+.content {
+  word-break: break-word;
+  font-family: 'roboto-monospace';
+}
+
+.results-table .fill-column {
+  border-left: 0px;
+}
+/* ------------------------------ */
+
+/* ------- Scroll up arrow --------- */
+.scroll-up-arrow-container i {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 999;
+  font-size: 45px;
+  color: #4e629a;
+  cursor: pointer;
+  opacity: 0.7;
+  background-color: #FFFFFF;
+  border-radius: 35px;
+  -webkit-border-radius: 35px;
+  -moz-border-radius: 35px;
+  border: 0;
+}
+
+.scroll-up-arrow-container i:hover {
+  color: #94adf3;
+}
+/* ------------------------------ */
