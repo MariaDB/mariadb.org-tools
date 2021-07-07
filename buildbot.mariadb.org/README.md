@@ -154,15 +154,15 @@ There's currently two types of workers that we use. Normal Buildbot workers, run
 For instructions on setting up a Buildbot Worker see http://docs.buildbot.net/latest/manual/installation/worker.html.
 
 To add a buildbot worker use the following commands:
-```
-useradd buildbot
-su - buildbot
-python3 -m venv buildbot-worker
-source buildbot-worker/bin/activate
-pip install buildbot-worker
-curl -o buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
+```bash
+$ useradd buildbot
+$ su - buildbot
+$ python3 -m venv buildbot-worker
+$ source buildbot-worker/bin/activate
+$ pip install buildbot-worker
+$ curl -o buildbot.tac https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac
 #set buildmaster, port and worker user and password
-buildbot-worker start
+$ buildbot-worker start
 ```
 
 The other type of worker we use is [DockerLatentWorker](https://docs.buildbot.net/current/manual/configuration/workers-docker.html). It is useful for running tests inside single use, disposable container Linux instances. We are currently aiming to use it for most of our Linux builds.
