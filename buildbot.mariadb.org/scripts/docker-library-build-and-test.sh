@@ -9,6 +9,7 @@ if [ -d mariadb-docker ]; then
 else
 	git clone https://github.com/MariaDB/mariadb-docker.git
 fi
+chmod a+rx mariadb-docker/*/docker-entrypoint.sh
 
 tarbuildnum=${1}
 mariadb_version=${2}
