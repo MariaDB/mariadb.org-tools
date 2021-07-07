@@ -17,6 +17,15 @@ buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${4:-${mariadb_version%\.*}}
 image=mdb-test:$master_branch
 
+# Temp workaround to correct for arg being buildername instead of parentbuildername
+if [ "$buildername" = amd64-rhel8-dockerlibrary ]; then
+	if [ $master_branch = 10.2 ]; then
+		buildername=amd64-ubuntu-1804-deb-autobake
+	else
+		buildername=amd64-ubuntu-2004-deb-autobake
+	fi
+fi
+
 if [[ "$buildername" =~ 2004 ]]; then
 	base=focal
 else
