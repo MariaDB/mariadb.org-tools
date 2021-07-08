@@ -1056,7 +1056,7 @@ activate_the_yum_repos() {
     done
     set +x
   fi
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/yum/ data/yum/${major}/";
+  ssh -t -t ${primary_mirror} "set -x ; cd data/yum ; ls -l ; rm -v ${major} ; ln -sv ../${version_nog}/yum ${major} ; ls -l";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
@@ -1069,7 +1069,7 @@ activate_the_yum_repos() {
 activate_the_deb_repos() {
   set -x
   set +x
-  rsync_wrapper_primary "--delete-after -av data/${version_nog}/repo/ data/repo/${major}/";
+  ssh -t -t ${primary_mirror} "set -x ; cd data/repo ; ls -l ; rm -v ${major} ; ln -sv ../${version_nog}/repo ${major} ; ls -l";
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
