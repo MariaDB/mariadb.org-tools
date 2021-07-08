@@ -2,6 +2,9 @@
 
 set -xeuvo pipefail
 
+# container builds copy permissions and
+# depend on go+rx permissions
+umask 0002
 if [ -d mariadb-docker ]; then
 	pushd mariadb-docker
 	git pull
@@ -9,7 +12,6 @@ if [ -d mariadb-docker ]; then
 else
 	git clone https://github.com/MariaDB/mariadb-docker.git
 fi
-chmod a+rx mariadb-docker/*/docker-entrypoint.sh
 
 tarbuildnum=${1}
 mariadb_version=${2}
