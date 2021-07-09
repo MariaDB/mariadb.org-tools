@@ -8,6 +8,7 @@ open (I, '<', "$file~") or die "open(<$file~): $!";
 open (O, '>', $file) or die "open(>$file): $!";
 
 while(<I>) {
+  s/\e\[\d+m//g;
   s/\e.*\a//;
   s/[\r\n\a]//g;
   s/^worker\[(\d+)\]/w$1/;

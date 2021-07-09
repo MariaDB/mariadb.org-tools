@@ -36,7 +36,7 @@ while [ -n "$1" ]; do
     echo "$GREEN$A$NORM"
 
     if [ -n "$diff" ] ; then
-      diff -u "$A".{result,reject}
+      diff --color=always -u "$A".{result,reject}
     else
       gvimdiff -f "$A".{reject,result}
     fi
