@@ -99,3 +99,8 @@ To use, just print values normally, for example
       last_word_mask = 4294967292, n_bits = 2}
 
 the last example shows `p/r` command to bypass a pretty-printer, if needed.
+
+# mtr-bash-completion.sh
+
+The name says it all. Bash command line completion for mtr.
+Use as `source mtr-bash-completion.sh` from your `.bashrc`
