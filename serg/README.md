@@ -104,3 +104,10 @@ the last example shows `p/r` command to bypass a pretty-printer, if needed.
 
 The name says it all. Bash command line completion for mtr.
 Use as `source mtr-bash-completion.sh` from your `.bashrc`
+
+# bookmarklets.html
+
+## ANSIfy
+
+Convert ANSI sequences in logs into html.
+Very useful when reading stdout logs from buildbot.
