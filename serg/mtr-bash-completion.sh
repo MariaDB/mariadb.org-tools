@@ -6,7 +6,7 @@ _mtr_complete_testnames ()
 }
 _mtr_all_suites ()
 {
-  suites="main "$(find suite ../{storage,plugin}/*/mysql-test -type d -exec find '{}' -maxdepth 1  -name '*.test' -print -quit \; | sed -E 's@/(t/)?[^/]+$@@; s@^(suite|.*/mysql-test)/@@')
+  suites=$(find suite ../{storage,plugin}/*/mysql-test -type d -exec find '{}' -maxdepth 1  -name '*.test' -print -quit \; | sed -E 's@/(t/)?[^/]+$@@; s@^(suite|.*/mysql-test)/@@'|sort -u)
 }
 _mtr_complete()
 {
@@ -33,10 +33,12 @@ _mtr_complete()
       COMPREPLY=( $( compgen -P ${cur%.*}. -W "$testnames" -- ${cur#*.}) )
       ;;
     --suite:*)
-      # XXX doesn't work yet
       _mtr_all_suites
       compopt -o nospace
-      COMPREPLY=( $( compgen -S , -W "$suites" -- $cur) )
+      COMPREPLY=( $( compgen -S , -W "$suites" -- ${cur##*,}) )
+      local prefix=
+      [[ $cur == *,* ]] && prefix=${cur%,*},
+      [[ ${#COMPREPLY[@]} == 1 ]] && COMPREPLY=( $prefix$COMPREPLY )
       ;;
     *)
       _mtr_all_suites
