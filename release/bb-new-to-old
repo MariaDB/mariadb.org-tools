@@ -52,9 +52,9 @@ tree='10.5'
 tarbuildnum_bb='41002'
 tarbuildnum_ci='16229'
 
-tree='10.6'
-tarbuildnum_bb='40992'
-tarbuildnum_ci='16233'
+tree='bb-10.6-release'
+tarbuildnum_bb='41296'
+tarbuildnum_ci='16603'
 
 
 #-------------------------------------------------------------------------------
@@ -71,11 +71,6 @@ cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-9-deb-autobak
 ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64* # make sure it doesn't exist
 ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-rhel-8-rpm-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-rhel-8-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-rhel8-aarch64/
-
-# fedora32-aarch64 (10.5, 10.6)
-ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64* # make sure it doesn't exist
-ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autobake/ # make sure it does exist
-cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-fedora-32-rpm-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora32-aarch64/
 
 # fedora33-amd64 (10.4, 10.5, 10.6)
 #ls -d ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-rpm-fedora33-amd64
@@ -112,6 +107,11 @@ cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-sid-deb-autob
 ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-ppc64le* # make sure it doesn't exist
 ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-sid-deb-autobake/ # make sure it does exist
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-sid-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-sid-ppc64le
+
+# hirsute-aarch64 (10.5, 10.6)
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64
 
 
 
