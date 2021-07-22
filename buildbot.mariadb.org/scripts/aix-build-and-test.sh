@@ -46,7 +46,7 @@ clean()
 
 export TMPDIR=$HOME/tmp
 export LIBPATH=/opt/freeware/lib/pthread/ppc64:/opt/freeware/lib:/usr/lib
-jobs=24
+jobs=12
 
 case $1 in
 	build|test|clean)
