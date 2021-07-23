@@ -23,7 +23,7 @@ build()
 		-DWITH_UNIT_TESTS=NO \
 		-DPLUGIN_S3=NO \
 		-DWITH_MARIABACKUP=NO \
-		-DPLUGIN_WSREP_INFO=NO \
+		-DPLUGIN_WSREP_INFO=NO
 	make -j"$jobs"
 	/opt/bin/ccache --show-stats
 }
