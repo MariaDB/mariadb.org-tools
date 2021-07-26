@@ -18,7 +18,7 @@ mariadb_version=${2}
 mariadb_version=${mariadb_version#*-}
 buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${4:-${mariadb_version%\.*}}
-image=mdb-test:$master_branch
+image=quay.io/mariadb-foundation/mariadb-devel:$master_branch
 
 # Temp workaround to correct for arg being buildername instead of parentbuildername
 if [ "$buildername" = amd64-rhel8-dockerlibrary ]; then
