@@ -39,3 +39,4 @@ buildah bud --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbui
 
 mariadb-docker/.test/run.sh "$image"
 
+podman push "$image"
