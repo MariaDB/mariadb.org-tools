@@ -67,6 +67,8 @@ git_update_refs()
     echo "Up-to-date"
   elif [ $LOCAL = $BASE ]; then
     echo "Need to pull"
+    git clean -dfX
+    git clean -dfx
     git pull
     ./buildconf
   elif [ $REMOTE = $BASE ]; then
