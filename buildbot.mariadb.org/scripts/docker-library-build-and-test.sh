@@ -26,8 +26,40 @@ else
 	base=bionic
 fi
 
-buildah bud --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/$buildername/debs ./" --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" --tag "$image" "mariadb-docker/$master_branch"
+buildernamebase=${buildername#*-}
 
-mariadb-docker/.test/run.sh "$image"
+build()
+{
+	arch=$1
+	shift
+	buildah bud "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" --tag "$image-$arch" "mariadb-docker/$master_branch"
+}
 
-podman push "$image"
+
+build amd64
+
+mariadb-docker/.test/run.sh "$image-amd64"
+
+
+manifest=mariadb-devel-$master_branch
+
+buildah manifest create "$manifest" || buildah manifest inspect "$manifest" | jq '.manifests[].digest' | xargs -n 1 -r  buildah manifest  remove "$manifest"
+
+buildah manifest add "$manifest" "$image-amd64"
+
+# build multiarch
+build aarch64 --arch arm64 --variant v8
+
+buildah manifest add "$manifest" "$image-aarch64"
+
+build ppc64le --arch ppc64le
+
+buildah manifest add "$manifest" "$image-ppc64le"
+
+#if [[ ! "$masterbranch" =~ 10.[234]  ]]
+#then
+#	build s390x --arch s390x
+#	buildah manifest add "$manifest" "$image-s390x"
+#fi
+#
+podman manifest push "$manifest" "docker://$image"
