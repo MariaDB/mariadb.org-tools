@@ -28,6 +28,9 @@ fi
 # pam test - https://github.com/php/php-src/pull/6667
 /usr/local/mariadb/bin/mysql -u root -e "INSTALL SONAME 'auth_pam'" \
 	|| :
+# tests mysqli_set_charset, mysqli_options, mysqli_character_set assume utf8mb3 (from 10.6.1)
+/usr/local/mariadb/bin/mysql -u root -e "/*M!100601 SET GLOBAL OLD_MODE = CONCAT(@@OLD_MODE, ',UTF8_IS_UTF8MB3') */" \
+	|| :
 
 
 export MYSQL_TEST_DB=test
