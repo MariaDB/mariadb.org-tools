@@ -78,8 +78,10 @@ if [[ $(buildah manifest inspect "$manifest" | jq '.manifests[] | length') -ge $
 then
 	podman manifest push "$manifest" "docker://$image"
 
-	# work around as buildah manifest rm isn't in buildah version of current worker.
-	buildah manifest inspect "$manifest" | jq '.manifests[].digest' | xargs -n 1 -r  buildah manifest  remove "$manifest"
+	# A manifest is an image type that podman can remove
+	podman rmi "$manifest"
+	podman images --filter dangling=true --format '{{.ID}}' | xargs podman rmi
+	podman images
 fi
 
 # not sure why these are leaking, however remove symlinks that don't link to anything
