@@ -136,6 +136,7 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_report )
 		mysqlifailtests+=( bug34810 )
 		mysqlifailtests+=( mysqli_class_mysqli_interface )
+		mysqlifailtests+=( mysqli_reap_async_query )
 		;&
 	PHP-7\.3)
 		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # https://github.com/php/php-src/pull/6484 - fixed 7.4
