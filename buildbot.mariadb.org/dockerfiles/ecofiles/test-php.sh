@@ -162,6 +162,7 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_debug_control_string )
 		mysqlifailtests+=( mysqli_debug_mysqlnd_control_string )
 		mysqlifailtests+=( mysqli_debug_mysqlnd_only )
+		mysqlifailtests+=( mysqli_class_mysqli_interface ) # 8.0, not 7.1
 		mysqlifailtests+=( mysqli_auth_pam ) # Access denied for user 'pamtest'@'localhost' (using password: NO) - but password is.
 
 esac
