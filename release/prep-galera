@@ -61,6 +61,20 @@ galera_suffix=""
       tarflag=false
   remote_prep="no"
 
+# mappings of dirs from the CI that we need
+ci_mappings="
+  gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
+  gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
+  gal-aarch64-fedora-33:kvm-rpm-fedora33-aarch64-gal
+  gal-aarch64-fedora-34:kvm-rpm-fedora34-aarch64-gal
+  gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
+  gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
+  gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
+  gal-aarch64-ubuntu-2104:kvm-deb-hirsute-aarch64-gal
+  gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
+  gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
+"
+
 date=$(date +%F)
 
 # The first thing we need to do is parse the command-line options
@@ -109,19 +123,24 @@ shift $(($OPTIND - 1))
 
 deb_dists="
   bionic
+  bullseye
   buster
   focal
   groovy
+  hirsute
   jessie
   sid
   stretch
   trusty
-  xenial
 "
 deb_dists_full="
   bionic-aarch64
   bionic-amd64
   bionic-ppc64le
+
+  bullseye-aarch64
+  bullseye-amd64
+  bullseye-ppc64le
 
   buster-aarch64
   buster-amd64
@@ -135,7 +154,13 @@ deb_dists_full="
   groovy-amd64
   groovy-ppc64le
 
+  hirsute-aarch64
+  hirsute-amd64
+  hirsute-ppc64le
+
+  sid-aarch64
   sid-amd64
+  sid-ppc64le
   sid-x86
   
   stretch-aarch64
@@ -163,8 +188,8 @@ rpm_dists="
   rhel8-amd64
   rhel8-ppc64le
 
-  fedora32-amd64
   fedora33-amd64
+  fedora34-amd64
 
   opensuse150-amd64
 
@@ -960,7 +985,8 @@ upload_this_release_to_the_buildmaster() {
 
 #===  FUNCTION  ================================================================
 #          NAME:  pull_this_release_from_the_buildmaster
-#   DESCRIPTION:  Transfer files over from the buildmaster before prepping
+#   DESCRIPTION:  Transfer/Download/Fetch files over from the buildmaster
+#                 before prepping
 #===============================================================================
 pull_this_release_from_the_buildmaster() {
   # This function enables prepping a release remotely. To be able to do this we
@@ -995,6 +1021,84 @@ pull_this_release_from_the_buildmaster() {
   message "Done pulling ${tree}/${rev}/ from ${buildmaster}"
 
 }
+
+pull_this_release_from_the_ci() {
+  important_message "Pulling this release from ${ci} to here..."
+
+  lowkey_message "Making sure local directories exist..."
+
+  if [ ! -d ${dir_archive}/ci/galera/${tree}/${rev} ]; then
+    mkdir -vp ${dir_archive}/ci/galera/${tree}/${rev}
+  fi
+
+  runCommand pushd ${dir_archive}/ci/
+    message "Transferring builds from ${ci}..."
+    set +e
+    runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
+    set -e
+    runCommand find ${dir_archive}/ci/galera/${tree}/${rev}/ -name "index.html" -exec rm -v {} \;
+  runCommand popd
+
+  runCommand tree ${dir_archive}/ci/galera/${tree}/${rev}
+  message "Done downloading release to ${dir_archive}/ci/galera/${tree}/${rev}"
+}
+
+verify_the_ci_download() {
+  message "Verifying files downloaded from ${ci}..."
+  for shafile in $(find ${dir_archive}/ci/galera/${tree}/${rev} -name sha256sums.txt) ; do
+    runCommand pushd $(dirname ${shafile})
+    case $shafile in
+      *windows*)
+        dos2unix sha256sums.txt
+        sed -i 's/[ \t]*$//' sha256sums.txt
+        sed -i '/^$/d' sha256sums.txt
+        ;;
+    esac
+    runCommand sha256sum --quiet -c sha256sums.txt
+    runCommand popd
+  done
+}
+
+verify_all_needed_ci_dirs_are_present() {
+  message "Checking for presence of all needed ci builds..."
+  should_I_quit=0
+  for ci_pair in ${ci_mappings}; do
+    ci_array=(${ci_pair//:/ })
+    dir_source=${dir_archive}/ci/galera/${tree}/${rev}/${ci_array[0]}
+    if [ -d ${dir_source} ]; then
+      lowkey_message "✔  ${ci_array[0]}"
+    else
+      lowkey_message "⚠  ${ci_array[0]}"
+      should_I_quit=1
+    fi
+  done
+  if ((${should_I_quit})) ; then
+    important_message "Some needed builds are missing, quitting..."
+    exit 8
+  fi
+}
+
+copy_ci_downloads_to_buildmaster_dir() {
+  verify_all_needed_ci_dirs_are_present
+  message "Copying needed builds from ${dir_archive}/ci/galera/${tree}/${rev} to ${dir_archive}/${tree}/${rev}/"
+
+  for ci_pair in ${ci_mappings}; do
+    ci_array=(${ci_pair//:/ })
+    dir_source=${dir_archive}/ci/galera/${tree}/${rev}/${ci_array[0]}
+    dir_dest=${dir_archive}/${tree}/${rev}/${ci_array[1]}
+    if [ -d ${dir_dest} ]; then
+      message "${dir_dest} already exists, moving..."
+      runCommand mv -vi ${dir_dest} ${dir_dest}_orig
+    fi
+    if [ ! -d ${dir_source} ]; then
+      runCommand cp -ai ${dir_source} ${dir_dest}
+    else
+      important_message "${dir_source} does not exist"
+      exit 1
+    fi
+  done
+}
+
 
 #===  FUNCTION  ================================================================
 #          NAME:  maybe_fix_permissions
@@ -1114,6 +1218,9 @@ case ${tree} in
 esac
 
 shouldI pull_this_release_from_the_buildmaster
+shouldI pull_this_release_from_the_ci
+shouldI verify_the_ci_download
+shouldI copy_ci_downloads_to_buildmaster_dir
 maybe_fix_permissions
 maybe_create_release_dir
 shouldI prepare_the_source_tarball
