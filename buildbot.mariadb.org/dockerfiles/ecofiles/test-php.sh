@@ -72,7 +72,6 @@ git_update_refs()
     echo "Need to pull"
     git clean -dfX
     git clean -dfx
-    rm -f ext/standard/basic_functions_arginfo.h
     git pull
     ./buildconf
   elif [ $REMOTE = $BASE ]; then
