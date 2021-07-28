@@ -81,3 +81,6 @@ then
 	# work around as buildah manifest rm isn't in buildah version of current worker.
 	buildah manifest inspect "$manifest" | jq '.manifests[].digest' | xargs -n 1 -r  buildah manifest  remove "$manifest"
 fi
+
+# not sure why these are leaking, however remove symlinks that don't link to anything
+find /tmp/run-1000/libpod/tmp/socket -xtype l ! -exec test -e {} \; -delete
