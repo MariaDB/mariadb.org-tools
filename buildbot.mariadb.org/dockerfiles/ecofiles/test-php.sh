@@ -28,6 +28,9 @@ fi
 # pam test - https://github.com/php/php-src/pull/6667
 /usr/local/mariadb/bin/mysql -u root -e "INSTALL SONAME 'auth_pam'" \
 	|| :
+# tests mysqli_set_charset, mysqli_options, mysqli_character_set assume utf8mb3 (from 10.6.1)
+/usr/local/mariadb/bin/mysql -u root -e "/*M!100601 SET GLOBAL OLD_MODE = CONCAT(@@OLD_MODE, ',UTF8_IS_UTF8MB3') */" \
+	|| :
 
 
 export MYSQL_TEST_DB=test
@@ -64,9 +67,12 @@ git_update_refs()
   REMOTE=$(git rev-parse "$UPSTREAM")
   BASE=$(git merge-base @ "$UPSTREAM")
   if [ $LOCAL = $REMOTE ]; then
+    git checkout -f HEAD
     echo "Up-to-date"
   elif [ $LOCAL = $BASE ]; then
     echo "Need to pull"
+    git clean -dfX
+    git clean -dfx
     git pull
     ./buildconf
   elif [ $REMOTE = $BASE ]; then
@@ -107,6 +113,7 @@ echo "BUILD: $opt"
 builddir="/build/${branch}-${opt}"
 mkdir -p "$builddir"
 cd "$builddir"
+touch "$codedir"/configure
 if [ "$codedir"/configure -nt config.log ]
 then
   "$codedir"/configure --enable-debug \
@@ -131,6 +138,7 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_report )
 		mysqlifailtests+=( bug34810 )
 		mysqlifailtests+=( mysqli_class_mysqli_interface )
+		mysqlifailtests+=( mysqli_reap_async_query )
 		;&
 	PHP-7\.3)
 		mysqlifailtests+=( mysqli_stmt_get_result_metadata_fetch_field ) # https://github.com/php/php-src/pull/6484 - fixed 7.4
@@ -154,6 +162,7 @@ case "${branch}" in
 		mysqlifailtests+=( mysqli_debug_control_string )
 		mysqlifailtests+=( mysqli_debug_mysqlnd_control_string )
 		mysqlifailtests+=( mysqli_debug_mysqlnd_only )
+		mysqlifailtests+=( mysqli_class_mysqli_interface ) # 8.0, not 7.1
 		mysqlifailtests+=( mysqli_auth_pam ) # Access denied for user 'pamtest'@'localhost' (using password: NO) - but password is.
 
 esac
