@@ -18,6 +18,8 @@ mariadb_version=${2}
 mariadb_version=${mariadb_version#*-}
 buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${4:-${mariadb_version%\.*}}
+commit=${5}
+
 image=quay.io/mariadb-foundation/mariadb-devel:$master_branch
 
 if [[ "$buildername" =~ 2004 ]]; then
@@ -27,39 +29,55 @@ else
 fi
 
 buildernamebase=${buildername#*-}
+builderarch=${buildername%%-*}
 
+# Annotations - https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
 build()
 {
 	arch=$1
 	shift
-	buildah bud "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" --tag "$image-$arch" "mariadb-docker/$master_branch"
+	t=$(mktemp)
+	buildah bud "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" \
+	       --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" \
+	       --annotation org.opencontainers.image.authors="MariaDB Foundation" \
+	       --annotation org.opencontainers.image.documentation=https://hub.docker.com/_/mariadb \
+	       --annotation org.opencontainers.image.source=https://github.com/MariaDB/mariadb-docker/tree/$(cd mariadb-docker/$master_branch; git rev-parse HEAD)/$master_branch \
+	       --annotation org.opencontainers.image.licenses=GPL-2.0 \
+	       --annotation org.opencontainers.image.title="MariaDB Server $master_branch CI build" \
+	       --annotation org.opencontainers.image.description="This is not a Release.\nBuild of the MariaDB Server from CI as of commit $commit" \
+	       --annotation org.opencontainers.image.version=$mariadb_version+$commit \
+	       --annotation org.opencontainers.image.revision=$commit \
+	       "mariadb-docker/$master_branch" | tee "${t}"
+	image=$(tail -n 1 "$t")
+	rm "$t"
 }
 
+if [ "${builderarch}" = aarch64 ]
+then
+	build aarch64 --arch arm64 --variant v8
+else
+	build "${builderarch}"
+fi
 
-build amd64
+mariadb-docker/.test/run.sh "$image"
 
-mariadb-docker/.test/run.sh "$image-amd64"
+manifest=mariadb-devel-$master_branch-$commit
 
+buildah manifest create "$manifest" || buildah manifest inspect "$manifest"
 
-manifest=mariadb-devel-$master_branch
+buildah manifest add "$manifest" "$image"
 
-buildah manifest create "$manifest" || buildah manifest inspect "$manifest" | jq '.manifests[].digest' | xargs -n 1 -r  buildah manifest  remove "$manifest"
+if [[ $master_branch =~ 10.[234] ]]
+then
+	expected=4
+else
+	expected=3
+fi
 
-buildah manifest add "$manifest" "$image-amd64"
+if [[ $(buildah manifest inspect "$manifest" | jq '.manifests[] | length') -ge $expected ]]
+then
+	podman manifest push "$manifest" "docker://$image"
 
-# build multiarch
-build aarch64 --arch arm64 --variant v8
-
-buildah manifest add "$manifest" "$image-aarch64"
-
-build ppc64le --arch ppc64le
-
-buildah manifest add "$manifest" "$image-ppc64le"
-
-#if [[ ! "$masterbranch" =~ 10.[234]  ]]
-#then
-#	build s390x --arch s390x
-#	buildah manifest add "$manifest" "$image-s390x"
-#fi
-#
-podman manifest push "$manifest" "docker://$image"
+	# work around as buildah manifest rm isn't in buildah version of current worker.
+	buildah manifest inspect "$manifest" | jq '.manifests[].digest' | xargs -n 1 -r  buildah manifest  remove "$manifest"
+fi
