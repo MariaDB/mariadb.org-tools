@@ -114,6 +114,16 @@ ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-aut
 cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64
 
 
+# bullseye-aarch64 (10.5, 10.6)
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-aarch64* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-bullseye-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-bullseye-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-aarch64
+
+# bullseye-ppc64le (10.5, 10.6)
+ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-ppc64le* # make sure it doesn't exist
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-ubuntu-bullseye-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-ubuntu-bullseye-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-ppc64le
+
 
 
 
