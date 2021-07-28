@@ -67,6 +67,7 @@ git_update_refs()
   REMOTE=$(git rev-parse "$UPSTREAM")
   BASE=$(git merge-base @ "$UPSTREAM")
   if [ $LOCAL = $REMOTE ]; then
+    git checkout -f HEAD
     echo "Up-to-date"
   elif [ $LOCAL = $BASE ]; then
     echo "Need to pull"
@@ -112,6 +113,7 @@ echo "BUILD: $opt"
 builddir="/build/${branch}-${opt}"
 mkdir -p "$builddir"
 cd "$builddir"
+touch "$codedir"/configure
 if [ "$codedir"/configure -nt config.log ]
 then
   "$codedir"/configure --enable-debug \
