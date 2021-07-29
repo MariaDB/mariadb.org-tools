@@ -72,7 +72,7 @@ else
 	expected=3
 fi
 
-if [[ $(buildah manifest inspect "$manifest" | jq '.manifests[] | length') -ge $expected ]]
+if [[ $(buildah manifest inspect "$manifest" | jq '.manifests | length') -ge $expected ]]
 then
 	podman manifest push "$manifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
 
