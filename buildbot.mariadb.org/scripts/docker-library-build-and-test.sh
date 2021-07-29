@@ -18,7 +18,7 @@ mariadb_version=${2}
 mariadb_version=${mariadb_version#*-}
 buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${4:-${mariadb_version%\.*}}
-commit=${5}
+commit=${5:-0}
 
 image=quay.io/mariadb-foundation/mariadb-devel:$master_branch
 
