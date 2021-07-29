@@ -20,8 +20,6 @@ buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${4:-${mariadb_version%\.*}}
 commit=${5:-0}
 
-image=quay.io/mariadb-foundation/mariadb-devel:$master_branch
-
 if [[ "$buildername" =~ 2004 ]]; then
 	base=focal
 else
@@ -76,7 +74,7 @@ fi
 
 if [[ $(buildah manifest inspect "$manifest" | jq '.manifests[] | length') -ge $expected ]]
 then
-	podman manifest push "$manifest" "docker://$image"
+	podman manifest push "$manifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
 
 	# A manifest is an image type that podman can remove
 	podman rmi "$manifest"
