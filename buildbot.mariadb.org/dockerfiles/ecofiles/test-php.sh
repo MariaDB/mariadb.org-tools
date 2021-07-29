@@ -113,7 +113,6 @@ echo "BUILD: $opt"
 builddir="/build/${branch}-${opt}"
 mkdir -p "$builddir"
 cd "$builddir"
-touch "$codedir"/configure
 if [ "$codedir"/configure -nt config.log ]
 then
   "$codedir"/configure --enable-debug \
