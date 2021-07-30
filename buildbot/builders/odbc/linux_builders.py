@@ -119,7 +119,6 @@ git submodule init
 git submodule update
 cd libmariadb
 git fetch --all --tags --prune
-#git checkout """+ tag + """
 git log | head -n5
 cd ..
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off""" + cmake_params + """ .
@@ -191,7 +190,6 @@ git submodule init
 git submodule update
 cd libmariadb
 git fetch --all --tags --prune
-#git checkout """+ tag + """
 git log | head -n5
 cd ..
 setarch i386 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DWITH_UNIT_TESTS=Off """ + cmake_params + """ -DCMAKE_TOOLCHAIN_FILE=cmake/linux_x86_toolchain.cmake .
