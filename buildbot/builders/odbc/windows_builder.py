@@ -25,7 +25,7 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "git_conc_tag_checkout",
-        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune && git checkout "+ tag)],
+        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune")],
         timeout=7200,
         doStepIf=do_step_win
   ));
