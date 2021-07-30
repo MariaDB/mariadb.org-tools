@@ -51,7 +51,7 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 
 RUN zypper install -y policycoreutils rpm-build
 
-RUN zypper install -y boost-devel libcurl-devel cracklib-devel libxml2-devel snappy-devel scons check-devel liblz4-devel
+RUN zypper install -y boost-devel libcurl-devel cracklib-devel libxml2-devel snappy-devel scons check-devel liblz4-devel jemalloc-devel
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
