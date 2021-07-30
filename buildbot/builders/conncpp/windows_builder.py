@@ -25,7 +25,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
 
   f_win_connector_cpp.addStep(ShellCommand(
         name= "git_conc_tag_checkout",
-        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune && git checkout "+ tag)],
+        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune")],
         timeout=7200,
         doStepIf=do_step_win
   ));
@@ -99,6 +99,22 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   ))
 
   addPackageUploadStepWin(f_win_connector_cpp, 'win')
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "build_package_64_debug",
+        command=["dojob",
+        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=0 -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
+          ],
+        haltOnFailure = True
+	));
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "test_with_built_release",
+        command=["dojob",
+        WithProperties("cd win64d\\test && copy ..\\..\\win64\\RelWithDebInfo\\mariadbcpp.dll .\\ && ctest")
+          ],
+        haltOnFailure = True
+	));
 
   f_win_connector_cpp.addStep(ShellCommand(
         name= "rm_tmp__upload_dir",
