@@ -111,7 +111,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "test_with_built_release",
         command=["dojob",
-        WithProperties("cd win64d\\test && copy ..\\..\\win64\\RelWithDebInfo\\mariadbcpp.dll .\\ && ctest")
+        WithProperties("cd win64d\\test && ls -l mariadbcpp.dll && copy ..\\..\\win64\\RelWithDebInfo\\mariadbcpp.dll .\\ && ls -l mariadbcpp.dll && ctest --VV")
           ],
         haltOnFailure = True
 	));
