@@ -29,7 +29,7 @@ RUN apt-get -y install dh-exec flex libboost-atomic-dev \
     libboost-chrono-dev libboost-date-time-dev \
     libboost-filesystem-dev libboost-regex-dev \
     libboost-system-dev libboost-thread-dev \
-    libedit-dev libpcre2-dev
+    libedit-dev libpcre2-dev liburing-dev
 
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot && \
