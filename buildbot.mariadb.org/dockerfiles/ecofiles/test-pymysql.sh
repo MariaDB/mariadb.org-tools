@@ -6,6 +6,7 @@ cd /code
 [ -d PyMySQL ] || git clone https://github.com/PyMySQL/PyMySQL.git
 cd PyMySQL
 git clean -dfx
+git checkout main
 git pull --tags
 if [ $# -gt 0 ]
 then
