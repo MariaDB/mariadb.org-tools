@@ -24,7 +24,7 @@ build()
 		-DPLUGIN_S3=NO \
 		-DWITH_MARIABACKUP=NO \
 		-DPLUGIN_WSREP_INFO=NO
-	make -j"$jobs"
+	make -j"$(( $jobs * 2 ))"
 	/opt/bin/ccache --show-stats
 }
 
@@ -32,9 +32,8 @@ test()
 {
 	# for saving logs
 	ln -s build/mysql-test
-	cd mysql-test
-	exec perl mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-	       --skip-test='connect\.(grant|updelx)$' --max-test-fail=20 --parallel="$jobs"
+	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
+		--skip-test='connect\.(grant|updelx)$' --max-test-fail=20 --parallel="$jobs"
 
 }
 
@@ -46,7 +45,7 @@ clean()
 
 export TMPDIR=$HOME/tmp
 export LIBPATH=/opt/freeware/lib/pthread/ppc64:/opt/freeware/lib:/usr/lib
-jobs=12
+jobs=${3:-12}
 
 case $1 in
 	build|test|clean)
