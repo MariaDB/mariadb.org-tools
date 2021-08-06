@@ -73,10 +73,50 @@ bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-am
 bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_stretch_x64_connector_odbc= build_linux_connector_odbc("codbc-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
-######################## New (unstable) version builders ######################
+##################### RPM/DEB builders ###################
 
 
-##################### New (unstable) version builders - END ###################
+def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
+    linux_connector_odbc= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_odbc.addStep(Compile(
+        description=["building", "linux-connctor_odbc"],
+        descriptionDone=["build", "linux-connector_odbc"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+cmake -DCPACK_GENERATOR="RPM" -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
+        ]))
+    linux_connector_odbc.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
+        ))
+    addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_odbc,
+            "slavenames": connector_slaves,
+            "category": "connectors"}
+
+bld_centos8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos8-amd64-rpm", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ################################# bld_linux_connector_oddbc ################################
 def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_params, tag):
