@@ -75,8 +75,65 @@ bld_stretch_x64_connector_odbc= build_linux_connector_odbc("codbc-stretch-amd64"
 
 ##################### RPM/DEB builders ###################
 
-
 def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
+    linux_connector_odbc= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-install.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_odbc.addStep(Compile(
+        description=["building", "linux-connctor_odbc"],
+        descriptionDone=["build", "linux-connector_odbc"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+cmake -DRPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
+        ]))
+    linux_connector_odbc.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*rpm`")],
+        ))
+    addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    linux_connector_odbc.addStep(Test(
+        description=["testing", "install"],
+        descriptionDone=["test", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm buildbot@localhost:buildbot/",
+        WithProperties("""
+set -ex
+ls
+cd buildbot
+ls
+if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
+sudo yum -y --nogpgcheck install %(bindistname)s
+garbd --version
+""")]))
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_odbc,
+            "slavenames": connector_slaves,
+            "category": "connectors"}
+
+def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
     linux_connector_odbc.addStep(ShellCommand(
@@ -101,14 +158,14 @@ def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 connodbc_linux_step0_checkout + """
-cmake -DCPACK_GENERATOR="RPM" -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 connodbc_linux_step1_build
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*deb`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
@@ -116,7 +173,9 @@ connodbc_linux_step1_build
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos8-amd64-rpm", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_centos8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos8-amd64-rpm", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL");
+
+bld_codbc_focal_amd64_rpm= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 
 ################################# bld_linux_connector_oddbc ################################
 def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_params, tag):
