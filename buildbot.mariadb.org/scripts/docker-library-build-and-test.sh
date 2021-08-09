@@ -57,7 +57,9 @@ else
 	build "${builderarch}" --arch "${builderarch}"
 fi
 
-mariadb-docker/.test/run.sh "$image"
+if [ "${builderarch}" = amd64 ]
+	mariadb-docker/.test/run.sh "$image"
+fi
 
 manifest=mariadb-devel-$master_branch-$commit
 
