@@ -58,6 +58,7 @@ else
 fi
 
 if [ "${builderarch}" = amd64 ]
+then
 	mariadb-docker/.test/run.sh "$image"
 fi
 
