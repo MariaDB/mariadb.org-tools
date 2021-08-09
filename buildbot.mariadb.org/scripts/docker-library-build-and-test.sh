@@ -54,7 +54,7 @@ if [ "${builderarch}" = aarch64 ]
 then
 	build aarch64 --arch arm64 --variant v8
 else
-	build "${builderarch}"
+	build "${builderarch}" --arch "${builderarch}"
 fi
 
 mariadb-docker/.test/run.sh "$image"
