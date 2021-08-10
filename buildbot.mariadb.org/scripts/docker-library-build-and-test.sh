@@ -84,9 +84,22 @@ if [[ $(buildah manifest inspect "$manifest" | jq '.manifests | length') -ge $ex
 then
 	podman manifest push "$manifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
 
+	t=$(mktemp)
+	buildah manifest inspect "$manifest" | tee "${t}"
 	# A manifest is an image type that podman can remove
+	podman images --filter dangling=true --format '{{.ID}} {{.Digest}}' | \
+		while read line
+		do
+			id=${line% *}
+			digest=${line#* }
+			echo id=$id digest=$digest
+			if [ -n "$(jq ".manifests[].digest  |select(. == \"$digest\")" < "$t")" ]
+			then
+				podman rmi "$id"
+			fi
+		done
+	rm "$t"
 	podman rmi "$manifest"
-	podman images --filter dangling=true --format '{{.ID}}' | xargs podman rmi
 	podman images
 fi
 
