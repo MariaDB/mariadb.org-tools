@@ -58,10 +58,11 @@ else
 	build "${builderarch}" --arch "${builderarch}"
 fi
 
-if [ "${builderarch}" = amd64 ]
+if [ "${builderarch}" != amd64 ]
 then
-	mariadb-docker/.test/run.sh "$image"
+	export DOCKER_LIBRARY_START_TIMEOUT=35
 fi
+mariadb-docker/.test/run.sh "$image"
 
 manifest=mariadb-devel-$master_branch-$commit
 
