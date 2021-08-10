@@ -72,9 +72,9 @@ buildah manifest add "$manifest" "$image"
 
 if [[ $master_branch =~ 10.[234] ]]
 then
-	expected=4
-else
 	expected=3
+else
+	expected=4
 fi
 
 if [[ $(buildah manifest inspect "$manifest" | jq '.manifests | length') -ge $expected ]]
@@ -88,4 +88,4 @@ then
 fi
 
 # not sure why these are leaking, however remove symlinks that don't link to anything
-find /tmp/run-1000/libpod/tmp/socket -xtype l ! -exec test -e {} \; -delete
+find /tmp/run-1000/libpod/tmp/socket -xtype l ! -exec test -e {} \; -ls -delete
