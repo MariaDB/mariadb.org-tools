@@ -49,7 +49,8 @@ jobs=${3:-12}
 
 case $1 in
 	build|test|clean)
+		do=$1
 		shift
-		$1 "$@"
+		$do "$@"
 		;;
 esac
