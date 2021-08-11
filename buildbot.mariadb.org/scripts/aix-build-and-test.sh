@@ -28,7 +28,7 @@ build()
 	/opt/bin/ccache --show-stats
 }
 
-test()
+mariadbtest()
 {
 	# for saving logs
 	ln -s build/mysql-test
@@ -39,7 +39,8 @@ test()
 
 clean()
 {
-	rm -r mariadb* build* mysql-test /mnt/packages/* /buildbot/logs/*  2> /dev/null
+	ls -ad "$@"
+	rm -rf "$@" 2> /dev/null
 }
 
 
@@ -48,9 +49,14 @@ export LIBPATH=/opt/freeware/lib/pthread/ppc64:/opt/freeware/lib:/usr/lib
 jobs=${4:-12}
 
 case $1 in
-	build|test|clean)
-		do=$1
+	build)
 		shift
-		$do "$@"
+		build "$@"
+		;;
+	test)
+		mariadbtest
+		;;
+	clean)
+		clean mariadb* build* mysql-test /mnt/packages/* /buildbot/logs/*
 		;;
 esac
