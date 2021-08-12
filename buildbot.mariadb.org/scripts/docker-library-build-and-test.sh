@@ -38,6 +38,14 @@ build()
 	t=$(mktemp)
 	buildah bud "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" \
 	       --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" \
+	--annotation org.opencontainers.image.authors="MariaDB Foundation" \
+	--annotation org.opencontainers.image.documentation=https://hub.docker.com/_/mariadb \
+	--annotation org.opencontainers.image.source=https://github.com/MariaDB/mariadb-docker/tree/$(cd mariadb-docker/$master_branch; git rev-parse HEAD)/$master_branch \
+	--annotation org.opencontainers.image.licenses=GPL-2.0 \
+	--annotation org.opencontainers.image.title="MariaDB Server $master_branch CI build" \
+	--annotation org.opencontainers.image.description="This is not a Release.\nBuild of the MariaDB Server from CI as of commit $commit" \
+	--annotation org.opencontainers.image.version=$mariadb_version+$commit \
+	--annotation org.opencontainers.image.revision=$commit \
 	       "mariadb-docker/$master_branch" | tee "${t}"
 	image=$(tail -n 1 "$t")
 	rm "$t"
