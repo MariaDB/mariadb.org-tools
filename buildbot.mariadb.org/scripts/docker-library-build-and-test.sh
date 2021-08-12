@@ -66,7 +66,13 @@ mariadb-docker/.test/run.sh "$image"
 
 manifest=mariadb-devel-$master_branch-$commit
 
-buildah manifest create "$manifest" || buildah manifest inspect "$manifest"
+# create a manifest, and if it already exists, remove the one for the
+# current achitecuture as we're replacing this.
+# This could happen due to triggered rebuilds on buildbot.
+
+buildah manifest create "$manifest" || buildah manifest inspect "$manifest" \
+	| jq ".manifests[] | select( .platform.architecture == \"$builderarch\") | .digest" \
+	| xargs --no-run-if-empty -n 1 buildah manifest remove "$manifest"
 
 buildah manifest add "$manifest" "$image"
 
