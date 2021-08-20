@@ -37,24 +37,24 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config} && . ${dir_conf}/prep.conf
 # they go in the old buildbot.askmonty.org structure
 #-------------------------------------------------------------------------------
 tree='10.2'
-tarbuildnum_bb='40790'
-tarbuildnum_ci='16329'
+tarbuildnum_bb='41828'
+tarbuildnum_ci='17269'
 
 tree='10.3'
-tarbuildnum_bb='40814'
-tarbuildnum_ci='16330'
+tarbuildnum_bb='41831'
+tarbuildnum_ci='17272'
 
 tree='10.4'
-tarbuildnum_bb='40815'
-tarbuildnum_ci='16327'
+tarbuildnum_bb='41847'
+tarbuildnum_ci='17288'
 
 tree='10.5'
-tarbuildnum_bb='41002'
-tarbuildnum_ci='16229'
+tarbuildnum_bb='41855'
+tarbuildnum_ci='17297'
 
-tree='bb-10.6-release'
-tarbuildnum_bb='41296'
-tarbuildnum_ci='16603'
+tree='10.6'
+tarbuildnum_bb='41868'
+tarbuildnum_ci='17310'
 
 
 #-------------------------------------------------------------------------------
@@ -110,19 +110,19 @@ cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-sid-deb-autob
 
 # hirsute-aarch64 (10.5, 10.6)
 ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64* # make sure it doesn't exist
-ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-autobake/ # make sure it does exist
-cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-hirsute-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-2104-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-2104-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-hirsute-aarch64
 
 
 # bullseye-aarch64 (10.5, 10.6)
 ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-aarch64* # make sure it doesn't exist
-ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-bullseye-deb-autobake/ # make sure it does exist
-cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-ubuntu-bullseye-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-aarch64
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-11-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/aarch64-debian-11-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-aarch64
 
 # bullseye-ppc64le (10.5, 10.6)
 ls -d1 ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-ppc64le* # make sure it doesn't exist
-ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-ubuntu-bullseye-deb-autobake/ # make sure it does exist
-cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-ubuntu-bullseye-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-ppc64le
+ls -d ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-11-deb-autobake/ # make sure it does exist
+cp -avi ${dir_archive}/ci/${tree}/${tarbuildnum_ci}/ppc64le-debian-11-deb-autobake/ ${dir_archive}/${tree}/build-${tarbuildnum_bb}/kvm-deb-bullseye-ppc64le
 
 
 
