@@ -71,6 +71,7 @@ ci_mappings="
   gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
   gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
   gal-aarch64-ubuntu-2104:kvm-deb-hirsute-aarch64-gal
+  gal-ppc64le-ubuntu-2104:kvm-deb-hirsute-ppc64le-gal
   gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
   gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
 "
@@ -170,11 +171,6 @@ deb_dists_full="
 
   trusty-amd64
   trusty-x86
-
-  xenial-aarch64
-  xenial-amd64
-  xenial-ppc64le
-  xenial-x86
 "
 
 rpm_dists="
@@ -677,7 +673,14 @@ END
     esac
 
     echo ${dist}
+    case ${dist} in
+      sid*)
+        reprepro --ignore=wrongdistribution --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
+        ;;
+      *)
     reprepro --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
+        ;;
+    esac
 
   done
   message "Finished preparing the deb repository"
@@ -1090,7 +1093,7 @@ copy_ci_downloads_to_buildmaster_dir() {
       message "${dir_dest} already exists, moving..."
       runCommand mv -vi ${dir_dest} ${dir_dest}_orig
     fi
-    if [ ! -d ${dir_source} ]; then
+    if [ -d ${dir_source} ]; then
       runCommand cp -ai ${dir_source} ${dir_dest}
     else
       important_message "${dir_source} does not exist"
