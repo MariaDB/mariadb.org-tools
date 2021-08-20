@@ -855,7 +855,11 @@ pull_this_release_from_ci() {
 
     message "Transferring builds from ${ci}..."
     set +e
-    runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/
+    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/ ; then
+      message "Downloaded from ci"
+    else
+      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${tarbuildnum}/
+    fi
     set -e
     runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
