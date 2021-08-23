@@ -61,6 +61,8 @@ fi
 if [ "${builderarch}" != amd64 ]
 then
 	export DOCKER_LIBRARY_START_TIMEOUT=35
+else
+	export DOCKER_LIBRARY_START_TIMEOUT=15
 fi
 mariadb-docker/.test/run.sh "$image"
 
