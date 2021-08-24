@@ -17,7 +17,9 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
+#maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
+#maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-1154/org/mariadb/jdbc/mariadb-java-client"
+maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-1155/org/mariadb/jdbc/mariadb-java-client"
 
 dir_java="connector-java-${version}"
 #tarball="mariadb-java-client-${version}.tar.gz"
@@ -114,6 +116,9 @@ unzip_and_stage_files() {
     #unzip ${version}*.zip
     #mv -vi ${version} ${dir_java}
     #rm -v ${version}*.zip
+    if [ -d ${dir_java} ]; then
+      rm -rf ${dir_java}
+    fi
     mkdir ${dir_java}
     pushd ${dir_java}
       wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
