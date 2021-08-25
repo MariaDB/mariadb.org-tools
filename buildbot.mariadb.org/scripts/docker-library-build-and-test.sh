@@ -198,19 +198,22 @@ manifestcleanup()
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]
 then
-	podman manifest push "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
-	#podman manifest push "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
+	buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
+	#buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
 
-	manifestcleanup "$devmanifest"
+	#manifestcleanup "$devmanifest"
 	#manifestcleanup "$debugmanifest"
 
-	podman images
+	buildah images
 	# lost and forgotten (or just didn't make enough manifest items - build failure on an arch)
 	lastweek=$(date +%s --date='1 week ago')
-	podman images --format=json | jq ".[] | select(.Created <= $lastweek and .Dangling) | .Id" | xargs --no-run-if-empty podman rmi
-	# size is a poor criteria - excludes ubuntu base images however.
-	podman images --format=json | jq ".[] | select(.Created <= $lastweek and .Size < 10000 ) | .Id" | xargs --no-run-if-empty buildah manifest rm
-	podman images
+	# clean buildah containers
+	buildah containers  --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah  rm
+	# clean images
+	buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( .names == null) | .id" | xargs --no-run-if-empty buildah rmi
+	# clean manifests
+	buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( try .names[0]? catch \"\" | startswith(\"localhost/mariadb-\") ) | .id" | xargs --no-run-if-empty buildah manifest rm
+	buildah images
 fi
 
 # not sure why these are leaking, however remove symlinks that don't link to anything
