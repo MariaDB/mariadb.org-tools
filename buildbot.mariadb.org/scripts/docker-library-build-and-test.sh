@@ -108,7 +108,7 @@ else
 	file=/etc/mysql/mariadb.cnf
 fi
 # Set mariadb version according to semver
-buildah run --add-history $container  sed -ie '/^\[mariadb/a version='"$mariadb_version+$commit" $file
+buildah run --add-history $container  sed -ie '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${commit}" $file
 
 #
 # MAKE it part of the mariadb-devel manifest
