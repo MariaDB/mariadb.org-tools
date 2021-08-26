@@ -107,7 +107,7 @@ then
 else
 	file=/etc/mysql/mariadb.cnf
 fi
-# Set mariadb version according to semver
+# Set mariadb version according to a version that looks simlar to existing pattern, except with a commit id.
 buildah run --add-history $container  sed -ie '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${commit}" $file
 
 #
@@ -149,15 +149,14 @@ buildmanifest $devmanifest $container
 # MAKE Debug manifest
 
 # linux-tools-common for perf
-# TODO: ci repo generation fix needed
-# buildah run --add-history "$container" sh -c \
-# 	"apt update \
-# 	&& apt-get install -y linux-tools-common gdbserver \
-# 	&& dpkg-query  --showformat='\${Package},\${Version},\${Architecture}\n' --show | grep mariadb \
-# 	| while IFS=, read  pkg version arch; do \
-#           [ \$arch != all ] apt-get install -y \${pkg}-dbgsym=\${version} ;
-#         done; \
-# 	rm -rf /var/lib/apt/lists/*"
+buildah run --add-history "$container" sh -c \
+	"apt update \
+	&& apt-get install -y linux-tools-common gdbserver \
+	&& dpkg-query  --showformat='\${Package},\${Version},\${Architecture}\n' --show | grep mariadb \
+	| while IFS=, read  pkg version arch; do \
+          [ \$arch != all ] apt-get install -y \${pkg}-dbgsym=\${version} ;
+        done; \
+	rm -rf /var/lib/apt/lists/*"
 
 debugmanifest=mariadb-debug-$master_branch-$commit
 
@@ -199,19 +198,24 @@ manifestcleanup()
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]
 then
 	buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
-	#buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
+	buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
 
 	#manifestcleanup "$devmanifest"
 	#manifestcleanup "$debugmanifest"
 
 	buildah images
 	# lost and forgotten (or just didn't make enough manifest items - build failure on an arch)
+	# Note *: coming to a buildah update sometime - epnoc timestamps - https://github.com/containers/buildah/pull/3482
 	lastweek=$(date +%s --date='1 week ago')
+	# old ubuntu and base images that got updated so are Dangling
+	podman images --format=json | jq ".[] | select(.Created <= $lastweek and .Dangling) | .Id" | xargs --no-run-if-empty podman rmi
 	# clean buildah containers
 	buildah containers  --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah  rm
 	# clean images
+	# (Note *) buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.created <= $lastweek) | select( .names == null) | .id" | xargs --no-run-if-empty buildah rmi
 	buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( .names == null) | .id" | xargs --no-run-if-empty buildah rmi
 	# clean manifests
+	# (Note *) buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.created <= $lastweek) | select( try .names[0]? catch \"\" | startswith(\"localhost/mariadb-\") ) | .id" | xargs --no-run-if-empty buildah manifest rm
 	buildah images --json |  jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( try .names[0]? catch \"\" | startswith(\"localhost/mariadb-\") ) | .id" | xargs --no-run-if-empty buildah manifest rm
 	buildah images
 fi
