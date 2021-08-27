@@ -150,11 +150,11 @@ buildmanifest $devmanifest $container
 
 # linux-tools-common for perf
 buildah run --add-history "$container" sh -c \
-	"apt update \
+	"apt-get update \
 	&& apt-get install -y linux-tools-common gdbserver \
 	&& dpkg-query  --showformat='\${Package},\${Version},\${Architecture}\n' --show | grep mariadb \
 	| while IFS=, read  pkg version arch; do \
-          [ \$arch != all ] apt-get install -y \${pkg}-dbgsym=\${version} ;
+          [ \$arch != all ] && apt-get install -y \${pkg}-dbgsym=\${version} ;
         done; \
 	rm -rf /var/lib/apt/lists/*"
 
