@@ -46,20 +46,122 @@ var {
 /* ------------------------------ */
 
 
+/* ------- Header --------- */
+
+/* Header columns styling */
+.top-header-column.column-1 {
+  flex: 0 auto;
+}
+
+.top-header-column.column-2 {
+  flex: 0 auto;
+}
+
+.top-header-column.column-3 {
+  flex: 1 auto;
+}
+
+.top-header-column.column-4 {
+  flex: 0 auto;
+}
+
+.top-header-column.column-5 {
+  flex: 0 auto;
+  background-color: #4e629a;
+}
+
+/* Header container */
+.top-header-container.desktop-version {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 88px;
+  width: 100%;
+  background-color: #FFFFFF;
+}
+
+.wavy-line-1 {
+  height: 44px;
+  background-color: #FFFFFF;
+}
+
+.under-wavy-line-1 {
+  height: 44px;
+  width: 200px;
+  background-image: url("../images/wave-1-try-4.svg");
+}
+
+.navigation-menu-item {
+  height: 44px;
+}
+
+.under-menu-nav {
+  background-color: #4e629a;
+  height: 44px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.wavy-line-2 {
+  height: 44px;
+  width: 200px;
+  background-image: url("../images/wave-2-try-4.svg");
+  background-size: 100% 100%;
+}
+
+.under-wavy-line-2 {
+  height: 44px;
+  background-color: #4e629a;
+}
+
+.header-navigation-menu {
+  height: 44px;
+  overflow: hidden;
+}
+
+/* ------------------------------ */
+
+
+
+/* -------- Site featured image -------- */
+/*.featured-header-image a:first-child {
+  display: block;
+}
+*/
+.top-header-container.desktop-version .featured-header-image img {
+  display: block;
+  height: 68px;
+  margin: 5px 0;
+}
+
+.under-header-image {
+  height: 10px;
+  background-color: #4e629a;
+}
+/* ------------------------------------- */
+
+
 
 /* ------- Section --------- */
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+}
+
 .body-container{
   display: flex;
-  flex-flow: column;
+  flex-flow: row nowrap;
 }
 
 /*Sections*/
 .section {
   margin: 30px 2%;
+}
+
+.section.table-section {
+  overflow: auto;
 }
 /* ------------------------------ */
 
@@ -80,7 +182,7 @@ a:hover {
 /* Divs that contain the inputs */
 .form-section form {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column;
 }
 
 .field-container {

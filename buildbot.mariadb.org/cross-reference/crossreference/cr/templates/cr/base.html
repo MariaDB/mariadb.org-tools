@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      {% load static %}
+      <link rel="stylesheet" type="text/css" href="{% static 'cr/css/style.css' %}">
+      <link rel="stylesheet" href="{% static 'cr/font-awesome/css/fontawesome.min.css' %}">
+      <link rel="stylesheet" href="{% static 'cr/font-awesome/css/solid.min.css' %}">
+      <link rel="stylesheet" href="{% static 'cr/font-awesome/css/brands.min.css' %}">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>{% block title %}Buildbot Crossreference{% endblock %}</title>
+  </head>
+
+  <header>
+    <div class="top-header-container desktop-version">
+      <div class="top-header-column column-1">
+        <div class="featured-header-image">
+          <a href="/">
+            <img src="{% static 'cr/images/mariadb_org_rgb_h.svg' %}">
+          </a>
+        </div>
+        <div class="under-header-image"></div>
+      </div>
+
+      <div class="top-header-column column-2">
+        <div class="wavy-line-1"></div>
+        <div class="under-wavy-line-1"> </div>
+      </div>
+
+      <div class="top-header-column column-3">
+        <div class="navigation-menu-item"></div>
+        <div class="under-menu-nav"></div>
+      </div>
+
+      <div class="top-header-column column-4">
+        <div class="wavy-line-2"></div>
+        <div class="under-wavy-line-2"></div>
+      </div>
+
+      <div class="top-header-column column-5">
+        <div class="header-social-links"></div>
+        <div class="under-social-nav"></div>
+      </div>
+    </div>
+
+  </header>
+
+  <body>
+      <div class="body-container">
+          {% block content %}{% endblock %}
+      </div>
+  </body>
+
+  <footer>
+    <script type="text/javascript" src="{% static 'cr/js/script.js' %}"></script>
+  </footer>
+</html>
