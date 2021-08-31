@@ -21,7 +21,7 @@ RUN yum -y install epel-release && \
     yum -y upgrade && \
     yum -y groupinstall 'Development Tools' && \
     yum -y install git ccache subversion \
-    python-devel libffi-devel openssl-devel \
+    python-devel libffi-devel openssl-devel jemalloc-devel \
     python-pip redhat-rpm-config curl wget && \
     # install MariaDB dependencies
     yum-builddep -y mariadb-server
