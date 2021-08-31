@@ -40,7 +40,7 @@ RUN zypper install -y policycoreutils rpm-build
 
 RUN zypper install -y boost-devel libboost_program_options1_66_0-devel libcurl-devel cracklib-devel libxml2-devel snappy-devel scons check-devel liblz4-devel
 RUN zypper install -y binutils bison checkpolicy coreutils cracklib-devel flex gawk gcc gcc-c++ gcc7 git-core glibc glibc-devel groff java-1_8_0-openjdk java-1_8_0-openjdk-devel java-1_8_0-openjdk-headless judy-devel krb5-devel libaio-devel libboost_atomic1_66_0-devel libboost_chrono1_66_0-devel libboost_date_time1_66_0-devel libboost_filesystem1_66_0-devel libboost_headers1_66_0-devel libboost_regex1_66_0-devel libboost_system1_66_0-devel libboost_thread1_66_0-devel libbz2-devel libcurl-devel libevent-devel libfl-devel libopenssl-1_1-devel libxml2-devel libxml2-tools libzstd-devel lzo-devel make ncurses-devel pam-devel pcre2-devel pkg-config policycoreutils readline-devel snappy-devel systemd-devel tar unixODBC unixODBC-devel xz-devel zlib-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel flex gawk gcc gcc-c++ git-core glibc glibc-devel groff java-1_8_0-openjdk java-1_8_0-openjdk-devel krb5-devel libaio-devel libbz2-devel libcurl-devel libevent-devel libopenssl-devel libxml2-devel libxml2-tools lzo-devel make ncurses-devel pam-devel pkg-config policycoreutils readline-devel ruby snappy-devel systemd-devel tar unixODBC unixODBC-devel xz-devel zlib-devel which
-RUN zypper install -y libpmem-devel
+RUN zypper install -y libpmem-devel jemalloc-devel
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
