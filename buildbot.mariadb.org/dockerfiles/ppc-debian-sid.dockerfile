@@ -48,7 +48,7 @@ RUN pip3 install buildbot-worker && \
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN apt-get -y install dumb-init
-RUN apt-get update && apt-get -y install debhelper libasio-dev libboost-all-dev check scons libboost-program-options-dev
+RUN apt-get update && apt-get -y install debhelper libbz2-dev liblzma-dev liblzo2-dev libasio-dev libboost-all-dev check scons libboost-program-options-dev
 RUN apt-get -y install liburing-dev libpmem-dev
 
 USER buildbot

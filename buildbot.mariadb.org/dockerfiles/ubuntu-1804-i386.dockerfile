@@ -50,7 +50,7 @@ RUN pip3 install buildbot-worker && \
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN curl http://mirrors.kernel.org/ubuntu/pool/universe/d/dumb-init/dumb-init_1.2.1-1_i386.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
-RUN apt-get -y install libboost-all-dev scons check debhelper libasio-dev libboost-program-options-dev
+RUN apt-get -y install libboost-all-dev scons check debhelper libbz2-dev liblzma-dev liblzo2-dev libasio-dev libboost-program-options-dev
 RUN apt-get -y install gnutls-dev
 
 USER buildbot

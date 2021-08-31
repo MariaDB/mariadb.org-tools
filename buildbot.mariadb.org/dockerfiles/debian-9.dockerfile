@@ -52,7 +52,7 @@ RUN pip3 install buildbot-worker && \
 RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 
 RUN apt-get install -y gnutls-dev
-RUN apt-get -y install debhelper libasio-dev libboost-all-dev check scons libboost-program-options-dev
+RUN apt-get -y install debhelper libbz2-dev liblzma-dev liblzo2-dev libasio-dev libboost-all-dev check scons libboost-program-options-dev
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

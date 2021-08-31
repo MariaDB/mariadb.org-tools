@@ -51,7 +51,7 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 #RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_$(arch).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 RUN apt-get -y install dumb-init
-RUN apt-get -y install libboost-all-dev scons check debhelper libasio-dev libboost-program-options-dev
+RUN apt-get -y install libboost-all-dev scons check debhelper libbz2-dev liblzma-dev liblzo2-dev libasio-dev libboost-program-options-dev
 RUN apt-get -y install libpmem-dev
 
 USER buildbot
