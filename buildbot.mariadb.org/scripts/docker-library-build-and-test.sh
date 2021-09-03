@@ -131,7 +131,8 @@ buildmanifest()
 	t=$(mktemp)
 	buildah commit "$@" --iidfile "$t" --manifest "$manifest" "$container"
 	image=$(<$t)
-	buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${manifest%-${master_branch}*}:${master_branch}-${builderarch}"
+	buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${manifest%-${master_branch}*}:${master_branch}-${builderarch}" \
+		&& buildah rmi "$image"
 	# $image is the wrong sha for annotation. Config vs Blog?
 	# Even below doesn't annotate manifest. Unknown reason, doesn't error
 	buildah manifest inspect "$manifest" \
