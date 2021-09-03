@@ -11,7 +11,9 @@ if [ -d mariadb-docker ]; then
 	popd
 else
 	git clone https://github.com/MariaDB/mariadb-docker.git
+	pushd mariadb-docker
 	git config pull.ff only
+	popd
 fi
 
 tarbuildnum=${1}
