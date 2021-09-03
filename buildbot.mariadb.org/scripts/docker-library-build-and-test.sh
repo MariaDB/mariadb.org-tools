@@ -106,7 +106,7 @@ if [[ $master_branch =~ 10.[234] ]]; then
 else
   file=/etc/mysql/mariadb.cnf
 fi
-# Set mariadb version according to a version that looks simlar to existing pattern, except with a commit id.
+# Set mariadb version according to a version that looks similar to existing pattern, except with a commit id.
 buildah run --add-history $container sed -ie '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${commit}" $file
 
 #
@@ -119,7 +119,7 @@ buildmanifest() {
   container=$1
   shift
   # create a manifest, and if it already exists, remove the one for the
-  # current architecuture as we're replacing this.
+  # current architecture as we're replacing this.
   # This could happen due to triggered rebuilds on buildbot.
 
   buildah manifest create "$manifest" || buildah manifest inspect "$manifest" |
