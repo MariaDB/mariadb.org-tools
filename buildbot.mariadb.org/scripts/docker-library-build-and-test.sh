@@ -85,13 +85,15 @@ else
 fi
 mariadb-docker/.test/run.sh "$image"
 
+origbuildimage=$image
+
 #
 # METADATA:
 
 # Add manifest file of version and fix mariadb version in the configuration
 # because otherwise 'buildah manifest add "$devmanifest" "$image"' would be sufficient
 
-container=$(buildah from $image)
+container=$(buildah from "$image")
 manifestfile=$(mktemp)
 for item in "${annotations[@]}"
   do
@@ -163,6 +165,8 @@ buildah run --add-history "$container" sh -c \
 debugmanifest=mariadb-debug-$master_branch-$commit
 
 buildmanifest $debugmanifest $container --rm
+
+buildah rmi "$origbuildimage"
 
 if [[ $master_branch =~ 10.[234] ]]
 then
