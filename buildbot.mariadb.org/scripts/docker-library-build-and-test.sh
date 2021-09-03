@@ -218,4 +218,6 @@ if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge 
 fi
 
 # not sure why these are leaking, however remove symlinks that don't link to anything
-find /tmp/run-1000/libpod/tmp/socket -xtype l ! -exec test -e {} \; -ls -delete
+typeset -r buildbot_uid=$(id -u buildbot)
+[[ -d "/tmp/run-${buildbot_uid}/libpod/tmp/socket" ]] &&
+  find "/tmp/run-${buildbot_uid}/libpod/tmp/socket" -xtype l ! -exec test -e {} \; -ls -delete
