@@ -219,5 +219,6 @@ fi
 
 # not sure why these are leaking, however remove symlinks that don't link to anything
 typeset -r buildbot_uid=$(id -u buildbot)
-[[ -d "/tmp/run-${buildbot_uid}/libpod/tmp/socket" ]] &&
+if [[ -d "/tmp/run-${buildbot_uid}/libpod/tmp/socket" ]]; then
   find "/tmp/run-${buildbot_uid}/libpod/tmp/socket" -xtype l ! -exec test -e {} \; -ls -delete
+fi
