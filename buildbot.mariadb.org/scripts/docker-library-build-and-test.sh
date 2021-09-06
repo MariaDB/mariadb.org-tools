@@ -194,8 +194,8 @@ manifestcleanup() {
 }
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
-  buildah manifest push --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
-  buildah manifest push --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
+  buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
+  buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
 
   #manifestcleanup "$devmanifest"
   #manifestcleanup "$debugmanifest"
