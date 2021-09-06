@@ -216,9 +216,3 @@ if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge 
   buildah images --json | jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( try .names[0]? catch \"\" | startswith(\"localhost/mariadb-\") ) | .id" | xargs --no-run-if-empty buildah manifest rm
   buildah images
 fi
-
-# not sure why these are leaking, however remove symlinks that don't link to anything
-typeset -r buildbot_uid=$(id -u buildbot)
-if [[ -d "/tmp/run-${buildbot_uid}/libpod/tmp/socket" ]]; then
-  find "/tmp/run-${buildbot_uid}/libpod/tmp/socket" -xtype l ! -exec test -e {} \; -ls -delete
-fi
