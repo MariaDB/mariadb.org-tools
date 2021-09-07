@@ -22,6 +22,13 @@ mariadb_version=${mariadb_version#*-}
 buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${mariadb_version%\.*}
 commit=${4:-0}
+branch=${5:-${master_branch}}
+
+if [[ $branch =~ preview ]]; then
+  container_tag=${branch#preview-}
+else
+  container_tag=$master_branch
+fi
 
 if [[ "$buildername" =~ 2004 ]]; then
   base=focal
@@ -40,7 +47,7 @@ declare -a annotations=(
     git rev-parse HEAD
   )/$master_branch"
   "--annotation" "org.opencontainers.image.licenses=GPL-2.0"
-  "--annotation" "org.opencontainers.image.title=MariaDB Server $master_branch CI build"
+  "--annotation" "org.opencontainers.image.title=MariaDB Server $container_tag CI build"
   "--annotation" "org.opencontainers.image.description=This is not a Release.\nBuild of the MariaDB Server from CI as of commit $commit"
   "--annotation" "org.opencontainers.image.version=$mariadb_version+$commit"
   "--annotation" "org.opencontainers.image.revision=$commit")
@@ -107,13 +114,15 @@ else
   file=/etc/mysql/mariadb.cnf
 fi
 # Set mariadb version according to a version that looks similar to existing pattern, except with a commit id.
-buildah run --add-history $container sed -ie '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${commit}" $file
+buildah run --add-history $container sed -ie '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${container_tag}-${commit}" $file
 
 #
 # MAKE it part of the mariadb-devel manifest
 #
 
 buildmanifest() {
+  base=$1
+  shift
   manifest=$1
   shift
   container=$1
@@ -129,7 +138,7 @@ buildmanifest() {
   t=$(mktemp)
   buildah commit "$@" --iidfile "$t" --manifest "$manifest" "$container"
   image=$(<$t)
-  buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${manifest%-${master_branch}*}:${master_branch}-${builderarch}" &&
+  buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${base}:${container_tag}-${builderarch}" &&
     buildah rmi "$image"
   # $image is the wrong sha for annotation. Config vs Blog?
   # Even below doesn't annotate manifest. Unknown reason, doesn't error
@@ -141,9 +150,9 @@ buildmanifest() {
   rm -f "$t"
 }
 
-devmanifest=mariadb-devel-$master_branch-$commit
+devmanifest=mariadb-devel-${container_tag}-$commit
 
-buildmanifest $devmanifest $container
+buildmanifest mariadb-devel $devmanifest $container
 
 #
 # MAKE Debug manifest
@@ -158,9 +167,9 @@ buildah run --add-history "$container" sh -c \
         done; \
 	rm -rf /var/lib/apt/lists/*"
 
-debugmanifest=mariadb-debug-$master_branch-$commit
+debugmanifest=mariadb-debug-${container_tag}-$commit
 
-buildmanifest $debugmanifest $container --rm
+buildmanifest mariadb-debug $debugmanifest $container --rm
 
 buildah rmi "$origbuildimage"
 
@@ -194,8 +203,8 @@ manifestcleanup() {
 }
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
-  #buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:$master_branch"
-  #buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:$master_branch"
+  #buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
+  #buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
 
   #manifestcleanup "$devmanifest"
   #manifestcleanup "$debugmanifest"
