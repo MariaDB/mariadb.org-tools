@@ -182,7 +182,8 @@ wait_for_mysql_upgrade () {
   fi
 }
 
-if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list" ; then
+if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 timeout 900 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list" ; then
+  get_columnstore_logs
   echo "ERROR: Installation of a previous release failed, see the output above"
   exit 1
 fi
@@ -190,7 +191,7 @@ fi
 wait_for_mysql_upgrade
 
 if [ -n "$spider_package_list" ] ; then
-  if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list" ; then
+  if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 timeout 900 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list" ; then
     echo "ERROR: Installation of Spider from the previous release failed, see the output above"
     exit 1
   fi
@@ -363,15 +364,16 @@ fi
 # Install the new packages
 #=========================
 
-sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 timeout 900 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list"
 if [[ $? -ne 0 ]] ; then
+  get_columnstore_logs
   echo "ERROR: Installation of the new packages failed, see the output above"
   exit 1
 fi
 wait_for_mysql_upgrade
 
 if [ -n "$spider_package_list" ] ; then
-  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list"
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 timeout 900 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $spider_package_list"
   if [[ $? -ne 0 ]] ; then
     echo "ERROR: Installation of the new Spider packages failed, see the output above"
     exit 1
