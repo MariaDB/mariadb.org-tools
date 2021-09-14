@@ -31,6 +31,8 @@ else
   container_tag=$master_branch
   feature=""
 fi
+# Container tags must be lower case.
+container_tag=${container_tag,,*}
 
 if [[ "$buildername" =~ 2004 ]]; then
   base=focal
