@@ -17,9 +17,8 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-#maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
-#maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-1154/org/mariadb/jdbc/mariadb-java-client"
-maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-1155/org/mariadb/jdbc/mariadb-java-client"
+orgmariadbjdbc=${2}
+maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
 
 dir_java="connector-java-${version}"
 #tarball="mariadb-java-client-${version}.tar.gz"
