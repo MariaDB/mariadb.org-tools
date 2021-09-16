@@ -26,7 +26,7 @@ branch=${5:-${master_branch}}
 
 if [[ $branch =~ preview ]]; then
   container_tag=${branch#preview-}
-  feature="${container_tag#10.7-}-"
+  feature="${container_tag#10.7-}"
 else
   container_tag=$master_branch
   feature=""
