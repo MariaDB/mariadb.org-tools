@@ -26,7 +26,7 @@ branch=${5:-${master_branch}}
 
 if [[ $branch =~ preview ]]; then
   container_tag=${branch#preview-}
-  feature="${container_tag}-"
+  feature="${container_tag#10.7-}-"
 else
   container_tag=$master_branch
   feature=""
@@ -118,7 +118,7 @@ else
   file=/etc/mysql/mariadb.cnf
 fi
 # Set mariadb version according to a version that looks similar to existing pattern, except with a commit id.
-buildah run --add-history $container sed -i -e '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${feature}${commit}" $file
+buildah run --add-history $container sed -i -e '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${feature:-${commit}}" $file
 
 #
 # MAKE it part of the mariadb-devel manifest
