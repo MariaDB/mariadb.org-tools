@@ -1,5 +1,6 @@
 #!/bin/bash
 
+distro=$version_name
 set -xv
 case "$branch" in
 *galera*)
