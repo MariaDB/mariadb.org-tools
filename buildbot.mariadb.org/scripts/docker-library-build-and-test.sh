@@ -95,8 +95,14 @@ else
 fi
 mariadb-docker/.test/run.sh "$image"
 
-origbuildimage=$image
+# restrict pushing of images to preview and release branches
+if [[ ! $branch =~ ^preview ]] && [[ ! $branch =~ ^10. ]]
+then
+	buildah rmi "$image"
+	exit 0
+fi
 
+origbuildimage=$image
 #
 # METADATA:
 
