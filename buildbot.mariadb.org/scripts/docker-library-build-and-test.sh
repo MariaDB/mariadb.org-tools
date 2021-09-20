@@ -149,8 +149,8 @@ buildmanifest() {
   t=$(mktemp)
   buildah commit "$@" --iidfile "$t" --manifest "$manifest" "$container"
   image=$(<$t)
-  buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${base}:${container_tag}-${builderarch}" &&
-    buildah rmi "$image"
+  ##buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${base}:${container_tag}-${builderarch}" &&
+  ##  buildah rmi "$image"
   # $image is the wrong sha for annotation. Config vs Blog?
   # Even below doesn't annotate manifest. Unknown reason, doesn't error
   buildah manifest inspect "$manifest" |
@@ -214,11 +214,11 @@ manifestcleanup() {
 }
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
-  #buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
-  #buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
+  buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
+  buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
 
-  #manifestcleanup "$devmanifest"
-  #manifestcleanup "$debugmanifest"
+  manifestcleanup "$devmanifest"
+  manifestcleanup "$debugmanifest"
 
   buildah images
   # lost and forgotten (or just didn't make enough manifest items - build failure on an arch)
