@@ -214,6 +214,7 @@ manifestcleanup() {
 }
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
+  container_tag=${container_tag%_triggerbb}
   buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
   buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
 
