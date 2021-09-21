@@ -27,6 +27,7 @@ branch=${5:-${master_branch}}
 if [[ $branch =~ preview ]]; then
   container_tag=${branch#preview-}
   feature="${container_tag#10.7-}"
+  feature="${feature%_triggerBB}"
 else
   container_tag=$master_branch
   feature=""
@@ -132,7 +133,7 @@ fi
 # Set mariadb version according to a version that looks similar to existing pattern, except with a commit id.
 buildah run --add-history $container sed -i -e '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${feature:-${commit}}" $file
 
-if [ "$feature" = MDEV-12933-provider-plugins ]; then
+if [[ "$feature" =~ MDEV-12933-provider-plugins ]]; then
   buildah run --add-history "$container" sh -c \
     "apt-get update \
   	&& apt-get install -y mariadb-plugin-provider-bzip2  mariadb-plugin-provider-lz4 mariadb-plugin-provider-lzma mariadb-plugin-provider-lzo mariadb-plugin-provider-snappy && \
