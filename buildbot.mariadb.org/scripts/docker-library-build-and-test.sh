@@ -93,13 +93,19 @@ if [ "${builderarch}" != amd64 ]; then
 else
   export DOCKER_LIBRARY_START_TIMEOUT=15
 fi
-mariadb-docker/.test/run.sh "$image"
+
+# NO_TEST for manual invokation
+if [ -n "${NO_TEST}" ]; then
+  echo "Skipping test"
+else
+  mariadb-docker/.test/run.sh "$image"
+fi
 
 # restrict pushing of images to preview and release branches
 if [[ ! $branch =~ ^preview ]] && [[ ! $branch =~ ^10. ]]
 then
-	buildah rmi "$image"
-	exit 0
+  buildah rmi "$image"
+  exit 0
 fi
 
 origbuildimage=$image
