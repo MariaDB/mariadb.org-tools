@@ -15,7 +15,7 @@ RUN apt-get update -y && \
       gcc                \
       git                \
       libsnappy1v5 libnuma1 libpmem1 \
-      libaio1 libreadline5 libncurses6 && \
+      libaio1 libreadline5 libncurses6 liblzo2-2 libtinfo5 libncurses5 && \
    rm -rf /var/lib/apt/lists/*
 
 # Source code
