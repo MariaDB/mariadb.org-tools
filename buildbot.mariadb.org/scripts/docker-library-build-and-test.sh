@@ -201,10 +201,8 @@ fi
 # PUSHIT - if the manifest if complete, i.e. all supported arches are there, we push
 #
 
-manifestcleanup() {
-  manifest=$1
-  t=$(mktemp)
-  buildah manifest inspect "$manifest" | tee "${t}"
+manifest_image_cleanup() {
+  t=$1
   # A manifest is an image type that podman can remove
   podman images --filter dangling=true --format '{{.ID}} {{.Digest}}' |
     while read line; do
@@ -216,16 +214,19 @@ manifestcleanup() {
       fi
     done
   rm "$t"
-  podman rmi "$manifest"
 }
 
 if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
   container_tag=${container_tag%_triggerbb}
+  t=$(mktemp)
+  buildah manifest inspect "$devmanifest" | tee "${t}"
   buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
-  buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
+  manifest_image_cleanup "$t"
 
-  manifestcleanup "$devmanifest"
-  manifestcleanup "$debugmanifest"
+  t=$(mktemp)
+  buildah manifest inspect "$debugmanifest" | tee "${t}"
+  buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
+  manifest_image_cleanup "$t"
 
   buildah images
   # lost and forgotten (or just didn't make enough manifest items - build failure on an arch)
