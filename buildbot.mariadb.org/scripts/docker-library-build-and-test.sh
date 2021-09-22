@@ -102,8 +102,10 @@ else
   mariadb-docker/.test/run.sh "$image"
 fi
 
-# restrict pushing of images to preview and release branches
-if [[ ! $branch =~ ^preview ]] && [[ ! $branch =~ ^10. ]]
+# restrict pushing of images to preview, main, and release branches
+if [[ ! $branch =~ ^preview ]] &&
+   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
+   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
 then
   buildah rmi "$image"
   exit 0
