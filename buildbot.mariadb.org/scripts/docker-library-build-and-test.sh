@@ -96,7 +96,7 @@ else
 fi
 
 # NO_TEST for manual invokation
-if [ -n "${NO_TEST}" ]; then
+if [ -n "${NO_TEST:-}" ]; then
   echo "Skipping test"
 else
   mariadb-docker/.test/run.sh "$image"
