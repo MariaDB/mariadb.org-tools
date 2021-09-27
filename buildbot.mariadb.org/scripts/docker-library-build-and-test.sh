@@ -24,10 +24,10 @@ master_branch=${mariadb_version%\.*}
 commit=${4:-0}
 branch=${5:-${master_branch}}
 
-if [[ $branch =~ preview ]]; then
-  container_tag=${branch#preview-}
-  feature="${container_tag#10.7-}"
-  feature="${feature%_triggerBB}"
+# keep in sync with docker-cleanup script
+if [[ $branch =~ ^preview ]]; then
+  container_tag=${branch#preview-[0-9]*\.[0-9]*-}
+  feature="${container_tag%_triggerBB}"
 else
   container_tag=$master_branch
   feature=""
