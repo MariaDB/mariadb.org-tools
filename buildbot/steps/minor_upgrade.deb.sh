@@ -364,7 +364,7 @@ fi
 # Install the new packages
 #=========================
 
-sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Debug::pkgProblemResolver=1 -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y $package_list"
 if [[ $? -ne 0 ]] ; then
   get_columnstore_logs
   echo "ERROR: Installation of the new packages failed, see the output above"
