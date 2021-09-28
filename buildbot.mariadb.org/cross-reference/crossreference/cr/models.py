@@ -20,7 +20,14 @@ class TestRun(models.Model):
     db_table = 'test_run'
 
 class TestFailure(models.Model):
-  test_run = models.ForeignKey(TestRun, null=False, blank=False, on_delete=models.DO_NOTHING)
+  test_run_id = models.ForeignKey(TestRun,
+    null=False,
+    blank=False,
+    db_column='test_run_id',
+    primary_key=True,
+    unique=False,
+    on_delete=models.DO_NOTHING
+  )
   test_name = models.CharField(max_length=100)
   test_variant = models.CharField(max_length=64)
   info_text = models.CharField(max_length=255, blank=True, null=True)
