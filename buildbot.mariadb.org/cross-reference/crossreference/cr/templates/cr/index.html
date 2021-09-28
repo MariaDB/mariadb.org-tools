@@ -91,25 +91,22 @@
     	</thead>
         {% for test in test_runs %}
             <tr class="expandable">
-                <td> [<a href="https://buildbot.mariadb.org/#/builders/{{ test.revision }}/builds/{{ test.bbnum }}" > Build details </a>] </td>
-                <td>{{test.branch}}</td>
-                <td>{{test.revision| slice:9}}</td>
-                <td>{{test.platform}}</td>
-                <td>{{test.dt}}</td>
-                <td>{{test.bbnum}}</td>
-                <td>{{test.typ}}</td>
-                <td>{{test.info}}</td>
-<!--                   {% for el in f %}
-                      {% if not forloop.last %}
-                      <td> {{ el }} </td>
-                      {% endif %}
-                  {% endfor %} -->
+                <td> [<a href="https://buildbot.mariadb.org/#/builders/{{ test.test_run_id.revision }}/builds/{{ test.test_run_id.bbnum }}" > Build details </a>] </td>
+                <td>{{test.test_run_id.branch}}</td>
+                <td>{{test.test_run_id.revision| slice:9}}</td>
+                <td>{{test.test_run_id.platform.name}}</td>
+                <td>{{test.test_run_id.dt|date:'Y-m-d H:i' }}</td>
+                <td>{{test.test_run_id.bbnum}}</td>
+                <td>{{test.test_run_id.typ}}</td>
+                <td>{{test.test_run_id.info}}</td>
+                <td>{{test.test_name}}</td>
+                <td>{{test.test_variant}}</td>
             </tr>
             <tr class="info-row">
                 <td style="border-right: 0px;" class="info-column" colspan=10>
                   <div class="info-column-container">
                     <div class="content">
-                      {{ f.11 }}
+                      {{ test.failure_text }}
                     </div>
                   </div>
                 </td>
