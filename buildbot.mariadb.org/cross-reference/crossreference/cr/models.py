@@ -1,27 +1,15 @@
 from django.db import models, connections
 from django.db.models import Q
-import pprint
+from pprint import pprint
 import re
-
-class Builders(models.Model):
-  name = models.TextField(null=False, blank=False, unique=True)
-  description = models.TextField(blank=True, null=True)
-  name_hash = models.CharField(unique=True, max_length=40)
-
-  class Meta:
-    managed = False
-    db_table = 'builders'
+from django.db import connection
+from datetime import datetime
 
 
 class TestRun(models.Model):
   branch = models.CharField(max_length=100, blank=True, null=True)
   revision = models.CharField(max_length=256, blank=True, null=True)
-  platform = models.ForeignKey(Builders,
-    null=False,
-    blank=False,
-    to_field='name',
-    on_delete=models.DO_NOTHING
-  )
+  platform = models.CharField(max_length=100)
   dt = models.DateTimeField()
   bbnum = models.IntegerField()
   typ = models.CharField(max_length=32)
