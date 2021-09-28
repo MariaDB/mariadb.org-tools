@@ -43,125 +43,195 @@ def select_test_failures(filters, include_failures=True):
   available_filters = ["branch", "revision", "platform", "dt", "bbnum", "typ", "info", "test_name", "test_variant", "info_text", "failure_text"]
 
   # New implementation
-
   limit = 5
   if 'limit' in filters and filters['limit'] != '':
     limit = int(filters['limit'])
 
-
   test_run_filters = None
-  test_failure_filters = {}
+  test_failure_filters = None
 
-  branch_regex_exp = [
-    # Pattern: 10.?
-    {
-      'pattern': '^([0-9]{1,2}\.)(\?)$',
-      # 'filter': [('branch__gte', 'AND')],
-      'filter': [('branch__startswith', 'AND')],
-      'replace': True
-    },
-    # Pattern: 10.1, 10.2, 5.5...
-    {
-      'pattern': '^([0-9]{1,2}\.)([0-9]{1,2})$',
-      'filter': [('branch__exact', 'AND')],
-      'replace': False
-    },
-    # Pattern: *10.1*, *10.2*...
-    {
-      'pattern': '^\*([0-9]{1,2}\.)([0-9]{1,2})\*$',
-      'filter': [('branch__icontains', 'AND')],
-      'replace': True
-    },
-    # Pattern *10.?*
-    {
-      'pattern': '^\*([0-9]{1,2}\.)(\?)\*$',
-      # 'filter': [('branch__icontains', 'AND'), ('branch__gte', 'OR')],
-      'filter': [('branch__icontains', 'AND'), ('branch__startswith', 'OR')],
-      'replace': True
-    },
-  ]
+  reg_exp = {
+    'branch': [
+      # Pattern: 10.?
+      {
+        'pattern': '^([0-9]{1,2}\.)(\?)$',
+        'filter': [('test_run_id__branch__startswith', 'AND')],
+        'replace': True
+      },
+      # Pattern: 10.1, 10.2, 5.5...
+      {
+        'pattern': '^([0-9]{1,2}\.)([0-9]{1,2})$',
+        'filter': [('test_run_id__branch__exact', 'AND')],
+        'replace': False
+      },
+      # Pattern: *10.1*, *10.2*...
+      {
+        'pattern': '^\*([0-9]{1,2}\.)([0-9]{1,2})\*$',
+        'filter': [('test_run_id__branch__icontains', 'AND')],
+        'replace': True
+      },
+      # Pattern *10.?*
+      {
+        'pattern': '^\*([0-9]{1,2}\.)(\?)\*$',
+        'filter': [('test_run_id__branch__icontains', 'AND'), ('test_run_id__branch__startswith', 'OR')],
+        'replace': True
+      },
+      {
+        'pattern': '^[a-zA-Z0-9_.-]*$',
+        'filter': [('test_run_id__branch__icontains', 'AND')],
+        'replace': False
+      }
+    ],
+    'revision': [
+      {
+        'pattern': '^[a-zA-Z0-9]*$',
+        'filter': [('test_run_id__revision__startswith', 'AND')],
+        'replace': False
+      }
+    ],
+    'platform': [
+      {
+        'pattern': '^[a-zA-Z0-9_.-]*$',
+        'filter': [('test_run_id__platform__exact', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^\*[a-zA-Z0-9_.-]*\*$',
+        'filter': [('test_run_id__platform__icontains', 'AND')],
+        'replace': True
+      }
+    ],
+    'typ': [
+      {
+        'pattern': '^[a-zA-Z0-9]*$',
+        'filter': [('test_run_id__typ__exact', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^[a-zA-Z0-9]*\*$',
+        'filter': [('test_run_id__typ__startswith', 'AND')],
+        'replace': True
+      }
+    ],
+    'info': [
+      {
+        'pattern': '^[a-zA-Z0-9]*$',
+        'filter': [('test_run_id__info__exact', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^[a-zA-Z0-9]*\*$',
+        'filter': [('test_run_id__info__startswith', 'AND')],
+        'replace': True
+      }
+    ],
+    'test_name': [
+      {
+        'pattern': '^[a-zA-Z0-9_.-]*$',
+        'filter': [('test_name__exact', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^\*\.[a-zA-Z0-9_.-]*$',
+        'filter': [('test_name__icontains', 'AND')],
+        'replace': True
+      }
+    ],
+    'test_variant': [
+      {
+        'pattern': '^[a-zA-Z0-9]*$',
+        'filter': [('test_variant__exact', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^\*[a-zA-Z0-9]*\*$',
+        'filter': [('test_variant__in', 'AND')],
+        'replace': True
+      }
+    ],
+    'failure_text': [
+      {
+        'pattern': '^timeout$',
+        'filter': [('failure_text__icontains', 'AND')],
+        'replace': False
+      },
+      {
+        'pattern': '^\*[a-zA-Z0-9]*\*$',
+        'filter': [('failure_text__icontains', 'AND')],
+        'replace': True
+      }
+    ],
 
-  # Branch
-  if filters['branch'] and 'branch' in available_filters:
-    match = None
-    search_string = filters['branch']
-    q_objects = Q()
+  }
 
-    for expression in branch_regex_exp:
-      match = re.search(expression['pattern'], filters['branch'])
-      if match is not None:
-        if expression['replace']:
-          search_string = re.sub('(\?)|(\*)', '', search_string)
-          # print('search_string', search_string)
+  # Loop each dropdown input
+  for key in filters:
+    if filters[key] and key in available_filters:
+      match = None
+      search_string = filters[key]
+      q_objects = Q()
 
-        for f in expression['filter']:
-          if f[1] == 'OR':
-            q_objects |= Q(**{f[0]: search_string})
-          else:
-            q_objects &= Q(**{f[0]: search_string})
+      # If the dropdown is found in the Regex rule dict
+      if key in reg_exp:
+        # Loop through each possible Regex pattern until one matches
+        for expression in reg_exp[key]:
+          # Try matching the Regex pattern with the input of the dropdown
+          match = re.search(expression['pattern'], filters[key])
+          if match is None:
+            continue
 
-        break
+          # If the input contains ? or * then eliminate them
+          # This is the case for multiple Regex rules. Example: 10.?, *timeout* etc.
+          if expression['replace']:
+            search_string = re.sub('(\?)|(\*)', '', search_string)
 
-    if match is None:
-      q_objects = Q(branch__icontains=search_string)
+          # Loop through all the filters of a pattern
+          # The filters are used for the database columns
+          for f in expression['filter']:
+            # Filtering columns is done through Q objects
+            if f[1] == 'OR':
+              q_objects |= Q(**{f[0]: search_string})
+            else:
+              q_objects &= Q(**{f[0]: search_string})
 
-    test_run_filters = TestRun.objects.filter(q_objects)
+            break
 
+        # If the Q object is empty then skip to the next dropdown input
+        # Without this check, it pulls random results
+        if not len(q_objects):
+          continue
 
-  # Revision
-  if filters['revision'] and 'revision' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(revision__startswith=filters['revision']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(revision__startswith=filters['revision']))
+        # If it's the first time filtering, then query the database model
+        # Otherwise use the variable to continue filtering
+        if test_failure_filters is not None:
+          test_failure_filters = test_failure_filters.filter(q_objects)
+        else:
+          test_failure_filters = TestFailure.objects.filter(q_objects)
 
-  # Platform -- Might need adjustment
-  if filters['platform'] and 'platform' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(platform__icontains=filters['platform']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(platform__icontains=filters['platform']))
+  # From Date dropdown filtering
+  if filters['dt']:
+    # Check 2 date and time formats (one with time, another without)
+    for dt_format in ('%Y-%m-%d', '%Y-%m-%d %H:%M:%S'):
+      try:
+        formatted_date = datetime.strptime(filters['dt'], dt_format)
+      except ValueError as e:
+        print(e)
+        pass
+      # Include the date in filtering if the passes the try/except block
+      else:
+        if test_failure_filters is not None:
+          test_failure_filters = test_failure_filters.filter(Q(test_run_id__dt__gte=formatted_date))
+        else:
+          test_failure_filters = TestFailure.objects.filter(Q(test_run_id__dt__gte=formatted_date))
 
-  # Build Number
-  if filters['bbnum'] and 'bbnum' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(bbnum__icontains=filters['bbnum']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(bbnum__icontains=filters['bbnum']))
-
-  # Type
-  if filters['typ'] and 'typ' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(typ__icontains=filters['typ']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(typ__icontains=filters['typ']))
-
-  # Run Info
-  if filters['info'] and 'info' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(info__icontains=filters['info']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(info__icontains=filters['info']))
-
-
-  # Test Name
-  if filters['test_name'] and 'test_name' in available_filters:
-    if test_run_filters is not None:
-      test_run_filters = test_run_filters.filter(Q(testfailure__test_name__icontains=filters['test_name']))
-    else:
-      test_run_filters = TestRun.objects.filter(Q(testfailure__test_name__icontains=filters['test_name']))
-
-
-
-  print('query', test_run_filters.query)
-  if test_run_filters is not None:
-    test_run_filters = test_run_filters[0:limit]
+  # Apply the limit filer and get related models to limit the no. of queries
+  if test_failure_filters is not None:
+    test_failure_filters = test_failure_filters[0:limit]
+    test_failure_filters = test_failure_filters.select_related('test_run_id')
 
 
   result = {
-    'test_runs': test_run_filters,
-    'test_failures': {},
-    'builders': {}
+    'test_runs': test_failure_filters,
   }
   # or_condition = Q()
   # for key, value in my_dict.items():
