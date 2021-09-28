@@ -18,14 +18,10 @@ def index(request):
 
   all_failures_list = select_test_failures(qd)
 
-  # context = {
-  #   'all_failures_list': all_failures_list,
-  # }
   context = all_failures_list
-  # print('context', all_failures_list.keys())
+
   for f in available_filters:
     if f in qd:
       context[f] = qd[f]
-  # print(context)
-  # return render(request, "cr/index.html", {})
+
   return render(request, "cr/index.html", context)
