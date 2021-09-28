@@ -89,27 +89,6 @@
 
     		</tr>
     	</thead>
-        <!--         {% for f in all_failures_list %}
-                    <tr class="expandable">
-                        <td> [<a href="https://buildbot.mariadb.org/#/builders/{{ f.2 }}/builds/{{ f.5 }}" > Build details </a>] </td>
-                          {% for el in f %}
-                              {% if not forloop.last %}
-                              <td> {{ el }} </td>
-                              {% endif %}
-                          {% endfor %}
-                    </tr>
-                    <tr class="info-row">
-                        <td style="border-right: 0px;" class="info-column" colspan=10>
-                          <div class="info-column-container">
-                            <div class="content">
-                              {{ f.11 }}
-                            </div>
-                          </div>
-                        </td>
-                        <td class="fill-column" colspan=2></td>
-                    </tr>
-
-                {% endfor %} -->
         {% for test in test_runs %}
             <tr class="expandable">
                 <td> [<a href="https://buildbot.mariadb.org/#/builders/{{ test.revision }}/builds/{{ test.bbnum }}" > Build details </a>] </td>
