@@ -161,7 +161,7 @@ body {
 }
 
 .section.table-section {
-  overflow: auto;
+  flex: 1 auto;
 }
 /* ------------------------------ */
 
@@ -236,7 +236,6 @@ input[type=button]:hover, input[type=submit]:hover {
 /* ------- Table --------- */
 .table-container {
   display: block;
-  overflow-x: auto;
   border: 5px solid #4e629a;
 }
 
@@ -245,6 +244,7 @@ input[type=button]:hover, input[type=submit]:hover {
   font-size: 14px;
   white-space: nowrap;
   border: 1px solid #4e629a;
+  width: 100%;
 }
 
 .results-table th {
