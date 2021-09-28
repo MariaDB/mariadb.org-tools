@@ -233,58 +233,5 @@ def select_test_failures(filters, include_failures=True):
   result = {
     'test_runs': test_failure_filters,
   }
-  # or_condition = Q()
-  # for key, value in my_dict.items():
-  #     or_condition.add(Q(**{key: value}), Q.OR)
 
-  # regex_exp = '^([0-9]{1,2}\.)(\?)$|^([0-9]{1,2}\.)([0-9]{1,2})$|^\*([0-9]{1,2}\.)([0-9]{1,2})\*$'
-
-  # TestFailure
-  # print(TestRun._meta.get_fields())
-      # test_run_filters.append('{0}__{1}'.format(field.name, 'iregex'))
-
-  # for field in TestFailure._meta.get_fields():
-  #   if field.name in filters and filters[field.name]:
-  #     test_failure_filters = {
-  #       '{0}__{1}'.format(field.name, 'iregex'): filters[field.name]
-  #     }
-      # test_run_filters.append('{0}__{1}={2}'.format(field.name, 'iregex', filters[field.name]))
-
-  # regex_exp = 
-
-  # filters = {
-  #   '{0}__{1}'.format(field.name, 'iregex'): value
-  #   for key, value in request.post.items()
-  #   if key in ['filter1', 'filter2', 'filter3']
-  # }
-  # test_run_filters = ['{0}__{1}={2}'.format(k, 'iregex', v) for (k,v) in filters.items()]
-
-  # print(test_run_filters)
-  # print(test_failure_filters)
-  # test_run_filters = {
-  #   '{0}__{1}'.format('branch', 'iregex'): filters['branch'],
-  #   '{0}__{1}'.format('revision', 'iregex'): filters['revision'],
-  #   '{0}__{1}'.format('platform', 'iregex'): filters['platform'],
-  #   '{0}__{1}'.format('dt', 'iregex'): filters['dt'],
-  #   '{0}__{1}'.format('bbnum', 'iregex'): filters['bbnum'],
-  #   '{0}__{1}'.format('typ', 'iregex'): filters['typ'],
-  #   '{0}__{1}'.format('info', 'iregex'): filters['info'],
-  # }
-
-
-  # test_failure_filters {
-  #   '{0}__{1}'.format('test_name', 'iregex'): filters['test_name'],
-  #   '{0}__{1}'.format('test_variant', 'iregex'): filters['test_variant'],
-  #   '{0}__{1}'.format('info_text', 'iregex'): filters['info_text'],
-  #   '{0}__{1}'.format('failure_text', 'iregex'): filters['failure_text'],
-  # }
-
-  # Person.objects.filter(**kwargs)
-  # test_failures = TestFailure.objects.all()
-
-  # builders = Builders.objects.all()
-  # test_runs = TestRun.objects.filter()
-
-
-  # return rows
   return result
