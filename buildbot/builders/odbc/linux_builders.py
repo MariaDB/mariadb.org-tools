@@ -100,7 +100,14 @@ def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 connodbc_linux_step0_checkout + """
-cmake -DRPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+mv ../src/libmariadb ../
+mkdir ../concbuild
+cd ../concbuild
+cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
+cmake --build . --config RelWithDebInfo
+sudo make install
+cd ../build
+cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 connodbc_linux_step1_build
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
@@ -157,7 +164,14 @@ def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params):
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 connodbc_linux_step0_checkout + """
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+mv ../src/libmariadb ../
+mkdir ../concbuild
+cd ../concbuild
+cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
+cmake --build . --config RelWithDebInfo
+sudo make install
+cd ../build
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 connodbc_linux_step1_build
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
@@ -167,6 +181,29 @@ connodbc_linux_step1_build
         command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*deb`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    linux_connector_odbc.addStep(Test(
+        description=["testing", "install"],
+        descriptionDone=["test", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm buildbot@localhost:buildbot/",
+        WithProperties("""
+set -ex
+ls
+cd buildbot
+ls
+for i in 1 2 3 4 5 6 7 8 9 10 ; do
+  if sudo apt-get update ; then
+      break
+  fi
+  echo "Installation warning: apt-get update failed, retrying ($i)"
+  sleep 10
+done
+
+sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y %(bindistname)s"
+""")]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
             "slavenames": connector_slaves,
