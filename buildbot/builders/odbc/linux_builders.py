@@ -203,7 +203,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
   sleep 10
 done
 
-sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y %(bindistname)s"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
