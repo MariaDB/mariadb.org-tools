@@ -7,6 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y make sudo curl libsnappy1v5 libpmem1 libaio1 vim-tiny perl-modules libnuma1 binutils \
+        liblzo2-2 liblzma5 libbz2-1.0 \
         xz-utils wget less net-tools lsof libreadline5 python3-pip \
     && rm -rf /var/lib/apt/lists/* 
 

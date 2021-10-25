@@ -16,6 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
       libaio1              \
+      liblzo2-2 liblzma5 libbz2-1.0 \
       libsnappy1v5 libnuma1 libreadline5 libpmem1 \
       python3 python3-pip  \
       curl                 \
