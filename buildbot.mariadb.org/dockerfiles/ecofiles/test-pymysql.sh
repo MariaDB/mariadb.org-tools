@@ -37,7 +37,7 @@ then
   create user if not exists test2@localhost identified by 'some password';
   grant all on test2.* to test2@localhost;
   drop user if exists buildbot@locahost;
-  EOF
+EOF
 
   export USER=buildbot
   # Both passwd and password are aliased to the same, so this isn't an error in the below configuration.
@@ -48,7 +48,7 @@ then
       {"host": "localhost", "unix_socket": "/tmp/mysql.sock", "user": "root", "passwd": "", "db": "test1", "use_unicode": true, "local_infile": true},
       {"host": "127.0.0.1", "port": 3306, "user": "test2", "password": "some password", "db": "test2" }
   ]
-  EOF
+EOF
 
   # Socket auth failing due to user existing?
   pytest -v -k 'not testSocketAuth' pymysql
