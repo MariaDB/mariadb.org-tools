@@ -19,11 +19,12 @@ then
   git checkout $1
 fi
 
-/usr/local/mariadb/bin/mysql -u root < ci/docker-entrypoint-initdb.d/init.sql
-/usr/local/mariadb/bin/mysql -u root < ci/docker-entrypoint-initdb.d/mariadb.sql
+/usr/local/mariadb/bin/mysql --comments -u root < ci/docker-entrypoint-initdb.d/init.sql
+/usr/local/mariadb/bin/mysql --comments -u root < ci/docker-entrypoint-initdb.d/mariadb.sql
 
 cp ci/docker.json pymysql/tests/databases.json
 
 export USER=buildbot
 
-pytest -v
+# test_auth is MySQL sha256password tests
+pytest -v -k 'not test_auth'
