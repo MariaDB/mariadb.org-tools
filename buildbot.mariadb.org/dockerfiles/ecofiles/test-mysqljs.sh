@@ -48,9 +48,6 @@ case "${VERSION}" in
 # ER_LOAD_INFILE_CAPABILITY_DISABLED
 	sed -i -e "s/err.code, 'ER_NOT_ALLOWED_COMMAND'/err.errno, 4166/" test/integration/connection/test-load-data-infile-disable.js
 	;&
-10\.4\.*)
-	sed -i -e 's/ER_ACCESS_DENIED_ERROR/ER_ACCESS_DENIED_NO_PASSWORD_ERROR/' test/integration/connection/test-bad-credentials.js
-	;&
 10\.3\.*)
 	sed -i -e 's/PROTOCOL_CONNECTION_LOST/ECONNRESET/g' test/integration/connection/test-server-timeout-disconnect.js
 	;&
