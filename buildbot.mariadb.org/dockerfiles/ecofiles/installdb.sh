@@ -35,6 +35,8 @@ fi
 /usr/local/mariadb/bin/mysql -e 'create user if not exists root;
 	set password for root = password("") ;
 	grant all on *.* TO root with grant option;
+	drop user if exists ""@localhost;
+	execute immediate concat("drop user if exists \"\"@",@@hostname);
 	show create user root;
        	show grants for root;
 	drop user if exists root@localhost'
