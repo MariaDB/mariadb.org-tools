@@ -59,19 +59,61 @@ connodbc_linux_step4_testsrun
             "slavenames": connector_slaves,
             "category": "connectors"}
 
+def build_linux_connector_odbc_no_test(name, kvm_image, cflags, cmake_params):
+    linux_connector_odbc= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_odbc.addStep(Compile(
+        description=["building", "linux-connctor_odbc"],
+        descriptionDone=["build", "linux-connector_odbc"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
+        ]))
+    linux_connector_odbc.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
+        ))
+    addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_odbc,
+            "slavenames": connector_slaves,
+            "category": "connectors"}
+
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
-bld_codbc_bionic_amd64= build_linux_connector_odbc("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_focal_amd64= build_linux_connector_odbc("codbc-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_hirsute_amd64= build_linux_connector_odbc("codbc-hirsute-amd64", "vm-hirsute-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_impish_amd64= build_linux_connector_odbc("codbc-impish-amd64", "vm-impish-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora33_amd64= build_linux_connector_odbc("codbc-fedora33-amd64", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_fedora34_amd64= build_linux_connector_odbc("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_sles12_amd64= build_linux_connector_odbc("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-centos8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_stretch_x64_connector_odbc= build_linux_connector_odbc("codbc-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+# We can't install server here or this time-outs with high probability
+bld_codbc_hirsute_amd64= build_linux_connector_odbc_no_test("codbc-hirsute-amd64", "vm-hirsute-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_impish_amd64= build_linux_connector_odbc_no_test("codbc-impish-amd64", "vm-impish-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_fedora34_amd64= build_linux_connector_odbc_no_test("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+# Tests on bionic usually/too often time-out
+bld_codbc_bionic_amd64= build_linux_connector_odbc_no_test("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ##################### RPM/DEB builders ###################
 
@@ -204,7 +246,13 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
 done
 
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
-""")]))
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+rm -rf ../src/libmariadb
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y cmake"
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" """ + cmake_params + """ ../src
+cmake --build . --config RelWithDebInfo
+""" + connodbc_linux_step2_serverinstall + connodbc_linux_step4_testsrun)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
             "slavenames": connector_slaves,
