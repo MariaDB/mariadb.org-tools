@@ -5,12 +5,14 @@
 
 ARG base_image=rhel7
 FROM registry.access.redhat.com/$base_image
-ARG rhel_user
-ARG rhel_pwd
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
-RUN subscription-manager register --username $rhel_user --password $rhel_pwd --auto-attach \
+RUN --mount=type=secret,id=rhel_user,target=/run/secrets/rhel_user \
+    --mount=type=secret,id=rhel_pwd,target=/run/secrets/rhel_pwd \
+    subscription-manager register \
+    --username "$(cat /run/secrets/rhel_user)" \
+    --password "$(cat /run/secrets/rhel_pwd)" --auto-attach \
     && rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && yum -y upgrade \
     && yum-builddep -y mariadb-server \
