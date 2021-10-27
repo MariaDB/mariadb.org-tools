@@ -23,9 +23,8 @@ RUN gosu buildbot curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >/tm
     && mv -v /home/buildbot/.cargo/bin/* /usr/local/bin \
     && rm -f /tmp/rustup-init.sh \
     && pip3 install --no-cache-dir -U pip \
-    # TODO: change URL when merged to master \
     && gosu buildbot curl -so /home/buildbot/requirements.txt \
-    https://raw.githubusercontent.com/fauust/mariadb.org-tools/bb-build-container/buildbot.mariadb.org/ci_build_images/requirements.txt \
+    https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/ci_build_images/requirements.txt \
     && gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location -r /home/buildbot/requirements.txt"
 
 # TODO: sync with BB steps (move to /home/buildbot)
