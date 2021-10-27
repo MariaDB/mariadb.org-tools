@@ -3,6 +3,7 @@
 # Create buildbot user
 RUN useradd -ms /bin/bash buildbot \
     && gosu buildbot curl -so /home/buildbot/buildbot.tac \
+    # TODO move buildbot.tac to ci_build_images
     https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/dockerfiles/buildbot.tac \
     && echo "[[ -d /home/buildbot/.local/bin/ ]] && export PATH=\"/home/buildbot/.local/bin:\$PATH\"" >>/home/buildbot/.bashrc \
     # autobake-deb (debian/ubuntu) will need sudo rights \
