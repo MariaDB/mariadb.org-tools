@@ -36,7 +36,7 @@ RUN curl -Lo /tmp/dumb.rpm http://rpmfind.net/linux/fedora/linux/releases/32/Eve
 
 RUN dnf -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons
 RUN dnf -y install Judy-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel flex gawk gcc gcc-c++ git-core glibc-common glibc-devel groff-base java-latest-openjdk-devel java-latest-openjdk java-latest-openjdk-headless krb5-devel libaio-devel libcurl-devel libedit-devel libevent-devel libxcrypt-devel libxml2 libxml2-devel libzstd-devel lz4-devel make ncurses-devel openssl-devel pam-devel pcre2-devel pkgconf-pkg-config policycoreutils readline-devel rubypick snappy-devel systemd-devel systemtap-sdt-devel tar unixODBC unixODBC-devel xz-devel zlib-devel which python
-RUN dnf -y install liburing-devel gdb
+RUN dnf -y install liburing-devel gdb bzip2 lzo bzip2-libs bzip2-devel lzo-devel
 
 USER buildbot
 CMD ["dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

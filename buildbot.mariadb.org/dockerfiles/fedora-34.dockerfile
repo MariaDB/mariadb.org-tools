@@ -38,6 +38,7 @@ RUN curl -Lo /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases
 RUN dnf -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel libxml2-devel lz4-devel snappy-devel check-devel scons flex readline-devel \
     Judy-devel binutils bison boost-devel checkpolicy coreutils cracklib-devel flex gawk gcc gcc-c++ git-core glibc-common glibc-devel groff-base java-latest-openjdk-devel java-latest-openjdk java-latest-openjdk-headless krb5-devel libaio-devel libcurl-devel libedit-devel libevent-devel libxcrypt-devel libxml2 libxml2-devel libzstd-devel lz4-devel make ncurses-devel openssl-devel pam-devel pcre2-devel pkgconf-pkg-config policycoreutils readline-devel rubypick snappy-devel systemd-devel systemtap-sdt-devel tar unixODBC unixODBC-devel xz-devel zlib-devel which python \
     liburing-devel libpmem-devel gdb jemalloc-devel && dnf clean all
+RUN dnf -y install bzip2 lzo bzip2-libs bzip2-devel lzo-devel
 
 USER buildbot
 CMD ["/usr/local/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
