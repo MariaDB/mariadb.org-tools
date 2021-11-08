@@ -8,11 +8,11 @@ FROM registry.access.redhat.com/$base_image
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
-RUN --mount=type=secret,id=rhel_user,target=/run/secrets/rhel_user \
-    --mount=type=secret,id=rhel_pwd,target=/run/secrets/rhel_pwd \
+RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
+    --mount=type=secret,id=rhel_keyname,target=/run/secrets/rhel_keyname \
     subscription-manager register \
-    --username "$(cat /run/secrets/rhel_user)" \
-    --password "$(cat /run/secrets/rhel_pwd)" --auto-attach \
+    --org="$(cat /run/secrets/rhel_orgid)" \
+    --activationkey="$(cat /run/secrets/rhel_keyname)" \
     && subscription-manager repos --enable "codeready-builder-for-rhel-8-$(uname -m)-rpms" \
     && rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
     && dnf -y upgrade \
