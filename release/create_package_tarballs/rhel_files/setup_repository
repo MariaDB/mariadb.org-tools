@@ -34,6 +34,9 @@ if ! cat > "$file" <<EoF
 name = MariaDB
 baseurl = file://$dir
 gpgkey = $gpgkey
+gpgcheck = 1
+enabled = 1
+module_hotfixes = 1
 EoF
   then
   err 'Could not create "%s". Please investigate and re-run this script.' "$file"
