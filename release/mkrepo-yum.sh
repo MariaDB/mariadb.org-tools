@@ -71,7 +71,7 @@ declare -A builder_dir_bb_amd64=(
   [centos7]=kvm-rpm-centos74-amd64 [centos8]=kvm-rpm-centos8-amd64
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [fedora33]=kvm-rpm-fedora33-amd64 [fedora34]=kvm-rpm-fedora34-amd64
-  [sles12]=kvm-zyp-sles123-amd64 [sles15]=kvm-zyp-sles150-amd64
+  [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles150-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
 )
 
@@ -116,7 +116,7 @@ declare -A builder_dir_bb_ppc64=(
 )
 
 case ${ARCHDIR} in
-  *10.5*|*10.6*)
+  *10.5*|*10.6*|*10.7*)
   dists_bb="
     centos7-amd64
     centos7-ppc64
@@ -375,7 +375,7 @@ for REPONAME in ${dists}; do
       set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
       case ${ARCHDIR} in
-        *10.6*)
+        *10.6*|*10.7*)
           echo "+ no symlinks for ${ARCHDIR}"
           ;;
         *)
@@ -405,7 +405,7 @@ for REPONAME in ${dists}; do
 
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*)
+        *10.5*|*10.6*|*10.7*)
           echo "+ no jemalloc for ${ARCHDIR}"
           ;;
         *)
@@ -418,7 +418,7 @@ for REPONAME in ${dists}; do
       set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
       case ${ARCHDIR} in
-        *10.6*)
+        *10.6*|*10.7*)
           echo "+ no symlinks for ${ARCHDIR}"
           ;;
         *)
@@ -448,7 +448,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*)
+        *10.5*|*10.6*|*10.7*)
           echo "+ no jemalloc for ${ARCHDIR}"
           ;;
         *)
@@ -475,7 +475,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*)
+        *10.5*|*10.6*|*10.7*)
           echo "+ no jemalloc for ${ARCHDIR}"
           ;;
         *)
@@ -521,7 +521,7 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*)
+        *10.5*|*10.6*|*10.7*)
           echo "+ no jemalloc for ${ARCHDIR}"
           ;;
         *)
