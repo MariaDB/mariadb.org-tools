@@ -60,8 +60,14 @@ case $1 in
     rhel_ver=( 7 )
     sles_ver=( 12 15 )
     ;;
-  *)
+  *10.3*|*10.4*)
     debian_ver=( stretch buster )
+    ubuntu_ver=( bionic focal )
+    rhel_ver=( 7 8 )
+    sles_ver=( 12 15 )
+    ;;
+  *)
+    debian_ver=( stretch buster bullseye )
     ubuntu_ver=( bionic focal )
     rhel_ver=( 7 8 )
     sles_ver=( 12 15 )
