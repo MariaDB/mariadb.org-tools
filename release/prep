@@ -72,7 +72,7 @@ fi
 
 set_build_dirs_variables() {
   case ${major} in
-    10.6)
+    10.6|10.7)
       build_dirs_x86=""
       build_dirs_x86_64="
         kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
@@ -777,9 +777,7 @@ upload_this_release_to_the_buildmaster() {
 #   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
 #===============================================================================
 update_the_STATUS_file() {
-  echo "+ date +%s > ${dir_release}/STATUS"
-          date +%s > ${dir_release}/STATUS
-  rsync_wrapper "-av --delete-after ${dir_release}/STATUS ${buildmaster}:${dir_release}/"
+  ssh ${buildmaster} "set -x ; bin/STATUS_update"
   lowkey_message "STATUS file updated"
 }
 
@@ -843,6 +841,15 @@ pull_this_release_from_ci() {
   remote_prep="yes"
   ci_release=true
 
+  ci_dirs_102="aarch64-debian-9-deb-autobake"
+  ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
+  ci_dirs_104="${ci_dirs_103}"
+  ci_dirs_105="${ci_dirs_104} aarch64-fedora-33-rpm-autobake aarch64-fedora-34-rpm-autobake amd64-debian-sid-deb-autobake aarch64-debian-sid-deb-autobake ppc64le-debian-sid-deb-autobake aarch64-ubuntu-2104-deb-autobake aarch64-debian-11-deb-autobake ppc64le-debian-11-deb-autobake s390x-ubuntu-2004-deb-autobake"
+  ci_dirs_106="${ci_dirs_105}"
+  ci_dirs_107="${ci_dirs_106}"
+
+  ci_dirs="ci_dirs_${major//./}"
+
   important_message "Transferring files on ${ci} to here"
 
   lowkey_message "Making sure local directories exist..."
@@ -855,16 +862,19 @@ pull_this_release_from_ci() {
 
     message "Transferring builds from ${ci}..."
     set +e
-    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/ ; then
+    for ci_dir in ${!ci_dirs} ; do
+    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/${ci_dir}/ ; then
       message "Downloaded from ci"
     else
-      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${tarbuildnum}/
+      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${tarbuildnum}/${ci_dir}/
     fi
+    done
     set -e
     runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
   runCommand popd
   runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
+  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}
   message "Done downloading release to ${dir_archive}/ci/${tree}/${tarbuildnum}"
 }
 
@@ -885,6 +895,7 @@ verify_the_ci_download() {
     esac
     runCommand sha256sum --quiet -c sha256sums.txt
     runCommand popd
+    line
   done
 }
 
@@ -1039,7 +1050,7 @@ upload_to_the_yum_mirrors() {
 
   set -x
   for yum_mirror in ${yum_mirrors} ;do 
-    ssh -t -t ${yum_primary_mirror} "rsync -a --info=progress2 --delete-after ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
+    ssh -t -t ${yum_primary_mirror} "set -x;rsync -a --info=progress2 --delete-after ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
   done
   set +x
 }
@@ -1090,7 +1101,7 @@ activate_the_corp_repos() {
   else
     echo;echo;
     set -x
-    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
+    ssh -t -t ${corp_mirror} "set -x;cd ${corp_mirror_path}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
     set +x
   fi
 }
@@ -1193,7 +1204,7 @@ activate_the_corp_staging_repos() {
   else
     echo;echo;
     set -x
-    ssh -t -t ${corp_mirror} "cd ${corp_mirror_path_staging}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
+    ssh -t -t ${corp_mirror} "set -x;cd ${corp_mirror_path_staging}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
     set +x
   fi
 }
@@ -1345,7 +1356,7 @@ exclude_an_old_release_from_the_yum_dir() {
 update_the_docker_library_mariadb_version() {
   if ! command -v bashbrew
   then
-    runCommand wget https://github.com/docker-library/bashbrew/releases/download/v0.1.1/bashbrew-amd64 -O ~/bin/bashbrew
+    runCommand wget https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64 -O ~/bin/bashbrew
     runCommand chmod a+x ~/bin/bashbrew
   fi
   if [ ! -d ${dir_docker_library_official_images} ]; then
@@ -1375,6 +1386,8 @@ will eventually run through to be green"
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
+    runCommand git checkout master
+    runCommand git pull
     reldate=$(date +%Y%m%d)
     if git checkout -b mariadb-release-$reldate ; then
       echo "+ git checkout -b mariadb-release-$reldate"
@@ -1384,18 +1397,18 @@ will eventually run through to be green"
       runCommand git checkout mariadb-release-$reldate
     fi
     runCommand git remote prune origin
-    # The ${dir_docker_library_official_images} git repo is linked upstream to
-    # the github.com/docker-library/official-images git repository. It was
-    # added with:
-    # git remote add upstream git@github.com:docker-library/official-images.git
-    # use the git remote command to check:
-    # git remote -v
-    # Anyway, before doing anything else, let's merge with upstream to make
-    # sure we have the latest from there before doing anything else:
+    message "The ${dir_docker_library_official_images} git repo is linked upstream to
+the github.com/docker-library/official-images git repository. It was
+added with:
+  git remote add upstream git@github.com:docker-library/official-images.git
+use the git remote command to check:
+  git remote -v
+Anyway, before doing anything else, let's merge with upstream to make
+sure we have the latest from there before doing anything else:"
     runCommand git fetch upstream
     runCommand git merge upstream/master
     #runCommand git push --set-upstream origin mariadb-release-$reldate
-    # now we can continue
+    message "now we can continue"
     echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
             ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
@@ -1404,13 +1417,13 @@ will eventually run through to be green"
            git commit -m "MariaDB releases ${reldate}" library/mariadb
     runCommand git push
     message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
-visiting link
-e.g. https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
-This should be a pull request against the
-https://github.com/docker-library/official-images repository. Write some
-covering text e.g. see
-https://github.com/docker-library/official-images/pull/10414 -and-
-https://github.com/docker-library/official-images/pull/10070 for examples"
++ visiting link
++ e.g. https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
++ This should be a pull request against the
++ https://github.com/docker-library/official-images repository. Write some
++ covering text e.g. see
++ https://github.com/docker-library/official-images/pull/10414 -and-
++ https://github.com/docker-library/official-images/pull/10070 for examples"
   popd
 }
 #===  FUNCTION  ================================================================
@@ -1522,13 +1535,13 @@ major=${num%.*}
 
 # Set the real version of galera to use
 case ${major} in
-  10.4|10.5|10.6)
-    ver_galera_real=${ver_galera4}
-    ver_galera_preferred_real=${ver_galera4_preferred}
-    ;;
-  *)
+  10.2|10.3)
     ver_galera_real=${ver_galera}
     ver_galera_preferred_real=${ver_galera_preferred}
+    ;;
+  *)
+    ver_galera_real=${ver_galera4}
+    ver_galera_preferred_real=${ver_galera4_preferred}
     ;;
 esac
 
@@ -1744,6 +1757,7 @@ if [ "${create_bintar}" != "no" ]; then
             runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+            message "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
             runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
@@ -1796,6 +1810,7 @@ if [ "${create_bintar}" != "no" ]; then
             runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
+            message "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
             runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
@@ -1803,10 +1818,10 @@ if [ "${create_bintar}" != "no" ]; then
           else
             echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
             runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
-            mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
-            mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+            runCommand mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
             runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
-            rm -rf ${version}-linux-systemd-${galera_arch}
+            runCommand rm -rf ${version}-linux-systemd-${galera_arch}
           fi
 
           # since we renamed them, we also need to regenerate the sums
@@ -1837,12 +1852,12 @@ if [ "${create_bintar}" != "no" ]; then
             # correct value
             if [ "${dir_array[1]}" = "bintar-linux-x86_64" ]; then
               if [ "${is_ent}" = "yes" ];then
-                mv -vi *-linux-x86_64.tar.gz ${version}-linux-x86_64.tar.gz
+                runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-x86_64.tar.gz
               fi
               galera_arch="x86_64"
             else
               if [ "${is_ent}" = "yes" ];then
-                mv -vi *-linux-i686.tar.gz ${version}-linux-i686.tar.gz
+                runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-i686.tar.gz
               fi
               galera_arch="i686"
             fi
@@ -1854,8 +1869,9 @@ if [ "${create_bintar}" != "no" ]; then
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-*-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-            rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-*-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+            message "Copying over galera packages for ${dir_array[1]}"
+            runCommand rsync -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+            runCommand rsync -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
@@ -1952,9 +1968,7 @@ if [ "${create_bintar}" != "no" ]; then
   # if we are creating a Galera release we need to copy in the galera source and
   # packages (for those not using the repositories)
   if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
-    line
-    echo "+ transfering Galera source and package files..."
-    line
+    message "transferring Galera source and package files..."
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
       # rsync the galera dir to the release dir
@@ -1972,11 +1986,11 @@ if [ "${create_bintar}" != "no" ]; then
         echo
       fi
     done
-    echo "+ done transfering Galera source and package files"
+    lowkey_message "done transferring Galera source and package files"
     echo
   fi
 
-  echo "+ done transfering bintar & source packages"
+  message "done transfering bintar & source packages"
   echo
 else
   echo
@@ -2258,6 +2272,7 @@ else
     echo 
     # remove ppc64el from repo config and update repo
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
+    sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/ubuntu/
       vi conf/distributions # remove deprecated distros
       reprepro -V --basedir . --delete clearvanished
