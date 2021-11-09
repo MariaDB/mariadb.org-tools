@@ -264,6 +264,10 @@ secureUserInput() {
   done
 }
 
+delete_the_lib_dir() {
+  runCommand rm -rfv lib
+}
+
 prepare_the_bintar_packages() {
   important_message "Preparing bintar packages..."
   if [ -d ${dir_release}/${dir_name}/bintar ] ; then
@@ -299,8 +303,14 @@ prepare_the_bintar_packages() {
       "galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
           # we are dealing with an .rpm file
           lowkey_message "rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv"
-                  rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
+                          rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
           runCommand cd usr
+          case ${dir_array[1]} in
+            "galera-${num}-x86_64")
+              runCommand tree
+              shouldI delete_the_lib_dir
+              ;;
+          esac
           if [ -d lib64 ];then
             if [ -d lib ];then
               # what to do if we have BOTH lib and lib64 dirs
@@ -320,7 +330,7 @@ prepare_the_bintar_packages() {
               runCommand ln -sv lib64 lib
             fi
           fi
-          cd lib
+          runCommand cd lib
           # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
           if [ -d galera-4 ];then
             runCommand ln -sv galera-4 galera
@@ -364,12 +374,12 @@ prepare_the_bintar_packages() {
 
 
   # sign the bintars
-  cd ${dir_release}/${dir_name}-signed/bintar/
-  echo "About to sign the bintars..."
+  runCommand cd ${dir_release}/${dir_name}-signed/bintar/
+  lowkey_message "About to sign the bintars..."
   pressAnyKeyToContinue
   for file in galera*.tar.gz ; do runCommand "gpg2 ${gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; runCommand cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; runCommand ${sum}sum -c ${sum}sums.txt ; runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
   # sign the ent-bintars
   cd ${dir_release}/${dir_name}-signed-ent/bintar/
@@ -377,7 +387,7 @@ prepare_the_bintar_packages() {
   pressAnyKeyToContinue
   for file in galera*.tar.gz ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; ${sum}sum -c ${sum}sums.txt;runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; runCommand cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; runCommand ${sum}sum -c ${sum}sums.txt ; runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
 
   message "Done preparing bintar packages"
   spacer
@@ -398,7 +408,7 @@ prepare_the_source_tarball() {
   rsync_wrapper "-av ${dir_archive}/${tree}/${rev}/kvm-src-centos8-amd64-gal/src/galera* ${dir_release}/${dir_name}/src/"
 
     cd ${dir_release}/${dir_name}/src
-    for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+    for sum in md5 sha1 sha256 sha512;do echo ${sum}; lowkey_message "${sum}sum ./galera* >> ${sum}sums.txt" ; ${sum}sum ./galera* >> ${sum}sums.txt; runCommand ${sum}sum -c ${sum}sums.txt;done
 
     # before signing the files, copy them to the ent dir
     runCommand cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed-ent/
@@ -1206,7 +1216,7 @@ case ${tree} in
     build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     ;;
 esac
-build_dirs_x86_64="kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
+build_dirs_x86_64="kvm-rpm-centos74-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
 build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64 kvm-rpm-centos74-aarch64-gal:galera-${num}-aarch64"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
