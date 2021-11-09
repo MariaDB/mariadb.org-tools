@@ -108,8 +108,8 @@ jobs:
         if: (contains(matrix.dockerfile, 'rhel'))
         run: |
           missing=()
-          [[ -n "${{ secrets.RHEL_USER }}" ]] || missing+=(RHEL_USER)
-          [[ -n "${{ secrets.RHEL_PWD }}" ]] || missing+=(RHEL_PWD)
+          [[ -n "${{ secrets.RHEL_ORGID }}" ]] || missing+=(RHEL_ORGID)
+          [[ -n "${{ secrets.RHEL_KEYNAME }}" ]] || missing+=(RHEL_KEYNAME)
           for i in "${missing[@]}"; do
             echo "Missing github secret: $i"
           done
@@ -158,8 +158,8 @@ jobs:
             base_image=${{ matrix.image }}
             mariadb_branch=${{ matrix.branch }}
           secrets: |
-            "rhel_user=${{ secrets.RHEL_USER }}"
-            "rhel_pwd=${{ secrets.RHEL_PWD }}"
+            "rhel_orgid=${{ secrets.RHEL_ORGID }}"
+            "rhel_keyname=${{ secrets.RHEL_KEYNAME }}"
           context: /home/runner/work
           file: /home/runner/work/Dockerfile
           platforms: ${{ matrix.platforms }}
@@ -170,6 +170,9 @@ jobs:
           docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} /home/buildbot/.local/bin/buildbot-worker --version
           docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} dumb-init /home/buildbot/.local/bin/twistd --pidfile= -y /home/buildbot/buildbot.tac
       - name: Check for registry credentials
+        if: >
+          github.ref == 'refs/heads/master' &&
+          github.repository == 'MariaDB/mariadb.org-tools'
         run: |
           missing=()
           [[ -n "${{ secrets.QUAY_USER }}" ]] || missing+=(QUAY_USER)
