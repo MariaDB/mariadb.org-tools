@@ -288,6 +288,37 @@ update_xtrabackup_24() {
   popd
 }
 
+update_mariadb_tools() {
+  userInput "Which version of MariaDB Tools should I add? (e.g. 6.0.0)"
+  mariadb_tools_ver="${INPUT}"
+
+  pushd ${dir_mariadb_tools}/${mariadb_tools_ver}/
+
+    # Add .deb files to the repository
+    for dist in ${dists_apt}; do
+      runCommand reprepro --basedir=${dir_tools}/apt/ --keepunreferencedfiles includedeb ${dist} mariadb-tools*.deb
+    done
+
+    # Sign the rpm (in case it hasn't been signed yet)
+    runCommand rpmsign --addsign --key-id=${ent_gpg_key} mariadb-tools*.rpm
+
+    # Add .rpm file to the repositories
+    for dist in ${dists_rhel}; do
+
+      # Update the rpm repository
+      pushd ${dir_tools}/rhel/${dist}/
+        pushd x86_64/rpms/
+          runCommand cp -avi ${dir_mariadb_tools}/${mariadb_tools_ver}/mariadb-tools*.rpm .
+        popd
+        runCommand createrepo --database --pretty x86_64
+        runCommand rm -v x86_64/repodata/repomd.xml.asc
+        runCommand gpg2 --detach-sign --armor -u ${ent_gpg_key} x86_64/repodata/repomd.xml
+      popd
+    done
+
+  popd
+}
+
 div() {
   echo;echo;thickline;echo;echo
 }
@@ -338,6 +369,10 @@ shouldI update_libev
 div
 
 shouldI update_socat
+
+div
+
+shouldI update_mariadb_tools
 
 div
 
