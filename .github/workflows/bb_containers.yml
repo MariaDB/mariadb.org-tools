@@ -170,6 +170,9 @@ jobs:
           docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} /home/buildbot/.local/bin/buildbot-worker --version
           docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} dumb-init /home/buildbot/.local/bin/twistd --pidfile= -y /home/buildbot/buildbot.tac
       - name: Check for registry credentials
+        if: >
+          github.ref == 'refs/heads/master' &&
+          github.repository == 'MariaDB/mariadb.org-tools'
         run: |
           missing=()
           [[ -n "${{ secrets.QUAY_USER }}" ]] || missing+=(QUAY_USER)
