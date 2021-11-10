@@ -2323,9 +2323,9 @@ else
 
     # Rsync a copy of the previous release to ${HOME}
     if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-after ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-after --exclude=*updateinfo.xml.gz ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-after --exclude=*updateinfo.xml.gz --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/

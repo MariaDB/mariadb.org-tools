@@ -288,6 +288,16 @@ set_builder_dir() {
   builder_dir="builder_dir_${build_type}_${builder_arch}[${builder_dist}]"
 }
 
+check_updateinfo() {
+  if xmlstarlet val ${1} ; then
+    echo "${1} is valid xml"
+  else
+    thickline
+    echo "+ ${1} is not valid xml, something went wrong"
+    thickline
+    exit 5
+  fi
+}
 
 #-------------------------------------------------------------------------------
 #  Main Script
@@ -779,8 +789,9 @@ for DIR in ${dists}; do
       ;;
   esac
 
-  runCommand modifyrepo /tmp/updateinfo.xml ${DIR}/repodata
-  runCommand rm -v /tmp/updateinfo.xml
+  check_updateinfo ./updateinfo.xml
+  runCommand modifyrepo ./updateinfo.xml ${DIR}/repodata
+  runCommand rm -v ./updateinfo.xml
   
   echo 
 

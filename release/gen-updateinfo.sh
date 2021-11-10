@@ -24,7 +24,7 @@ set -e
 PLATFORM_NAME=""
 PLATFORM_VER=""
 
-UPDATEINFO='/tmp/updateinfo.xml'
+UPDATEINFO='./updateinfo.xml'
 REPOPATH=$(dirname $0)
 # SEVERITY may be critical, important, moderate, bugfix, enhancement
 # script doesn't check for correct value, please be careful!
