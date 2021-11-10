@@ -308,6 +308,7 @@ update_mariadb_tools() {
       # Update the rpm repository
       pushd ${dir_tools}/rhel/${dist}/
         pushd x86_64/rpms/
+          runCommand rm -v mariadb-tools*.rpm
           runCommand cp -avi ${dir_mariadb_tools}/${mariadb_tools_ver}/mariadb-tools*.rpm .
         popd
         runCommand createrepo --database --pretty x86_64
