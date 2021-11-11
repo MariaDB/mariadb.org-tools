@@ -243,7 +243,7 @@ if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge 
   # Note *: coming to a buildah update sometime - epnoc timestamps - https://github.com/containers/buildah/pull/3482
   lastweek=$(date +%s --date='1 week ago')
   # old ubuntu and base images that got updated so are Dangling
-  podman images --format=json | jq ".[] | select(.Created <= $lastweek and .Dangling) | .Id" | xargs --no-run-if-empty podman rmi
+  podman images --format=json | jq ".[] | select(.Created <= $lastweek and .Dangling) | .Id" | xargs --no-run-if-empty podman rmi || echo "continuing cleanup anyway"
   # clean buildah containers
   buildah containers --format "{{.ContainerID}}" | xargs --no-run-if-empty buildah rm
   # clean images
