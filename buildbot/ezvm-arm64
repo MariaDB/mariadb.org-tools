@@ -1,0 +1,3 @@
+port=$(($UID + 4000))
+vm=/kvm/vms/vm-$1.qcow2
+[ -f $vm ] && runvm --port=$port --user=buildbot --smp=4 --mem=4096 --cpu=host --base-image=$vm tmp.qcow2 bash
