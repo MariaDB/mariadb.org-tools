@@ -114,6 +114,7 @@ bld_codbc_fedora34_amd64= build_linux_connector_odbc_no_test("codbc-fedora34-amd
 bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # Tests on bionic usually/too often time-out
 bld_codbc_bionic_amd64= build_linux_connector_odbc_no_test("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-amd64-notest", "vm-sles150-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ##################### RPM/DEB builders ###################
 
