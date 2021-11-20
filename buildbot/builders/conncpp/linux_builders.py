@@ -80,6 +80,7 @@ bld_impish_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-impish-amd64", "vm
 bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora33_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora33-amd64", "vm-fedora33-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora34_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_fedora35_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ##################### Building with the hack for platforms with old gcc ##################
 
