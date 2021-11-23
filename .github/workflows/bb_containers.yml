@@ -70,6 +70,9 @@ jobs:
           - dockerfile: fedora.Dockerfile
             image: fedora:34
             platforms: linux/amd64, linux/arm64/v8
+          - dockerfile: fedora.Dockerfile
+            image: fedora:35
+            platforms: linux/amd64, linux/arm64/v8
           # TODO: linux/ppc64le pb when installing bb-worker with pip
           # "ModuleNotFoundError: No module named '_cffi_backend'"
           - dockerfile: centos7.Dockerfile
