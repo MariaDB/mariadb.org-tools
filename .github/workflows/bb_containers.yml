@@ -98,6 +98,10 @@ jobs:
       - name: Set up env vars
         run: |
           set -vx
+          [[ -n "${{ matrix.image }}" ]] || {
+            echo "Missing base image (FROM)"
+            exit 1
+          }
           TAG_TMP=${{ matrix.image }}
           if [[ $TAG_TMP = "ubi8" ]]; then
             echo "TAG=rhel8" >>$GITHUB_ENV

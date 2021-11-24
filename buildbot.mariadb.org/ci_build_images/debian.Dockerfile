@@ -3,7 +3,7 @@
 # Provides a base Debian/Ubuntu image with latest buildbot worker installed
 # and MariaDB build dependencies
 
-ARG base_image=debian:11
+ARG base_image
 FROM "$base_image"
 ARG mariadb_branch=10.5
 LABEL maintainer="MariaDB Buildbot maintainers"
