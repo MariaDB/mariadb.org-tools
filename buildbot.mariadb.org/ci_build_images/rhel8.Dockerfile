@@ -3,7 +3,7 @@
 # Provides a base RHEL-8 image with latest buildbot worker installed
 # and MariaDB build dependencies
 
-ARG base_image=ubi8
+ARG base_image
 FROM registry.access.redhat.com/$base_image
 LABEL maintainer="MariaDB Buildbot maintainers"
 

@@ -3,7 +3,7 @@
 # Provides a base Fedora image with latest buildbot worker installed
 # and MariaDB build dependencies
 
-ARG base_image=fedora:34
+ARG base_image
 FROM "$base_image"
 LABEL maintainer="MariaDB Buildbot maintainers"
 
