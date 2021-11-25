@@ -49,7 +49,7 @@ RUN dnf -y install cracklib cracklib-dicts cracklib-devel boost-devel curl-devel
     java-1.8.0-openjdk-headless krb5-devel libaio-devel libcurl-devel libevent-devel libxml2 libxml2-devel libzstd-devel make ncurses-devel \
     openssl-devel pam-devel pcre2-devel pkgconfig policycoreutils readline-devel ruby snappy-devel systemd-devel systemtap-sdt-devel tar unixODBC \
     unixODBC-devel xz-devel zlib-devel which python3 gdb jemalloc-devel --allowerasing && dnf clean all
-UN dnf -y install bzip2 lzo bzip2-libs bzip2-devel lzo-devel
+RUN dnf -y install bzip2 lzo bzip2-libs bzip2-devel lzo-devel
 
 RUN subscription-manager unregister
 

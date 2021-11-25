@@ -49,6 +49,7 @@ RUN pip3 install buildbot-worker && \
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
 RUN apt-get -y install dumb-init
 RUN apt-get -y install debhelper libbz2-dev liblzma-dev liblzo2-dev libboost-all-dev check scons libboost-program-options-dev liburing-dev libpmem-dev
+RUN apt-get update && apt-get -y install flex
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

@@ -48,6 +48,7 @@ RUN apt-get -y install dumb-init
 
 RUN apt-get -y install gnutls-dev
 RUN apt-get -y install debhelper libbz2-dev liblzma-dev liblzo2-dev libboost-all-dev check scons libboost-program-options-dev
+RUN apt-get update && apt-get install -y flex
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]

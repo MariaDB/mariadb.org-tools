@@ -51,6 +51,7 @@ RUN pip3 install buildbot-worker && \
 RUN apt-get -y install dumb-init
 RUN apt-get update && apt-get -y install debhelper libbz2-dev liblzma-dev liblzo2-dev libasio-dev libboost-all-dev check scons libboost-program-options-dev
 RUN apt-get -y install liburing-dev libpmem-dev
+RUN apt-get update && apt-get -y install flex
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
