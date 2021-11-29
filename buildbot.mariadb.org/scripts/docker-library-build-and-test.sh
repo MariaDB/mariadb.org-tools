@@ -69,7 +69,7 @@ build() {
   arch=$1
   shift
   t=$(mktemp)
-  buildah bud "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" \
+  buildah bud --layers "$@" --build-arg REPOSITORY="[trusted=yes] https://ci.mariadb.org/$tarbuildnum/${arch}-${buildernamebase}/debs ./" \
     --build-arg MARIADB_VERSION="1:$mariadb_version+maria~$base" \
     "${annotations[@]}" \
     "mariadb-docker/$master_branch" | tee "${t}"
