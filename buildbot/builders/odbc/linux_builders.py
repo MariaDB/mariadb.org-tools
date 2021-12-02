@@ -169,7 +169,7 @@ connodbc_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" $(find . -name mariadb*odbc*rpm ) buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
