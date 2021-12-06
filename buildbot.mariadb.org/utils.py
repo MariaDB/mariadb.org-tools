@@ -80,3 +80,130 @@ def canStartBuild(builder, wfb, request):
     worker.putInQuarantine()
     worker.resetQuarantine()
     return True
+
+@util.renderer
+def mtrJobsMultiplier(props):
+    jobs = props.getProperty('jobs', default=20)
+    return jobs * 2
+
+# ls2string gets the output of ls and returns a space delimited string with the files and directories
+def ls2string(rc, stdout, stderr):
+    lsFilenames = []
+
+    for l in stdout.strip().split('\n'):
+        if l != "":
+            lsFilenames.append(l.strip())
+
+    return { 'packages' : " ".join(lsFilenames) }
+
+# ls2list gets the output of ls and returns a list with the files and directories
+def ls2list(rc, stdout, stderr):
+    lsFilenames = []
+
+    for l in stdout.strip().split('\n'):
+        if l != "":
+            lsFilenames.append(l.strip())
+
+    return { 'packages' : lsFilenames }
+
+# Save packages for current branch?
+def savePackage(step):
+    return step.getProperty("save_packages") and \
+           (fnmatch_any(step.getProperty("branch"), savedPackageBranches) or \
+           str(step.getProperty("buildername")).endswith('ubuntu-2004-deb-autobake'))
+
+# Return a HTML file that contains links to MTR logs
+def getHTMLLogString():
+    return """
+echo '<!DOCTYPE html>
+<html>
+<body>' >> /buildbot/mysql_logs.html
+
+echo '<a href="https://ci.mariadb.org/%(prop:tarbuildnum)s/logs/%(prop:buildername)s/">mysqld* log dir</a><br>' >> /buildbot/mysql_logs.html
+
+echo '</body>
+</html>' >> /buildbot/mysql_logs.html"""
+
+# Function to move the MTR logs to a known location so that they can be saved
+def moveMTRLogs():
+    return """
+parallel=$(expr %(kw:jobs)s \* 2)
+
+mkdir -p /buildbot/logs
+for ((mtr=0; mtr<=parallel; mtr++)); do
+    for mysqld in {1..4}; do
+        if [ $mtr = 0 ]; then
+            logname="mysqld."$mysqld".err"
+            filename="mysql-test/var/log/mysqld."$mysqld".err"
+        else
+            logname="mysqld."$mysqld".err."$mtr
+            filename="mysql-test/var/"$mtr"/log/mysqld."$mysqld".err"
+        fi
+        if [ -e $filename ]; then
+            cp $filename /buildbot/logs/$logname
+        fi
+    done
+done
+"""
+
+@util.renderer
+def dockerfile(props):
+    worker = props.getProperty('workername')
+    return "https://github.com/MariaDB/mariadb.org-tools/tree/master/buildbot.mariadb.org/dockerfiles/" + "-".join(worker.split('-')[-2:]) + '.dockerfile'
+
+# checks if the list of files is empty
+def hasFiles(step):
+  if len(step.getProperty("packages")) < 1:
+    return False
+  else:
+    return True
+
+def filterBranch(step):
+  if '10.5' in step.getProperty("branch"):
+        return False
+  if '10.6' in step.getProperty("branch"):
+        return False
+  return True
+
+# check if branch is a staging branch
+def isStagingBranch(step):
+  if staging_branch_fn(step.getProperty("branch")):
+    return True
+  else:
+    return False
+
+# returns true if build is succeeding
+def ifStagingSucceeding(step):
+  if isStagingBranch(step):
+    step.setProperty("build_results", step.build.results)
+    return step.build.results in ('SUCCESS', 'WARNINGS')
+  else:
+    return False
+
+# set step's waitForFinish to True if staging branch
+def waitIfStaging(step):
+  if isStagingBranch(step):
+    step.waitForFinish = True
+  return True
+
+def hasAutobake(props):
+    builderName = props.getProperty("buildername")
+    for b in builders_autobake:
+        if builderName in b:
+            return True
+    return False
+
+def hasBigtest(props):
+    builderName = str(props.getProperty("buildername"))
+
+    for b in builders_big:
+        if builderName in b:
+            return True
+    return False
+
+@util.renderer
+def getArch(props):
+    buildername = props.getProperty('buildername')
+    return buildername.split('-')[0]
+
+
