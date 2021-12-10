@@ -294,10 +294,10 @@ for dist in ${debian_dists}; do
   builder_dir="builder_dir_${build_type}_amd64[${builder}]"
   case ${builder} in 
     'jessie')
-      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
     'stretch'|'buster'|'sid')
-      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
     * )
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
