@@ -4,20 +4,9 @@ set -ex
 dpkg -l | grep -iE 'maria|mysql|galera' || true
 old_ver=`dpkg -l | grep -iE 'mysql-server-|mariadb-server-' | head -1 | awk '{print $2}' | sed -e "s/.*\(mysql\|mariadb\)-server-\(5\.[567]\|10\.[0-9]\).*/\\1-\\2/"`
 
-sudo sh -c "echo 'deb [trusted=yes] file:$(pwd)/debs binary/' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs .' >> /etc/apt/sources.list"
 
-cd debs
-dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
-dpkg-scansources source /dev/null | gzip -9c > source/Sources.gz
-cd ..
-
-chmod -cR go+r debs
-
-if [ -e debs/binary/Packages.gz ] ; then
-    gunzip debs/binary/Packages.gz
-fi
-
-package_version=`ls debs/binary/mariadb-server_* | head -n 1 | sed -e 's/.*mariadb-server_\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/'`
+package_version=$mariadb_version
 packages_to_install="mariadb-server mariadb-client libmariadbclient18"
 
 case "${old_ver}-${mariadb_version}" in
@@ -56,30 +45,28 @@ mysql*-8.0-*)
   echo "Upgrade from MySQL $old_ver to MariaDB ${mariadb_version} will be attempted"
   ;;
 esac
-if [ "$needsGalera" == "yes" ]
+
+if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
+# Override the location of the library for versions which don't have their own
 then
-  if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
-  # Override the location of the library for versions which don't have their own
-  then
-    if [ "$dist_name" == "debian" ] ; then
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    else
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    fi
+  if [ "$dist_name" == "debian" ] ; then
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
   else
-    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
   fi
-  # Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
-  case "$branch" in
-  *10.[1-3]*)
-    sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  *10.[4-9]*)
-    sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  esac
+else
+  sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
 fi
-chmod -cR go+r debs
+# Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
+case "$branch" in
+*10.[1-3]*)
+  sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+*10.[4-9]*)
+  sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+esac
+
 # Sometimes apt-get update fails because the repo is being updated.
 for i in 1 2 3 4 5 6 7 8 9 10 ; do
   if sudo apt-get update ; then
