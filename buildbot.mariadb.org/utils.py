@@ -9,6 +9,8 @@ import sys
 import docker
 from datetime import timedelta
 
+from constants import *
+
 DEVELOPMENT_BRANCH="10.7"
 RELEASABLE_BRANCHES="5.5 10.0 10.1 10.2 10.3 10.4 10.5 10.6 bb-5.5-release bb-10.0-release bb-10.1-release bb-10.2-release bb-10.3-release bb-10.4-release bb-10.5-release bb-10.6-release"
 savedPackageBranches= ["5.5", "10.0", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "bb-*-release", "bb-10.2-compatibility", "preview-*"]
@@ -158,6 +160,47 @@ def hasFiles(step):
   else:
     return True
 
+def hasInstall(props):
+    builderName = str(props.getProperty("buildername"))
+
+    for b in builders_install:
+        if builderName in b:
+            return True
+    return False
+
+def hasUpgrade(props):
+    builderName = str(props.getProperty("buildername"))
+
+    for b in builders_upgrade:
+        if builderName in b:
+            return True
+    return False
+
+def hasEco(props):
+    builderName = str(props.getProperty("buildername"))
+
+    for b in builders_eco:
+        if builderName in b:
+            return True
+    return False
+
+@util.renderer
+def getDockerLibraryNames(props):
+    return builders_dockerlibrary[0]
+
+def hasDockerLibrary(props):
+    branch = str(props.getProperty("master_branch"))
+    builderName = str(props.getProperty("buildername"))
+
+    # from https://github.com/MariaDB/mariadb-docker/blob/master/update.sh#L4-L7
+    if branch == "10.2":
+        dockerbase = "ubuntu-1804-deb-autobake"
+    else:
+        dockerbase = "ubuntu-2004-deb-autobake"
+
+    # We only build on the above two autobakes for all architectures
+    return builderName.endswith(dockerbase)
+
 def filterBranch(step):
   if '10.5' in step.getProperty("branch"):
         return False
@@ -206,4 +249,56 @@ def getArch(props):
     buildername = props.getProperty('buildername')
     return buildername.split('-')[0]
 
+####### SCHEDULER HELPER FUNCTIONS
+@util.renderer
+def getBranchBuilderNames(props):
+    mBranch = props.getProperty("master_branch")
+
+    return supportedPlatforms[mBranch]
+
+@util.renderer
+def getAutobakeBuilderNames(props):
+    builderName = props.getProperty("parentbuildername")
+    for b in builders_autobake:
+        if builderName in b:
+            return [b]
+    return []
+
+@util.renderer
+def getBigtestBuilderNames(props):
+    builderName = str(props.getProperty("parentbuildername"))
+
+    for b in builders_big:
+        if builderName in b:
+            return [b]
+    return []
+
+@util.renderer
+def getInstallBuilderNames(props):
+    builderName = str(props.getProperty("parentbuildername"))
+
+    for b in builders_install:
+        if builderName in b:
+            return [b]
+    return []
+
+@util.renderer
+def getUpgradeBuilderNames(props):
+    builderName = str(props.getProperty("parentbuildername"))
+
+    builds = []
+    for b in builders_upgrade:
+        if builderName in b:
+            builds.append(b)
+    return builds
+
+@util.renderer
+def getEcoBuilderNames(props):
+    builderName = str(props.getProperty("parentbuildername"))
+
+    builds = []
+    for b in builders_eco:
+        if builderName in b:
+            builds.append(b)
+    return builds
 

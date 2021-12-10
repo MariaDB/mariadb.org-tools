@@ -7,6 +7,7 @@ from buildbot.process.remotecommand import RemoteCommand
 from twisted.internet import defer
 
 from utils import *
+from constants import *
 
 def downloadSourceTarball():
     return ShellCommand(
