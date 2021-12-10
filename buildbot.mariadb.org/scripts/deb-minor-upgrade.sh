@@ -254,43 +254,27 @@ esac
 set +x
 for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs` ; do echo "=== $i"; ldd $i | sort | sed 's/(.*)//' ; done > /buildbot/ldd.old
 set -x
-#=========================================
-# Restore apt configuration for local repo
-#=========================================
-cd debs
-dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
-dpkg-scansources source /dev/null | gzip -9c > source/Sources.gz
-cd ..
 
-chmod -cR go+r debs
-
-if [ -e debs/binary/Packages.gz ] ; then
-    gunzip debs/binary/Packages.gz
-fi
-
-if [ "$needsGalera" == "yes" ]
+if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
+# Override the location of the library for versions which don't have their own
 then
-  if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
-  # Override the location of the library for versions which don't have their own
-  then
-    if [ "$dist_name" == "debian" ] ; then
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    else
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    fi
+  if [ "$dist_name" == "debian" ] ; then
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
   else
-    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
   fi
-  # Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
-  case "$branch" in
-  *10.[1-3]*)
-    sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  *10.[4-9]*)
-    sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  esac
+else
+  sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
 fi
+# Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
+case "$branch" in
+*10.[1-3]*)
+  sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+*10.[4-9]*)
+  sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+esac
 
 if [[ "$test_mode" == "deps" ]] ; then
   # For the dependency check, only keep the local repo
@@ -301,7 +285,7 @@ else
   sudo rm /etc/apt/sources.list.d/mariadb_upgrade.list
 fi
 sudo rm /etc/apt/preferences.d/release
-sudo sh -c "echo 'deb [trusted=yes] file:$(pwd)/debs binary/' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs .' >> /etc/apt/sources.list"
 # Sometimes apt-get update fails because the repo is being updated.
 res=1
 for i in 1 2 3 4 5 6 7 8 9 10 ; do
