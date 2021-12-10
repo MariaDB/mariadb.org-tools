@@ -35,6 +35,7 @@ RUN apt-get update \
     dumb-init \
     gawk \
     git \
+    gnutls-dev \
     gosu \
     iputils-ping \
     libffi-dev \
