@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 set -ex
+branch=${1:-bb-10.8-release}
 df -kT
 case "$branch" in
 *mdev10416*)
@@ -32,65 +33,54 @@ fi
 sudo yum search mysql | { grep "^mysql" || true; }
 sudo yum search maria | { grep "^maria" || true; }
 sudo yum search percona | { grep percona || true; }
-case "$branch" in
-# 10.1+ branches; 3.x is for MDEV-17688, 10.2 with 3.x connector
-*10.[1-9]*|*3.[0-9]*)
-  sudo sh -c "echo '[galera]
+sudo sh -c "echo '[galera]
 name=galera
 baseurl=http://yum.mariadb.org/galera/repo/rpm/$arch
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1' > /etc/yum.repos.d/galera.repo"
-  # Update galera.repo to point at either the galera-3 or galera-4 test repo
-  case "$branch" in
+# Update galera.repo to point at either the galera-3 or galera-4 test repo
+case "$branch" in
   *10.[1-3]*)
     sudo sed -i 's/repo/repo3/' /etc/yum.repos.d/galera.repo
     ;;
   *10.[4-9]*)
     sudo sed -i 's/repo/repo4/' /etc/yum.repos.d/galera.repo
     ;;
-  esac
-  sudo cat /etc/yum.repos.d/galera.repo
-  sudo yum -y --nogpgcheck install rpms/*.rpm
-  sh -c 'g=/usr/lib*/galera*/libgalera_smm.so; echo -e "[galera]\nwsrep_provider=$g"' | sudo tee /etc/my.cnf.d/galera.cnf
-  case "$systemdCapability" in
-  yes)
-    if ! sudo systemctl start mariadb ; then
-      sudo journalctl -lxn 500 --no-pager -u mariadb.service
-      sudo systemctl -l status mariadb.service --no-pager
-      exit 1
-    fi
-    ;;
-  no)
-    sudo /etc/init.d/mysql restart
-    ;;
-  *)
-    echo "It should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
-    ;;
-  esac
-  if [[ "$branch" == *"10."[4-9]* ]] ; then
-    echo "Uninstallation of Cracklib plugin may fail if it wasn't installed, it's quite all right"
-    if sudo mysql -e "uninstall soname 'cracklib_password_check.so'" ; then
-      reinstall_cracklib_plugin="YES"
-    fi
-    sudo mysql -e "set password=''"
+esac
+sudo cat /etc/yum.repos.d/galera.repo
+sudo yum -y --nogpgcheck install rpms/*.rpm
+sh -c 'g=/usr/lib*/galera*/libgalera_smm.so; echo -e "[galera]\nwsrep_provider=$g"' | sudo tee /etc/my.cnf.d/galera.cnf
+case "$systemdCapability" in
+yes)
+  if ! sudo systemctl start mariadb ; then
+    sudo journalctl -lxn 500 --no-pager -u mariadb.service
+    sudo systemctl -l status mariadb.service --no-pager
+    exit 1
   fi
-  mysql -uroot -e 'drop database if exists test; create database test; use test; create table t(a int primary key) engine=innodb; insert into t values (1); select * from t; drop table t;'
-  if ls rpms/*.rpm | grep -i columnstore > /dev/null 2>&1 ; then
-    mysql --verbose -uroot -e "create database cs; use cs; create table cs.t_columnstore (a int, b char(8)); insert into cs.t_columnstore select seq, concat('val',seq) from seq_1_to_10; select * from cs.t_columnstore"
-    sudo systemctl restart mariadb
-    mysql --verbose -uroot -e "select * from cs.t_columnstore; update cs.t_columnstore set b = 'updated'"
-    sudo systemctl restart mariadb-columnstore
-    mysql --verbose -uroot -e "update cs.t_columnstore set a = a + 10; select * from cs.t_columnstore"
-  fi
-  mysql -uroot -e 'show global status like "wsrep%%"'
   ;;
-# 5.5/10.0 non-Galera branches
-*)
-  sudo yum -y --nogpgcheck install rpms/*.rpm
+no)
   sudo /etc/init.d/mysql restart
-  mysql -uroot -e "use test; create table t(a int primary key) engine=innodb; insert into t values (1); select * from t; drop table t"
+  ;;
+*)
+  echo "It should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
   ;;
 esac
+if [[ "$branch" == *"10."[4-9]* ]] ; then
+  echo "Uninstallation of Cracklib plugin may fail if it wasn't installed, it's quite all right"
+  if sudo mysql -e "uninstall soname 'cracklib_password_check.so'" ; then
+    reinstall_cracklib_plugin="YES"
+  fi
+  sudo mysql -e "set password=''"
+fi
+mysql -uroot -e 'drop database if exists test; create database test; use test; create table t(a int primary key) engine=innodb; insert into t values (1); select * from t; drop table t;'
+if ls rpms/*.rpm | grep -i columnstore > /dev/null 2>&1 ; then
+  mysql --verbose -uroot -e "create database cs; use cs; create table cs.t_columnstore (a int, b char(8)); insert into cs.t_columnstore select seq, concat('val',seq) from seq_1_to_10; select * from cs.t_columnstore"
+  sudo systemctl restart mariadb
+  mysql --verbose -uroot -e "select * from cs.t_columnstore; update cs.t_columnstore set b = 'updated'"
+  sudo systemctl restart mariadb-columnstore
+  mysql --verbose -uroot -e "update cs.t_columnstore set a = a + 10; select * from cs.t_columnstore"
+fi
+mysql -uroot -e 'show global status like "wsrep%%"'
 echo "Test for MDEV-18563, MDEV-18526"
 set +e
 case "$systemdCapability" in
