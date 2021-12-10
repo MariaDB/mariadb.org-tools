@@ -2,59 +2,46 @@
 
 set -ex
 df -kT
-arch="amd64"
 dpkg -l | grep -iE 'maria|mysql|galera' || true
 # We want a clean installation here
 dpkg -l | grep -iE 'maria|mysql|galera' | awk '{print $2}' | xargs sudo apt-get remove -y
 dpkg -l | grep -iE 'maria|mysql|galera' | awk '{print $2}' | xargs sudo apt-get purge -y
 
-if [ "$needsGalera" == "yes" ]
+if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
+# Override the location of the library for versions which don't have their own
 then
-  if ! wget http://yum.mariadb.org/galera/repo/deb/dists/$version_name
-  # Override the location of the library for versions which don't have their own
-  then
-    if [ "$dist_name" == "debian" ] ; then
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    else
-      sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
-    fi
+  if [ "$dist_name" == "debian" ] ; then
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb stretch main' > /etc/apt/sources.list.d/galera-test-repo.list"
   else
-    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
+    sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb xenial main' > /etc/apt/sources.list.d/galera-test-repo.list"
   fi
-  # Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
-  case "$branch" in
-  *10.[1-3]*)
-    sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  *10.[4-9]*)
-    sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
-    ;;
-  esac
+else
+  sudo sh -c "echo 'deb [trusted=yes] http://yum.mariadb.org/galera/repo/deb $version_name main' > /etc/apt/sources.list.d/galera-test-repo.list"
 fi
+# Update galera-test-repo.list to point at either the galera-3 or galera-4 test repo
+case "$branch" in
+*10.[1-3]*)
+  sudo sed -i 's/repo/repo3/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+*10.[4-9]*)
+  sudo sed -i 's/repo/repo4/' /etc/apt/sources.list.d/galera-test-repo.list
+  ;;
+esac
 
-sudo sh -c "echo 'deb [trusted=yes] file:$(pwd)/debs binary/' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs .' >> /etc/apt/sources.list"
 
-cd debs
-dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
-dpkg-scansources source /dev/null | gzip -9c > source/Sources.gz
-cd ..
-
-chmod -cR go+r debs
-
-if [ -e debs/binary/Packages.gz ] ; then
-    gunzip debs/binary/Packages.gz
-fi
+wget "https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/deb/Packages.gz" | gunzip -c > Packages
 # Due to MDEV-14622 and its effect on Spider installation,
 # Spider has to be installed separately after the server
-package_list=`grep -B 1 'Source: mariadb-' debs/binary/Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | xargs`
+package_list=`grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | xargs`
 if grep -i spider debs/binary/Packages > /dev/null ; then
-  spider_package_list=`grep -B 1 'Source: mariadb-' debs/binary/Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | xargs`
+  spider_package_list=`grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | xargs`
 fi
-if grep -i columnstore debs/binary/Packages > /dev/null ; then
-  if [[ "$arch" == "x86" ]] ; then
-    echo "Upgrade warning: Due to MCOL-4123, Columnstore won't be installed on x86"
+if grep -i columnstore Packages > /dev/null ; then
+  if [ "$arch" != "amd64" ] && [ "$arch" != "arm64" ]; then
+    echo "Upgrade warning: Due to MCOL-4123, Columnstore won't be installed on $arch"
   else
-    columnstore_package_list=`grep -B 1 'Source: mariadb-' debs/binary/Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | xargs`
+    columnstore_package_list=`grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | xargs`
   fi
 fi
 # Sometimes apt-get update fails because the repo is being updated.
@@ -65,7 +52,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
   echo "Upgrade warning: apt-get update failed, retrying ($i)"
   sleep 10
 done
-sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y $package_list $columnstore_package_list"
+sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install -y $package_list $columnstore_package_list"
 # MDEV-14622: Wait for mysql_upgrade running in the background to finish
 res=1
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 ; do
@@ -106,7 +93,7 @@ fi
 # Due to MDEV-14622 and its effect on Spider installation,
 # Spider has to be installed separately after the server
 if [ -n "$spider_package_list" ] ; then
-  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y $spider_package_list"
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install -y $spider_package_list"
 fi
 
 # Unix socket
@@ -141,7 +128,7 @@ done
 sudo mysql_install_db --no-defaults --user=mysql --plugin-maturity=unknown
 set +e
 ## Install mariadb-test for further use
-#sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y mariadb-test"
+#sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install -y mariadb-test"
 if dpkg -l | grep -i spider > /dev/null ; then
   echo "Upgrade warning: Workaround for MDEV-22979, otherwise server hangs further in SST steps"
   sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get remove --allow-unauthenticated -y mariadb-plugin-spider" || true
