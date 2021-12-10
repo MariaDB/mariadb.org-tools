@@ -18,8 +18,8 @@ releaseBranches = ["bb-*-release", "preview-10.*"]
 def envFromProperties(envlist):
     d = dict()
     for e in envlist:
-        d[e] = str(util.Property(e))
-    d['tarbuildnum'] = str(util.Property('buildnumber'))
+        d[e] = util.Interpolate(f'%(prop:{e})s')
+    d['tarbuildnum'] = util.Interpolate("%(prop:buildnumber)s")
     d['releaseable_branches'] = RELEASABLE_BRANCHES
     d['development_branch']= DEVELOPMENT_BRANCH
     return d
