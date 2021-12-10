@@ -184,7 +184,7 @@ for dist in ${ubuntu_dists}; do
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
     'bionic'|'focal'|'hirsute'|'impish')
-      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/binary/mariadb-*_amd64.changes
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
   esac
 
