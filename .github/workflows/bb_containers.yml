@@ -65,9 +65,6 @@ jobs:
             branch: 10.7
             platforms: linux/amd64, linux/arm64/v8, linux/ppc64le, linux/s390x
           - dockerfile: fedora.Dockerfile
-            image: fedora:33
-            platforms: linux/amd64, linux/arm64/v8
-          - dockerfile: fedora.Dockerfile
             image: fedora:34
             platforms: linux/amd64, linux/arm64/v8
           - dockerfile: fedora.Dockerfile
