@@ -21,12 +21,6 @@ for var in test_mode branch arch dist_name version_name major_version systemd_ca
 done
 
 case $branch in
-*galera*)
-  if [[ "$test_mode" == "all" ]] ; then
-    echo "Upgrade warning: the test in 'all' mode is not executed for galera branches"
-    exit
-  fi
-  ;;
 *"$development_branch"*)
   if [[ "$test_mode" != "server" ]] ; then
     echo "Upgrade warning: For non-stable branches the test is only run in 'test' mode"
@@ -358,6 +352,45 @@ done
 if [[ $res -ne 0 ]] ; then
   echo "ERROR: apt-get update failed"
   exit $res
+fi
+
+#==================================================================
+# Download Galera library for the new packages and prepare the repo
+#==================================================================
+
+case "$major_version" in
+*10.[1-3]*)
+  GALERA_VERSION=3
+  ;;
+*10.[4-9]*)
+  GALERA_VERSION=4
+  ;;
+*)
+  echo "ERROR: Unknown server version: $major_version"
+  exit 1
+  ;;
+esac
+
+mkdir galera_download
+cd galera_download
+if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 ; then
+  echo "ERROR: Could not download the Galera library"
+  exit 1
+fi
+mv debs ../buildbot/galera-debs
+cd ..
+rm -rf galera_download
+sudo sh -c 'echo "deb [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs binary/" >> /etc/apt/sources.list'
+sudo sh -c 'echo "deb-src [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/debs source/" >> /etc/apt/sources.list'
+
+cd buildbot
+chmod -cR go+r debs galera-debs
+
+if [ -e debs/binary/Packages.gz ] ; then
+    gunzip debs/binary/Packages.gz
+fi
+if [ -e galera-debs/binary/Packages.gz ] ; then
+    gunzip galera-debs/binary/Packages.gz
 fi
 
 #=========================
