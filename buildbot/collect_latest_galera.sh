@@ -9,6 +9,9 @@ for galera in 3 4 ; do
   rm -rf /tmp/latest.new
   mkdir /tmp/latest.new
   for rev in `ls -t /ds1819/archive/builds/mariadb-${galera}.x/` ; do
+    if [[ ${rev} =~ latest ]] ; then
+      continue
+    fi
     for bld in `ls /ds1819/archive/builds/mariadb-${galera}.x/${rev}` ; do
       if ! [ -e /tmp/latest.new/${bld} ] ; then
         ln -s /ds1819/archive/builds/mariadb-${galera}.x/${rev}/${bld} /tmp/latest.new/${bld}
