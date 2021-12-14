@@ -2,8 +2,22 @@
 
 set -x -v
 
+build_deps()
+{
+	wget https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz -O - | tar -zxf -
+	mkdir build-fmt
+	pushd build-fmt
+	cmake -DCMAKE_INSTALL_PREFIX=$HOME/inst-fmt  -DFMT_MODULE=ON -DFMT_DOC=OFF -DFMT_TEST=OFF ../fmt-8.0.1/
+	cmake --build .
+	cmake --install .
+	popd
+}
+
 build()
 {
+	if [ ! -d inst-fmt ]; then
+		build_deps
+	fi
 	source=$1
 	mkdir build
 	cd build
@@ -23,7 +37,8 @@ build()
 		-DWITH_UNIT_TESTS=NO \
 		-DPLUGIN_S3=NO \
 		-DWITH_MARIABACKUP=NO \
-		-DPLUGIN_WSREP_INFO=NO
+		-DPLUGIN_WSREP_INFO=NO \
+		-DCMAKE_INCLUDE_PATH=$HOME/inst-fmt/include -DCMAKE_LIBRARY_PATH=$HOME/inst-fmt/lib
 	make -j"$(( $jobs * 2 ))"
 	/opt/bin/ccache --show-stats
 }
