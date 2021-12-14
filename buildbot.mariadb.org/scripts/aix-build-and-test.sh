@@ -6,11 +6,11 @@ build_deps()
 {
 	wget https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz -O - | tar -zxf -
 	mkdir build-fmt
-	pushd build-fmt
+	cd build-fmt
 	cmake -DCMAKE_INSTALL_PREFIX=$HOME/inst-fmt  -DFMT_MODULE=ON -DFMT_DOC=OFF -DFMT_TEST=OFF ../fmt-8.0.1/
 	cmake --build .
 	cmake --install .
-	popd
+	cd ..
 }
 
 build()
