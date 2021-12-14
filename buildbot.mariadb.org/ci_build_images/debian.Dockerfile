@@ -37,6 +37,7 @@ RUN apt-get update \
     git \
     gosu \
     iputils-ping \
+    libasio-dev \
     libffi-dev \
     libssl-dev \
     python3-dev \
