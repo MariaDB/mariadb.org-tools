@@ -104,7 +104,21 @@ echo "Package_list: $package_list"
 # Prepare apt source configuration for installation of the last release
 #======================================================================
 
-sudo sh -c "echo 'deb http://mirror.netinch.com/pub/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
+for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
+  if ping -W 1 -c 5 -i 1 $m ; then
+    mirror=$m
+    break
+  else
+    echo "WARNING: Mirror $m seems to be having troubles"
+  fi
+done
+
+if [ -z "$mirror" ] ; then
+  echo "ERROR: Could not find a mirror to download the release from"
+  exit 1
+fi
+
+sudo sh -c "echo 'deb http://$mirror/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
