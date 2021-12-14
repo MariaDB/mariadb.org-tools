@@ -31,6 +31,7 @@ RUN dnf -y upgrade \
     liburing-devel \
     lzo \
     lzo-devel \
+    python-unversioned-command \
     python3-devel \
     python3-pip \
     readline-devel \
