@@ -5,7 +5,7 @@ set -xeuv
 build_deps()
 {
 	wget https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz -O - | tar -zxf -
-	mkdir build-fmt
+	mkdir -p build-fmt
 	cd build-fmt
 	cmake -DCMAKE_INSTALL_PREFIX="$HOME"/inst-fmt  -DFMT_MODULE=ON -DFMT_DOC=OFF -DFMT_TEST=OFF ../fmt-8.0.1/
 	cmake --build .
@@ -19,7 +19,7 @@ build()
 		build_deps
 	fi
 	source=$1
-	mkdir build
+	mkdir -p build
 	cd build
 	/opt/bin/ccache --zero-stats
 	cmake ../"$source" -DCMAKE_BUILD_TYPE="$2" \
@@ -54,7 +54,7 @@ mariadbtest()
 
 clean()
 {
-	ls -ad "$@"
+	ls -ad "$@" || echo "not there I guess"
 	rm -rf "$@" 2> /dev/null
 }
 
