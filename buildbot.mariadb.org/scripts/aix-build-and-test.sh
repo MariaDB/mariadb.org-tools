@@ -1,13 +1,13 @@
 #!/bin/sh
 
-set -x -v
+set -xeuv
 
 build_deps()
 {
 	wget https://github.com/fmtlib/fmt/archive/refs/tags/8.0.1.tar.gz -O - | tar -zxf -
 	mkdir build-fmt
 	cd build-fmt
-	cmake -DCMAKE_INSTALL_PREFIX=$HOME/inst-fmt  -DFMT_MODULE=ON -DFMT_DOC=OFF -DFMT_TEST=OFF ../fmt-8.0.1/
+	cmake -DCMAKE_INSTALL_PREFIX="$HOME"/inst-fmt  -DFMT_MODULE=ON -DFMT_DOC=OFF -DFMT_TEST=OFF ../fmt-8.0.1/
 	cmake --build .
 	cmake --install .
 	cd ..
@@ -15,14 +15,14 @@ build_deps()
 
 build()
 {
-	if [ ! -d inst-fmt ]; then
+	if [ ! -d "${HOME}"/inst-fmt ]; then
 		build_deps
 	fi
 	source=$1
 	mkdir build
 	cd build
 	/opt/bin/ccache --zero-stats
-	cmake ../$source -DCMAKE_BUILD_TYPE="$2" \
+	cmake ../"$source" -DCMAKE_BUILD_TYPE="$2" \
 		-DCMAKE_C_LAUNCHER=/opt/bin/ccache \
 		-DCMAKE_CXX_LAUNCHER=/opt/bin/ccache \
 		-DCMAKE_C_COMPILER=gcc \
@@ -38,15 +38,15 @@ build()
 		-DPLUGIN_S3=NO \
 		-DWITH_MARIABACKUP=NO \
 		-DPLUGIN_WSREP_INFO=NO \
-		-DCMAKE_INCLUDE_PATH=$HOME/inst-fmt/include -DCMAKE_LIBRARY_PATH=$HOME/inst-fmt/lib
-	make -j"$(( $jobs * 2 ))"
+		-DCMAKE_INCLUDE_PATH="$HOME"/inst-fmt/include -DCMAKE_LIBRARY_PATH="$HOME"/inst-fmt/lib
+	make -j"$(( "$jobs" * 2 ))"
 	/opt/bin/ccache --show-stats
 }
 
 mariadbtest()
 {
 	# for saving logs
-	ln -s build/mysql-test
+	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
 		--skip-test='connect\.(grant|updelx)$' --max-test-fail=20 --parallel="$jobs"
 
