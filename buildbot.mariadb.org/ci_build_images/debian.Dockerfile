@@ -38,6 +38,9 @@ RUN apt-get update \
     gosu \
     iputils-ping \
     libasio-dev \
+    libboost-dev \
+    libboost-filesystem-dev \
+    libboost-program-options-dev \
     libffi-dev \
     libssl-dev \
     python3-dev \
