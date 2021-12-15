@@ -21,6 +21,7 @@ RUN dnf -y upgrade \
     curl-devel \
     dumb-init \
     flex \
+    fmt-devel \
     java-latest-openjdk \
     java-latest-openjdk-devel \
     java-latest-openjdk-headless \
