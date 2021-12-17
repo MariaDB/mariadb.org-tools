@@ -187,7 +187,7 @@ buildmanifest mariadb-devel $devmanifest $container
 # linux-tools-common for perf
 buildah run --add-history "$container" sh -c \
   "apt-get update \
-	&& apt-get install -y linux-tools-common gdbserver gdb \
+	&& apt-get install -y linux-tools-common gdbserver gdb curl \
 	&& dpkg-query  --showformat='\${Package},\${Version},\${Architecture}\n' --show | grep mariadb \
 	| while IFS=, read  pkg version arch; do \
           [ \$arch != all ] && apt-get install -y \${pkg}-dbgsym=\${version} ;
