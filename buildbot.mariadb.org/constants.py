@@ -1,4 +1,4 @@
-github_status_builders = ["amd64-centos-7", "amd64-debian-10", "amd64-fedora-35", "amd64-ubuntu-2004-clang11"]
+github_status_builders = ["amd64-centos-7", "amd64-debian-10", "amd64-fedora-35", "amd64-ubuntu-2004-clang11", "amd64-windows", "amd64-windows-packages"]
 
 release_builders = ["aarch64-debian-9", "aarch64-debian-9-deb-autobake", "aarch64-debian-11", "aarch64-debian-11-deb-autobake", "aarch64-debian-sid", "aarch64-debian-sid-deb-autobake", "aarch64-fedora-34", "aarch64-fedora-34-rpm-autobake", "aarch64-fedora-35", "aarch64-fedora-35-rpm-autobake", "aarch64-rhel-8", "aarch64-rhel-8-rpm-autobake", "aarch64-ubuntu-2104", "aarch64-ubuntu-2104-deb-autobake", "aarch64-ubuntu-2110", "aarch64-ubuntu-2110-deb-autobake", "amd64-debian-sid", "amd64-debian-sid-deb-autobake", "ppc64le-debian-11", "ppc64le-debian-11-deb-autobake", "ppc64le-debian-sid", "ppc64le-debian-sid-deb-autobake"]
 
