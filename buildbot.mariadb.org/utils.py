@@ -302,3 +302,16 @@ def getEcoBuilderNames(props):
             builds.append(b)
     return builds
 
+##### Builder priority
+# Prioritize builders. At this point, only the Windows builders need a higher priority
+# since the others run on dedicated machines.
+def prioritizeBuilders(buildmaster, builders):
+    """amd64-windows-* builders should have the highest priority since they are used for
+    protected branches"""
+    builderPriorities = {
+        "amd64-windows": 0,
+        "amd64-windows-packages": 0,
+    }
+    builders.sort(key=lambda b: builderPriorities.get(b.name, 1))
+    return builders
+
