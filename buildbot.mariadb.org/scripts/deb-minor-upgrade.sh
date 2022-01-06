@@ -55,10 +55,10 @@ df -kT
 #========================================
 # Check whether a previous version exists
 #========================================
-if ! wget https://ftp.osuosl.org/mariadb/repo/$prev_major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget https://ftp.osuosl.org/pub/mariadb/repo/$prev_major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
   echo "Upgrade warning: could not find the 'Packages' file for a previous version in MariaDB repo, skipping the test"
-  exit 1
+  exit
 fi
 #===============================================
 # Define the list of packages to install/upgrade
@@ -99,11 +99,11 @@ echo "Package_list: $package_list"
 #======================================================================
 # Prepare apt source configuration for installation of the last release
 #======================================================================
-sudo sh -c "echo 'deb [trusted=yes] http://mirror.netinch.com/pub/mariadb/repo/$prev_major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ftp.osuosl.org/pub/mariadb/repo/$prev_major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
 sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
-sudo sh -c "echo 'Pin: origin mirror.netinch.com' >> /etc/apt/preferences.d/release"
+sudo sh -c "echo 'Pin: origin ftp.osuosl.org' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
 sudo sh -c 'grep -v "^deb .*file" /etc/apt/sources.list.backup | grep -v "^deb-src .*file" > /etc/apt/sources.list'
