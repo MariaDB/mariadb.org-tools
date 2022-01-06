@@ -350,7 +350,7 @@ fi
 # Run mysql_upgrade for non-GA branches (minor upgrades in GA branches shouldn't need it)
 #=====================================================================================
 if [[ "$major_version" == $development_branch ]] || [[ "$test_type" == "major" ]] ; then
-  mysql_upgrade -uroot $password_option
+  sudo -u mysql mysql_upgrade -uroot $password_option
 fi
 set +e
 #=====================================================================================
