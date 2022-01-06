@@ -55,10 +55,10 @@ df -kT
 #========================================
 # Check whether a previous version exists
 #========================================
-if ! wget http://mirror.netinch.com/pub/mariadb/repo/$prev_major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget https://ftp.osuosl.org/mariadb/repo/$prev_major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
   echo "Upgrade warning: could not find the 'Packages' file for a previous version in MariaDB repo, skipping the test"
-  exit
+  exit 1
 fi
 #===============================================
 # Define the list of packages to install/upgrade
