@@ -330,7 +330,7 @@ fi
 wait_for_mysql_upgrade
 # run mysql_upgrade for non GA branches
 if [[ "$major_version" == $development_branch ]] ; then
-  mysql_upgrade -uroot -prootpass
+  sudo -u mysql mysql_upgrade -uroot -prootpass
 fi
 #================================
 # Make sure that the new server is running
