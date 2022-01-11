@@ -9,7 +9,7 @@ sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${pare
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 
 package_version=$mariadb_version
-packages_to_install="mariadb-server libmariadbclient18"
+packages_to_install="mariadb-server mariadb-client libmariadbclient18"
 
 case "${old_ver}-${mariadb_version}" in
 mysql-5.7-10.[0-1])
@@ -77,7 +77,6 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
   echo "Upgrade warning: apt-get update failed, retrying ($i)"
   sleep 10
 done
-sudo apt-get install -y mariadb-client
 # On some of VMs the password might be not pre-created as expected
 if mysql -uroot -e "set password = password('rootpass')" ; then
   echo "The password has now been set"
