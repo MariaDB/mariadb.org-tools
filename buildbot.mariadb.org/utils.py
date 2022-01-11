@@ -310,8 +310,8 @@ def prioritizeBuilders(buildmaster, builders):
     protected branches"""
     builderPriorities = {
         "amd64-windows": 0,
-        "amd64-windows-packages": 0,
+        "amd64-windows-packages": 1,
     }
-    builders.sort(key=lambda b: builderPriorities.get(b.name, 1))
+    builders.sort(key=lambda b: builderPriorities.get(b.name, 2))
     return builders
 
