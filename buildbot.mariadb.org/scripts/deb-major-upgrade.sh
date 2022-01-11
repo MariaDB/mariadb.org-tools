@@ -77,7 +77,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
   echo "Upgrade warning: apt-get update failed, retrying ($i)"
   sleep 10
 done
-sudo apt-get install mariadb-client
+sudo apt-get install -y mariadb-client
 # On some of VMs the password might be not pre-created as expected
 if mysql -uroot -e "set password = password('rootpass')" ; then
   echo "The password has now been set"
