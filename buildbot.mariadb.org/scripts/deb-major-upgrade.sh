@@ -4,7 +4,7 @@ set -ex
 dpkg -l | grep -iE 'maria|mysql|galera' || true
 old_ver=`dpkg -l | grep -iE 'mysql-server-|mariadb-server-' | head -1 | awk '{print $2}' | sed -e "s/.*\(mysql\|mariadb\)-server-\(5\.[567]\|10\.[0-9]\).*/\\1-\\2/"`
 
-sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >> /etc/apt/sources.d/mariadb.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >> /etc/apt/sources.list.d/mariadb.list"
 
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 
