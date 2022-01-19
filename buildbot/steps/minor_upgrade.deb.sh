@@ -445,7 +445,7 @@ wait_for_mysql_upgrade
 
 # run mysql_upgrade for non GA branches
 if [[ "$major_version" == "$development_branch" ]] ; then
-  mysql_upgrade -uroot -prootpass
+  sudo mysql_upgrade -uroot -prootpass
 fi
 
 #================================
