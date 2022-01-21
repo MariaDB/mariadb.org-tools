@@ -62,19 +62,33 @@ galera_suffix=""
   remote_prep="no"
 
 # mappings of dirs from the CI that we need
-ci_mappings="
-  gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
-  gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
-  gal-aarch64-fedora-33:kvm-rpm-fedora33-aarch64-gal
-  gal-aarch64-fedora-34:kvm-rpm-fedora34-aarch64-gal
-  gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
-  gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
-  gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
+ci_mappings_4="
+       gal-aarch64-rhel-7:kvm-rpm-centos74-aarch64-gal
+       gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
+    gal-aarch64-fedora-33:kvm-rpm-fedora33-aarch64-gal
+    gal-aarch64-fedora-34:kvm-rpm-fedora34-aarch64-gal
+    gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
+     gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
+    gal-aarch64-debian-10:kvm-deb-buster-aarch64-gal
+    gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
+    gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
+     gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
+   gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
+   gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
+  gal-aarch64-ubuntu-1804:kvm-deb-bionic-aarch64-gal
+    gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
+  gal-aarch64-ubuntu-2004:kvm-deb-focal-aarch64-gal
   gal-aarch64-ubuntu-2104:kvm-deb-hirsute-aarch64-gal
   gal-ppc64le-ubuntu-2104:kvm-deb-hirsute-ppc64le-gal
-  gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
-  gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
+  gal-aarch64-ubuntu-2110:kvm-deb-impish-aarch64-gal
 "
+  #gal-ppc64le-ubuntu-2110:kvm-deb-impish-ppc64le-gal
+
+ci_mappings_3="
+       gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
+     gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
+"
+
 
 date=$(date +%F)
 
@@ -122,19 +136,50 @@ done
 
 shift $(($OPTIND - 1))
 
-deb_dists="
+deb_dists_3="
+  bionic
+  buster
+  focal
+  stretch
+  trusty
+"
+
+deb_dists_4="
   bionic
   bullseye
   buster
   focal
-  groovy
   hirsute
-  jessie
+  impish
   sid
   stretch
   trusty
 "
-deb_dists_full="
+
+deb_dists_full_3="
+  bionic-aarch64
+  bionic-amd64
+  bionic-ppc64le
+
+  buster-aarch64
+  buster-amd64
+  buster-ppc64le
+
+  focal-aarch64
+  focal-amd64
+  focal-ppc64le
+
+  stretch-aarch64
+  stretch-amd64
+  stretch-ppc64le
+  stretch-x86
+
+  trusty-amd64
+  trusty-x86
+"
+
+
+deb_dists_full_4="
   bionic-aarch64
   bionic-amd64
   bionic-ppc64le
@@ -151,13 +196,12 @@ deb_dists_full="
   focal-amd64
   focal-ppc64le
 
-  groovy-aarch64
-  groovy-amd64
-  groovy-ppc64le
-
   hirsute-aarch64
   hirsute-amd64
   hirsute-ppc64le
+
+  impish-amd64
+  impish-aarch64
 
   sid-aarch64
   sid-amd64
@@ -173,7 +217,9 @@ deb_dists_full="
   trusty-x86
 "
 
-rpm_dists="
+rpm_dists_3="
+  alma84-amd64
+
   centos73-ppc64
   centos73-ppc64le
 
@@ -184,14 +230,45 @@ rpm_dists="
   rhel8-amd64
   rhel8-ppc64le
 
+  opensuse150-amd64
+
+  rocky84-amd64
+
+  sles125-amd64
+  sles150-amd64
+"
+
+rpm_dists_4="
+  alma84-amd64
+
+  centos73-ppc64
+  centos73-ppc64le
+
+  centos74-aarch64
+  centos74-amd64
+  centos8-amd64
+
+  rhel8-amd64
+  rhel8-aarch64
+  rhel8-ppc64le
+
   fedora33-amd64
   fedora34-amd64
+  fedora35-amd64
+  fedora-rawhide-amd64
+
+  fedora33-aarch64
+  fedora34-aarch64
+  fedora35-aarch64
 
   opensuse150-amd64
 
-  sles123-amd64
+  rocky84-amd64
+
+  sles125-amd64
   sles150-amd64
 "
+
 old_rpm_dists="
   sles12-ppc64le
 "
@@ -213,7 +290,7 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 # Functions
 #-------------------------------------------------------------------------------
 
-runCommand() {
+RC() {
   lowkey_message "${@}"
   sleep 1
   if ${@} ; then
@@ -265,88 +342,89 @@ secureUserInput() {
 }
 
 delete_the_lib_dir() {
-  runCommand rm -rfv lib
+  RC rm -rfv lib
 }
 
 prepare_the_bintar_packages() {
   important_message "Preparing bintar packages..."
   if [ -d ${dir_release}/${dir_name}/bintar ] ; then
     message "Removing old bintar dirs..."
-    runCommand rm -rf ${dir_release}/${dir_name}/bintar
-    runCommand rm -rf ${dir_release}/${dir_name}-signed/bintar
-    runCommand rm -rf ${dir_release}/${dir_name}-signed-ent/bintar
+    RC rm -rf ${dir_release}/${dir_name}/bintar
+    RC rm -rf ${dir_release}/${dir_name}-signed/bintar
+    RC rm -rf ${dir_release}/${dir_name}-signed-ent/bintar
   fi
 
-  runCommand mkdir -v ${dir_release}/${dir_name}/bintar
-  runCommand mkdir -v ${dir_release}/${dir_name}-signed/bintar
-  runCommand mkdir -v ${dir_release}/${dir_name}-signed-ent/bintar
+  RC mkdir -v ${dir_release}/${dir_name}/bintar
+  RC mkdir -v ${dir_release}/${dir_name}-signed/bintar
+  RC mkdir -v ${dir_release}/${dir_name}-signed-ent/bintar
 
-  runCommand cd ${dir_release}/${dir_name}/bintar
+  RC cd ${dir_release}/${dir_name}/bintar
   echo
   for dir_pair in ${build_dirs}; do
     dir_array=(${dir_pair//:/ })
     # create the directory
     if [ "${dir_array[1]}" = "src" ]; then
       if [ ! -d ${dir_release}/${dir_name}/${dir_array[1]} ]; then
-        runCommand mkdir -v ${dir_release}/${dir_name}/${dir_array[1]}
+        RC mkdir -v ${dir_release}/${dir_name}/${dir_array[1]}
       fi
     else 
       if [ -d ${dir_release}/${dir_name}/bintar/${dir_array[1]} ]; then
-        runCommand rm -rf ${dir_release}/${dir_name}/bintar/${dir_array[1]}
+        RC rm -rf ${dir_release}/${dir_name}/bintar/${dir_array[1]}
       fi
-      runCommand mkdir -v ${dir_release}/${dir_name}/bintar/${dir_array[1]}
+      RC mkdir -v ${dir_release}/${dir_name}/bintar/${dir_array[1]}
     fi
 
     # This is where we actually extract the binary files
     cd ${dir_release}/${dir_name}/bintar/${dir_array[1]}
     case ${dir_array[1]} in
-      "galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
+      #"galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
+      "galera-${num}-x86_64"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
           # we are dealing with an .rpm file
           lowkey_message "rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv"
                           rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
-          runCommand cd usr
+          RC cd usr
           case ${dir_array[1]} in
             "galera-${num}-x86_64")
-              runCommand tree
+              RC tree
               shouldI delete_the_lib_dir
               ;;
           esac
           if [ -d lib64 ];then
             if [ -d lib ];then
               # what to do if we have BOTH lib and lib64 dirs
-              runCommand cd lib
+              RC cd lib
               # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
               if [ -d ../lib64/galera-4 ];then
-                runCommand pushd ../lib64
-                  runCommand ln -sv galera-4 galera
-                runCommand popd
+                RC pushd ../lib64
+                  RC ln -sv galera-4 galera
+                RC popd
               fi
-              runCommand ln -sv ../lib64/galera ./
-              runCommand cd ../lib64
-              runCommand ln -sv galera/libgalera_smm.so ./
-              runCommand cd ../
+              RC ln -sv ../lib64/galera ./
+              RC cd ../lib64
+              RC ln -sv galera/libgalera_smm.so ./
+              RC cd ../
             else
               # if we have a lib64 dir and no lib dir
-              runCommand ln -sv lib64 lib
+              RC ln -sv lib64 lib
             fi
           fi
-          runCommand cd lib
+          RC cd lib
           # MDEV-23760 - 10.5.5 x86_64 build has incorrect galera library symlink
           if [ -d galera-4 ];then
-            runCommand ln -sv galera-4 galera
+            RC ln -sv galera-4 galera
           fi
-          runCommand ln -sv galera/libgalera_smm.so ./
+          RC ln -sv galera/libgalera_smm.so ./
           ;;
       *)
           # we are dealing with .deb files
           case ${tree} in
             "mariadb-4.x")
-              runCommand dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-4_*.deb ./
-              runCommand dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-4_*.deb ./
+              RC dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-4_*.deb ./
+              RC dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-4_*.deb ./
               ;;
             *)
-              runCommand dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
-              runCommand dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
+              RC dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-3_*.deb ./
+              RC dpkg -X ${dir_archive}/${tree}/${rev}/${dir_array[0]}/debs/binary/galera-arbitrator-3_*.deb ./
               ;;
           esac
           ;;
@@ -355,14 +433,14 @@ prepare_the_bintar_packages() {
     # create a tarball
     cd ${dir_release}/${dir_name}/bintar/
     if [ -f ${dir_array[1]}.tar.gz ] ; then
-      runCommand rm -v ${dir_array[1]}.tar.gz
+      RC rm -v ${dir_array[1]}.tar.gz
     fi
-    runCommand tar -czvf ${dir_array[1]}.tar.gz ${dir_array[1]}/
+    RC tar -czvf ${dir_array[1]}.tar.gz ${dir_array[1]}/
     for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./${dir_array[1]}.tar.gz >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
     # copy the tarball over to -signed and -signed-ent directories
-    runCommand cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${dir_release}/${dir_name}-signed/bintar/
-    runCommand cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${dir_release}/${dir_name}-signed-ent/bintar/
+    RC cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${dir_release}/${dir_name}-signed/bintar/
+    RC cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]}.tar.gz ${dir_release}/${dir_name}-signed-ent/bintar/
 
     #cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]} ${dir_release}/${dir_name}-signed/bintar/
     #cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]} ${dir_release}/${dir_name}-signed-ent/bintar/
@@ -374,20 +452,20 @@ prepare_the_bintar_packages() {
 
 
   # sign the bintars
-  runCommand cd ${dir_release}/${dir_name}-signed/bintar/
+  RC cd ${dir_release}/${dir_name}-signed/bintar/
   lowkey_message "About to sign the bintars..."
   pressAnyKeyToContinue
-  for file in galera*.tar.gz ; do runCommand "gpg2 ${gpg_opts} ${file}";done
+  for file in galera*.tar.gz ; do RC "gpg2 ${gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; runCommand cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; runCommand ${sum}sum -c ${sum}sums.txt ; runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
   # sign the ent-bintars
   cd ${dir_release}/${dir_name}-signed-ent/bintar/
   lowkey_message "About to sign the ent bintars..."
   pressAnyKeyToContinue
-  for file in galera*.tar.gz ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
+  for file in galera*.tar.gz ; do RC "gpg2 ${ent_gpg_opts} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; runCommand cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; runCommand ${sum}sum -c ${sum}sums.txt ; runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
 
   message "Done preparing bintar packages"
   spacer
@@ -397,51 +475,51 @@ prepare_the_source_tarball() {
   important_message "Preparing source tarball..."
   if [ -d ${dir_release}/${dir_name}/src ]; then
     message "Removing old src dir..."
-    runCommand rm -rf ${dir_release}/${dir_name}/src
-    runCommand rm -rf ${dir_release}/${dir_name}-signed/src
-    runCommand rm -rf ${dir_release}/${dir_name}-signed-ent/src
+    RC rm -rf ${dir_release}/${dir_name}/src
+    RC rm -rf ${dir_release}/${dir_name}-signed/src
+    RC rm -rf ${dir_release}/${dir_name}-signed-ent/src
   fi
 
-  runCommand mkdir -v ${dir_release}/${dir_name}/src
+  RC mkdir -v ${dir_release}/${dir_name}/src
 
   # Copy over the src tarball
   rsync_wrapper "-av ${dir_archive}/${tree}/${rev}/kvm-src-centos8-amd64-gal/src/galera* ${dir_release}/${dir_name}/src/"
 
     cd ${dir_release}/${dir_name}/src
-    for sum in md5 sha1 sha256 sha512;do echo ${sum}; lowkey_message "${sum}sum ./galera* >> ${sum}sums.txt" ; ${sum}sum ./galera* >> ${sum}sums.txt; runCommand ${sum}sum -c ${sum}sums.txt;done
+    for sum in md5 sha1 sha256 sha512;do echo ${sum}; lowkey_message "${sum}sum ./galera* >> ${sum}sums.txt" ; ${sum}sum ./galera* >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
 
     # before signing the files, copy them to the ent dir
-    runCommand cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed-ent/
+    RC cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed-ent/
 
     lowkey_message "signing source tarball and sum files..."
-    runCommand cd ${dir_release}/${dir_name}/src/
+    RC cd ${dir_release}/${dir_name}/src/
     # remove any signature files before signing, if they exist
     for sig_file in $(ls ./*.asc); do
-      runCommand rm -v "${sig_file}"
+      RC rm -v "${sig_file}"
     done
     # sign the source tarball
     echo "About to sign the source tarball..."
     pressAnyKeyToContinue
-    runCommand gpg2 ${gpg_opts} ${version}.tar.gz
+    RC gpg2 ${gpg_opts} ${version}.tar.gz
     # sign the sum files as well
-    for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+    for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
     # Copy to the -signed folder
-    runCommand cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed/
+    RC cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed/
 
     # Switch over to the -signed-ent folder and sign those
     lowkey_message "signing source tarball and sum files in the -signed-ent folder..."
-    runCommand cd ${dir_release}/${dir_name}-signed-ent/src/
+    RC cd ${dir_release}/${dir_name}-signed-ent/src/
     # remove any signature files before signing, if they exist
     for sig_file in $(ls ./*.asc); do
-      runCommand rm "${sig_file}"
+      RC rm "${sig_file}"
     done
     # sign the source tarball
     echo "About to sign the ent source tarball..."
     pressAnyKeyToContinue
-    runCommand gpg2 ${ent_gpg_opts} ${version}.tar.gz
+    RC gpg2 ${ent_gpg_opts} ${version}.tar.gz
     # sign the sum files as well
-    for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
+    for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
   #fi # removing src rsync if statement (db:2017-01-06)
   message "prep of src done"
   spacer
@@ -452,21 +530,24 @@ prepare_the_deb_packages() {
   # if the deb dir exists, delete it
   if [ -d ${dir_release}/${dir_name}/deb ]; then
     message "Removing old deb dir..."
-    runCommand rm -rf "${dir_release}/${dir_name}/deb"
+    RC rm -rf "${dir_release}/${dir_name}/deb"
   fi
   if [ -d ${dir_release}/${dir_name}-signed/deb ]; then
-    runCommand rm -rf "${dir_release}/${dir_name}-signed/deb"
+    RC rm -rf "${dir_release}/${dir_name}-signed/deb"
   fi
   if [ -d ${dir_release}/${dir_name}-signed-ent/deb ]; then
-    runCommand rm -rf "${dir_release}/${dir_name}-signed-ent/deb"
+    RC rm -rf "${dir_release}/${dir_name}-signed-ent/deb"
   fi
-  runCommand mkdir -v ${dir_release}/${dir_name}/deb
-  runCommand cd ${dir_release}/${dir_name}/deb/
+  RC mkdir -v ${dir_release}/${dir_name}/deb
+  RC cd ${dir_release}/${dir_name}/deb/
 
   # Copy over the deb packages
   for dist in ${deb_dists_full}; do
     message "Copying ${dist}"
-    runCommand cp -avi ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/binary/galera* ${dir_release}/${dir_name}/deb/
+    RC cp -avi ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/binary/galera* ${dir_release}/${dir_name}/deb/
+    if compgen -G "${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/galera*changes" > /dev/null ; then
+      RC cp -avi ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/galera*changes ${dir_release}/${dir_name}/deb/
+    fi
   done
 
 
@@ -474,29 +555,29 @@ prepare_the_deb_packages() {
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
 
   # copy deb dir to signed and signed-ent dirs
-  runCommand cp -avi ${dir_release}/${dir_name}/deb ${dir_release}/${dir_name}-signed/
-  runCommand cp -avi ${dir_release}/${dir_name}/deb ${dir_release}/${dir_name}-signed-ent/
+  RC cp -avi ${dir_release}/${dir_name}/deb ${dir_release}/${dir_name}-signed/
+  RC cp -avi ${dir_release}/${dir_name}/deb ${dir_release}/${dir_name}-signed-ent/
 
   # sign the deb files for mariadb.org
   cd ${dir_release}/${dir_name}-signed/deb/
   # sign the deb files
   echo "About to sign the debs..."
   pressAnyKeyToContinue
-  for file in galera* ; do runCommand "gpg2 ${gpg_opts} ${file}";done
+  for file in galera* ; do RC "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
 
   # sign the deb files for mariadb.com (aka MariaDB Enterprise)
-  runCommand cd ${dir_release}/${dir_name}-signed-ent/deb/
+  RC cd ${dir_release}/${dir_name}-signed-ent/deb/
   # sign the deb files
   echo "About to sign the ent debs..."
   pressAnyKeyToContinue
-  for file in galera* ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
+  for file in galera* ; do RC "gpg2 ${ent_gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
 
-  runCommand tree "${dir_release}/${dir_name}/deb" "${dir_release}/${dir_name}-signed/deb" "${dir_release}/${dir_name}-signed-ent/deb"
+  RC tree "${dir_release}/${dir_name}/deb" "${dir_release}/${dir_name}-signed/deb" "${dir_release}/${dir_name}-signed-ent/deb"
   message "Done preparing deb packages"
   spacer
 }
@@ -505,37 +586,37 @@ prepare_the_rpm_packages() {
   important_message "Preparing rpm packages..."
   if [ -d ${dir_release}/${dir_name}/rpm ]; then
     message "Removing old rpm dir..."
-    runCommand rm -rf "${dir_release}/${dir_name}/rpm"
+    RC rm -rf "${dir_release}/${dir_name}/rpm"
   fi
   if [ -d ${dir_release}/${dir_name}-signed/rpm ]; then
-    runCommand rm -rf "${dir_release}/${dir_name}-signed/rpm"
+    RC rm -rf "${dir_release}/${dir_name}-signed/rpm"
   fi
   if [ -d ${dir_release}/${dir_name}-signed-ent/rpm ]; then
-    runCommand rm -rf "${dir_release}/${dir_name}-signed-ent/rpm"
+    RC rm -rf "${dir_release}/${dir_name}-signed-ent/rpm"
   fi
-  runCommand mkdir -v ${dir_release}/${dir_name}/rpm
-  runCommand cd ${dir_release}/${dir_name}/rpm/
+  RC mkdir -v ${dir_release}/${dir_name}/rpm
+  RC cd ${dir_release}/${dir_name}/rpm/
 
   for dist in ${rpm_dists}; do
     message "Preparing ${dist}"
-    runCommand mkdir -v ${dir_release}/${dir_name}/rpm/${dist}
+    RC mkdir -v ${dir_release}/${dir_name}/rpm/${dist}
     case ${dist} in
       'sles11-amd64'|'sles11-x86')
         if [ "${tree}" = "mariadb-3.x" ];then
-          runCommand cp -avi ${dir_release}/galera-25.3.23/rpm/${dist}/galera*rpm ${dir_release}/${dir_name}/rpm/${dist}/
+          RC cp -avi ${dir_release}/galera-25.3.23/rpm/${dist}/galera*rpm ${dir_release}/${dir_name}/rpm/${dist}/
         else
-          runCommand rmdir -v ${dir_release}/${dir_name}/rpm/${dist}
+          RC rmdir -v ${dir_release}/${dir_name}/rpm/${dist}
         fi
         ;;
       'sles12-ppc64le')
         if [ "${tree}" = "mariadb-3.x" ];then
-          runCommand cp -avi ${dir_archive}/${tree}/${rev}/p8-suse12-rpm-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
+          RC cp -avi ${dir_archive}/${tree}/${rev}/p8-suse12-rpm-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
         else
-          runCommand rmdir -v ${dir_release}/${dir_name}/rpm/${dist}
+          RC rmdir -v ${dir_release}/${dir_name}/rpm/${dist}
         fi
         ;;
       *)
-        runCommand cp -avi ${dir_archive}/${tree}/${rev}/kvm-*-${dist}-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
+        RC cp -avi ${dir_archive}/${tree}/${rev}/kvm-*-${dist}-gal/rpms/galera*.rpm ${dir_release}/${dir_name}/rpm/${dist}/
         ;;
     esac
   done
@@ -551,9 +632,9 @@ prepare_the_rpm_packages() {
   # sign the rpms
   echo "About to sign the rpms..."
   pressAnyKeyToContinue
-  for file in ./*/*.rpm ; do runCommand "gpg2 ${gpg_opts} ${file}";done
+  for file in ./*/*.rpm ; do RC "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${gpg_opts} ${sum}sums.txt";done
   
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.org
@@ -562,17 +643,17 @@ prepare_the_rpm_packages() {
   echo
   lowkey_message "Switching ~/.rpmmacros file to std version..."
   echo 
-  rm -v .rpmmacros
-  ln -sv .rpmmacros-std .rpmmacros
-  cd ${dir_release}/${dir_name}-signed/rpm/
-  rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  RC rm -v .rpmmacros
+  RC ln -sv .rpmmacros-std .rpmmacros
+  RC cd ${dir_release}/${dir_name}-signed/rpm/
+  RC rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   echo "About to sign the rpms..."
   pressAnyKeyToContinue
-  for file in ./*/*.rpm ; do runCommand "gpg2 ${gpg_opts} ${file}";done
+  for file in ./*/*.rpm ; do RC "gpg2 ${gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${gpg_opts} ${sum}sums.txt";done
 
 
   #-------------------------------------------------------------------------------
@@ -580,24 +661,24 @@ prepare_the_rpm_packages() {
   #-------------------------------------------------------------------------------
   cd ${HOME}
   lowkey_message "Switching ~/.rpmmacros file to ent version..."
-  rm -v .rpmmacros
-  ln -sv .rpmmacros-ent-v3 .rpmmacros
+  RC rm -v .rpmmacros
+  RC ln -sv .rpmmacros-ent-v3 .rpmmacros
 
   cd ${dir_release}/${dir_name}-signed-ent/rpm/
   echo "About to sign the ent rpms..."
   pressAnyKeyToContinue
-  rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
+  RC rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
-  for file in ./*/*.rpm ; do runCommand "gpg2 ${ent_gpg_opts} ${file}";done
+  for file in ./*/*.rpm ; do RC "gpg2 ${ent_gpg_opts} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do runCommand "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg2 ${ent_gpg_opts} ${sum}sums.txt";done
   
   cd ${HOME}
   lowkey_message "Switching ~/.rpmmacros file back to standard version..."
-  rm -v .rpmmacros
-  ln -sv .rpmmacros-std .rpmmacros
-  cd ${dir_release}/${dir_name}-signed-ent/rpm/
+  RC rm -v .rpmmacros
+  RC ln -sv .rpmmacros-std .rpmmacros
+  RC cd ${dir_release}/${dir_name}-signed-ent/rpm/
 
   # Create symlinks
   for dir in ${dir_release}/${dir_name}-signed/rpm/ ${dir_release}/${dir_name}-signed-ent/rpm/ ; do
@@ -607,12 +688,12 @@ prepare_the_rpm_packages() {
       ln -sv centos73-ppc64 centos7-ppc64
       ln -sv centos73-ppc64le centos7-ppc64le
       ln -sv opensuse150-amd64 opensuse15-amd64
-      ln -sv sles123-amd64 sles12-amd64
+      ln -sv sles125-amd64 sles12-amd64
       ln -sv sles150-amd64 sles15-amd64
     popd
   done
 
-  runCommand tree "${dir_release}/${dir_name}/rpm" "${dir_release}/${dir_name}-signed/rpm" "${dir_release}/${dir_name}-signed-ent/rpm"
+  RC tree "${dir_release}/${dir_name}/rpm" "${dir_release}/${dir_name}-signed/rpm" "${dir_release}/${dir_name}-signed-ent/rpm"
   message "Done preparing rpm packages"
   spacer
 }
@@ -622,14 +703,14 @@ prepare_the_deb_repository() {
   # Delete the directory if it exists (we want to start from scratch)
   if [ -d ${dir_release}/${dir_name}/${repo}/deb ]; then
     message "Removing old deb repository..."
-    runCommand rm -rf "${dir_release}/${dir_name}/${repo}/deb"
+    RC rm -rf "${dir_release}/${dir_name}/${repo}/deb"
   fi
 
   architectures="amd64 arm64 i386 ppc64el source"
   gpg_key="0xcbcb082a1bb943db"
   gpg_key_2016="0xF1656F24C74CD1D8"
-  mkdir -vp ${dir_release}/${dir_name}/${repo}/deb/conf
-  cd ${dir_release}/${dir_name}/${repo}/deb/
+  RC mkdir -vp ${dir_release}/${dir_name}/${repo}/deb/conf
+  RC cd ${dir_release}/${dir_name}/${repo}/deb/
 
   for dist in ${deb_dists}; do
     case ${dist} in
@@ -685,10 +766,10 @@ END
     echo ${dist}
     case ${dist} in
       sid*)
-        reprepro --ignore=wrongdistribution --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
+        RC reprepro --ignore=wrongdistribution --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
         ;;
       *)
-    reprepro --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
+    RC reprepro --basedir=. include ${dist_name} ${dir_release}/${dir_name}-${suffix}/deb/galera*${dist_name}*_${dist_arch}.changes
         ;;
     esac
 
@@ -702,10 +783,10 @@ prepare_the_yum_repository() {
   # Delete the directory if it exists (we want to start from scratch)
   if [ -d ${dir_release}/${dir_name}/${repo}/rpm ]; then
     message "Removing old rpm repository..."
-    runCommand rm -rf "${dir_release}/${dir_name}/${repo}/rpm"
+    RC rm -rf "${dir_release}/${dir_name}/${repo}/rpm"
   fi
-  runCommand mkdir -vp ${dir_release}/${dir_name}/${repo}/rpm
-  runCommand cd ${dir_release}/${dir_name}/${repo}/rpm
+  RC mkdir -vp ${dir_release}/${dir_name}/${repo}/rpm
+  RC cd ${dir_release}/${dir_name}/${repo}/rpm
 
   # Here we are going to iterate through the various distros and:
   #   1. create the needed directories
@@ -717,11 +798,11 @@ prepare_the_yum_repository() {
         if [[ "${tree}" = "mariadb-4.x" ]]; then
           lowkey_message "no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86"
         else
-          rsync -avP --keep-dirlinks --exclude=*.asc ${dir_release}/${dir_name}-${suffix}/rpm/${dist}/ ${dir_release}/${dir_name}/${repo}/rpm/${dist}/rpms/
+          RC rsync -avP --keep-dirlinks --exclude=*.asc ${dir_release}/${dir_name}-${suffix}/rpm/${dist}/ ${dir_release}/${dir_name}/${repo}/rpm/${dist}/rpms/
         fi
         ;;
       *)
-        rsync -avP --keep-dirlinks --exclude=*.asc ${dir_release}/${dir_name}-${suffix}/rpm/${dist}/ ${dir_release}/${dir_name}/${repo}/rpm/${dist}/rpms/
+        RC rsync -avP --keep-dirlinks --exclude=*.asc ${dir_release}/${dir_name}-${suffix}/rpm/${dist}/ ${dir_release}/${dir_name}/${repo}/rpm/${dist}/rpms/
         ;;
     esac
   done
@@ -733,37 +814,35 @@ prepare_the_yum_repository() {
       'sles114-amd64'|'sles114-x86')
         mv -vi ${dist} ~/ && cd ~/
         # SLES 11 doesn't support newer sha256 checksums
-        createrepo -s sha --database --pretty ${dist}
-        mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
-        runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
+        RC createrepo -s sha --database --pretty ${dist}
+        RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
+        RC gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
         ;;
       *)
-        mv -vi ${dist} ~/ && cd ~/
-        createrepo --database --pretty ${dist}
-        mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
-        runCommand gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
+        RC mv -vi ${dist} ~/ && cd ~/
+        RC createrepo --database --pretty ${dist}
+        RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
+        RC gpg2 --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
         ;;
     esac
   done
 
   # one final thing: create symlinks so buildbot tests work
-  ln -sv sles11-amd64 sles11sp1-amd64
-  ln -sv sles11-amd64 sles114-amd64
-  ln -sv sles11-x86 sles114-x86
-  ln -sv sles150-amd64 sles15-amd64
-  ln -sv sles123-amd64 sles12-amd64
-  ln -sv opensuse150-amd64 opensuse15-amd64
-  ln -sv centos6-amd64 rhel6-amd64
-  ln -sv centos6-x86 rhel6-x86
-  ln -sv centos74-amd64 centos7-amd64
-  ln -sv centos74-amd64 rhel7-amd64
-  ln -sv centos73-ppc64 centos7-ppc64
-  ln -sv centos73-ppc64 rhel7-ppc64
-  ln -sv centos73-ppc64le centos7-ppc64le
-  ln -sv centos73-ppc64le rhel7-ppc64le
-  ln -sv centos73-ppc64le rhel71-ppc64le
-  ln -sv centos74-aarch64 centos7-aarch64
-  ln -sv centos74-aarch64 rhel7-aarch64
+  RC ln -sv sles150-amd64 sles15-amd64
+  RC ln -sv sles125-amd64 sles12-amd64
+  RC ln -sv opensuse150-amd64 opensuse15-amd64
+  RC ln -sv centos74-amd64 centos7-amd64
+  RC ln -sv centos74-amd64 rhel7-amd64
+  RC ln -sv centos73-ppc64 centos7-ppc64
+  RC ln -sv centos73-ppc64 rhel7-ppc64
+  RC ln -sv centos73-ppc64le centos7-ppc64le
+  RC ln -sv centos73-ppc64le rhel7-ppc64le
+  RC ln -sv centos73-ppc64le rhel71-ppc64le
+  RC ln -sv centos74-aarch64 centos7-aarch64
+  RC ln -sv centos74-aarch64 rhel7-aarch64
+  RC ln -sv rhel8-aarch64 centos8-aarch64
+  RC ln -sv rhel8-aarch64 rocky84-aarch64
+  RC ln -sv rhel8-aarch64 alma84-aarch64
   message "Finished preparing the yum repository"
 }
 
@@ -945,18 +1024,18 @@ rsync_wrapper() {
 
 update_galera_version_in_conf_file() {
   message "Updating Galera version in prep.conf..."
-  runCommand cp -avi ${dir_conf}/prep.conf ${dir_conf}/prep.conf.bak
+  RC cp -avi ${dir_conf}/prep.conf ${dir_conf}/prep.conf.bak
   case ${tree} in
     mariadb-3.x)
-      runCommand sed -i "s/ver_galera=\"${ver_galera}\"/ver_galera=\"${num}\"/" ${dir_conf}/prep.conf
-      runCommand sed -i "s/ver_galera_preferred=\"${ver_galera}\"/ver_galera_preferred=\"${num}\"/" ${dir_conf}/prep.conf
+      RC sed -i "s/ver_galera=\"${ver_galera}\"/ver_galera=\"${num}\"/" ${dir_conf}/prep.conf
+      RC sed -i "s/ver_galera_preferred=\"${ver_galera}\"/ver_galera_preferred=\"${num}\"/" ${dir_conf}/prep.conf
       ;;
     mariadb-4.x)
-      runCommand sed -i "s/ver_galera4=\"${ver_galera4}\"/ver_galera4=\"${num}\"/" ${dir_conf}/prep.conf
-      runCommand sed -i "s/ver_galera4_preferred=\"${ver_galera4}\"/ver_galera4_preferred=\"${num}\"/" ${dir_conf}/prep.conf
+      RC sed -i "s/ver_galera4=\"${ver_galera4}\"/ver_galera4=\"${num}\"/" ${dir_conf}/prep.conf
+      RC sed -i "s/ver_galera4_preferred=\"${ver_galera4}\"/ver_galera4_preferred=\"${num}\"/" ${dir_conf}/prep.conf
       ;;
   esac
-  runCommand diff -u ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
+  RC diff -u ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
   local cont
   cont=""
   while [ -z ${cont} ]; do
@@ -964,7 +1043,7 @@ update_galera_version_in_conf_file() {
     case ${ANSWER} in
       "y")
         lowkey_message "Cleaning up and continuing..."
-        runCommand rm -v ${dir_conf}/prep.conf.bak
+        RC rm -v ${dir_conf}/prep.conf.bak
         cont="yes"
         ANSWER=""
         return 0
@@ -1030,7 +1109,7 @@ pull_this_release_from_the_buildmaster() {
   rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive}/${tree}/${rev}/ ${dir_archive}/${tree}/${rev}/"
 
   # We should be done now
-  runCommand tree ${dir_archive}/${tree}/${rev}/
+  RC tree ${dir_archive}/${tree}/${rev}/
   message "Done pulling ${tree}/${rev}/ from ${buildmaster}"
 
 }
@@ -1044,22 +1123,23 @@ pull_this_release_from_the_ci() {
     mkdir -vp ${dir_archive}/ci/galera/${tree}/${rev}
   fi
 
-  runCommand pushd ${dir_archive}/ci/
+  RC pushd ${dir_archive}/ci/galera/
     message "Transferring builds from ${ci}..."
     set +e
-    runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
+    #RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
+    RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tree}/${rev}/
     set -e
-    runCommand find ${dir_archive}/ci/galera/${tree}/${rev}/ -name "index.html" -exec rm -v {} \;
-  runCommand popd
+    RC find ${dir_archive}/ci/galera/${tree}/${rev}/ -name "index.html" -exec rm -v {} \;
+  RC popd
 
-  runCommand tree ${dir_archive}/ci/galera/${tree}/${rev}
+  RC tree ${dir_archive}/ci/galera/${tree}/${rev}
   message "Done downloading release to ${dir_archive}/ci/galera/${tree}/${rev}"
 }
 
 verify_the_ci_download() {
   message "Verifying files downloaded from ${ci}..."
   for shafile in $(find ${dir_archive}/ci/galera/${tree}/${rev} -name sha256sums.txt) ; do
-    runCommand pushd $(dirname ${shafile})
+    RC pushd $(dirname ${shafile})
     case $shafile in
       *windows*)
         dos2unix sha256sums.txt
@@ -1067,8 +1147,8 @@ verify_the_ci_download() {
         sed -i '/^$/d' sha256sums.txt
         ;;
     esac
-    runCommand sha256sum --quiet -c sha256sums.txt
-    runCommand popd
+    RC sha256sum --quiet -c sha256sums.txt
+    RC popd
   done
 }
 
@@ -1101,10 +1181,10 @@ copy_ci_downloads_to_buildmaster_dir() {
     dir_dest=${dir_archive}/${tree}/${rev}/${ci_array[1]}
     if [ -d ${dir_dest} ]; then
       message "${dir_dest} already exists, moving..."
-      runCommand mv -vi ${dir_dest} ${dir_dest}_orig
+      RC mv -vi ${dir_dest} ${dir_dest}_orig
     fi
     if [ -d ${dir_source} ]; then
-      runCommand cp -ai ${dir_source} ${dir_dest}
+      RC cp -ai ${dir_source} ${dir_dest}
     else
       important_message "${dir_source} does not exist"
       exit 1
@@ -1155,12 +1235,12 @@ maybe_fix_permissions() {
 maybe_create_release_dir() {
 if [ ! -d ${dir_release}/${dir_name} ]; then
   message "Creating release dir..."
-  runCommand mkdir -v ${dir_release}/${dir_name}
+  RC mkdir -v ${dir_release}/${dir_name}
   if [ ! -d ${dir_release}/${dir_name}-signed ]; then
-    runCommand mkdir -v ${dir_release}/${dir_name}-signed
+    RC mkdir -v ${dir_release}/${dir_name}-signed
   fi
   if [ ! -d ${dir_release}/${dir_name}-signed-ent ]; then
-    runCommand mkdir -v ${dir_release}/${dir_name}-signed-ent
+    RC mkdir -v ${dir_release}/${dir_name}-signed-ent
   fi
 fi
 }
@@ -1210,25 +1290,27 @@ dir_archive="${dir_archive_galera}"
 
 case ${tree} in
   "mariadb-3.x")
-    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    repo="repo3"
+    ci_mappings=${ci_mappings_3}
+    deb_dists=${deb_dists_3}
+    deb_dists_full=${deb_dists_full_3}
+    rpm_dists=${rpm_dists_3}
     ;;
   "mariadb-4.x")
-    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
+    repo="repo4"
+    ci_mappings=${ci_mappings_4}
+    deb_dists=${deb_dists_4}
+    deb_dists_full=${deb_dists_full_4}
+    rpm_dists=${rpm_dists_4}
     ;;
 esac
+
 build_dirs_x86_64="kvm-rpm-centos74-amd64-gal:galera-${num}-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-glibc_214-x86_64 kvm-deb-trusty-amd64-gal:galera-${num}-systemd-x86_64"
 build_dirs_p8="kvm-rpm-centos73-ppc64le-gal:galera-${num}-ppc64le kvm-rpm-centos73-ppc64-gal:galera-${num}-ppc64 kvm-rpm-centos74-aarch64-gal:galera-${num}-aarch64"
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64} ${build_dirs_p8}"
-
-case ${tree} in
-  mariadb-3.x)
-    repo="repo3"
-    ;;
-  mariadb-4.x)
-    repo="repo4"
-    ;;
-esac
 
 shouldI pull_this_release_from_the_buildmaster
 shouldI pull_this_release_from_the_ci
