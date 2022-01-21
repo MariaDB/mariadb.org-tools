@@ -42,6 +42,11 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config} && . ${dir_conf}/prep.conf
 # Go through each of the following, depending on the tree
 #-------------------------------------------------------------------------------
 
+# kvm-deb-bionic-aarch64
+# kvm-deb-buster-aarch64
+# kvm-deb-focal-aarch64
+# kvm-rpm-centos74-aarch64
+
 # stretch-aarch64 (10.2+)
 ls -d1 ${dir_archive}/${tree}/build-${build}/kvm-deb-stretch-aarch64* # it will exist, so rename next
 mv -vi ${dir_archive}/${tree}/build-${build}/kvm-deb-stretch-aarch64 ${dir_archive}/${tree}/build-${build}/kvm-deb-stretch-aarch64-orig
@@ -107,9 +112,9 @@ cp -avi ${dir_archive}/ci/${tree}/${ci_build}/ppc64le-debian-11-deb-autobake/ ${
 
 
 # focal-s390x (10.5+)
-ls -d1 ${dir_archive}/${tree}/build-${build}/kvm-deb-bullseye-s390x* # make sure it doesn't exist
+ls -d1 ${dir_archive}/${tree}/build-${build}/kvm-deb-focal-s390x* # make sure it doesn't exist
 ls -d ${dir_archive}/ci/${tree}/${ci_build}/s390x-ubuntu-2004-deb-autobake/ # make sure it does exist
-cp -avi ${dir_archive}/ci/${tree}/${ci_build}/s390x-ubuntu-2004-deb-autobake/ ${dir_archive}/${tree}/build-${build}/kvm-deb-bullseye-ppc64le
+cp -avi ${dir_archive}/ci/${tree}/${ci_build}/s390x-ubuntu-2004-deb-autobake/ ${dir_archive}/${tree}/build-${build}/kvm-deb-focal-s390x
 
 
 
