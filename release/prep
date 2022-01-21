@@ -934,9 +934,9 @@ upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
 #===============================================================================
 upload_to_the_staging_mirror() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   else
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   fi
 }
 
@@ -983,9 +983,9 @@ copy_the_previous_release_to_the_current_release_on_the_mirrors() {
 #===============================================================================
 copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
   else
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${dir_corp}/"
+    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dir_corp}/"
   fi
 }
 
@@ -995,9 +995,9 @@ copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
 #===============================================================================
 upload_corp_dir_to_the_staging_mirror() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   else
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   fi
 }
 
@@ -1010,15 +1010,15 @@ upload_corp_dir_to_the_staging_mirror() {
 upload_to_the_primary_mirror() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   fi
 }
@@ -1036,15 +1036,15 @@ upload_to_the_yum_mirrors() {
 
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     fi
   fi
 
@@ -1180,15 +1180,15 @@ bundles() {
 upload_to_the_corp_mirror_staging_dir() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     fi
   fi
 }
@@ -1228,15 +1228,15 @@ copy_the_corp_mirror_staging_dir_to_prod() {
 upload_to_the_corp_mirror() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*.orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     fi
   fi
 }
