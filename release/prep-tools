@@ -32,7 +32,7 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="bionic buster focal stretch xenial"
+dists_apt="bionic bullseye buster focal stretch xenial"
 dists_rhel="6 7 8"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
@@ -262,7 +262,14 @@ update_xtrabackup_24() {
 
     # Download .deb files and add them to the repository
     for dist in ${dists_apt}; do
+      case $dist in
+        bullseye)
+          file="percona-xtrabackup-24_${xtrabackup_24_ver}-1.buster_amd64.deb"
+          ;;
+        *)
       file="percona-xtrabackup-24_${xtrabackup_24_ver}-1.${dist}_amd64.deb"
+          ;;
+      esac
       runCommand wget -N ${url_xtrabackup_24}/${file}
       runCommand reprepro --basedir=${dir_tools}/apt/ --keepunreferencedfiles includedeb ${dist} ${file}
     done
