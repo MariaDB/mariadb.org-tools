@@ -1,3 +1,4 @@
+serverVersionToInstall= "10.6"
 linux_serverinstall= """
 # Installing server to run tests
 if [ -e /usr/bin/apt ] ; then
@@ -23,13 +24,25 @@ gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
     USEAPT=1
     sudo apt-get install -y software-properties-common gnupg-curl
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu xenial main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu xenial main'
   fi
   if grep -i groovy /etc/os-release ; then
     USEAPT=1
     sudo apt-get install -y software-properties-common
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/10.5/ubuntu groovy main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu groovy main'
+  fi
+  if grep -i impish /etc/os-release ; then
+    USEAPT=1
+    sudo apt-get install -y software-properties-common
+    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu impish main'
+  fi
+  if grep -i hirsute /etc/os-release ; then
+    USEAPT=1
+    sudo apt-get install -y software-properties-common
+    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu hirsute main'
   fi
 fi
 
