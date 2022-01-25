@@ -176,5 +176,5 @@ conncpp_linux_step4_testsrun
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-amd64", "vm-sles125-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
