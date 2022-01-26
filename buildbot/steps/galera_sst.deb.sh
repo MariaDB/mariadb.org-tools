@@ -10,6 +10,24 @@
 # - 'xtrabackup-v2' -- Legacy, currently disabled and no longer supported
 #===============
 
+store_logs() {
+  # Make sure we store all existing logs, whenever we decide to exit game
+  set +e
+  mkdir /home/buildbot/sst_logs
+  sudo chmod uga+r /var/lib/node*/node*.err
+  sudo cp /var/lib/node*/node*.err /home/buildbot/sst_logs
+  if [ "$sst_mode" == "mariabackup" ] ; then
+    mkdir /home/buildbot/sst_logs/mbackup
+    for node in 1 2 3 ; do
+      for log in prepare move backup ; do
+        sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/sst_logs/mbackup/node${node}.mariabackup.${log}.log
+      done
+    done
+    sudo chown -R buildbot:buildbot /home/buildbot/sst_logs
+  fi
+  ls -l /home/buildbot/sst_logs/
+}
+
 # Mandatory variables
 for var in sst_mode arch version_name ; do
   if [ -z "${!var}" ] ; then
@@ -58,6 +76,7 @@ if [ "$sst_mode" == "mariabackup" ] ; then
   echo "Installing $mbackup"
   if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y $mbackup socat" ; then
     echo "Test warning: failed to install MariaBackup"
+    store_logs
     exit 1
   fi
 elif [ "$sst_mode" == "xtrabackup-v2" ] ; then
@@ -66,6 +85,7 @@ elif [ "$sst_mode" == "xtrabackup-v2" ] ; then
   sudo apt-get update
   if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y percona-xtrabackup-24 socat" ; then
     echo "Test warning: could not install XtraBackup, check if it's available for this version/architecture"
+    store_logs
     exit 1
   fi
 fi
@@ -163,6 +183,7 @@ done
 set -x
 if [ "$res" != "0" ] ; then
   echo "ERROR: Failed to start the first node or to create the table"
+  store_logs
   exit 1
 fi
 mysql -uroot -prootpass --port=8301 --protocol=tcp -e "select * from mgc.t1"
@@ -187,6 +208,7 @@ for node in 2 3 ; do
   set -x
   if [ "$res" != "0" ] ; then
     echo "ERROR: Failed to start node $node or to connect to it after the start"
+    store_logs
     exit 1
   fi
   mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1"
@@ -194,16 +216,7 @@ done
 
 mysql -uroot -prootpass --port=8301 --protocol=tcp -e "show status like 'wsrep_cluster_size'"
 
-sudo chmod uga+r /var/lib/node*/node*.err
-if [ "$sst_mode" == "mariabackup" ] ; then
-  mkdir /home/buildbot/mariabackup_logs
-  for node in 1 2 3 ; do
-    for log in prepare move backup ; do
-      sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/mariabackup_logs/node${node}.mariabackup.${log}.log
-    done
-  done
-  sudo chown -R buildbot:buildbot /home/buildbot/mariabackup_logs
-fi
+store_logs
 
 set -e
 mysql -uroot -prootpass --port=8301 --protocol=tcp -e "show status like 'wsrep_cluster_size'" | grep 3
