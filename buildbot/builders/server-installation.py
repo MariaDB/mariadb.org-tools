@@ -11,9 +11,18 @@ fi
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash ; then
   if [ -e /etc/fedora-release ]; then
     source /etc/os-release
+    case $ID$VERSION_ID in fedora35) 
+        sudo sh -c "echo \\"#galera test repo
+[galera]
+name = galera
+baseurl = https://yum.mariadb.org/galera/repo4/rpm/$ID$VERSION_ID-amd64
+gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck = 1\\" > /etc/yum.repos.d/galera.repo"
+        VERSION_ID=34 ;; esac
     sudo sh -c "echo \\"#MariaDB.Org repo
 [mariadb]
 name = MariaDB
+#baseurl = http://yum.mariadb.org/10.5/$ID$VERSION_ID-amd64
 baseurl = http://yum.mariadb.org/10.5/$ID$VERSION_ID-amd64
 gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
