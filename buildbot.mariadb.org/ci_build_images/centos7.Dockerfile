@@ -22,6 +22,7 @@ RUN yum -y --enablerepo=extras install epel-release \
     cmake3 \
     cracklib-devel \
     curl-devel \
+    gnutls-devel \
     java-1.8.0-openjdk \
     java-1.8.0-openjdk-devel \
     java-1.8.0-openjdk-headless \
