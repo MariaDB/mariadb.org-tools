@@ -5,7 +5,7 @@
 
 ARG base_image
 FROM "$base_image"
-ARG mariadb_branch=10.5
+ARG mariadb_branch=10.7
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # This will make apt-get install without question
@@ -24,6 +24,29 @@ RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get -y install --no-install-recommends equivs devscripts curl \
     && curl -skO https://raw.githubusercontent.com/MariaDB/server/$mariadb_branch/debian/control \
+    # skip unavailable deps on Debian 9 \
+    && if grep -q 'stretch' /etc/apt/sources.list; then \
+        sed '/libpmem-dev/d' -i control; \
+        sed '/liburing-dev/d' -i control; \
+        sed '/libzstd-dev/d' -i control; \
+    fi \
+    # skip unavailable deps on Debian 10 \
+    && if grep -q 'buster' /etc/apt/sources.list; then \
+        # libpmem-dev is not available on buster ARM/PPC \
+        if [ "$(uname -m)" != "x86_64" ]; then \
+            sed '/libpmem-dev/d' -i control; \
+        fi; \
+        sed '/liburing-dev/d' -i control; \
+    fi \
+    # skip unavailable deps on Ubuntu 18.04 \
+    && if grep -q 'bionic' /etc/apt/sources.list; then \
+        sed '/libpmem-dev/d' -i control; \
+        sed '/liburing-dev/d' -i control; \
+    fi \
+    # skip unavailable deps on Ubuntu 20.04 \
+    && if grep -q 'focal' /etc/apt/sources.list; then \
+        sed '/liburing-dev/d' -i control; \
+    fi \
     && mk-build-deps -r -i control \
     -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' \
     && apt-get -y build-dep -q mariadb-server \
