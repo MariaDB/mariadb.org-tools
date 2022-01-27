@@ -34,11 +34,11 @@ jobs:
           #   platforms: linux/arm64/v8
           - dockerfile: debian.Dockerfile
             image: debian:9
-            branch: 10.5
+            branch: 10.7
             platforms: linux/386, linux/amd64, linux/arm64/v8
           - dockerfile: debian.Dockerfile
             image: debian:10
-            branch: 10.5
+            branch: 10.7
             platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: debian.Dockerfile
             image: debian:11
@@ -50,11 +50,11 @@ jobs:
             platforms: linux/386, linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: debian.Dockerfile
             image: ubuntu:18.04
-            branch: 10.5
+            branch: 10.7
             platforms: linux/386, linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: debian.Dockerfile
             image: ubuntu:20.04
-            branch: 10.5
+            branch: 10.7
             platforms: linux/amd64, linux/arm64/v8, linux/ppc64le, linux/s390x
           - dockerfile: debian.Dockerfile
             image: ubuntu:21.04
