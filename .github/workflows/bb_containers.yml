@@ -169,10 +169,18 @@ jobs:
           platforms: ${{ matrix.platforms }}
           push: true
           tags: localhost:5000/test/bb-worker:${{ env.TAG }}
-      - name: Check container
+      - name: Check multi-arch container
         run: |
-          docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} /home/buildbot/.local/bin/buildbot-worker --version
-          docker run -i localhost:5000/test/bb-worker:${{ env.TAG }} dumb-init /home/buildbot/.local/bin/twistd --pidfile= -y /home/buildbot/buildbot.tac
+          for p in ${{ matrix.platforms }}; do
+            platform="${p/,/}"
+            image="localhost:5000/test/bb-worker:${{ env.TAG }}"
+            msg="Testing docker image $image on platform $platform"
+            line="${msg//?/=}"
+            printf "\n${line}\n${msg}\n${line}\n"
+            docker pull -q --platform "$platform" "$image"
+            docker run -i "$image" /home/buildbot/.local/bin/buildbot-worker --version
+            docker run -i "$image" dumb-init /home/buildbot/.local/bin/twistd --pidfile= -y /home/buildbot/buildbot.tac
+          done
       - name: Check for registry credentials
         if: >
           github.ref == 'refs/heads/master' &&
