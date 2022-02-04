@@ -28,9 +28,9 @@ case "$branch" in
   ;;
 esac
 
-sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs .' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >> /etc/apt/sources.list"
 
-wget "https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/deb/Packages.gz" | gunzip -c > Packages
+wget "https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs/Packages.gz" | gunzip -c > Packages
 # Due to MDEV-14622 and its effect on Spider installation,
 # Spider has to be installed separately after the server
 package_list=`grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | xargs`
