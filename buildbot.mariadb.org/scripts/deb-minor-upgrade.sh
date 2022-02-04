@@ -285,7 +285,7 @@ else
   sudo rm /etc/apt/sources.list.d/mariadb_upgrade.list
 fi
 sudo rm /etc/apt/preferences.d/release
-sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs .' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >> /etc/apt/sources.list"
 # Sometimes apt-get update fails because the repo is being updated.
 res=1
 for i in 1 2 3 4 5 6 7 8 9 10 ; do
