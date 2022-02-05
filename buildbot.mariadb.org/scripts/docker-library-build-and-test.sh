@@ -2,12 +2,6 @@
 
 set -xeuvo pipefail
 
-if [[ ! $branch =~ ^preview ]] &&
-   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
-   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
-then
-  exit 0
-fi
 
 # container builds copy permissions and
 # depend on go+rx permissions
@@ -30,6 +24,13 @@ buildername=${3:-amd64-ubuntu-2004-deb-autobake}
 master_branch=${mariadb_version%\.*}
 commit=${4:-0}
 branch=${5:-${master_branch}}
+
+if [[ ! $branch =~ ^preview ]] &&
+   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
+   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
+then
+  exit 0
+fi
 
 # keep in sync with docker-cleanup script
 if [[ $branch =~ ^preview ]]; then
