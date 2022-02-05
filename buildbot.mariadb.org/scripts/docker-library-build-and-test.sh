@@ -2,6 +2,13 @@
 
 set -xeuvo pipefail
 
+if [[ ! $branch =~ ^preview ]] &&
+   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
+   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
+then
+  exit 0
+fi
+
 # container builds copy permissions and
 # depend on go+rx permissions
 umask 0002
