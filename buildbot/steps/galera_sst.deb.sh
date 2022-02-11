@@ -14,8 +14,11 @@ store_logs() {
   # Make sure we store all existing logs, whenever we decide to exit game
   set +e
   mkdir /home/buildbot/sst_logs
-  sudo chmod uga+r /var/lib/node*/node*.err
-  sudo cp /var/lib/node*/node*.err /home/buildbot/sst_logs
+  # It looks like buildbot may be enveloping the path into single quotes
+  # if it has wildcards, as in '/var/lib/node*/node*.err'.
+  # Trying to get rid of the wildcards
+  sudo chmod uga+r /var/lib/node1/node1.err /var/lib/node2/node2.err /var/lib/node3/node3.err
+  sudo cp /var/lib/node1/node1.err /var/lib/node2/node2.err /var/lib/node3/node3.err /home/buildbot/sst_logs
   if [ "$sst_mode" == "mariabackup" ] ; then
     mkdir /home/buildbot/sst_logs/mbackup
     for node in 1 2 3 ; do
