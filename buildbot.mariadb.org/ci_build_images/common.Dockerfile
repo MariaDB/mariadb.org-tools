@@ -26,6 +26,10 @@ RUN gosu buildbot curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >/tm
     && pip3 install --no-cache-dir -U pip \
     && gosu buildbot curl -so /home/buildbot/requirements.txt \
     https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/ci_build_images/requirements.txt \
+    # https://jira.mariadb.org/browse/MDBF-329 \
+    && if grep -q "stretch" /etc/apt/sources.list; then \
+        gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location incremental"; \
+    fi \
     && gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location -r /home/buildbot/requirements.txt"
 
 # TODO: sync with BB steps (move to /home/buildbot)

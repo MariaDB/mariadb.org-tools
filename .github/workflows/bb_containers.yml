@@ -75,9 +75,9 @@ jobs:
           - dockerfile: centos7.Dockerfile
             image: centos:7
             platforms: linux/amd64, linux/arm64/v8
-          - dockerfile: centos.Dockerfile
-            image: centos:8
-            platforms: linux/amd64, linux/arm64/v8
+          # - dockerfile: centos.Dockerfile
+          #   image: centos:8
+          #   platforms: linux/amd64, linux/arm64/v8
           - dockerfile: rhel7.Dockerfile
             image: rhel7
             platforms: linux/amd64
