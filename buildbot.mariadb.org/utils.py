@@ -11,9 +11,9 @@ from datetime import timedelta
 
 from constants import *
 
-DEVELOPMENT_BRANCH="10.7"
+DEVELOPMENT_BRANCH="10.9"
 RELEASABLE_BRANCHES="5.5 10.0 10.1 10.2 10.3 10.4 10.5 10.6 bb-5.5-release bb-10.0-release bb-10.1-release bb-10.2-release bb-10.3-release bb-10.4-release bb-10.5-release bb-10.6-release"
-savedPackageBranches= ["5.5", "10.0", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "bb-*-release", "bb-10.2-compatibility", "preview-*"]
+savedPackageBranches= ["5.5", "10.0", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "10.9", "bb-*-release", "bb-10.2-compatibility", "preview-*"]
 # The trees for which we save binary packages.
 releaseBranches = ["bb-*-release", "preview-10.*"]
 
