@@ -87,6 +87,7 @@ ci_mappings_4="
 ci_mappings_3="
        gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
      gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
+    gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
 "
 
 
@@ -168,6 +169,7 @@ deb_dists_full_3="
   focal-aarch64
   focal-amd64
   focal-ppc64le
+  focal-s390x
 
   stretch-aarch64
   stretch-amd64
@@ -195,6 +197,7 @@ deb_dists_full_4="
   focal-aarch64
   focal-amd64
   focal-ppc64le
+  focal-s390x
 
   hirsute-aarch64
   hirsute-amd64
@@ -228,6 +231,7 @@ rpm_dists_3="
   centos8-amd64
 
   rhel8-amd64
+  rhel8-aarch64
   rhel8-ppc64le
 
   opensuse150-amd64
@@ -539,17 +543,14 @@ prepare_the_deb_packages() {
     RC rm -rf "${dir_release}/${dir_name}-signed-ent/deb"
   fi
   RC mkdir -v ${dir_release}/${dir_name}/deb
-  RC cd ${dir_release}/${dir_name}/deb/
 
   # Copy over the deb packages
   for dist in ${deb_dists_full}; do
     message "Copying ${dist}"
-    RC cp -avi ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/binary/galera* ${dir_release}/${dir_name}/deb/
-    if compgen -G "${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/galera*changes" > /dev/null ; then
-      RC cp -avi ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/galera*changes ${dir_release}/${dir_name}/deb/
-    fi
+    find ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/ -name 'galera*' -exec cp -avi {} ${dir_release}/${dir_name}/deb/ \;
   done
 
+  RC cd ${dir_release}/${dir_name}/deb/
 
   # sum the deb files prior to copying them to -signed and -signed-ent
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./galera* >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
