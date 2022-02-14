@@ -62,13 +62,13 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [hirsute]=kvm-deb-hirsute-amd64 [impish]=kvm-deb-impish-amd64)
+declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [impish]=kvm-deb-impish-amd64)
 
 declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [hirsute]=kvm-deb-hirsute-aarch64)
+declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [hirsute]=kvm-deb-hirsute-ppc64le)
+declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le)
 
 declare -A builder_dir_ci_s390x=([focal]=s390x-ubuntu-2004-deb-autobake)
 declare -A builder_dir_bb_s390x=([focal]=kvm-deb-focal-s390x)
@@ -120,8 +120,8 @@ case ${ARCHDIR} in
   *10.4*)
     ubuntu_dists="bionic focal"
     ;;
-  *10.5*|*10.6*|*10.7*)
-    ubuntu_dists="bionic focal hirsute impish"
+  *10.5*|*10.6*|*10.7*|*10.8*)
+    ubuntu_dists="bionic focal impish"
     ;;
   *)
     line
@@ -183,8 +183,8 @@ for dist in ${ubuntu_dists}; do
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'bionic'|'focal'|'hirsute'|'impish')
-      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
+    'bionic'|'focal'|'impish')
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb-*_amd64.changes)
       ;;
   esac
 
@@ -200,7 +200,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'hirsute')
+    'bionic'|'focal'|'impish')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
