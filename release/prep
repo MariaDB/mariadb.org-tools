@@ -72,7 +72,7 @@ fi
 
 set_build_dirs_variables() {
   case ${major} in
-    10.6|10.7)
+    10.6|10.7|10.8|10.9)
       build_dirs_x86=""
       build_dirs_x86_64="
         kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
@@ -254,6 +254,41 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
        ;;
   esac
 }
+
+#-------------------------------------------------------------------------------
+# Dirs for buildbot.mariadb.org
+#-------------------------------------------------------------------------------
+#ci_dirs_102="aarch64-debian-9-deb-autobake"
+#ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
+ci_dirs_102="kvm-deb-stretch-aarch64:aarch64-debian-9-deb-autobake kvm-deb-bionic-aarch64:aarch64-ubuntu-1804-deb-autobake kvm-rpm-centos74-aarch64:aarch64-centos-7-rpm-autobake"
+ci_dirs_103="${ci_dirs_102} kvm-deb-buster-aarch64:aarch64-debian-10-deb-autobake kvm-deb-focal-aarch64:aarch64-ubuntu-2004-deb-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake"
+ci_dirs_104="${ci_dirs_103}"
+ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-impish-aarch64:aarch64-ubuntu-2110-deb-autobake kvm-deb-hirsute-aarch64:aarch64-ubuntu-2104-deb-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake"
+ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
+ci_dirs_107="${ci_dirs_106}"
+ci_dirs_108="${ci_dirs_107}"
+
+
+#-------------------------------------------------------------------------------
+# Dirs for buildbot.askmonty.org 
+#-------------------------------------------------------------------------------
+
+bb_dirs_102="kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-deb-stretch-amd64: kvm-deb-stretch-ppc64le: kvm-deb-stretch-x86: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
+bb_dirs_103="${bb_dirs_102} kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
+bb_dirs_104="${bb_dirs_103}"
+bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-deb-impish-amd64: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
+bb_dirs_106="${bb_dirs_105}"
+bb_dirs_107="${bb_dirs_106}"
+bb_dirs_108="${bb_dirs_107}"
+
+full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
+full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
+full_dirs_104="${bb_dirs_104} ${ci_dirs_104}"
+full_dirs_105="${bb_dirs_105} ${ci_dirs_105}"
+full_dirs_106="${bb_dirs_106} ${ci_dirs_106}"
+full_dirs_107="${bb_dirs_107} ${ci_dirs_107}"
+full_dirs_108="${bb_dirs_108} ${ci_dirs_108}"
+
 
 ## Enterprise builds should not build solaris10 for now
 ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
@@ -635,7 +670,7 @@ message() {
 
 lowkey_message() {
   message="${@}"
-  echo "+ ${message}"
+  echo -e "+ ${message}"
 }
 
 
@@ -763,12 +798,12 @@ rsync_wrapper_primary() {
 upload_this_release_to_the_buildmaster() {
   important_message "Transferring files from here to the ${buildmaster}"
   message "Uploading release to ${buildmaster}..."
-  rsync_wrapper "-av --delete-after ${dir_release}/${dir_name} ${buildmaster}:${dir_release}/"
+  rsync_wrapper "-av --delete-before ${dir_release}/${dir_name} ${buildmaster}:${dir_release}/"
 
   shouldI update_the_STATUS_file
 
   message "Uploading corp release to ${buildmaster}..."
-  rsync_wrapper "-av --delete-after ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp}/"
+  rsync_wrapper "-av --delete-before ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp}/"
   # All done
 }
 
@@ -821,17 +856,17 @@ pull_this_release_from_the_buildmaster() {
 
   # We can now rsync the builds from the buildmaster
   message "Transferring kvm builds from ${buildmaster}..."
-  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
+  rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
 
-  message "Transferring other builds from ${buildmaster}..."
-  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
+  #message "Transferring other builds from ${buildmaster}..."
+  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
  
   message "Transferring galera from ${buildmaster}..."
   for galera_version in ${ver_galera_real}; do
-    rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}* ${dir_galera}/"
+    rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}* ${dir_galera}/"
   done
-  #rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}-signed ${dir_galera}/"
-  #rsync_wrapper "-av --delete-after ${buildmaster}:${dir_galera}/galera-${galera_version}-signed-ent ${dir_galera}/"
+  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed ${dir_galera}/"
+  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed-ent ${dir_galera}/"
 
   # We should be done now
 
@@ -839,52 +874,105 @@ pull_this_release_from_the_buildmaster() {
 
 pull_this_release_from_ci() {
   remote_prep="yes"
-  ci_release=true
-
-  ci_dirs_102="aarch64-debian-9-deb-autobake"
-  ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
-  ci_dirs_104="${ci_dirs_103}"
-  ci_dirs_105="${ci_dirs_104} aarch64-fedora-33-rpm-autobake aarch64-fedora-34-rpm-autobake amd64-debian-sid-deb-autobake aarch64-debian-sid-deb-autobake ppc64le-debian-sid-deb-autobake aarch64-ubuntu-2104-deb-autobake aarch64-debian-11-deb-autobake ppc64le-debian-11-deb-autobake s390x-ubuntu-2004-deb-autobake"
-  ci_dirs_106="${ci_dirs_105}"
-  ci_dirs_107="${ci_dirs_106}"
-
-  ci_dirs="ci_dirs_${major//./}"
-
+  #ci_release=true
   important_message "Transferring files on ${ci} to here"
 
   lowkey_message "Making sure local directories exist..."
 
-  if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum} ]; then
-    mkdir -vp ${dir_archive}/ci/${tree}/${tarbuildnum}
+  if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum} ]; then
+    mkdir -vp ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
   fi
 
   runCommand pushd ${dir_archive}/ci/${tree}
 
     message "Transferring builds from ${ci}..."
     set +e
-    for ci_dir in ${!ci_dirs} ; do
-    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tarbuildnum}/${ci_dir}/ ; then
-      message "Downloaded from ci"
+    for ci_pair in ${!ci_dirs} ; do
+      ci_dir=(${ci_pair//:/ })
+    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
+      message "Downloaded ${ci_dir[1]} from ci"
     else
-      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${tarbuildnum}/${ci_dir}/
+      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
     fi
     done
     set -e
-    runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
+    runCommand find ${ci_tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
   runCommand popd
-  runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
-  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}
-  message "Done downloading release to ${dir_archive}/ci/${tree}/${tarbuildnum}"
+  #runCommand tree ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
+  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
+  message "Done downloading release to ${dir_archive}/ci/${tree}/${ci_tarbuildnum}"
+  shouldI verify_the_ci_download
 }
 
+verify_all_needed_ci_dirs_are_present() {
+  message "Checking for presence of all needed ci builds..."
+  should_I_quit=0
+  for ci_pair in ${!ci_dirs}; do
+    ci_dir=(${ci_pair//:/ })
+    dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
+    if [ -d ${dir_source} ]; then
+      lowkey_message "\e[32m✔  ${ci_dir[1]}\e[0m"
+    else
+      lowkey_message "\e[31m⚠  ${ci_dir[1]}\e[0m"
+      should_I_quit=1
+    fi
+  done
+  if ((${should_I_quit})) ; then
+    important_message "Some needed builds are missing, quitting..."
+    exit 8
+  fi
+}
+
+verify_all_needed_dirs_are_present() {
+  message "Checking for presence of all needed builds..."
+  should_I_quit=0
+  for dir_pair in ${!full_dirs}; do
+    needed_dir=(${dir_pair//:/ })
+    dir_source=${dir_archive}/${tree}/build-${tarbuildnum}/${needed_dir[0]}
+    if [ -d ${dir_source} ]; then
+      lowkey_message "\e[32m✔  ${needed_dir[0]}\e[0m"
+    else
+      lowkey_message "\e[31m⚠  ${needed_dir[0]}\e[0m"
+      should_I_quit=1
+    fi
+  done
+  if ((${should_I_quit})) ; then
+    important_message "Some needed builds are missing, quitting..."
+    exit 8
+  fi
+}
+
+copy_ci_downloads_to_buildmaster_dir() {
+  verify_all_needed_ci_dirs_are_present
+  message "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
+
+  for ci_pair in ${!ci_dirs}; do
+    ci_dir=(${ci_pair//:/ })
+    dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
+    dir_dest=${dir_archive}/${tree}/build-${tarbuildnum}/${ci_dir[0]}
+    if [ -d ${dir_dest} ]; then
+      message "${dir_dest} already exists, moving..."
+      runCommand mv -vi ${dir_dest} ${dir_dest}_orig
+    fi
+    if [ -d ${dir_source} ]; then
+      runCommand cp -ai ${dir_source} ${dir_dest}
+    else
+      important_message "${dir_source} does not exist"
+      exit 1
+    fi
+  done
+}
+
+
+#===  FUNCTION  ================================================================
 mark_this_release_as_a_ci_release() {
   ci_release=true
 }
 
 verify_the_ci_download() {
   message "Verifying files downloaded from ${ci}..."
-  for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -name sha256sums.txt) ; do
+  for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -name sha256sums.txt) ; do
     runCommand pushd $(dirname ${shafile})
     case $shafile in
       *windows*)
@@ -916,7 +1004,7 @@ start_the_ssh-agent() {
 #   DESCRIPTION:  Transfer bundles to the staging mirror
 #===============================================================================
 upload_the_bundles_to_the_staging_mirror() {
-  rsync_wrapper "-av --delete-after ${dir_bundles}/mariadb*${num}* ${staging_mirror}:${dir_bundles}/"
+  rsync_wrapper "-av --delete-before ${dir_bundles}/mariadb*${num}* ${staging_mirror}:${dir_bundles}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -925,7 +1013,7 @@ upload_the_bundles_to_the_staging_mirror() {
 #                 mirror
 #===============================================================================
 upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
-  rsync_wrapper_staging "-av --delete-after ${dir_bundles}/mariadb*${num}* ${corp_mirror}:${corp_bundles_path}/"
+  rsync_wrapper_staging "-av --delete-before ${dir_bundles}/mariadb*${num}* ${corp_mirror}:${corp_bundles_path}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -934,9 +1022,9 @@ upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
 #===============================================================================
 upload_to_the_staging_mirror() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
+    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   else
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
+    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
   fi
 }
 
@@ -983,9 +1071,9 @@ copy_the_previous_release_to_the_current_release_on_the_mirrors() {
 #===============================================================================
 copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
+    rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
   else
-    rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dir_corp}/"
+    rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dir_corp}/"
   fi
 }
 
@@ -995,9 +1083,9 @@ copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
 #===============================================================================
 upload_corp_dir_to_the_staging_mirror() {
   if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   else
-    rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   fi
 }
 
@@ -1010,15 +1098,15 @@ upload_corp_dir_to_the_staging_mirror() {
 upload_to_the_primary_mirror() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   fi
 }
@@ -1036,21 +1124,21 @@ upload_to_the_yum_mirrors() {
 
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
     fi
   fi
 
   set -x
   for yum_mirror in ${yum_mirrors} ;do 
-    ssh -t -t ${yum_primary_mirror} "set -x;rsync -a --info=progress2 --delete-after ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
+    ssh -t -t ${yum_primary_mirror} "set -x;rsync -a --info=progress2 --delete-before ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
   done
   set +x
 }
@@ -1180,15 +1268,15 @@ bundles() {
 upload_to_the_corp_mirror_staging_dir() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
     fi
   fi
 }
@@ -1228,15 +1316,15 @@ copy_the_corp_mirror_staging_dir_to_prod() {
 upload_to_the_corp_mirror() {
   if [ "${skip_staging}" = "yes" ]; then
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     else
-      rsync_wrapper_staging "-av --delete-after --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
+      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
     fi
   fi
 }
@@ -1451,7 +1539,7 @@ generate_the_file_list_pickle_for_org_downloads() {
 #-------------------------------------------------------------------------------
 
 # The first thing we need to do is parse the options
-while getopts 'b:deghlr:t:v:y' OPTION
+while getopts 'b:c:deghlr:t:v:y' OPTION
 do
   case $OPTION in
     d)  # Not implemented yet
@@ -1490,6 +1578,10 @@ do
       ;;
     b)  # The tarbuildnum of the release
       tarbuildnum="${OPTARG}"
+      tarflag=true
+      ;;
+    c)  # The ci tarbuildnum of the release
+      ci_tarbuildnum="${OPTARG}"
       tarflag=true
       ;;
     y)  # Actually run this script (helps prevent accidental runs)
@@ -1533,6 +1625,11 @@ loadDefaults                                    # Load Default paths and vars
 # create major variable that has the base major version of mariadb (e.g. 10.3)
 major=${num%.*}
 
+# set various ${xx_dirs} variables to the appropriate version
+ci_dirs="ci_dirs_${major//./}"
+bb_dirs="bb_dirs_${major//./}"
+full_dirs="full_dirs_${major//./}"
+
 # Set the real version of galera to use
 case ${major} in
   10.2|10.3)
@@ -1561,9 +1658,12 @@ shouldI pull_this_release_from_the_buildmaster
 
 shouldI pull_this_release_from_ci
 
-shouldI verify_the_ci_download
 
-shouldI mark_this_release_as_a_ci_release
+shouldI copy_ci_downloads_to_buildmaster_dir
+
+#shouldI mark_this_release_as_a_ci_release
+
+shouldI verify_all_needed_dirs_are_present
 
 important_message "Creating the ${version} Release"
 
@@ -1635,8 +1735,8 @@ if [ ${log} = "yes" ]; then
 fi
 
 #exit 0;
-echo
-shouldI start_the_ssh-agent
+#echo
+#shouldI start_the_ssh-agent
 
 echo
 # start the gpg-agent if it's not already started
@@ -1742,10 +1842,14 @@ if [ "${create_bintar}" != "no" ]; then
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
           # for the quantal bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
+            if [ -e *-linux-x86_64.tar.gz ] ; then
             runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
+            fi
             galera_arch="x86_64"
           else
+            if [ -e *-linux-i686.tar.gz ] ; then
             runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
+            fi
             galera_arch="i686"
           fi
 
@@ -1754,12 +1858,14 @@ if [ "${create_bintar}" != "no" ]; then
             # and repack the bintar
             runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
             runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+            if [ -d *-linux-${galera_arch} ]; then
             runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+            fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
             message "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
           else
@@ -1795,10 +1901,14 @@ if [ "${create_bintar}" != "no" ]; then
         elif [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-systemd-x86" ]; then
           # for the systemd bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ]; then
+            if [ -e *-linux-x86_64.tar.gz ]; then
             runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
+            fi
             galera_arch="x86_64"
           else
+            if [ -e *-linux-i686.tar.gz ]; then
             runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
+            fi
             galera_arch="i686"
           fi
 
@@ -1807,12 +1917,14 @@ if [ "${create_bintar}" != "no" ]; then
             # and repack the bintar
             runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
             runCommand mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+            if [ -d *-linux-${galera_arch} ]; then
             runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+            fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
             message "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-            runCommand rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
             runCommand rm -rf ${version}-linux-systemd-${galera_arch}
           else
@@ -1870,8 +1982,8 @@ if [ "${create_bintar}" != "no" ]; then
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
             message "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-            runCommand rsync -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+            runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+            runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
@@ -2014,7 +2126,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
     line
     echo "+ transfering Windows packages..."
     line
-    for arch in win32 winx64; do
+    for arch in winx64; do
       if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
         mkdir ${dir_release}/${dir_name}/${arch}-packages
       fi
@@ -2036,7 +2148,6 @@ if [ "${galera_suffix}" != "-galera" ]; then
           if [ "${pkgtype}" = "msi" ];then
           case ${arch} in
             winx64) windir=windows ;;
-            win32) windir=win32 ;;
           esac
           runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
           fi
@@ -2082,7 +2193,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       fi
     done
     message "Generating Windows Checksums and Signatures..."
-    for arch in win32 winx64; do
+    for arch in winx64; do
       pushd ${dir_release}/${dir_name}/${arch}-packages
       pwd
       if ${ci_release};then
@@ -2323,9 +2434,9 @@ else
 
     # Rsync a copy of the previous release to ${HOME}
     if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-after --exclude=*updateinfo.xml.gz ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-before --exclude=*updateinfo.xml.gz ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     else
-      rsync_wrapper "-av --delete-after --exclude=*updateinfo.xml.gz --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-before --exclude=*updateinfo.xml.gz --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
