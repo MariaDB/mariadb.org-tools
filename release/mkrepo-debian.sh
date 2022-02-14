@@ -270,7 +270,10 @@ case ${TREE} in
   '10.4'|'bb-10.4-release')
     debian_dists="stretch buster"
     ;;
-  '10.5'|'bb-10.5-release'|'10.6'|'bb-10.6-release'|'10.7'|'bb-10.7-release')
+  '10.5'|'bb-10.5-release')
+    debian_dists="stretch buster bullseye"
+    ;;
+  '10.6'|'bb-10.6-release'|'10.7'|'bb-10.7-release'|*10.8*)
     debian_dists="stretch buster bullseye sid"
     ;;
 esac
@@ -296,8 +299,8 @@ for dist in ${debian_dists}; do
     'jessie')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
-    'stretch'|'buster'|'sid')
-      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
+    'stretch'|'buster'|'bullseye'|'sid')
+      runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb-*_amd64.changes)
       ;;
     * )
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
