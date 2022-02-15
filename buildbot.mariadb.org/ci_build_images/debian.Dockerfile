@@ -64,7 +64,6 @@ RUN apt-get update \
     libboost-dev \
     libboost-filesystem-dev \
     libboost-program-options-dev \
-    libdistro-info-perl \
     libffi-dev \
     libssl-dev \
     python3-dev \
@@ -73,6 +72,4 @@ RUN apt-get update \
     scons \
     sudo  \
     wget \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+    && apt-get clean
