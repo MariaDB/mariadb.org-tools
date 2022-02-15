@@ -22,7 +22,7 @@ RUN if grep -q "ID=debian" /etc/os-release; then \
 # see: https://cryptography.io/en/latest/installation/
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get -y install --no-install-recommends equivs devscripts curl \
+    && apt-get -y install --no-install-recommends curl devscripts equivs \
     && curl -skO https://raw.githubusercontent.com/MariaDB/server/$mariadb_branch/debian/control \
     # skip unavailable deps on Debian 9 \
     && if grep -q 'stretch' /etc/apt/sources.list; then \
@@ -64,6 +64,7 @@ RUN apt-get update \
     libboost-dev \
     libboost-filesystem-dev \
     libboost-program-options-dev \
+    libdistro-info-perl \
     libffi-dev \
     libssl-dev \
     python3-dev \
