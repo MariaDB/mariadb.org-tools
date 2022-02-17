@@ -10,6 +10,163 @@
 # - 'xtrabackup-v2' -- Legacy, currently disabled and no longer supported
 #===============
 
+# Setting the path for some utilities on CentOS
+export PATH="$PATH:/usr/sbin:/usr/bin:/sbin:/bin"
+
+commandex()
+{
+    if [ -n "$BASH_VERSION" ]; then
+        command -v "$1" || :
+    elif [ -x "$1" ]; then
+        echo "$1"
+    else
+        which "$1" || :
+    fi
+}
+
+check_sockets_utils()
+{
+    lsof_available=0
+    sockstat_available=0
+    ss_available=0
+
+    [ -n "$(commandex lsof)" ] && lsof_available=1
+    [ -n "$(commandex sockstat)" ] && sockstat_available=1
+    [ -n "$(commandex ss)" ] && ss_available=1
+
+    if [ $lsof_available -eq 0 -a \
+         $sockstat_available -eq 0 -a \
+         $ss_available -eq 0 ]
+    then
+        echo "Neither lsof, nor sockstat or ss tool was found in" \
+             "the PATH. Make sure you have it installed."
+        store_logs
+        exit 1
+    fi
+}
+
+check_sockets_utils
+
+#
+# Check if the port is in the "listen" state.
+# The first parameter is the PID of the process that should
+# listen on the port - if it is not known, you can specify
+# an empty string or zero.
+# The second parameter is the port number.
+# The third parameter is a list of the names of utilities
+# (via "|") that can listen on this port during the state
+# transfer.
+#
+check_port()
+{
+    local pid="${1:-0}"
+    local port="$2"
+    local utils="$3"
+
+    [ $pid -le 0 ] && pid='[0-9]+'
+
+    local rc=1
+
+    if [ $lsof_available -ne 0 ]; then
+        lsof -Pnl -i ":$port" 2>/dev/null | \
+        grep -q -E "^($utils)[^[:space:]]*[[:space:]]+$pid[[:space:]].*\\(LISTEN\\)" && rc=0
+    elif [ $sockstat_available -ne 0 ]; then
+        local opts='-p'
+        if [ "$OS" = 'FreeBSD' ]; then
+            # sockstat on FreeBSD requires the "-s" option
+            # to display the connection state:
+            opts='-sp'
+        fi
+        sockstat "$opts" "$port" 2>/dev/null | \
+        grep -q -E "[[:space:]]+($utils)[^[:space:]]*[[:space:]]+$pid[[:space:]].*[[:space:]]LISTEN" && rc=0
+    elif [ $ss_available -ne 0 ]; then
+        ss -nlpH "( sport = :$port )" 2>/dev/null | \
+        grep -q -E "users:\\(.*\\(\"($utils)[^[:space:]]*\"[^)]*,pid=$pid(,[^)]*)?\\)" && rc=0
+    else
+        echo "Unknown sockets utility"
+        store_logs
+        exit 1
+    fi
+
+    return $rc
+}
+
+check_pid_and_port()
+{
+    local pid="$1"
+    local addr="$2"
+    local port="$3"
+
+    local utils='mysqld|mariadbd'
+
+    if ! check_port "$pid" "$port" "$utils"; then
+        local port_info
+        local busy=0
+
+        if [ $lsof_available -ne 0 ]; then
+            port_info=$(lsof -Pnl -i ":$port" 2>/dev/null | \
+                        grep -F '(LISTEN)')
+            echo "$port_info" | \
+            grep -q -E "[[:space:]](\\*|\\[?::\\]?):$port[[:space:]]" && busy=1
+        else
+            local filter='([^[:space:]]+[[:space:]]+){4}[^[:space:]]+'
+            if [ $sockstat_available -ne 0 ]; then
+                local opts='-p'
+                if [ "$OS" = 'FreeBSD' ]; then
+                    # sockstat on FreeBSD requires the "-s" option
+                    # to display the connection state:
+                    opts='-sp'
+                    # in addition, sockstat produces an additional column:
+                    filter='([^[:space:]]+[[:space:]]+){5}[^[:space:]]+'
+                fi
+                port_info=$(sockstat "$opts" "$port" 2>/dev/null | \
+                    grep -E '[[:space:]]LISTEN' | grep -o -E "$filter")
+            else
+                port_info=$(ss -nlpH "( sport = :$port )" 2>/dev/null | \
+                    grep -F 'users:(' | grep -o -E "$filter")
+            fi
+            echo "$port_info" | \
+            grep -q -E "[[:space:]](\\*|\\[?::\\]?):$port\$" && busy=1
+        fi
+
+        if [ $busy -eq 0 ]; then
+            if ! echo "$port_info" | grep -qw -F "[$addr]:$port" && \
+               ! echo "$port_info" | grep -qw -F -- "$addr:$port"
+            then
+                if [ -n "$pid" ] && ! ps -p $pid >/dev/null 2>&1; then
+                    echo "server daemon (PID: $pid) terminated unexpectedly."
+                    store_logs
+                    exit 1
+                fi
+                return 1
+            fi
+        fi
+
+        if ! check_port $pid "$port" "$utils"; then
+            echo "server daemon port '$port'" \
+                 "has been taken by another program"
+            store_logs
+            exit 1
+        fi
+    fi
+
+    return 0
+}
+
+wait_port()
+{
+    local pid="$1"
+    local addr="$2"
+    local port="$3"
+    for i in {0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29}; do
+        if check_pid_and_port "$pid" "$addr" "$port"; then
+            break
+        fi
+        echo "wait pid=${pid:-ANY} for port=$port..."
+        sleep 2
+    done
+}
+
 store_logs() {
   # Make sure we store all existing logs, whenever we decide to exit game
   set +e
@@ -176,8 +333,9 @@ sudo mysqld_safe --defaults-extra-file=/home/buildbot/node1.cnf --user=mysql --w
 res=1
 set +x
 echo "Waiting till the first node comes up..."
-for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ; do
-  sleep 2
+for i in 1 2 3 4 5 ; do
+  wait_port "" "127.0.0.1" "8301"
+  sleep 3
   if mysql -uroot -prootpass --port=8301 --protocol=tcp -e "create database mgc; create table mgc.t1 (i int); insert into mgc.t1 values (1)" ; then
     res=0
     break
@@ -194,14 +352,12 @@ mysql -uroot -prootpass --port=8301 --protocol=tcp -e "select * from mgc.t1"
 # We can't start both nodes at once, because it causes rsync port conflict
 # (and maybe some other SST methods will have problems too)
 for node in 2 3 ; do
-  if [ "$sst_mode" == "rsync" ] ; then
-    sudo killall rsync
-  fi
   sudo mysqld_safe --defaults-extra-file=/home/buildbot/node$node.cnf --user=mysql &
   res=1
   set +x
   echo "Waiting till node $node comes up..."
-  for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ; do
+  for i in 1 2 3 4 5 ; do
+    wait_port "" "127.0.0.1" "830$node"
     sleep 3
     if mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1" ; then
       res=0
