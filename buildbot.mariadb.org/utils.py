@@ -184,6 +184,14 @@ def hasEco(props):
             return True
     return False
 
+def hasCompat(step):
+    builderName = str(step.getProperty("buildername"))
+
+    # For s390x there are no compat files
+    if 's390x' in builderName:
+        return False
+    return True
+
 @util.renderer
 def getDockerLibraryNames(props):
     return builders_dockerlibrary[0]
