@@ -79,9 +79,9 @@ jobs:
           - dockerfile: centos7.Dockerfile
             image: centos:7
             platforms: linux/amd64, linux/arm64/v8
-          # #- dockerfile: centos.Dockerfile
-          # #  image: centos:8
-          # #  platforms: linux/amd64, linux/arm64/v8
+          - dockerfile: centos.Dockerfile
+            image: quay.io/centos/centos:stream8
+            platforms: linux/amd64, linux/arm64/v8
           - dockerfile: rhel7.Dockerfile
             image: rhel7
             platforms: linux/amd64
@@ -107,7 +107,9 @@ jobs:
             exit 1
           }
           TAG_TMP=${{ matrix.image }}
-          if [[ $TAG_TMP = "ubi8" ]]; then
+          if [[ $TAG_TMP = "quay.io/centos/centos:stream8" ]]; then
+            echo "TAG=centos-stream8" >>$GITHUB_ENV
+          elif [[ $TAG_TMP = "ubi8" ]]; then
             echo "TAG=rhel8" >>$GITHUB_ENV
           else
             echo "TAG=${TAG_TMP/:/}" >>$GITHUB_ENV
