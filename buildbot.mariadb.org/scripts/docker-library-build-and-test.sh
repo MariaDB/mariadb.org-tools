@@ -142,8 +142,6 @@ if [[ $master_branch =~ 10.[234] ]]; then
 else
   file=/etc/mysql/mariadb.cnf
 fi
-# Set mariadb version according to a version that looks similar to existing pattern, except with a commit id.
-buildah run --add-history $container sed -i -e '/^\[mariadb/a version='"${mariadb_version}-MariaDB-${feature:-${commit}}" $file
 
 if [[ "$feature" =~ MDEV-12933-provider-plugins ]]; then
   buildah run --add-history "$container" sh -c \
