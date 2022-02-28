@@ -8,7 +8,7 @@ set -xeuvo pipefail
 umask 0002
 if [ -d mariadb-docker ]; then
   pushd mariadb-docker
-  git fetch --ff-only
+  git fetch
   git checkout origin/next
   popd
 else
