@@ -8,10 +8,11 @@ set -xeuvo pipefail
 umask 0002
 if [ -d mariadb-docker ]; then
   pushd mariadb-docker
-  git pull --ff-only
+  git fetch --ff-only
+  git checkout origin/next
   popd
 else
-  git clone https://github.com/MariaDB/mariadb-docker.git
+  git clone --branch next https://github.com/MariaDB/mariadb-docker.git
   pushd mariadb-docker
   git config pull.ff only
   popd
