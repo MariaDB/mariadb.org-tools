@@ -27,15 +27,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # # TODO: missing ppc64le/debian:9 image
-          # # TODO: problem with pip
-          # # - dockerfile: rhel7.Dockerfile
-          # #   image: rhel7-aarch64
-          # #   platforms: linux/arm64/v8
           - dockerfile: debian.Dockerfile
             image: debian:9
             branch: 10.7
-            platforms: linux/386, linux/amd64, linux/arm64/v8
+            platforms: linux/386, linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: debian.Dockerfile
             image: debian:10
             branch: 10.7
@@ -70,20 +65,18 @@ jobs:
           - dockerfile: fedora.Dockerfile
             image: fedora:35
             platforms: linux/amd64, linux/arm64/v8
-          # TODO: linux/ppc64le pb when installing bb-worker with pip
-          # "ModuleNotFoundError: No module named '_cffi_backend'"
           - dockerfile: centos7.Dockerfile
             image: centos:7
             platforms: linux/amd64, linux/arm64/v8
           - dockerfile: centos.Dockerfile
             image: quay.io/centos/centos:stream8
-            platforms: linux/amd64, linux/arm64/v8
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: rhel7.Dockerfile
             image: rhel7
-            platforms: linux/amd64
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
           - dockerfile: rhel8.Dockerfile
             image: ubi8
-            platforms: linux/amd64, linux/arm64/v8
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
     env:
       BUILD_RHEL: false
       DEPLOY_IMAGES: false
