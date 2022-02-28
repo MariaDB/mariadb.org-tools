@@ -143,13 +143,6 @@ else
   file=/etc/mysql/mariadb.cnf
 fi
 
-if [[ "$feature" =~ MDEV-12933-provider-plugins ]]; then
-  buildah run --add-history "$container" sh -c \
-    "apt-get update \
-  	&& apt-get install -y mariadb-plugin-provider-bzip2  mariadb-plugin-provider-lz4 mariadb-plugin-provider-lzma mariadb-plugin-provider-lzo mariadb-plugin-provider-snappy && \
-  	rm -rf /var/lib/apt/lists/*"
-fi
-
 #
 # MAKE it part of the mariadb-devel manifest
 #
