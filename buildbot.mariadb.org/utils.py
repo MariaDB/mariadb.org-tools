@@ -203,8 +203,10 @@ def hasDockerLibrary(props):
     # from https://github.com/MariaDB/mariadb-docker/blob/master/update.sh#L4-L7
     if branch == "10.2":
         dockerbase = "ubuntu-1804-deb-autobake"
-    else:
+    elif branch in ['10.3', '10.4', '10.5', '10.6', '10.7']:
         dockerbase = "ubuntu-2004-deb-autobake"
+    else:
+        dockerbase = "ubuntu-2204-deb-autobake"
 
     # We only build on the above two autobakes for all architectures
     return builderName.endswith(dockerbase)
