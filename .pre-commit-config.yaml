@@ -1,0 +1,44 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-xml
+      - id: debug-statements
+        name: Check for Python debug statements
+      - id: trailing-whitespace
+        name: Check trailing whitespace
+        args: [--markdown-linebreak-ext=md]
+  - repo: https://gitlab.com/pycqa/flake8.git
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+        name: Check python (flake8)
+        args: ["--ignore=E501"]
+  - repo: https://github.com/fauust/pre-commit-shell
+    rev: v1.1
+    hooks:
+      - id: shellcheck
+        name: Check shell script (shellcheck)
+        args: ["-x"]
+      - id: shfmt
+        name: Check shell style (shfmt)
+        args: ["-d", "-i", "2", "-ci"]
+  - repo: https://github.com/markdownlint/markdownlint
+    rev: v0.11.0
+    hooks:
+      - id: markdownlint
+        name: Check for markdown lint (mdl)
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+      - id: codespell
+        name: Checks for common misspellings in text files
+        entry: codespell
+        language: python

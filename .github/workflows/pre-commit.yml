@@ -1,0 +1,24 @@
+---
+name: pre-commit
+
+on:
+  push:
+    paths:
+      - "buildbot.mariadb.org/**"
+      - .github/workflows/pre-commit.yml
+      - .pre-commit-config.yaml
+  pull_request:
+    paths:
+      - "buildbot.mariadb.org/**"
+      - .github/workflows/pre-commit.yml
+      - .pre-commit-config.yaml
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v2.0.3
+        with:
+          extra_args: --files buildbot.mariadb.org/**
