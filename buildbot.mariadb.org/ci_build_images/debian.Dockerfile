@@ -79,5 +79,7 @@ RUN apt-get update \
         "x86_64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-amd64" >/usr/local/bin/gosu ;; \
         "aarch64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-arm64" >/usr/local/bin/gosu ;; \
         "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
+        "s390x") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-s390x" >/usr/local/bin/gosu ;; \
+        "i386") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-i386" >/usr/local/bin/gosu ;; \
     esac \
     && chmod +x /usr/local/bin/gosu
