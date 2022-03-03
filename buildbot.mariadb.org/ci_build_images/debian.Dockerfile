@@ -61,7 +61,6 @@ RUN apt-get update \
     dumb-init \
     gawk \
     git \
-    gosu \
     iputils-ping \
     libasio-dev \
     libboost-dev \
@@ -75,4 +74,10 @@ RUN apt-get update \
     scons \
     sudo  \
     wget \
-    && apt-get clean
+    && apt-get clean \
+    && case $(uname -m) in \
+        "x86_64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-amd64" >/usr/local/bin/gosu ;; \
+        "aarch64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-arm64" >/usr/local/bin/gosu ;; \
+        "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
+    esac \
+    && chmod +x /usr/local/bin/gosu
