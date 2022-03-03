@@ -100,13 +100,12 @@ jobs:
             exit 1
           }
           TAG_TMP=${{ matrix.image }}
-          if [[ $TAG_TMP = "quay.io/centos/centos:stream8" ]]; then
-            echo "TAG=centos-stream8" >>$GITHUB_ENV
-          elif [[ $TAG_TMP = "ubi8" ]]; then
-            echo "TAG=rhel8" >>$GITHUB_ENV
-          else
-            echo "TAG=${TAG_TMP/:/}" >>$GITHUB_ENV
-          fi
+          case $TAG_TMP in
+            "quay.io/centos/centos:stream8") echo "TAG=centos-stream8" >>$GITHUB_ENV;;
+            "ubi8") echo "TAG=rhel8" >>$GITHUB_ENV;;
+            "ppc64le/debian:9") echo "TAG=debian9-ppc64le" >>$GITHUB_ENV;;
+            *) echo "TAG=${TAG_TMP/:/}" >>$GITHUB_ENV;;
+          esac
       - name: Check for rhel subscription credentials
         if: (contains(matrix.dockerfile, 'rhel'))
         run: |
