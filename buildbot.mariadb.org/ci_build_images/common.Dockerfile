@@ -10,7 +10,10 @@ RUN useradd -ms /bin/bash buildbot \
     && if grep -qi "debian" /etc/os-release; then \
         usermod -a -G sudo buildbot; \
         echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers; \
-    fi
+    fi ; \
+    mkdir /home/buildbot/.ccache ; \
+    echo 'max_size = 15.0G' > /home/buildbot/.ccache/ccache.conf ; \
+    chown -R buildbot: /home/buildbot
 
 # Install a recent rust toolchain needed for some arch
 # see: https://cryptography.io/en/latest/installation/
