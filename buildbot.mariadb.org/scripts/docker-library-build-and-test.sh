@@ -45,11 +45,14 @@ fi
 # Container tags must be lower case.
 container_tag=${container_tag,,*}
 
-if [[ "$buildername" =~ 2004 ]]; then
-  base=focal
-else
-  base=bionic
-fi
+case "$buildername" in
+  2204)
+    base=jammy ;;
+  2004)
+    base=focal ;;
+  1804)
+    base=bionic ;;
+esac
 
 buildernamebase=${buildername#*-}
 builderarch=${buildername%%-*}
