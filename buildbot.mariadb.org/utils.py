@@ -133,22 +133,38 @@ echo '</body>
 # Function to move the MTR logs to a known location so that they can be saved
 def moveMTRLogs():
     return """
-parallel=$(expr %(kw:jobs)s \* 2)
+echo Logs available at https://ci.mariadb.org/%(prop:tarbuildnum)s/logs/%(prop:buildername)s/
 
 mkdir -p /buildbot/logs
-for ((mtr=0; mtr<=parallel; mtr++)); do
-    for mysqld in {1..4}; do
-        if [ $mtr = 0 ]; then
-            logname="mysqld."$mysqld".err"
-            filename="mysql-test/var/log/mysqld."$mysqld".err"
-        else
-            logname="mysqld."$mysqld".err."$mtr
-            filename="mysql-test/var/"$mtr"/log/mysqld."$mysqld".err"
-        fi
-        if [ -e $filename ]; then
-            cp $filename /buildbot/logs/$logname
-        fi
-    done
+
+filename="mysql-test/var/log/mysqld.1.err"
+if [ -f $filename ]; then
+   cp $filename /buildbot/logs/mysqld.1.err
+fi
+
+mtr=1
+mysqld=1
+
+while true
+do
+  while true
+  do
+    logname="mysqld.$mysqld.err.$mtr"
+    filename="mysql-test/var/$mtr/log/mysqld.$mysqld.err"
+    if [ -f $filename ]; then
+       cp $filename /buildbot/logs/$logname
+    else
+       break
+    fi
+    mysqld=$(( mysqld + 1 ))
+  done
+  mysqld=1
+  mtr=$(( mtr + 1 ))
+  filename="mysql-test/var/$mtr/log/mysqld.$mysqld.err"
+  if [ ! -f $filename ]
+  then
+    break
+  fi
 done
 """
 
