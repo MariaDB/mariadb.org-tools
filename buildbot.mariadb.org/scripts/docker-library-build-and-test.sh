@@ -45,12 +45,12 @@ fi
 # Container tags must be lower case.
 container_tag=${container_tag,,*}
 
-case "$buildername" in
-  2204)
+case "${buildername#ubuntu-}" in
+  2204*)
     base=jammy ;;
-  2004)
+  2004*)
     base=focal ;;
-  1804)
+  1804*)
     base=bionic ;;
 esac
 
