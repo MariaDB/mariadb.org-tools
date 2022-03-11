@@ -45,13 +45,16 @@ fi
 # Container tags must be lower case.
 container_tag=${container_tag,,*}
 
-case "${buildername#ubuntu-}" in
-  2204*)
+case "${buildername#*ubuntu-}" in
+2204-deb-autobake)
     base=jammy ;;
-  2004*)
+2004-deb-autobake)
     base=focal ;;
-  1804*)
+1804-deb-autobake)
     base=bionic ;;
+*)
+    echo "unknown base buildername $buildername"
+    exit 0;
 esac
 
 buildernamebase=${buildername#*-}
