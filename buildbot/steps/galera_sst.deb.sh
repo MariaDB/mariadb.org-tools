@@ -182,6 +182,8 @@ for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ; do
     res=0
     break
   fi
+  date "+%H:%M:%S"
+  tail -n 5 /var/lib/node1/node1.err || true
 done
 set -x
 if [ "$res" != "0" ] ; then
@@ -207,6 +209,8 @@ for node in 2 3 ; do
       res=0
       break
     fi
+    date "+%H:%M:%S"
+    tail -n 5 /var/lib/node${node}/node${node}.err || true
   done
   set -x
   if [ "$res" != "0" ] ; then
