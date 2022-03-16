@@ -7,7 +7,9 @@ from buildbot.process.remotecommand import RemoteCommand
 from twisted.internet import defer
 import sys
 import docker
-from datetime import timedelta
+from datetime import timedelta, datetime
+
+from pyzabbix import ZabbixAPI
 
 from constants import *
 
@@ -16,6 +18,9 @@ RELEASABLE_BRANCHES="5.5 10.0 10.1 10.2 10.3 10.4 10.5 10.6 bb-5.5-release bb-10
 savedPackageBranches= ["5.5", "10.0", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "10.9", "bb-*-release", "bb-10.2-compatibility", "preview-*"]
 # The trees for which we save binary packages.
 releaseBranches = ["bb-*-release", "preview-10.*"]
+
+private_config = { "private": {} }
+exec(open("master-private.cfg").read(), private_config, { })
 
 def envFromProperties(envlist):
     d = dict()
@@ -64,21 +69,22 @@ def shell(command, worker, builder):
     yield cmd.run(FakeStep(), worker.conn, builder.name)
     return cmd.rc
 
-@defer.inlineCallbacks
 def canStartBuild(builder, wfb, request):
     worker=wfb.worker
-    return True
-    # check worker load over the last 5 minutes
-    rc = yield shell(
-        'test "$(cut -d" " -f2 /proc/loadavg | cut -d. -f1)" -le "$(( $(nproc) / 2 ))"',
-        worker, builder)
-    if rc != 0:
-        log.msg('loadavg is too high to take new builds',
-                system=repr(worker))
+    if not 's390x' in worker.name:
+        return True
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', worker.name)
+
+    load = getMetric('ibm-s390x-ubuntu20.04', "Load average (1m avg)")
+
+    print('????????????????????????????????????', load)
+
+    if float(load) > 8:
+        print('****************************Load too high')
         worker.putInQuarantine()
         return False
 
-    worker.quarantine_timeout = 180
+    worker.quarantine_timeout = 30
     worker.putInQuarantine()
     worker.resetQuarantine()
     return True
@@ -328,3 +334,36 @@ def prioritizeBuilders(buildmaster, builders):
     builders.sort(key=lambda b: builderPriorities.get(b.name, 2))
     return builders
 
+##### Zabbix helper
+def getMetric(hostname, metric):
+    # set API
+    zapi = ZabbixAPI(private_config["private"]["zabbix_server"])
+
+    zapi.session.verify = True
+
+    zapi.timeout = 10
+
+    zapi.login(api_token=private_config["private"]["zabbix_token"])
+
+    host_id = None
+    for h in zapi.host.get(output="extend"):
+        if h['host'] == hostname:
+            host_id = h['hostid']
+            break
+
+    assert host_id is not None
+
+    hostitems = zapi.item.get(filter={"hostid": host_id, "name": metric})
+
+    assert len(hostitems) == 1
+    hostitem = hostitems[0]
+
+    last_value = hostitem['lastvalue']
+    last_time = datetime.fromtimestamp(int(hostitem['lastclock']))
+
+    elapsed_from_last = (datetime.now() - last_time).total_seconds()
+
+    # The latest data is no older than 80 seconds
+    assert elapsed_from_last < 80
+
+    return last_value
