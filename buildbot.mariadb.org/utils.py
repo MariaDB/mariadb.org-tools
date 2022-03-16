@@ -73,18 +73,14 @@ def canStartBuild(builder, wfb, request):
     worker=wfb.worker
     if not 's390x' in worker.name:
         return True
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', worker.name)
 
     load = getMetric('ibm-s390x-ubuntu20.04', "Load average (1m avg)")
 
-    print('????????????????????????????????????', load)
-
-    if float(load) > 8:
-        print('****************************Load too high')
+    if float(load) > 6:
         worker.putInQuarantine()
         return False
 
-    worker.quarantine_timeout = 30
+    worker.quarantine_timeout = 120
     worker.putInQuarantine()
     worker.resetQuarantine()
     return True
