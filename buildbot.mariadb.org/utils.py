@@ -71,12 +71,15 @@ def shell(command, worker, builder):
 
 def canStartBuild(builder, wfb, request):
     worker=wfb.worker
-    if not 's390x' in worker.name:
+    if not "s390x" in worker.name:
         return True
 
-    load = getMetric('ibm-s390x-ubuntu20.04', "Load average (1m avg)")
+    worker_prefix = "-".join((worker.name).split('-')[0:2])
+    worker_name = private_config["private"]["worker_name_mapping"][worker_prefix]
+    load = getMetric(worker_name, "Load average (1m avg)")
 
-    if float(load) > 6:
+    if float(load) > 7:
+        worker.quarantine_timeout = 60
         worker.putInQuarantine()
         return False
 
