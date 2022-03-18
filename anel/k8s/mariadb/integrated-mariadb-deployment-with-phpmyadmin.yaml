@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mariadb-configmap
+data:
+  database_url: mariadb-internal-service #name of service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-internal-service
+spec:
+  selector:
+    app: mariadb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+spec:
+  selector:
+    app: mariadb
+  type: LoadBalancer # port type
+  ports:
+    - protocol: TCP
+      port: 8080 # same port of a service as for a pods
+      targetPort: 8080 # targeting containerPort
+      nodePort: 30100 # external IP port from 30000 till 32767 range
+---
+apiVersion: apps/v1
+kind: Deployment # what to create?
+metadata:
+  name: mariadb-deployment
+spec: # specification for deployment resource
+  replicas: 2 # how many replicas of pods we want to create
+  selector:
+    matchLabels:
+      app: mariadb
+  template: # blueprint for pods
+    metadata:
+      labels:
+        app: mariadb # service will look for this label
+    spec: # specification for Pods
+      containers:
+      - name: mariadb
+        image: mariadb
+        ports:
+        - containerPort: 3306 
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          value: anel 
+      - name: phpmyadmin
+        image: bitnami/phpmyadmin:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mariadb-configmap
+              key: database_url
