@@ -3,7 +3,7 @@
 # Provides a base Ubuntu image with latest buildbot worker installed
 # and nodejs build dependencies
 
-FROM  node:15-buster-slim
+FROM  node:17-buster-slim
 LABEL maintainer="Anel Husakovic anel@mariadb.org"
 
 ARG DEBIAN_FRONTEND=noninteractive

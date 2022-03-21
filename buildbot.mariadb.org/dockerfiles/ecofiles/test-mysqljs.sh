@@ -32,7 +32,7 @@ rm -f test/unit/connection/test-connection-ssl-reject.js \
 	 test/unit/connection/test-connection-ssl-min-version-accept.js \
 	 test/unit/connection/test-connection-ssl-min-version-reject.js
 
-npm install -g npm@8.5.5
+#npm install -g npm@8.5.5
 npm install
 # Run the unit tests (probably should be controlled with worker variable)
 # If unit==1 run unit test else run integration test
