@@ -33,7 +33,7 @@ supportedPlatforms["10.9"] = ['aarch64-centos-7', 'aarch64-centos-8', 'aarch64-d
 # Until MDEV-28133 Backport OpenSSL-3.0 compatibility to 10.6 branch is done, we can disable these as they will fail
 for ver in ['10.6', '10.7']:
     for arch in ['aarch64', 'amd64', 'ppc64le', 's390x']:
-        suppportedPlatforms[ver].remove(arch + '-ubuntu-2204')
+        supportedPlatforms[ver].remove(arch + '-ubuntu-2204')
 
 # Hack to remove all github_status_builders since they are triggered separately
 for k in supportedPlatforms:
