@@ -26,10 +26,6 @@ RUN apt-get update \
     && curl -skO https://raw.githubusercontent.com/MariaDB/server/$mariadb_branch/debian/control \
     # skip unavailable deps on Debian 9 \
     && if grep -q 'stretch' /etc/apt/sources.list; then \
-        # activate backports to install a recent version of libzstd-dev (>= 1.1.3).
-        echo "deb http://deb.debian.org/debian stretch-backports main" >/etc/apt/sources.list.d/bpo.list; \
-        apt-get update; \
-        apt-get -y install --no-install-recommends -t stretch-backports libzstd-dev; \
         sed '/libpmem-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
