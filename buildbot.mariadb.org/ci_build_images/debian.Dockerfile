@@ -24,8 +24,13 @@ RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get -y install --no-install-recommends curl devscripts equivs \
     && curl -skO https://raw.githubusercontent.com/MariaDB/server/$mariadb_branch/debian/control \
+    # MDEV-27965 - temporary hack to introduce a late libfmt dependency, so \
+    # the main branches don't immediately fail on autobake builders once \
+    # https://github.com/MariaDB/server/pull/2062 is merged. \
+    && sed -i -e '/libedit-dev:native/a\\               libfmt-dev (>= 7.0.0),' control \
     # skip unavailable deps on Debian 9 \
     && if grep -q 'stretch' /etc/apt/sources.list; then \
+        sed '/libfmt-dev/d' -i control; \
         sed '/libpmem-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
@@ -35,15 +40,18 @@ RUN apt-get update \
         if [ "$(uname -m)" != "x86_64" ]; then \
             sed '/libpmem-dev/d' -i control; \
         fi; \
+        sed '/libfmt-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
     # skip unavailable deps on Ubuntu 18.04 \
     && if grep -q 'bionic' /etc/apt/sources.list; then \
+        sed '/libfmt-dev/d' -i control; \
         sed '/libpmem-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
     # skip unavailable deps on Ubuntu 20.04 \
     && if grep -q 'focal' /etc/apt/sources.list; then \
+        sed '/libfmt-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
     && mk-build-deps -r -i control \
