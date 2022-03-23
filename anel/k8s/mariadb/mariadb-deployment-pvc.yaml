@@ -1,4 +1,17 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pv-claim
+  labels:
+    app: mariadb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 300M
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: mariadb-internal-service
@@ -38,5 +51,11 @@ spec: # specification for deployment resource
               key: mariadb-root-password
         - name: MARIADB_DATABASE
           value: wordpress
-
+        volumeMounts:
+        - name: mariadb-pv
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb-pv
+        persistentVolumeClaim:
+          claimName: mariadb-pv-claim
 
