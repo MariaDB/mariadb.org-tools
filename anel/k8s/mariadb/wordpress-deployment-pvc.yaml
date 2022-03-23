@@ -1,12 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress-mariadb-service
+  name: wordpress
 spec:
   selector:
     app: wordpress
   ports:
     - port: 80
+      targetPort: 80
+      protocol: TCP #default
+      nodePort: 31000
   type: LoadBalancer
 ---
 
@@ -26,7 +29,7 @@ spec: # specification for deployment resource
     spec: # specification for pods
       containers:
       - name: wordpress
-        image: wordpress:5.9.2
+        image: wordpress:latest ##4.8-apache
         ports:
         - containerPort: 80
         env:
@@ -37,3 +40,5 @@ spec: # specification for deployment resource
           value: secret
         - name: WORDPRESS_DB_USER
           value: root
+        - name: WORDPRESS_DEBUG
+          value: "1"

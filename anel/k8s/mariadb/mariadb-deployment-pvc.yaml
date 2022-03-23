@@ -9,13 +9,14 @@ spec:
     - protocol: TCP
       port: 3306
       targetPort: 3306
+  clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mariadb-deployment
 spec: # specification for deployment resource
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mariadb
@@ -31,9 +32,8 @@ spec: # specification for deployment resource
         - containerPort: 3306 #default one
         env:
         - name: MARIADB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mariadb-secret
-              key: mariadb-root-password
+          value: secret
+        - name: MARIADB_DATABASE
+          value: wordpress
 
 
