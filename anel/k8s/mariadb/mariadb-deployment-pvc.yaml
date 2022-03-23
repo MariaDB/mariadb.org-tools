@@ -32,7 +32,10 @@ spec: # specification for deployment resource
         - containerPort: 3306 #default one
         env:
         - name: MARIADB_ROOT_PASSWORD
-          value: secret
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-root-password
         - name: MARIADB_DATABASE
           value: wordpress
 
