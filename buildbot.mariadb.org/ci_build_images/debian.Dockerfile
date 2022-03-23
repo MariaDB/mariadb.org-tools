@@ -33,6 +33,7 @@ RUN apt-get update \
         sed '/libfmt-dev/d' -i control; \
         sed '/libpmem-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
+        sed '/libzstd-dev/d' -i control; \
     fi \
     # skip unavailable deps on Debian 10 \
     && if grep -q 'buster' /etc/apt/sources.list; then \
