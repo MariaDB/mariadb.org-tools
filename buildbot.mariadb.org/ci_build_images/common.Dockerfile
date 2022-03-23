@@ -23,14 +23,23 @@ RUN gosu buildbot curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >/tm
     esac \
     && mv -v /home/buildbot/.cargo/bin/* /usr/local/bin \
     && rm -f /tmp/rustup-init.sh \
-    && pip3 install --no-cache-dir -U pip \
-    && gosu buildbot curl -so /home/buildbot/requirements.txt \
-    https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/ci_build_images/requirements.txt \
-    # https://jira.mariadb.org/browse/MDBF-329 \
-    && if grep -q "stretch" /etc/apt/sources.list; then \
-        gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location incremental"; \
-    fi \
-    && gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location -r /home/buildbot/requirements.txt"
+    # for Centos7/ppcle64, specific pip packages versions \
+    # and python3-devel are needed \
+    && if grep -q "CentOS Linux release 7" /etc/centos-release && [ "$(arch)" = "ppc64le" ]; then \
+        yum -y install python3-devel; \
+        yum clean all; \
+        pip3 install --no-cache-dir cffi==1.14.3 cryptography==3.1.1 pyOpenSSL==19.1.0 twisted[tls]==20.3.0 buildbot-worker==2.8.4; \
+        gosu buildbot sh -c "mkdir -p /home/buildbot/.local/ && ln -s /usr/local/bin /home/buildbot/.local/bin"; \
+    else \
+        pip3 install --no-cache-dir -U pip; \
+        gosu buildbot curl -so /home/buildbot/requirements.txt \
+        https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/ci_build_images/requirements.txt; \
+        # https://jira.mariadb.org/browse/MDBF-329 \
+        if grep -q "stretch" /etc/apt/sources.list; then \
+            gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location incremental"; \
+        fi; \
+        gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location -r /home/buildbot/requirements.txt"; \
+    fi
 
 # TODO: sync with BB steps (move to /home/buildbot)
 RUN ln -s /home/buildbot /buildbot
