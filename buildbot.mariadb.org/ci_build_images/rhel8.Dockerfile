@@ -29,6 +29,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     coreutils \
     cracklib-devel \
     curl-devel \
+    # fmt-devel # >= 7.0 needed, epel8 has 6.2.1-1.el8
     java-1.8.0-openjdk \
     jemalloc-devel --allowerasing \
     krb5-devel \
