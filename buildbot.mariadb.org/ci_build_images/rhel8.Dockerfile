@@ -36,6 +36,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     libcurl-devel \
     libevent-devel \
     libffi-devel \
+    liburing-devel \
     libxml2-devel \
     libzstd-devel \
     lz4-devel \
