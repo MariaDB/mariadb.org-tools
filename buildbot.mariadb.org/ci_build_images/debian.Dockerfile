@@ -45,10 +45,12 @@ RUN apt-get update \
     && if grep -q 'bionic' /etc/apt/sources.list; then \
         sed '/libpmem-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
+        apt-get -y install --no-install-recommends clang; \
     fi \
     # skip unavailable deps on Ubuntu 20.04 \
     && if grep -q 'focal' /etc/apt/sources.list; then \
         sed '/liburing-dev/d' -i control; \
+        apt-get -y install --no-install-recommends clang; \
     fi \
     && mk-build-deps -r -i control \
     -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' \
