@@ -1456,7 +1456,7 @@ update_the_docker_library_mariadb_version() {
     runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
   pushd ${dir_docker_library}
-    #runCommand git checkout ${major}
+    runCommand git checkout next
     runCommand git pull
     if test -d ${major}; then       # only update version if the dir exists
       runCommand ./update.sh "${num}"
