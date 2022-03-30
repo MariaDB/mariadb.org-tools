@@ -1,0 +1,69 @@
+----- List PID namespaces  -----
+        NS TYPE NPROCS   PID USER COMMAND
+4026531836 pid      93  3078 anel /lib/systemd/systemd --user
+4026532213 pid       1 16065 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=88 --launch-time-ticks=8735598980 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532214 pid       1 15718 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=76 --launch-time-ticks=8582167008 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532222 pid       1 16806 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=98 --launch-time-ticks=9320378195 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532223 pid       1 16438 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=93 --launch-time-ticks=8919890180 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532231 pid       1 16464 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=94 --launch-time-ticks=8938637851 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532232 pid       1 16832 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=99 --launch-time-ticks=9348901739 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532240 pid       1 15869 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=85 --launch-time-ticks=8602067772 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532241 pid       1 15899 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=86 --launch-time-ticks=8647374010 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532568 pid       1 12465 anel /opt/google/chrome/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532569 pid       1 12624 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=11 --launch-time-ticks=6270169330 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532571 pid       2 12429 anel /opt/google/chrome/chrome --type=zygote --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --enable-crashpad
+4026532775 pid       1 12430 anel /opt/google/chrome/nacl_helper
+4026532878 pid       1 12650 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=14 --launch-time-ticks=6272500730 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532879 pid       1 12953 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=29 --launch-time-ticks=6474234245 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532880 pid       1 12682 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=16 --launch-time-ticks=6285113133 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532881 pid       1 12800 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=19 --launch-time-ticks=6385440859 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532883 pid       1 12899 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=24 --launch-time-ticks=6467878289 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532885 pid       2 11538 anel /usr/share/code/code --type=zygote
+4026532943 pid       1 12933 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=28 --launch-time-ticks=6471189951 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+4026532946 pid       1 13439 anel /opt/google/chrome/chrome --type=renderer --enable-crashpad --crashpad-handler-pid=12420 --enable-crash-reporter=, --display-capture-permissions-policy-allowed --change-stack-guard-on-fork=enable --lang=en-US --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=38 --launch-time-ticks=6638861031 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,11117854605787755949,12651962703991619366,131072
+----- Get PIDs of mysqld -----
+PID host: 5165, PID container: 13320
+----- Get PID namespaces of mariadbd/mysqld -----
++++ Note: unnamed namespaces
+         -  5165 mysqld
+         - 13320 /usr/sbin/mysqld
+4026531836 17230 grep -E mysqld|mariadbd
++++ Note: named namespaces with root are visible
+        NS TYPE NPROCS   PID USER COMMAND
+4026532796 pid       1  5165 999  mysqld
+        NS TYPE NPROCS   PID USER COMMAND
+4026532796 pid       1  5165 999  mysqld
++++ Alternative (see other namespace types)
+lrwxrwxrwx 1 mysql mysql 0 Mar 27 07:11 pid -> pid:[4026531836]
+lrwxrwxrwx 1 mysql mysql 0 Mar 27 08:30 pid_for_children -> pid:[4026531836]
+----- Testing PID namespace of ppgrep -----
+93
+----- Errors testing pgrep -x --ns PID mysqld -----
+Applied from patch fb7c1b9415c9 doesn't work - not a valid command
+1
+Applied from patch fb7c1b9415c9 with sudo doesn't work - not a valid command
+1
+----- Errors testing pgrep --ns PID PID number -----
+1
+1
+Error reading reference namespace information
+3
+Error reading reference namespace information
+3
+----- Errors testing pgrep --ns PID|grep single process -----
+Error reading reference namespace information
+----- Errors testing pgrep --ns PID|grep multiple processes -----
+Error reading reference namespace information
+------ SUGGESTED SOLUTION  ------
+All PIDs: 5165 13320
++ Current PID analaysis: 5165
+NSpid:	5165	1
+3
+Who am I?
+I am container PID
++ Current PID analaysis: 13320
+NSpid:	13320
+2
+Who am I?
+I am host PID
+HOST PID: 13320
