@@ -38,7 +38,8 @@ build()
 		-DPLUGIN_S3=NO \
 		-DWITH_MARIABACKUP=NO \
 		-DPLUGIN_WSREP_INFO=NO \
-		-DCMAKE_INCLUDE_PATH="$HOME"/inst-fmt/include -DCMAKE_LIBRARY_PATH="$HOME"/inst-fmt/lib
+		-DLIBFMT_INCLUDE_DIR="$HOME"/inst-fmt/include \
+		-DCMAKE_LIBRARY_PATH="$HOME"/inst-fmt/lib
 	make -j"$(( "$jobs" * 2 ))"
 	/opt/bin/ccache --show-stats
 }
