@@ -25,8 +25,8 @@ build()
 	cmake ../"$source" -DCMAKE_BUILD_TYPE="$2" \
 		-DCMAKE_C_LAUNCHER=/opt/bin/ccache \
 		-DCMAKE_CXX_LAUNCHER=/opt/bin/ccache \
-		-DCMAKE_C_COMPILER=gcc \
-		-DCMAKE_CXX_COMPILER=g++ \
+		-DCMAKE_C_COMPILER=gcc-10 \
+		-DCMAKE_CXX_COMPILER=g++-10 \
 		-DCMAKE_AR=/usr/bin/ar \
 		-DLIBXML2_LIBRARY=/opt/freeware/lib/libxml2.a \
 		-DPLUGIN_TOKUDB=NO \
