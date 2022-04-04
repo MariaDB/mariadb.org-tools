@@ -25,7 +25,7 @@ RUN gosu buildbot curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >/tm
     && rm -f /tmp/rustup-init.sh \
     # for Centos7/ppcle64, specific pip packages versions \
     # and python3-devel are needed \
-    && if grep -q "CentOS Linux release 7" /etc/centos-release && [ "$(arch)" = "ppc64le" ]; then \
+    && if grep -q "CentOS Linux release 7" /etc/centos-release || grep -q "Red Hat Enterprise Linux Server release 7" /etc/redhat-release && [ "$(arch)" = "ppc64le" ]; then \
         yum -y install python3-devel; \
         yum clean all; \
         pip3 install --no-cache-dir cffi==1.14.3 cryptography==3.1.1 pyOpenSSL==19.1.0 twisted[tls]==20.3.0 buildbot-worker==2.8.4; \

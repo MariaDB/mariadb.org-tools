@@ -31,6 +31,10 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     scons \
     snappy-devel \
     wget \
+    && if [ "$(arch)" = "ppc64le" ]; then \
+        subscription-manager repos --enable rhel-7-for-power-le-optional-rpms; \
+        yum -y install python3-devel; \
+    fi \
     && yum clean all \
     && subscription-manager unregister \
     && curl -sL "https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_$(uname -m)" >/usr/local/bin/dumb-init \
