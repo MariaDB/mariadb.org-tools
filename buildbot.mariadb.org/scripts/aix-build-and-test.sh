@@ -61,7 +61,9 @@ clean()
 
 
 export TMPDIR=$HOME/tmp
-export LIBPATH=/opt/freeware/lib/pthread/ppc64:/opt/freeware/lib:/usr/lib
+# gcc-10 paths found by looking at nm /opt/freeware/.../libstdc++.a | grep {missing symbol}
+export LIBPATH=/opt/freeware/lib/gcc/powerpc-ibm-aix7.1.0.0/10/pthread/:/opt/freeware/lib/gcc/powerpc-ibm-aix7.1.0.0/10:/usr/lib:$PWD/build/libmariadb/libmariadb/
+
 jobs=${4:-12}
 
 case $1 in
