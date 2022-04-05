@@ -30,7 +30,7 @@ build()
 		-DCMAKE_AR=/usr/bin/ar \
 		-DCMAKE_PREFIX_PATH=/opt/freeware/ \
 		-DCMAKE_REQUIRED_LINK_OPTIONS=-L/opt/freeware/lib \
-		-DCMAKE_REQUIRED_FLAGS=-I\ /opt/freeware/include
+		-DCMAKE_REQUIRED_FLAGS=-I\ /opt/freeware/include \
 		-DPLUGIN_OQGRAPH=NO \
 		-DWITH_UNIT_TESTS=NO \
 		-DPLUGIN_S3=NO \
