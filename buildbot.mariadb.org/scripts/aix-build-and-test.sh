@@ -28,15 +28,12 @@ build()
 		-DCMAKE_C_COMPILER=gcc-10 \
 		-DCMAKE_CXX_COMPILER=g++-10 \
 		-DCMAKE_AR=/usr/bin/ar \
-		-DLIBXML2_LIBRARY=/opt/freeware/lib/libxml2.a \
-		-DPLUGIN_TOKUDB=NO \
-		-DPLUGIN_MROONGA=NO \
-		-DPLUGIN_SPIDER=NO \
+		-DCMAKE_PREFIX_PATH=/opt/freeware/ \
+		-DCMAKE_REQUIRED_LINK_OPTIONS=-L/opt/freeware/lib \
+		-DCMAKE_REQUIRED_FLAGS=-I\ /opt/freeware/include
 		-DPLUGIN_OQGRAPH=NO \
-		-DPLUGIN_SPHINX=NO \
 		-DWITH_UNIT_TESTS=NO \
 		-DPLUGIN_S3=NO \
-		-DWITH_MARIABACKUP=NO \
 		-DPLUGIN_WSREP_INFO=NO \
 		-DLIBFMT_INCLUDE_DIR="$HOME"/inst-fmt/include \
 		-DCMAKE_LIBRARY_PATH="$HOME"/inst-fmt/lib
@@ -49,7 +46,7 @@ mariadbtest()
 	# for saving logs
 	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-		--skip-test='connect\.*' --max-test-fail=20 --parallel="$jobs"
+		--skip-test='connect\.*'  --skip-test='spider\.*' ---max-test-fail=20 --parallel="$jobs"
 
 }
 
