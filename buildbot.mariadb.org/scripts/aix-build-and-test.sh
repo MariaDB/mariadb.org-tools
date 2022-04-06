@@ -34,6 +34,8 @@ build()
 		-DPLUGIN_OQGRAPH=NO \
 		-DWITH_UNIT_TESTS=NO \
 		-DPLUGIN_S3=NO \
+		-DPLUGIN_CONNECT=NO \
+		-DPLUGIN_SPIDER=NO \
 		-DPLUGIN_WSREP_INFO=NO \
 		-DLIBFMT_INCLUDE_DIR="$HOME"/inst-fmt/include \
 		-DCMAKE_LIBRARY_PATH="$HOME"/inst-fmt/lib
@@ -46,7 +48,7 @@ mariadbtest()
 	# for saving logs
 	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-		--skip-test='connect\.*'  --skip-test='spider\.*' --max-test-fail=20 --parallel="$jobs"
+		--max-test-fail=20 --parallel="$jobs"
 
 }
 
