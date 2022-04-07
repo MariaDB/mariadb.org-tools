@@ -80,4 +80,8 @@ RUN apt-get update \
     scons \
     sudo  \
     wget \
+    # install Debian 9 only deps \
+    && if grep -q 'stretch' /etc/apt/sources.list; then \
+        apt-get -y install --no-install-recommends gnutls-dev; \
+    fi \
     && apt-get clean
