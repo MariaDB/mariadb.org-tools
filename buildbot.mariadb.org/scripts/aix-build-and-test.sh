@@ -48,7 +48,7 @@ mariadbtest()
 	# for saving logs
 	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-		--max-test-fail=20 --parallel="$jobs"
+		--max-test-fail=20 --testcase-timeout=2 --parallel="$jobs"
 
 }
 
