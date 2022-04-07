@@ -45,10 +45,18 @@ build()
 
 mariadbtest()
 {
+	cat <<EOF > ../unstable-tests
+type_test.type_test_double
+plugins.server_audit
+main.cli_options_force_protocol_not_win
+innodb.log_file_name
+type_inet.type_inet6
+main.func_json_notembedded
+EOF
 	# for saving logs
 	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-		--max-test-fail=20 --testcase-timeout=2 --parallel="$jobs"
+		--max-test-fail=20 --testcase-timeout=2 --parallel="$jobs" --skip-test-list=../unstable-tests
 
 }
 
