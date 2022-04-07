@@ -76,9 +76,9 @@ def canStartBuild(builder, wfb, request):
 
     worker_prefix = "-".join((worker.name).split('-')[0:2])
     worker_name = private_config["private"]["worker_name_mapping"][worker_prefix]
-    load = getMetric(worker_name, "Load average (1m avg)")
+    load = getMetric(worker_name, "BB_accept_new_build")
 
-    if float(load) > 7:
+    if float(load) > 50:
         worker.quarantine_timeout = 60
         worker.putInQuarantine()
         return False
