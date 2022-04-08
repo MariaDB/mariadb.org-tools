@@ -46,12 +46,12 @@ build()
 mariadbtest()
 {
 	cat <<EOF > ../unstable-tests
-type_test.type_test_double
-plugins.server_audit
+type_test.type_test_double   : unknown reason
+plugins.server_audit         : unknown reasons
 main.cli_options_force_protocol_not_win
-innodb.log_file_name
-type_inet.type_inet6
-main.func_json_notembedded
+innodb.log_file_name         : sparitic on ther platforms too
+type_inet.type_inet6         : implementatation differences in IS_IPV4_COMPAT?
+main.func_json_notembedded   : machine too fast sometimes - bb-10.6-danielblack-MDEV-27955-postfix-func_json_notembedded 
 EOF
 	# for saving logs
 	ln -s build/mysql-test .
