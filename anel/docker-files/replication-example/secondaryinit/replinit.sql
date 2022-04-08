@@ -2,7 +2,7 @@
 
 # Change master related settings
 CHANGE MASTER TO
-  MASTER_HOST='172.17.0.2', # or containerID
+  MASTER_HOST='172.17.0.2',
   MASTER_USER='repluser',
   MASTER_PASSWORD='replsecret',
   MASTER_PORT=3306,
