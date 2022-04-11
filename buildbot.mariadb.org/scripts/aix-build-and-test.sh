@@ -53,6 +53,7 @@ type_inet.type_inet6         : AIX incorrect IN6_IS_ADDR_V4COMPAT implementation
 main.func_json_notembedded   : machine too fast sometimes - bb-10.6-danielblack-MDEV-27955-postfix-func_json_notembedded 
 binlog_encryption.rpl_typeconv : timeout on 2 minutes, resource, backtrace is just on poll loop
 rpl.rpl_typeconv : timeout on 2 minutes, resource, backtrace is just on poll loop
+rpl.rpl_row_img_blobs : timeout on 2 minutes, resource, backtrace is just on poll loop
 main.mysql_upgrade : timeout on 2 minutes, resource, backtrace is just on poll loop
 EOF
 	# for saving logs
