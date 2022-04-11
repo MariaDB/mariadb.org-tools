@@ -110,6 +110,12 @@ Even with ^ didn't suppress the errors.
 
 Adding `ARG DEBIAN_FRONTEND=noninteractive` suppressed but still says that `apt-utils` not installed ?
 
+#### Creating MariaDB Connect image
+```bash
+$ docker build -t mariadb_connect . -f mariadb_connect.dockerfile
+$ docker images ls|grep connect
+mariadb_connect               latest    f8ae867c9a43   3 minutes ago   455MB
+```
 #### Literature
 
 [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
