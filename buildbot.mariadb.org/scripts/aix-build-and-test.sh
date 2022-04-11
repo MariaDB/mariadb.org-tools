@@ -52,6 +52,9 @@ main.cli_options_force_protocol_not_win : unknown reasons
 innodb.log_file_name         : sparitic on ther platforms too
 type_inet.type_inet6         : implementatation differences in IS_IPV4_COMPAT?
 main.func_json_notembedded   : machine too fast sometimes - bb-10.6-danielblack-MDEV-27955-postfix-func_json_notembedded 
+binlog_encryption.rpl_typeconv : timeout on 2 minutes, resource, backtrace is just on poll loop
+rpl.rpl_typeconv : timeout on 2 minutes, resource, backtrace is just on poll loop
+main.mysql_upgrade : timeout on 2 minutes, resource, backtrace is just on poll loop
 EOF
 	# for saving logs
 	ln -s build/mysql-test .
