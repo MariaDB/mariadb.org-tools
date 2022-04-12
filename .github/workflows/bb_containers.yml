@@ -22,7 +22,7 @@ jobs:
         # this is needed because we restart the docker daemon for experimental
         # support
         options: "--restart always"
-    name: ${{ matrix.image }}
+    name: ${{ matrix.image }} (${{ matrix.platforms }})
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,11 @@ jobs:
           - dockerfile: debian.Dockerfile
             image: debian:9
             branch: 10.7
-            platforms: linux/386, linux/amd64, linux/arm64/v8
+            platforms: linux/amd64, linux/arm64/v8
+          - dockerfile: debian.Dockerfile
+            image: debian:9
+            branch: 10.7
+            platforms: linux/386
           - dockerfile: debian.Dockerfile
             image: debian:10
             branch: 10.7
@@ -47,11 +51,19 @@ jobs:
           - dockerfile: debian.Dockerfile
             image: debian:sid
             branch: 10.7
-            platforms: linux/386, linux/amd64, linux/arm64/v8, linux/ppc64le
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
+          - dockerfile: debian.Dockerfile
+            image: debian:sid
+            branch: 10.7
+            platforms: linux/386
           - dockerfile: debian.Dockerfile
             image: ubuntu:18.04
             branch: 10.7
-            platforms: linux/386, linux/amd64, linux/arm64/v8, linux/ppc64le
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
+          - dockerfile: debian.Dockerfile
+            image: ubuntu:18.04
+            branch: 10.7
+            platforms: linux/386
           - dockerfile: debian.Dockerfile
             image: ubuntu:20.04
             branch: 10.7
@@ -105,6 +117,8 @@ jobs:
             echo "TAG=centos-stream8" >>$GITHUB_ENV
           elif [[ $TAG_TMP = "ubi8" ]]; then
             echo "TAG=rhel8" >>$GITHUB_ENV
+          elif [[ "${{ matrix.platforms }}" = "linux/386" ]]; then
+            echo "TAG=${TAG_TMP/:/}-386" >>$GITHUB_ENV
           else
             echo "TAG=${TAG_TMP/:/}" >>$GITHUB_ENV
           fi
