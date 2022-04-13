@@ -21,6 +21,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     boost-devel \
     ccache \
     check-devel \
+    cmake3 \
     cracklib-devel \
     curl-devel \
     jemalloc-devel \
@@ -37,6 +38,9 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     fi \
     && yum clean all \
     && subscription-manager unregister \
+    # We can't use old cmake version (from @development package) \
+    && yum -y remove cmake \
+    && ln -sf /usr/bin/cmake3 /usr/bin/cmake \
     && curl -sL "https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_$(uname -m)" >/usr/local/bin/dumb-init \
     && chmod +x /usr/local/bin/dumb-init \
     && case $(uname -m) in \
@@ -47,10 +51,3 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     && chmod +x /usr/local/bin/gosu
 
 ENV CRYPTOGRAPHY_ALLOW_OPENSSL_102=1
-
-RUN curl -sO https://cmake.org/files/v3.19/cmake-3.19.0-Linux-x86_64.sh \
-    && mkdir -p /opt/cmake \
-    && sh cmake-3.19.0-Linux-x86_64.sh --prefix=/opt/cmake --skip-license \
-    && ln -sf /opt/cmake/bin/cmake /usr/local/bin/cmake \
-    && rm cmake-3.19.0-Linux-x86_64.sh
-
