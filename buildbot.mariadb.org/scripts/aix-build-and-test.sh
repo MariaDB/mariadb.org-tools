@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -xeuv
 
@@ -48,7 +48,6 @@ mariadbtest()
 	cat <<EOF > ../unstable-tests
 type_test.type_test_double   : unknown reason
 plugins.server_audit         : unknown reasons
-innodb.log_file_name         : Unknown but frequent reasons
 main.cli_options_force_protocol_not_win : unknown reasons
 type_inet.type_inet6         : AIX incorrect IN6_IS_ADDR_V4COMPAT implementation (reported)
 main.func_json_notembedded   : machine too fast sometimes - bb-10.6-danielblack-MDEV-27955-postfix-func_json_notembedded 
@@ -59,10 +58,15 @@ main.mysql_upgrade : timeout on 2 minutes, resource, backtrace is just on poll l
 main.mysql_client_test_comp : too much memory when run in parallel (8 seems to work)
 federated.* : really broken, can't load plugin
 EOF
+	if [[ $1 =~ mariadb-10.[567].* ]]; then
+		cat <<EOF >> ../unstable-tests
+innodb.log_file_name         : 10.[567] only. MDEV-14425 probably incidenly fixed it
+EOF
+	fi
 	# for saving logs
 	ln -s build/mysql-test .
 	mysql-test/mysql-test-run.pl --verbose-restart --force --retry=3 --max-save-core=1 --max-save-datadir=1 \
-		--max-test-fail=20 --testcase-timeout=2 --parallel="$jobs" --skip-test-list=$PWD/../unstable-tests
+		--max-test-fail=20 --testcase-timeout=2 --parallel="$jobs" --skip-test-list="$PWD"/../unstable-tests
 
 }
 
@@ -85,7 +89,7 @@ case $1 in
 		build "$@"
 		;;
 	test)
-		mariadbtest
+		mariadbtest "$2"
 		;;
 	clean)
 		clean mariadb* build* mysql-test /mnt/packages/* /buildbot/logs/*
