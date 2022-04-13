@@ -61,14 +61,14 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [impish]=kvm-deb-impish-amd64)
+declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
+declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [impish]=kvm-deb-impish-amd64 [jammy]=ubuntu-2204-deb-autobake)
 
-declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64)
+declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
+declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=ubuntu-2204-deb-autobake)
 
-declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le)
+declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [jammy]=ubuntu-2204-deb-autobake)
 
 declare -A builder_dir_ci_s390x=([focal]=s390x-ubuntu-2004-deb-autobake)
 declare -A builder_dir_bb_s390x=([focal]=kvm-deb-focal-s390x)
@@ -121,7 +121,7 @@ case ${ARCHDIR} in
     ubuntu_dists="bionic focal"
     ;;
   *10.5*|*10.6*|*10.7*|*10.8*)
-    ubuntu_dists="bionic focal impish"
+    ubuntu_dists="bionic focal impish jammy"
     ;;
   *)
     line
@@ -183,7 +183,7 @@ for dist in ${ubuntu_dists}; do
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'bionic'|'focal'|'impish')
+    'bionic'|'focal'|'impish'|'jammy')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb-*_amd64.changes)
       ;;
   esac
@@ -191,7 +191,7 @@ for dist in ${ubuntu_dists}; do
   # Include ppc64le debs
   builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
-    'bionic'|'focal')
+    'bionic'|'focal'|'jammy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -200,7 +200,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'impish')
+    'bionic'|'focal'|'impish'|'jammy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -233,14 +233,14 @@ for dist in ${ubuntu_dists}; do
 
         # include ppc64le
         case ${dist} in
-          'bionic'|'focal')
+          'bionic'|'focal'|'jammy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'bionic'|'focal')
+          'bionic'|'focal'|'jammy')
             runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
             ;;
         esac

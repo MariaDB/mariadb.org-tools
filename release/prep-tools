@@ -32,7 +32,7 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="bionic bullseye buster focal stretch xenial"
+dists_apt="bionic bullseye buster focal jammy stretch xenial"
 dists_rhel="6 7 8"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"

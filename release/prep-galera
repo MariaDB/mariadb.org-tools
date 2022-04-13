@@ -81,6 +81,7 @@ ci_mappings_4="
   gal-aarch64-ubuntu-2104:kvm-deb-hirsute-aarch64-gal
   gal-ppc64le-ubuntu-2104:kvm-deb-hirsute-ppc64le-gal
   gal-aarch64-ubuntu-2110:kvm-deb-impish-aarch64-gal
+  gal-aarch64-ubuntu-2204:kvm-deb-jammy-aarch64-gal
 "
   #gal-ppc64le-ubuntu-2110:kvm-deb-impish-ppc64le-gal
 
@@ -152,6 +153,7 @@ deb_dists_4="
   focal
   hirsute
   impish
+  jammy
   sid
   stretch
   trusty
@@ -205,6 +207,10 @@ deb_dists_full_4="
 
   impish-amd64
   impish-aarch64
+
+  jammy-aarch64
+  jammy-amd64
+  jammy-ppc64le
 
   sid-aarch64
   sid-amd64
