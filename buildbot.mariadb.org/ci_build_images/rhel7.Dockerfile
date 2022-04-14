@@ -28,6 +28,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     libffi-devel \
     libxml2-devel \
     lz4-devel \
+    pcre2-devel \
     python3-pip \
     scons \
     snappy-devel \
