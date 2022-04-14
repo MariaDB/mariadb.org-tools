@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mariadb-secret
+type: Opaque
+data:
+  mariadb-root-password: c2VjcmV0 #echo -n 'secret'|base64
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  labels:
+    app: mariadb
+spec:
+  ports:
+  - port: 3306
+    name: mariadb-port
+  clusterIP: None
+  selector:
+    app: mariadb
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb-sts
+spec:
+  serviceName: "mariadb-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: mariadb
+        ports:
+        - containerPort: 3306
+          name: mariadb-port
+        env:
+        # Using Secrets
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-root-password
+        # Mount volumes from persistent volume claim
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql/
+        - name: mariadb-config
+          mountPath: /etc/mysql/mariadb.conf.d/
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 300M
