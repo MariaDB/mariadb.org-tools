@@ -87,4 +87,5 @@ spec:
       resources:
         requests:
           storage: 300M
-# Delete the pvc's  for i in 0 1 2; do kubectl delete pvc datadir-mariadb-sts-$i; done
+# Delete the pvc's 
+# for i in 0 1 2; do kubectl delete pvc datadir-mariadb-sts-$i; done
