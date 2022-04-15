@@ -13,6 +13,7 @@ data:
     simple_password_check_letters_same_case=0  # default 1
     simple_password_check_other_characters=0   # default 1
     #strict_password_validation=1              # if set to 1 hash passwords are used
+
   init.sh: |
     set -ex
     # Generate mysql server-id from pod ordinal index.
@@ -21,19 +22,33 @@ data:
     ordinal=${BASH_REMATCH[1]}
     echo [mariadb] > /etc/mysql/conf.d/server-id.cnf
     # Add an offset to avoid reserved server-id=0 value.
-    echo server-id=$((100 + $ordinal)) >> etc/mysql/server-id.cnf 
+    echo server-id=$((100 + $ordinal)) >> etc/mysql/server-id.cnf
+
   primary.cnf: |
     [mariadb]
     log-bin                         # enable binary loging
     # server_id=3000                  # used to uniquely identify the server
     log-basename=my-mariadb         # used to be independent of to hostname changes (otherwise is in datadir/mysql)
-    #binlog-format=MIXED            #default 
+    #binlog-format=MIXED            #default
 
   replica.cnf: |
     [mariadb]
     # server_id=3001                  # used to uniquely identify the server
     log-basename=my-mariadb         # used to be independent of to hostname changes (otherwise is in datadir/mysql)
-    #binlog-format=MIXED            #default 
+    #binlog-format=MIXED            #default
+
+  primary.sql: |
+    CREATE USER 'repluser'@'%' IDENTIFIED BY 'replsecret';
+    GRANT REPLICATION SLAVE ON *.* TO 'repluser'@'%';
+    CREATE DATABASE primary_db;
+  # This should be done on the first clone. Not needed at all
+  secondary.sql: |
+    CHANGE MASTER TO
+    MASTER_HOST=mariadb-sts-0,
+    MASTER_USER='repluser',
+    MASTER_PASSWORD='replsecret',
+    MASTER_PORT=3306,
+    MASTER_CONNECT_RETRY=10;
 ---
 apiVersion: v1
 kind: Secret
@@ -41,7 +56,7 @@ metadata:
     name: mariadb-secret
 type: Opaque
 data:
-  mariadb-root-password: c2VjcmV0 #echo -n 'secret'|base64
+  mariadb-root-password: c2VjcmV0 # echo -n 'secret'|base64
 ---
 apiVersion: v1
 kind: Service
@@ -63,7 +78,7 @@ metadata:
   name: mariadb-sts
 spec:
   serviceName: "mariadb-service"
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: mariadb
@@ -77,7 +92,7 @@ spec:
         image: mariadb
         imagePullPolicy: Always
         command:
-        - bash 
+        - bash
         - "-c"
         - |
           set -ex
@@ -85,18 +100,22 @@ spec:
           ls /mnt/config-map
           [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
           ordinal=${BASH_REMATCH[1]}
-          echo [mariadb] > /etc/mysql/conf.d/server-id.cnf
+          # Copy appropriate conf.d files from config-map to emptyDir.
+          if [[ $ordinal -eq 0 ]]; then
+            cp /mnt/config-map/primary.cnf /etc/mysql/conf.d/server-id.cnf
+            # Create the users needed for replication on primary
+            cp /mnt/config-map/primary.sql docker-entrypoint-initdb.d/
+          else
+            cp /mnt/config-map/replica.cnf /etc/mysql/conf.d/server-id.cnf
+            # We cannot know the IP of the host, it will be created
+            # cp /mnt/config-map/secondary.sql docker-entrypoint-initdb.d/
+          fi
           # Add an offset to avoid reserved server-id=0 value.
           echo server-id=$((3000 + $ordinal)) >> etc/mysql/conf.d/server-id.cnf
           # cp /mnt/config-map/mariadb.cnf /etc/mysql/conf.d
           # Execute the script if needed (maybe for galera)
           # ./mnt/config-map/init.sh
-          # Copy appropriate conf.d files from config-map to emptyDir.
-          if [[ $ordinal -eq 0 ]]; then
-            cp /mnt/config-map/primary.cnf /etc/mysql/conf.d/
-          else
-            cp /mnt/config-map/replica.cnf /etc/mysql/conf.d/
-          fi
+
           ls /etc/mysql/conf.d/
           cat /etc/mysql/conf.d/server-id.cnf
         env:
@@ -125,6 +144,8 @@ spec:
             secretKeyRef:
               name: mariadb-secret
               key: mariadb-root-password
+        - name: MYSQL_INITDB_SKIP_TZINFO
+          value: "yes"
         # Mount volumes from persistent volume claim
         volumeMounts:
         - name: datadir
@@ -147,7 +168,7 @@ spec:
       resources:
         requests:
           storage: 300M
-# Delete the 
+# Delete the
 # pvc's  for i in 0 1 2; do kubectl delete pvc datadir-mariadb-sts-$i; done
 # https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/
 # https://github.com/Yolean/kubernetes-mysql-cluster/blob/master/50mariadb.yml
