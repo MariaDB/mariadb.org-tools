@@ -6,7 +6,7 @@ builders_autobake=["amd64-centos-7-rpm-autobake", "amd64-centos-8-rpm-autobake",
 
 builders_big=["amd64-ubuntu-1804-bigtest"]
 
-builders_install=["amd64-ubuntu-1804-deb-autobake-install", "amd64-centos-7-rpm-autobake-install"]
+builders_install=["amd64-debian-11-deb-autobake-install", "amd64-ubuntu-1804-deb-autobake-install", "amd64-centos-7-rpm-autobake-install"]
 
 builders_upgrade=["amd64-ubuntu-1804-deb-autobake-major-upgrade", "amd64-ubuntu-1804-deb-autobake-minor-upgrade", "amd64-centos-7-rpm-autobake-major-upgrade", "amd64-centos-7-rpm-autobake-minor-upgrade"]
 
