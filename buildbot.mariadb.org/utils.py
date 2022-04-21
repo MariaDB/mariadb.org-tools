@@ -34,7 +34,12 @@ def envFromProperties(envlist):
 def getScript(scriptname):
     return steps.ShellCommand(
       name=f"fetch_{scriptname}",
-      command=['sh', '-xc', f"curl https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/scripts/{scriptname} -o {scriptname} && chmod a+x {scriptname}"])
+      command=["bash", "-xc", util.Interpolate("""
+  for script in bash_lib.sh {scriptname}; do
+    curl "https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/scripts/$script" -o $script
+  done
+  chmod a+x {scriptname}
+""")])
 
 # BUILD HELPERS
 
