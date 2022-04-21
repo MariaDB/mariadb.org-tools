@@ -1,25 +1,39 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
-set -ex
-# //TEMP why vlad?
-branch=${1:-bb-10.8-release}
+set -e
+
+# Buildbot installation test script
+# this script can be called manually by providing the build URL as argument:
+# ./rpm-install.sh "https://buildbot.mariadb.org/#/builders/368/builds/695"
+
+# load common functions
+# shellcheck disable=SC1091
+. ./bash_lib.sh
+
+# function to be able to run the script manually (see bash_lib.sh)
+manual_run_switch "$1"
+
+set -x
+
+# print disk usage
 df -kT
 
-# //TEMP this should be done in the VM preparation IMO
-case "$branch" in
-  *mdev10416*)
-    sudo cat /etc/sysconfig/selinux | grep SELINUX || true
-    sudo sh -c \"PATH=$PATH:/usr/sbin getenforce || true\"
-    sudo sh -c \"PATH=$PATH:/usr/sbin setenforce Enforcing || true\"
-    sudo sh -c \"PATH=$PATH:/usr/sbin getenforce || true\"
-    ;;
-esac
+# # //TEMP this should be done in the VM preparation
+# case "$master_branch" in
+#   *mdev10416*)
+#     sudo cat /etc/sysconfig/selinux | grep SELINUX || true
+#     sudo sh -c \"PATH=$PATH:/usr/sbin getenforce || true\"
+#     sudo sh -c \"PATH=$PATH:/usr/sbin setenforce Enforcing || true\"
+#     sudo sh -c \"PATH=$PATH:/usr/sbin getenforce || true\"
+#     ;;
+# esac
 
 rpm -qa | { grep -iE 'maria|mysql|galera' || true; }
 
 # Try several times, to avoid sporadic "The requested URL returned error: 404"
 made_cache=0
+# shellcheck disable=SC2034
 for i in 1 2 3 4 5; do
   sudo rm -rf /var/cache/yum/*
   sudo yum clean all
@@ -33,8 +47,9 @@ for i in 1 2 3 4 5; do
     sleep 5
   fi
 done
-if [[ "$made_cache" != "1" ]]; then
-  echo "Failed to make cache"
+
+if ((made_cache != 1)); then
+  bb_log_err "failed to make cache"
   exit 1
 fi
 sudo yum search mysql | { grep "^mysql" || true; }
@@ -44,7 +59,7 @@ sudo yum search percona | { grep percona || true; }
 # setup repository
 sudo sh -c "echo '[galera]
 name=galera
-baseurl=https://rpm.mariadb.org/$branch/$arch
+baseurl=https://rpm.mariadb.org/$master_branch/$arch
 gpgkey=https://rpm.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1' >/etc/yum.repos.d/galera.repo"
 
@@ -63,18 +78,19 @@ case "$systemdCapability" in
     sudo /etc/init.d/mysql restart
     ;;
   *)
-    echo "It should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
+    bb_log_warn "should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
     ;;
 esac
-if [[ "$branch" == *"10."[4-9]* ]]; then
-  echo "Uninstallation of Cracklib plugin may fail if it wasn't installed, it's quite all right"
+if [[ $master_branch == *"10."[4-9]* ]]; then
+  bb_log_info "uninstallation of Cracklib plugin may fail if it wasn't installed, it's quite all right"
   if sudo mysql -e "uninstall soname 'cracklib_password_check.so'"; then
+    # shellcheck disable=SC2034
     reinstall_cracklib_plugin="YES"
   fi
   sudo mysql -e "set password=''"
 fi
 mysql -uroot -e 'drop database if exists test; create database test; use test; create table t(a int primary key) engine=innodb; insert into t values (1); select * from t; drop table t;'
-if ls rpms/*.rpm | grep -i columnstore >/dev/null 2>&1; then
+if find rpms/*.rpm | grep -qi columnstore; then
   mysql --verbose -uroot -e "create database cs; use cs; create table cs.t_columnstore (a int, b char(8)); insert into cs.t_columnstore select seq, concat('val',seq) from seq_1_to_10; select * from cs.t_columnstore"
   sudo systemctl restart mariadb
   mysql --verbose -uroot -e "select * from cs.t_columnstore; update cs.t_columnstore set b = 'updated'"
@@ -82,7 +98,7 @@ if ls rpms/*.rpm | grep -i columnstore >/dev/null 2>&1; then
   mysql --verbose -uroot -e "update cs.t_columnstore set a = a + 10; select * from cs.t_columnstore"
 fi
 mysql -uroot -e 'show global status like "wsrep%%"'
-echo "Test for MDEV-18563, MDEV-18526"
+bb_log_info "test for MDEV-18563, MDEV-18526"
 set +e
 case "$systemdCapability" in
   yes)
@@ -98,9 +114,9 @@ for p in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
   if test -x $p/mysql_install_db; then
     sudo $p/mysql_install_db --no-defaults --user=mysql --plugin-maturity=unknown
   else
-    echo "$p/mysql_install_db does not exist"
+    bb_log_warn "$p/mysql_install_db does not exist"
   fi
 done
 sudo mysql_install_db --no-defaults --user=mysql --plugin-maturity=unknown
 set +e
-echo "All done"
+bb_log_info "all done"
