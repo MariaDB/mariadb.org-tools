@@ -70,7 +70,7 @@ innodb.compression_providers_loaded : plugins sigh
 plugins.test_sql_service : plugins sigh
 plugins.password_reuse_check : plugins sigh
 plugins.compression_load : plugins sigh
-
+innodb.innodb_28867993 : need supression -[ERROR] InnoDB: File ./ib_logfile2: 'delete' returned OS error 201.
 EOF
 	# for saving logs
 	ln -s build/mysql-test .
