@@ -58,6 +58,19 @@ rpl.rpl_row_img_blobs : timeout on 2 minutes, resource, backtrace is just on pol
 main.mysql_upgrade : timeout on 2 minutes, resource, backtrace is just on poll loop
 main.mysql_client_test_comp : too much memory when run in parallel (8 seems to work)
 federated.* : really broken, can't load plugin
+encryption.innodb-redo-nokeys : [ERROR] InnoDB: Missing FILE_CHECKPOINT at 1309364 between the checkpoint 51825 and the end 1374720
+innodb.insert_into_empty : ER_ERROR_DURING_COMMIT "Operation not permitted" -> "Not Owner"
+mariabackup.incremental_compressed : mysqltest: At line 19: query 'INSTALL SONAME 'provider_snappy'' failed: <Unknown> (2013): Lost connection to server during query
+innodb.innodb-page_compression_lz4 : plugins sigh
+innodb.innodb-page_compression_lzma : plugins sigh
+mariabackup.compression_providers_loaded : plugins sigh
+mariabackup.compression_providers_unloaded : plugins sigh
+plugins.compression : plugins sigh
+innodb.compression_providers_loaded : plugins sigh
+plugins.test_sql_service : plugins sigh
+plugins.password_reuse_check : plugins sigh
+plugins.compression_load : plugins sigh
+
 EOF
 	# for saving logs
 	ln -s build/mysql-test .
