@@ -106,6 +106,9 @@ case $test_mode in
     if ! grep columnstore Packages >/dev/null; then
       bb_log_warn "Columnstore was not found in packages, the test will not be run"
       exit
+    elif [[ $version_name == "sid" ]]; then
+      bb_log_warn "Columnstore isn't necessarily built on Sid, the test will be skipped"
+      exit
     fi
     package_list="mariadb-server "$(grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs)
     ;;
@@ -119,7 +122,7 @@ echo "Package_list: $package_list"
 #======================================================================
 # Prepare apt source configuration for installation of the last release
 #======================================================================
-sudo sh -c "echo 'deb [trusted=yes] https://deb.mariadb.org/$prev_major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb-upgrade.list"
+sudo sh -c "echo 'deb [trusted=yes] https://deb.mariadb.org/$prev_major_version/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb-upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
@@ -127,7 +130,7 @@ sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin: origin deb.mariadb.org' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
-sudo sh -c 'grep -v "^deb .*file" /etc/apt/sources.list.backup | grep -v "^deb-src .*file" > /etc/apt/sources.list'
+sudo sh -c 'grep -v "^deb .*file" /etc/apt/sources.list.backup | grep -v "^deb-src .*file" >/etc/apt/sources.list'
 
 # apt get update may be running in the background (Ubuntu start).
 apt_get_update
@@ -200,6 +203,11 @@ else
   # Even without unix_socket, on some of VMs the password might be not pre-created as expected. This command should normally fail.
   mysql -uroot -e "set password = password('rootpass')" >>/dev/null 2>&1
 fi
+
+# Print "have_xx" capabilitites for the old server
+
+mysql -uroot -prootpass -e "select 'Stat' t, variable_name name, variable_value val from information_schema.global_status where variable_name like '%have%' union select 'Vars' t, variable_name name, variable_value val from information_schema.global_variables where variable_name like '%have%' order by t, name"
+
 # All the commands below should succeed
 set -e
 mysql -uroot -prootpass -e "CREATE DATABASE db"
@@ -279,14 +287,14 @@ esac
 
 if [[ $test_mode == "deps" ]]; then
   # For the dependency check, only keep the local repo
-  sudo sh -c "grep -iE 'deb .*file|deb-src .*file' /etc/apt/sources.list.backup > /etc/apt/sources.list"
+  sudo sh -c "grep -iE 'deb .*file|deb-src .*file' /etc/apt/sources.list.backup >/etc/apt/sources.list"
   sudo rm -rf /etc/apt/sources.list.d/*
 else
   sudo cp /etc/apt/sources.list.backup /etc/apt/sources.list
   sudo rm /etc/apt/sources.list.d/mariadb-upgrade.list
 fi
 sudo rm /etc/apt/preferences.d/release
-sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >>/etc/apt/sources.list.d/bb-artifacts.list"
 
 # apt get update may be running in the background (Ubuntu start).
 apt_get_update
@@ -342,6 +350,11 @@ fi
 #=====================================================================================
 # Check that the server is functioning and previously created structures are available
 #=====================================================================================
+
+# Print "have_xx" capabilitites for the new server
+
+mysql -uroot -prootpass -e "select 'Stat' t, variable_name name, variable_value val from information_schema.global_status where variable_name like '%have%' union select 'Vars' t, variable_name name, variable_value val from information_schema.global_variables where variable_name like '%have%' order by t, name"
+
 # All the commands below should succeed
 set -e
 mysql -uroot -prootpass -e "select @@version, @@version_comment"
