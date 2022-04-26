@@ -2,7 +2,7 @@
 # Buildbot worker for building and running pymysql against mariadb server
 #
 
-FROM       python:3.9-slim-buster
+FROM       python:3.10-slim-bullseye
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # This will make apt-get install without question
@@ -43,7 +43,7 @@ RUN pip3 install buildbot-worker && \
 # Test runs produce a great quantity of dead grandchild processes.  In a
 # non-docker environment, these are automatically reaped by init (process 1),
 # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
-RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_$(dpkg --print-architecture).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
+RUN curl https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_$(dpkg --print-architecture).deb -Lo /tmp/init.deb && dpkg -i /tmp/init.deb
 
 USER buildbot
 CMD ["/usr/bin/dumb-init", "twistd", "--pidfile=", "-ny", "buildbot.tac"]
