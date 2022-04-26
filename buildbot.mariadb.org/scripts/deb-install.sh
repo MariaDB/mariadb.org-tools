@@ -53,30 +53,13 @@ if grep -qi columnstore Packages; then
   fi
 fi
 
-# apt-get update may fail because apt cache is being updated at boot (Ubuntu
-# mainly)
-for i in 1 2 3 4 5 6 7 8 9 10; do
-  if sudo apt-get update; then
-    break
-  fi
-  bb_log_warn "apt-get update failed, retrying ($i)"
-  sleep 10
-done
+# apt get update may be running in the background (Ubuntu start).
+apt_get_update
+
 sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install -y $package_list $columnstore_package_list"
 
 # MDEV-14622: Wait for mysql_upgrade running in the background to finish
-res=1
-for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  if pgrep -i 'mysql_upgrade|mysqlcheck|mysqlrepair|mysqlanalyze|mysqloptimize|mariadb-upgrade|mariadb-check'; then
-    sleep 2
-  else
-    res=0
-    break
-  fi
-done
-if ((res != 0)); then
-  bb_log_warn "mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
-fi
+wait_for_mysql_upgrade
 
 # To avoid confusing errors in further logic, do an explicit check
 # whether the service is up and running
