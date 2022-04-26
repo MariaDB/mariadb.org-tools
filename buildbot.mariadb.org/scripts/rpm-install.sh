@@ -33,7 +33,6 @@ rpm -qa | { grep -iE 'maria|mysql|galera' || true; }
 
 # Try several times, to avoid sporadic "The requested URL returned error: 404"
 made_cache=0
-# shellcheck disable=SC2034
 for i in 1 2 3 4 5; do
   sudo rm -rf /var/cache/yum/*
   sudo yum clean all
@@ -44,6 +43,7 @@ for i in 1 2 3 4 5; do
     made_cache=1
     break
   else
+    bb_log_info "try several times ($i), to avoid sporadic The requested URL returned error: 404"
     sleep 5
   fi
 done
@@ -81,7 +81,8 @@ case "$systemdCapability" in
     bb_log_warn "should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
     ;;
 esac
-if [[ $master_branch == *"10."[4-9]* ]]; then
+
+if ((${master_branch/10./} >= 4)); then
   bb_log_info "uninstallation of Cracklib plugin may fail if it wasn't installed, it's quite all right"
   if sudo mysql -e "uninstall soname 'cracklib_password_check.so'"; then
     # shellcheck disable=SC2034
@@ -100,14 +101,8 @@ fi
 mysql -uroot -e 'show global status like "wsrep%%"'
 bb_log_info "test for MDEV-18563, MDEV-18526"
 set +e
-case "$systemdCapability" in
-  yes)
-    sudo systemctl stop mariadb
-    ;;
-  no)
-    sudo /etc/init.d/mysql stop
-    ;;
-esac
+control_mariadb_server stop
+
 sleep 1
 sudo pkill -9 mysqld
 for p in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
@@ -119,4 +114,5 @@ for p in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
 done
 sudo mysql_install_db --no-defaults --user=mysql --plugin-maturity=unknown
 set +e
-bb_log_info "all done"
+
+bb_log_ok "all done"
