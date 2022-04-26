@@ -5,7 +5,7 @@ set -e
 
 # Buildbot installation test script
 # this script can be called manually by providing the build URL as argument:
-# ./deb-install.sh "https://buildbot.mariadb.org/#/builders/171/builds/7351"
+# ./script.sh "https://buildbot.mariadb.org/#/builders/171/builds/7351"
 
 # load common functions
 # shellcheck disable=SC1091
@@ -94,7 +94,7 @@ if [[ $sst_mode == "mariabackup" ]]; then
 elif [[ $sst_mode == "xtrabackup-v2" ]]; then
   wget "https://repo.percona.com/apt/percona-release_${xtrabackup_version}.${version_name}_all.deb"
   sudo dpkg -i "percona-release_${xtrabackup_version}.${version_name}_all.deb"
-  sudo apt-get update
+  apt_get_update
   if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y percona-xtrabackup-24 socat"; then
     bb_log_warn "could not install XtraBackup, check if it's available for this version/architecture"
     exit 1
@@ -257,3 +257,5 @@ mysql -uroot -prootpass --port=8303 --protocol=tcp -e "drop table mgc.t1"
 # shellcheck disable=SC2251
 ! mysql -uroot -prootpass --port=8302 --protocol=tcp -e "set wsrep_sync_wait=15; select * from mgc.t1"
 ! mysql -uroot -prootpass --port=8301 --protocol=tcp -e "set wsrep_sync_wait=15; select * from mgc.t1"
+
+bb_log_ok "all done"

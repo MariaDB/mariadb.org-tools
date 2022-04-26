@@ -32,10 +32,10 @@ for cmd in wget gunzip; do
 done
 
 # setup repository
-sudo sh -c "echo 'deb [trusted=yes] https://deb.mariadb.org/$master_branch/$dist_name $version_name main' >/etc/apt/sources.list.d/galera-test-repo.list"
+deb_setup_mariadb_mirror "$master_branch"
 
 # setup repository for BB artifacts
-sudo sh -c "echo 'deb [trusted=yes] https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs ./' >/etc/apt/sources.list.d/bb-artifacts.list"
+deb_setup_bb_artifacts_mirror
 
 wget -O - "https://ci.mariadb.org/${tarbuildnum}/${parentbuildername}/debs/Packages.gz" | gunzip >Packages
 
@@ -53,33 +53,16 @@ if grep -qi columnstore Packages; then
   fi
 fi
 
-# apt-get update may fail because apt cache is being updated at boot (Ubuntu
-# mainly)
-for i in 1 2 3 4 5 6 7 8 9 10; do
-  if sudo apt-get update; then
-    break
-  fi
-  bb_log_warn "apt-get update failed, retrying ($i)"
-  sleep 10
-done
+# apt get update may be running in the background (Ubuntu start).
+apt_get_update
+
 sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install -y $package_list $columnstore_package_list"
 
 # MDEV-14622: Wait for mysql_upgrade running in the background to finish
-res=1
-for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-  if pgrep -i 'mysql_upgrade|mysqlcheck|mysqlrepair|mysqlanalyze|mysqloptimize|mariadb-upgrade|mariadb-check'; then
-    sleep 2
-  else
-    res=0
-    break
-  fi
-done
-if ((res != 0)); then
-  bb_log_warn "mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
-fi
+wait_for_mariadb_upgrade
 
-# To avoid confusing errors in further logic, do an explicit check
-# whether the service is up and running
+# To avoid confusing errors in further logic, do an explicit check whether the
+# service is up and running
 if [[ $systemdCapability == "yes" ]]; then
   if ! sudo systemctl status mariadb --no-pager; then
     sudo journalctl -xe --no-pager
@@ -87,7 +70,8 @@ if [[ $systemdCapability == "yes" ]]; then
     if echo "$package_list" | grep -q columnstore; then
       bb_log_info "It is likely to be caused by ColumnStore problems upon installation, getting the logs"
       set +e
-      # It is done in such a weird way, because Columnstore currently makes its logs hard to read
+      # It is done in such a weird way, because Columnstore currently makes its
+      # logs hard to read
       for f in $(sudo ls /var/log/mariadb/columnstore | xargs); do
         f=/var/log/mariadb/columnstore/$f
         echo "----------- $f -----------"
@@ -102,6 +86,7 @@ if [[ $systemdCapability == "yes" ]]; then
     exit 1
   fi
 fi
+
 # Due to MDEV-14622 and its effect on Spider installation,
 # Spider has to be installed separately after the server
 if [[ -n $spider_package_list ]]; then
@@ -119,16 +104,11 @@ fi
 
 mysql --verbose -uroot -prootpass -e "create database test; use test; create table t(a int primary key) engine=innodb; insert into t values (1); select * from t; drop table t; drop database test; create user galera identified by 'gal3ra123'; grant all on *.* to galera;"
 mysql -uroot -prootpass -e "select @@version"
-bb_log_info "Test for MDEV-18563, MDEV-18526"
+bb_log_info "test for MDEV-18563, MDEV-18526"
 set +e
-case "$systemdCapability" in
-  yes)
-    sudo systemctl stop mariadb
-    ;;
-  no)
-    sudo /etc/init.d/mysql stop
-    ;;
-esac
+
+control_mariadb_server stop
+
 sleep 1
 sudo pkill -9 mysqld
 for p in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
@@ -152,3 +132,5 @@ if dpkg -l | grep -i columnstore >/dev/null; then
   sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get remove --allow-unauthenticated -y mariadb-plugin-columnstore" || true
   sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get purge --allow-unauthenticated -y mariadb-plugin-columnstore" || true
 fi
+
+bb_log_ok "all done"
