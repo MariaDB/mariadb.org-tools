@@ -46,11 +46,10 @@ manual_run_switch() {
         export "$var"="$(jq -r ".properties[] | .${var}[0]" properties.json)"
       done
     fi
-  fi
-
-  # for RPM we have to download artifacts from ci.mariadb.org
-  if command -v rpm >/dev/null; then
-    mkdir rpms
-    wget -r -np -nH --cut-dirs=3 -A "*.rpm" "https://ci.mariadb.org/$tarbuildnum/$parentbuildername/rpms" -P rpms
+    # for RPM we have to download artifacts from ci.mariadb.org
+    if command -v rpm >/dev/null; then
+      mkdir rpms
+      wget -r -np -nH --cut-dirs=3 -A "*.rpm" "https://ci.mariadb.org/$tarbuildnum/$parentbuildername/rpms" -P rpms
+    fi
   fi
 }
