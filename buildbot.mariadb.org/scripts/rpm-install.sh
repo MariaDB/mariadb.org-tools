@@ -19,6 +19,14 @@ set -x
 # print disk usage
 df -kT
 
+# Mandatory variables
+for var in arch master_branch; do
+  if [[ -z $var ]]; then
+    bb_log_err "$var is not defined"
+    exit 1
+  fi
+done
+
 # # //TEMP this should be done in the VM preparation
 # case "$master_branch" in
 #   *mdev10416*)

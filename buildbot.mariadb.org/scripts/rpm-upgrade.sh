@@ -44,10 +44,12 @@ bb_log_info "  Previous major version $prev_major_version"
 bb_log_info "Current test mode: $test_mode"
 
 # Environment
+set +e
 rpm -qa | grep -iE 'maria|mysql|galera'
 cat /etc/*release
 uname -a
 df -kT
+set -e
 
 # Check whether a previous version exists
 if ! wget "https://yum.mariadb.org/$prev_major_version/$repo_dist_arch/repodata" -O repodata.list; then
