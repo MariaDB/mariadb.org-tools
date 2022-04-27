@@ -89,18 +89,26 @@ wait_for_mariadb_upgrade() {
   done
   if ((res != 0)); then
     bb_log_err "mysql_upgrade or alike have not finished in reasonable time"
+    exit $res
   fi
 }
 
 deb_setup_mariadb_mirror() {
   # stop if any variable is undefined
   set -u
-  [[ -n $1 ]] || bb_log_err "missing the branch variable"
+  [[ -n $1 ]] || {
+    bb_log_err "missing the branch variable"
+    exit 1
+  }
   bb_log_info "setup MariaDB repository for $1 branch"
-  command -v wget >/dev/null ||
+  command -v wget >/dev/null || {
     bb_log_err "wget command not found"
-  sudo wget https://mariadb.org/mariadb_release_signing_key.asc -O /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc ||
+    exit 1
+  }
+  sudo wget https://mariadb.org/mariadb_release_signing_key.asc -O /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc || {
     bb_log_err "mariadb repository key installation failed"
+    exit 1
+  }
   sudo sh -c "echo 'deb https://deb.mariadb.org/$1/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb.list"
   set +u
 }
@@ -142,6 +150,7 @@ upgrade_test_type() {
       ;;
     *)
       log_bb_err "test type not provided"
+      exit 1
       ;;
   esac
 }
