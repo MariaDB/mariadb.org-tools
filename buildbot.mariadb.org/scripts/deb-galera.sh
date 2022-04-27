@@ -36,7 +36,7 @@ store_logs() {
 manual_run_switch "$1"
 
 # Mandatory variables
-for var in sst_mode arch version_name; do
+for var in arch master_branch version_name sst_mode; do
   if [[ -z $var ]]; then
     bb_log_err "$var is not defined"
     exit 1
