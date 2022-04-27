@@ -95,6 +95,7 @@ wait_for_mariadb_upgrade() {
 deb_setup_mariadb_mirror() {
   # stop if any variable is undefined
   set -u
+  [[ -n $1 ]] || bb_log_err "missing the branch variable"
   bb_log_info "setup MariaDB repository for $1 branch"
   command -v wget >/dev/null ||
     bb_log_err "wget command not found"
