@@ -24,7 +24,9 @@ store_logs() {
     mkdir /home/buildbot/sst_logs/mbackup
     for node in 1 2 3; do
       for log in prepare move backup; do
-        sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/sst_logs/mbackup/node${node}.mariabackup.${log}.log
+        if [[ -f /var/lib/node${node}/mariabackup.${log}.log ]]; then
+          sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/sst_logs/mbackup/node${node}.mariabackup.${log}.log
+        fi
       done
     done
     sudo chown -R buildbot:buildbot /home/buildbot/sst_logs
@@ -55,21 +57,31 @@ if [[ $sst_mode == "xtrabackup-v2" ]]; then
   esac
 fi
 
-sudo killall mysqld mariadbd || true
+# //TEMP probably need to remove mysqld in the future
+bb_log_info "make sure mariadb is not running"
+for process in mariadbd mysqld; do
+  if pgrep $process >/dev/null; then
+    sudo killall $process >/dev/null
+  fi
+done
 
 # give mariadb the time to shutdown
 for i in 1 2 3 4 5 6 7 8 9 10; do
   if pgrep 'mysqld|mariadbd'; then
+    bb_log_info "give mariadb the time to shutdown ($i)"
     sleep 3
   else
     break
   fi
 done
 
-# We don't want crash recovery, but if mysqld hasn't stopped, we'll have to deal with it
-if pgrep 'mysqld|mariadbd'; then
-  sudo killall -s 9 mysqld mariadbd
-fi
+# We don't want crash recovery, but if mariadb hasn't stopped, we'll have to
+# deal with it
+for process in mariadbd mysqld; do
+  if pgrep $process >/dev/null; then
+    sudo killall -s 9 $process >/dev/null
+  fi
+done
 
 if [[ $sst_mode == "mariabackup" ]]; then
   # Starting from 10.3.6, MariaBackup packages have a generic name mariadb-backup.
@@ -198,12 +210,13 @@ res=1
 set +x
 bb_log_info "waiting till the first node comes up..."
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+  bb_log_info "still waiting for first node comes up ($i)..."
   sleep 2
   if mysql -uroot -prootpass --port=8301 --protocol=tcp -e "create database mgc; create table mgc.t1 (i int); insert into mgc.t1 values (1)"; then
     res=0
     break
   fi
-  date "+%H:%M:%S"
+  date +'%Y-%m-%dT%H:%M:%S%z'
   sudo tail -n 5 /var/lib/node1/node1.err || true
 done
 set -x
@@ -212,7 +225,7 @@ if [ "$res" != "0" ]; then
   store_logs
   exit 1
 fi
-mysql -uroot -prootpass --port=8301 --protocol=tcp -e "select * from mgc.t1"
+mysql -uroot -prootpass --port=8301 --protocol=tcp -e "select * from mgc.t1\G"
 
 # We can't start both nodes at once, because it causes rsync port conflict
 # (and maybe some other SST methods will have problems too)
@@ -224,15 +237,17 @@ for node in 2 3; do
   res=1
   set +x
   bb_log_info "waiting till node $node comes up..."
-  # shellcheck disable=SC2034
   for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
     sleep 5
-    if mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1"; then
+    # echoing to 2>/dev/null because we do not want mysql connection error to
+    # be printed ERROR 2002 (HY000): Can't connect to MySQL server on 'localhost'
+    if mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1\G" 2>/dev/null; then
       res=0
       break
     fi
-    date "+%H:%M:%S"
-    tail -n 5 /var/lib/node${node}/node${node}.err || true
+    bb_log_info "still waiting for node $node to come up ($i)..."
+    date +'%Y-%m-%dT%H:%M:%S%z'
+    sudo tail -n 5 /var/lib/node${node}/node${node}.err || true
   done
   set -x
   if [ "$res" != "0" ]; then
@@ -240,7 +255,7 @@ for node in 2 3; do
     store_logs
     exit 1
   fi
-  mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1"
+  mysql -uroot -prootpass --port=830$node --protocol=tcp -e "select * from mgc.t1\G"
 done
 
 mysql -uroot -prootpass --port=8301 --protocol=tcp -e "show status like 'wsrep_cluster_size'"
@@ -249,13 +264,24 @@ store_logs
 
 set -e
 mysql -uroot -prootpass --port=8301 --protocol=tcp -e "show status like 'wsrep_cluster_size'" | grep 3
-mysql -uroot -prootpass --port=8302 --protocol=tcp -e "select * from mgc.t1"
-mysql -uroot -prootpass --port=8303 --protocol=tcp -e "select * from mgc.t1"
-mysql -uroot -prootpass --port=8303 --protocol=tcp -e "drop table mgc.t1"
 
-# //TEMP I don't understand this test but it's not validated by shellcheck
-# shellcheck disable=SC2251
-! mysql -uroot -prootpass --port=8302 --protocol=tcp -e "set wsrep_sync_wait=15; select * from mgc.t1"
-! mysql -uroot -prootpass --port=8301 --protocol=tcp -e "set wsrep_sync_wait=15; select * from mgc.t1"
+for node in 2 3; do
+  mysql -uroot -prootpass --port=830${node} --protocol=tcp -e "select * from mgc.t1\G"
+done
+
+mysql -uroot -prootpass --port=8303 --protocol=tcp -e "drop table mgc.t1"
+# check that previous drop was replicated to other nodes
+for node in 2 1; do
+  if mysql -uroot -prootpass --port=830${node} --protocol=tcp -e "set wsrep_sync_wait=15; use mgc; show tables" | grep -q t1; then
+    bb_log_err "modification on node 3 was not replicated on node ${node}"
+    mysql -uroot -prootpass --port=830${node} --protocol=tcp -e "use mgc; show tables"
+    exit 1
+  fi
+done
+
+bb_log_info "stop cluster"
+sudo killall -s 9 mariadbd || true
+sleep 1
+sudo killall -s 9 mysqld_safe || true
 
 bb_log_ok "all done"
