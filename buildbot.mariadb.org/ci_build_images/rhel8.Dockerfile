@@ -51,6 +51,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     python3-devel \
     python3-scons \
     readline-devel \
+    rpmlint \
     ruby \
     snappy-devel \
     subversion \
@@ -72,4 +73,3 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
         "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
     esac \
     && chmod +x /usr/local/bin/gosu
-

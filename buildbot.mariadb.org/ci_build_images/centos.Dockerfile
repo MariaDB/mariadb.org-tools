@@ -32,6 +32,7 @@ RUN dnf -y --enablerepo=extras install epel-release \
     python3-devel \
     python3-scons \
     readline-devel \
+    rpmlint \
     ruby \
     snappy-devel \
     subversion \
@@ -57,4 +58,3 @@ RUN dnf -y --enablerepo=extras install epel-release \
 # RUN wget http://yum.mariadb.org/10.5.6/centos8-amd64/srpms/MariaDB-10.5.6-1.el8.src.rpm
 # RUN rpm -ivh ./MariaDB-10.5.6-1.el8.src.rpm
 # RUN yum-builddep -y ~/rpmbuild/SPECS/*
-

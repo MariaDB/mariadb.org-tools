@@ -36,6 +36,7 @@ RUN yum -y --enablerepo=extras install epel-release \
     pcre2-devel \
     python3 \
     python3-pip \
+    rpmlint \
     ruby \
     scons \
     snappy-devel \
@@ -60,4 +61,3 @@ RUN yum -y --enablerepo=extras install epel-release \
         "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
     esac \
     && chmod +x /usr/local/bin/gosu
-

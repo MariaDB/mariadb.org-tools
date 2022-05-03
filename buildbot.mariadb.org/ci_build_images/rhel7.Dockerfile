@@ -30,6 +30,7 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     lz4-devel \
     pcre2-devel \
     python3-pip \
+    rpmlint \
     scons \
     snappy-devel \
     wget \

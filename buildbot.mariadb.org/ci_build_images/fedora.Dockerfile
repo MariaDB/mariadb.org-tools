@@ -37,6 +37,7 @@ RUN dnf -y upgrade \
     python3-pip \
     readline-devel \
     rpm-build \
+    rpmlint \
     rubypick \
     scons \
     snappy-devel \
@@ -51,4 +52,3 @@ RUN dnf -y upgrade \
         "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
     esac \
     && chmod +x /usr/local/bin/gosu
-
