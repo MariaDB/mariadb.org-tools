@@ -39,6 +39,9 @@ RUN gosu buildbot curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >/tm
             gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location incremental"; \
         fi; \
         gosu buildbot bash -c "pip3 install --no-cache-dir --no-warn-script-location -r /home/buildbot/requirements.txt"; \
+    fi \
+    && if grep -qi "debian" /etc/os-release; then \
+        pip3 install --no-cache-dir --no-warn-script-location python-debian junit_xml; \
     fi
 
 # TODO: sync with BB steps (move to /home/buildbot)

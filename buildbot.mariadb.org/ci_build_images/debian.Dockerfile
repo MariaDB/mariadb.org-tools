@@ -55,6 +55,10 @@ RUN apt-get update \
         sed '/libfmt-dev/d' -i control; \
         sed '/liburing-dev/d' -i control; \
     fi \
+    && curl \
+       https://salsa.debian.org/salsa-ci-team/pipeline/-/raw/master/images/scripts/check_for_missing_breaks_replaces.py \
+       > /usr/local/bin/check_for_missing_breaks_replaces.py \
+    && chmod +x /usr/local/bin/check_for_missing_breaks_replaces.py \
     && mk-build-deps -r -i control \
     -t 'apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends' \
     && apt-get -y build-dep -q mariadb-server \
