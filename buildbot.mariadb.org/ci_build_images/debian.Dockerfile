@@ -22,7 +22,7 @@ RUN if grep -q "ID=debian" /etc/os-release; then \
 # see: https://cryptography.io/en/latest/installation/
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get -y install --no-install-recommends curl devscripts equivs \
+    && apt-get -y install --no-install-recommends ca-certificates curl devscripts equivs \
     && curl -skO https://raw.githubusercontent.com/MariaDB/server/$mariadb_branch/debian/control \
     # MDEV-27965 - temporary hack to introduce a late libfmt dependency, so \
     # the main branches don't immediately fail on autobake builders once \
