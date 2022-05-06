@@ -109,7 +109,11 @@ deb_setup_mariadb_mirror() {
     bb_log_err "mariadb repository key installation failed"
     exit 1
   }
-  sudo sh -c "echo 'deb https://deb.mariadb.org/$1/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb.list"
+  if wget -q --spider "https://deb.mariadb.org/$1"; then
+    sudo sh -c "echo 'deb https://deb.mariadb.org/$1/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb.list"
+  else
+    bb_log_warn "deb_setup_mariadb_mirror: $1 branch doesn't exist yet"
+  fi
   set +u
 }
 
