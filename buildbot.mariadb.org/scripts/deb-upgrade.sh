@@ -57,10 +57,10 @@ case $test_mode in
     if grep -qi columnstore Packages; then
       bb_log_warn "due to MCOL-4120 (Columnstore leaves the server shut down) and other bugs Columnstore upgrade is tested separately"
     fi
-    package_list=$(grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | sort | uniq | xargs)
+    package_list=$(grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | sort | uniq | xargs)
     if grep -qi spider Packages; then
       bb_log_warn "due to MDEV-14622 Spider will be installed separately after the server"
-      spider_package_list=$(grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | sort | uniq | xargs)
+      spider_package_list=$(grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | sort | uniq | xargs)
     fi
     if grep -si tokudb Packages; then
       # For the sake of installing TokuDB, disable hugepages
@@ -81,7 +81,7 @@ case $test_mode in
       bb_log_warn "Columnstore isn't necessarily built on Sid, the test will be skipped"
       exit
     fi
-    package_list="mariadb-server "$(grep -B 1 'Source: mariadb-' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs)
+    package_list="mariadb-server "$(grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs)
     ;;
   *)
     bb_log_err "unknown test mode: $test_mode"
