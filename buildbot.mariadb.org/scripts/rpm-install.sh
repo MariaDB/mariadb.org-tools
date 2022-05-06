@@ -65,9 +65,15 @@ sudo yum search maria | { grep "^maria" || true; }
 sudo yum search percona | { grep percona || true; }
 
 # setup repository
+if wget -q --spider https://rpm.mariadb.org/"$master_branch"; then
+  galbranch=$master_branch
+else
+  # as long as the galera major version maps this is ok
+  galbranch=10.8
+fi
 sudo sh -c "echo '[galera]
 name=galera
-baseurl=https://rpm.mariadb.org/$master_branch/$arch
+baseurl=https://rpm.mariadb.org/$galbranch/$arch
 gpgkey=https://rpm.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1' >/etc/yum.repos.d/galera.repo"
 
