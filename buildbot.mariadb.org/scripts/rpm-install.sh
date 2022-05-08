@@ -65,7 +65,7 @@ sudo yum search maria | { grep "^maria" || true; }
 sudo yum search percona | { grep percona || true; }
 
 # setup repository
-if wget -q --spider https://rpm.mariadb.org/"$master_branch"; then
+if wget -q --spider https://rpm.mariadb.org/"$master_branch/$arch"; then
   galbranch=$master_branch
 else
   # as long as the galera major version maps this is ok
