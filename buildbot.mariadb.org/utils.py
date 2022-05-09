@@ -36,7 +36,7 @@ def getScript(scriptname):
       name=f"fetch_{scriptname}",
       command=["bash", "-xc", f"""
   for script in bash_lib.sh {scriptname}; do
-    wget "https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/scripts/$script"
+    [[ ! -f $script ]] && wget "https://raw.githubusercontent.com/MariaDB/mariadb.org-tools/master/buildbot.mariadb.org/scripts/$script"
   done
   chmod a+x {scriptname}
 """])
