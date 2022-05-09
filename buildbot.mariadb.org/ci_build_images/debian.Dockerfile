@@ -74,6 +74,7 @@ RUN apt-get update \
     libboost-program-options-dev \
     libffi-dev \
     libssl-dev \
+    lintian \
     python3-dev \
     python3-pip \
     python3-setuptools \
