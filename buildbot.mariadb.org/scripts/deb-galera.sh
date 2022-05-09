@@ -14,24 +14,28 @@ set -e
 store_logs() {
   # Make sure we store all existing logs, whenever we decide to exit game
   set +e
-  mkdir /home/buildbot/sst_logs
+  mkdir /home/buildbot/logs
+  for log in /var/log/daemon.log /var/log/syslog; do
+    [[ -f $log ]] && sudo cp $log /home/buildbot/logs
+  done
   # It looks like buildbot may be enveloping the path into single quotes
   # if it has wildcards, as in '/var/lib/node*/node*.err'.
   # Trying to get rid of the wildcards
-  sudo chmod uga+r /var/lib/node1/node1.err /var/lib/node2/node2.err /var/lib/node3/node3.err
-  sudo cp /var/lib/node1/node1.err /var/lib/node2/node2.err /var/lib/node3/node3.err /home/buildbot/sst_logs
+  for node in 1 2 3; do
+    sudo cp /var/lib/node${node}/node${node}.err /home/buildbot/logs
+  done
   if [[ $sst_mode == "mariabackup" ]]; then
-    mkdir /home/buildbot/sst_logs/mbackup
     for node in 1 2 3; do
       for log in prepare move backup; do
         if [[ -f /var/lib/node${node}/mariabackup.${log}.log ]]; then
-          sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/sst_logs/mbackup/node${node}.mariabackup.${log}.log
+          sudo cp /var/lib/node${node}/mariabackup.${log}.log /home/buildbot/logs/node${node}.mariabackup.${log}.log
         fi
       done
     done
-    sudo chown -R buildbot:buildbot /home/buildbot/sst_logs
+    sudo chown -R buildbot:buildbot /home/buildbot/logs
   fi
-  ls -l /home/buildbot/sst_logs/
+  sudo chmod -R +r /home/buildbot/logs
+  ls -l /home/buildbot/logs
 }
 
 # function to be able to run the script manually (see bash_lib.sh)
@@ -281,7 +285,7 @@ done
 
 bb_log_info "stop cluster"
 sudo killall -s 9 mariadbd || true
-sleep 1
+sudo killall -s 9 mysqld || true
 sudo killall -s 9 mysqld_safe || true
 
 bb_log_ok "all done"
