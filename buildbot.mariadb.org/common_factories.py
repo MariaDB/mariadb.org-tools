@@ -1,5 +1,6 @@
 from buildbot.plugins import *
 from buildbot.process.properties import Property, Properties
+from buildbot.steps.package.rpm.rpmlint import RpmLint
 from buildbot.steps.shell import ShellCommand, Compile, Test, SetPropertyFromCommand
 from buildbot.steps.mtrlogobserver import MTR, MtrLogObserver
 from buildbot.steps.source.github import GitHub
@@ -68,6 +69,7 @@ def getRpmAutobakeFactory(mtrDbPool):
     # build steps
     f_rpm_autobake.addStep(steps.ShellCommand(logfiles={'CMakeCache.txt': 'CMakeCache.txt'}, name="cmake", command=
         ["sh", "-c", util.Interpolate("export PATH=/usr/lib/ccache:/usr/lib64/ccache:$PATH && cmake . -DBUILD_CONFIG=mysql_release -DRPM=%(kw:rpm_type)s -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache  %(kw:mtr_additional_args)s", mtr_additional_args=util.Property('mtr_additional_args', default=''), rpm_type=util.Property('rpm_type'))], env={'CCACHE_DIR':'/mnt/ccache'}, description="cmake"))
+    f_rpm_autobake.addStep(steps.RpmLint())
     f_rpm_autobake.addStep(steps.Compile(command=
         ["sh", "-xc", util.Interpolate("""
             mkdir -p rpms srpms
@@ -100,4 +102,3 @@ def getRpmAutobakeFactory(mtrDbPool):
         set_properties={"tarbuildnum" : Property("tarbuildnum"), "mariadb_version" : Property("mariadb_version"), "master_branch" : Property("master_branch"), "parentbuildername": Property("buildername")}, doStepIf=lambda step: hasUpgrade(step) and savePackage(step) and hasFiles(step)))
     f_rpm_autobake.addStep(steps.ShellCommand(name="cleanup", command="rm -r * .* 2> /dev/null || true", alwaysRun=True))
     return f_rpm_autobake
-
