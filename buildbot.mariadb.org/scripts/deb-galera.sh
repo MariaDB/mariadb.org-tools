@@ -65,7 +65,7 @@ fi
 bb_log_info "make sure mariadb is not running"
 for process in mariadbd mysqld; do
   if pgrep $process >/dev/null; then
-    sudo killall $process >/dev/null
+    sudo killall $process >/dev/null || true
   fi
 done
 
@@ -83,7 +83,7 @@ done
 # deal with it
 for process in mariadbd mysqld; do
   if pgrep $process >/dev/null; then
-    sudo killall -s 9 $process >/dev/null
+    sudo killall -s 9 $process >/dev/null || true
   fi
 done
 
@@ -137,13 +137,14 @@ sudo chown -R mysql:mysql /var/lib/node1 /var/lib/node2 /var/lib/node3
 # To make sure that xtrabackup / mariabackup works with the right datadir
 sudo mv /var/lib/mysql /var/lib/mysql.save
 
-sudo sh -c "echo '
+cat >/home/buildbot/galera.cnf <<EOF
 [galera]
 wsrep-on
 binlog-format=ROW
 wsrep_sst_method=$sst_mode
 wsrep_provider=libgalera_smm.so
-' > /etc/mysql/conf.d/galera.cnf"
+EOF
+sudo cp /home/buildbot/galera.cnf /etc/mysql/conf.d/galera.cnf
 
 if [[ $sst_mode == "mysqldump" ]]; then
   sudo sh -c "echo 'bind-address=0.0.0.0' >> /etc/mysql/conf.d/galera.cnf"
@@ -153,7 +154,7 @@ if [[ $sst_mode != "rsync" ]]; then
   sudo sh -c "echo 'wsrep_sst_auth=galera:gal3ra123' >> /etc/mysql/conf.d/galera.cnf"
 fi
 
-echo '
+cat >/home/buildbot/node1.cnf <<EOF
 [mysqld]
 port=8301
 socket=/tmp/node1.sock
@@ -169,9 +170,9 @@ socket=/tmp/node1.sock
 pid-file=/tmp/node1.pid
 log-error=/var/lib/node1/node1.err
 skip-syslog
-' >/home/buildbot/node1.cnf
+EOF
 
-echo '
+cat >/home/buildbot/node2.cnf <<EOF
 [mysqld]
 port=8302
 socket=/tmp/node2.sock
@@ -187,9 +188,9 @@ socket=/tmp/node2.sock
 pid-file=/tmp/node2.pid
 log-error=/var/lib/node2/node2.err
 skip-syslog
-' >/home/buildbot/node2.cnf
+EOF
 
-echo '
+cat >/home/buildbot/node3.cnf <<EOF
 [mysqld]
 port=8303
 socket=/tmp/node3.sock
@@ -205,7 +206,7 @@ socket=/tmp/node3.sock
 pid-file=/tmp/node3.pid
 log-error=/var/lib/node3/node3.err
 skip-syslog
-' >/home/buildbot/node3.cnf
+EOF
 
 chmod uga+r /home/buildbot/node*.cnf
 
@@ -235,7 +236,9 @@ mysql -uroot -prootpass --port=8301 --protocol=tcp -e "select * from mgc.t1\G"
 # (and maybe some other SST methods will have problems too)
 for node in 2 3; do
   if [[ $sst_mode == "rsync" ]]; then
-    sudo killall rsync
+    if pgrep rsync >/dev/null; then
+      sudo killall rsync >/dev/null || true
+    fi
   fi
   sudo mysqld_safe --defaults-extra-file=/home/buildbot/node$node.cnf --user=mysql &
   res=1
@@ -284,8 +287,10 @@ for node in 2 1; do
 done
 
 bb_log_info "stop cluster"
-sudo killall -s 9 mariadbd || true
-sudo killall -s 9 mysqld || true
-sudo killall -s 9 mysqld_safe || true
+for process in mariadbd mysqld mysqld_safe; do
+  if pgrep $process >/dev/null; then
+    sudo killall -s 9 $process >/dev/null || true
+  fi
+done
 
 bb_log_ok "all done"
