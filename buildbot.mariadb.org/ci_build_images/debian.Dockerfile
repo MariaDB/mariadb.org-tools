@@ -7,6 +7,7 @@ ARG base_image
 FROM "$base_image"
 ARG mariadb_branch=10.7
 LABEL maintainer="MariaDB Buildbot maintainers"
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
 # This will make apt-get install without question
 ARG DEBIAN_FRONTEND=noninteractive
