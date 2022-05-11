@@ -87,7 +87,7 @@ jobs:
             platforms: linux/amd64, linux/arm64/v8
           - dockerfile: centos7.Dockerfile
             image: centos:7
-            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
+            platforms: linux/amd64
           - dockerfile: centos.Dockerfile
             image: quay.io/centos/centos:stream8
             platforms: linux/amd64, linux/arm64/v8
