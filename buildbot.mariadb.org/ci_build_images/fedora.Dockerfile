@@ -43,12 +43,14 @@ RUN dnf -y upgrade \
     unixODBC \
     unixODBC-devel \
     wget \
-    && if [ "$(uname -m)" = "x86_64" ]; then dnf -y install libpmem-devel; fi \
+    && arch=$(uname -m) \
+    && if [ "$arch" = x86_64 ] || [ "$arch" = ppc64le ]; then dnf -y install libpmem-devel; fi \
     && dnf clean all \
-    && case $(uname -m) in \
+    && case $arch in \
         "x86_64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-amd64" >/usr/local/bin/gosu ;; \
         "aarch64") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-arm64" >/usr/local/bin/gosu ;; \
         "ppc64le") curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-ppc64el" >/usr/local/bin/gosu ;; \
+        *) curl -sL "https://github.com/tianon/gosu/releases/download/1.14/gosu-$arch" >/usr/local/bin/gosu ;; \
     esac \
     && chmod +x /usr/local/bin/gosu
 
