@@ -93,7 +93,7 @@ jobs:
             platforms: linux/amd64, linux/arm64/v8
           - dockerfile: rhel7.Dockerfile
             image: rhel7
-            platforms: linux/amd64, linux/ppc64le
+            platforms: linux/amd64
           - dockerfile: rhel8.Dockerfile
             image: ubi8
             platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
