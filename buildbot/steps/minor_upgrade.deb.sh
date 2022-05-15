@@ -217,7 +217,7 @@ if [[ "$systemd_capability" == "yes" ]] ; then
   fi
 fi
 
-if [[ "$test_mode" == "all" ]] && [[ "$branch" == *"10."[5-9]* ]] ; then
+if [[ "$test_mode" == "all" ]] && [[ "$branch" != *"10."[234]* ]] ; then
   echo "Upgrade warning: Due to MDEV-23061, an extra server restart is needed"
   sudo systemctl restart mariadb
 fi
@@ -226,7 +226,7 @@ fi
 # Check that the server is functioning and create some structures
 #================================================================
 
-if [[ "$branch" == *"10."[4-9]* ]] ; then
+if [[ "$branch" != *"10."[23]* ]] ; then
 # 10.4+ uses unix_socket by default
   sudo mysql -e "set password=password('rootpass')"
 else
@@ -296,36 +296,9 @@ fi
 # Store information about server version and available plugins/engines BEFORE upgrade
 #====================================================================================
 
-if [[ "$test_mode" == "all" ]] ; then
-  # Due to MDEV-14560, we have to restart the server to get the full list of engines
-  # MDEV-14560 is fixed in 10.2
-  if [[ "$major_version" != *"10."[2-9]* ]] ; then
-    case "$systemd_capability" in
-    yes)
-      sudo systemctl restart mariadb
-      ;;
-    no)
-      sudo /etc/init.d/mysql restart
-      ;;
-    esac
-  fi
-fi
-
 mysql -uroot -prootpass --skip-column-names -e "select @@version" | awk -F'-' '{ print $1 }' > /tmp/version.old
 mysql -uroot -prootpass --skip-column-names -e "select engine, support, transactions, savepoints from information_schema.engines" | sort > /tmp/engines.old
-
-case "$major_version" in
-5.5)
-  mysql -uroot -prootpass --skip-column-names -e "show plugins" | sort > /tmp/plugins.old
-  ;;
-10.[0-9])
-  mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.old
-  ;;
-*)
-  echo "ERROR: unknown major version: $major_version"
-  exit 1
-  ;;
-esac
+mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.old
 
 # Store dependency information for old binaries/libraries:
 # - names starting with "mysql*" in the directory where mysqld is located;
@@ -373,15 +346,11 @@ fi
 #==================================================================
 
 case "$major_version" in
-*10.[1-3]*)
+*10.[2-3]*)
   GALERA_VERSION=3
   ;;
-*10.[4-9]*)
-  GALERA_VERSION=4
-  ;;
 *)
-  echo "ERROR: Unknown server version: $major_version"
-  exit 1
+  GALERA_VERSION=4
   ;;
 esac
 
@@ -514,15 +483,7 @@ set -e
 
 mysql -uroot -prootpass --skip-column-names -e "select @@version" | awk -F'-' '{ print $1 }' > /tmp/version.new
 mysql -uroot -prootpass --skip-column-names -e "select engine, support, transactions, savepoints from information_schema.engines" | sort > /tmp/engines.new
-
-case "$major_version" in
-5.5)
-  mysql -uroot -prootpass --skip-column-names -e "show plugins" | sort > /tmp/plugins.new
-  ;;
-10.[0-9])
-  mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.new
-  ;;
-esac
+mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.new
 
 # Dependency information for new binaries/libraries
 
