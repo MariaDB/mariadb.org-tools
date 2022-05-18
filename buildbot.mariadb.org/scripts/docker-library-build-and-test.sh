@@ -2,7 +2,6 @@
 
 set -xeuvo pipefail
 
-
 # container builds copy permissions and
 # depend on go+rx permissions
 umask 0002
@@ -27,9 +26,8 @@ commit=${4:-0}
 branch=${5:-${master_branch}}
 
 if [[ ! $branch =~ ^preview ]] &&
-   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
-   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
-then
+  [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
+  [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]; then
   exit 0
 fi
 
@@ -46,15 +44,19 @@ fi
 container_tag=${container_tag,,*}
 
 case "${buildername#*ubuntu-}" in
-2204-deb-autobake)
-    base=jammy ;;
-2004-deb-autobake)
-    base=focal ;;
-1804-deb-autobake)
-    base=bionic ;;
-*)
+  2204-deb-autobake)
+    base=jammy
+    ;;
+  2004-deb-autobake)
+    base=focal
+    ;;
+  1804-deb-autobake)
+    base=bionic
+    ;;
+  *)
     echo "unknown base buildername $buildername"
-    exit 0;
+    exit 0
+    ;;
 esac
 
 buildernamebase=${buildername#*-}
@@ -64,7 +66,7 @@ declare -a annotations=(
   "--annotation" "org.opencontainers.image.authors=MariaDB Foundation"
   "--annotation" "org.opencontainers.image.documentation=https://hub.docker.com/_/mariadb"
   "--annotation" "org.opencontainers.image.source=https://github.com/MariaDB/mariadb-docker/tree/$(
-    cd mariadb-docker/$master_branch
+    cd "mariadb-docker/$master_branch"
     git rev-parse HEAD
   )/$master_branch"
   "--annotation" "org.opencontainers.image.licenses=GPL-2.0"
@@ -111,18 +113,19 @@ else
   export DOCKER_LIBRARY_START_TIMEOUT=150
 fi
 
-# NO_TEST for manual invokation
+# NO_TEST for manual invocation
 if [ -n "${NO_TEST:-}" ]; then
   echo "Skipping test"
 else
+  # clean images if test does not succeed
+  trap 'buildah rmi "$image"' EXIT
   mariadb-docker/.test/run.sh "$image"
 fi
 
 # restrict pushing of images to preview, main, and release branches
 if [[ ! $branch =~ ^preview ]] &&
-   [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
-   [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]
-then
+  [[ ! $branch =~ ^[[:digit:]]+\.[[:digit:]]+$ ]] &&
+  [[ ! $branch =~ ^bb-[[:digit:]]+\.[[:digit:]]+-release ]]; then
   buildah rmi "$image"
   exit 0
 fi
@@ -139,15 +142,8 @@ manifestfile=$(mktemp)
 for item in "${annotations[@]}"; do
   [ "$item" != "--annotation" ] && echo -e "$item\n"
 done >"$manifestfile"
-buildah copy --add-history $container $manifestfile /manifest.txt
+buildah copy --add-history "$container" "$manifestfile" /manifest.txt
 rm -f "$manifestfile"
-
-# which file - see mariadb-docker commit 710e0cd9d9197becc954e9a4c572cb97dd1d07a8
-if [[ $master_branch =~ 10.[234] ]]; then
-  file=/etc/mysql/my.cnf
-else
-  file=/etc/mysql/mariadb.cnf
-fi
 
 #
 # MAKE it part of the mariadb-devel manifest
@@ -170,7 +166,7 @@ buildmanifest() {
 
   t=$(mktemp)
   buildah commit "$@" --iidfile "$t" --manifest "$manifest" "$container"
-  image=$(<$t)
+  image=$(<"$t")
   ##buildah push --rm "$image" "docker://quay.io/mariadb-foundation/${base}:${container_tag}-${builderarch}" &&
   ##  buildah rmi "$image"
   # $image is the wrong sha for annotation. Config vs Blog?
@@ -185,7 +181,8 @@ buildmanifest() {
 
 devmanifest=mariadb-devel-${container_tag}-$commit
 
-buildmanifest mariadb-devel $devmanifest $container
+trap 'buildah rm "$container"' EXIT
+buildmanifest mariadb-devel "$devmanifest" "$container"
 
 #
 # MAKE Debug manifest
@@ -202,7 +199,7 @@ buildah run --add-history "$container" sh -c \
 
 debugmanifest=mariadb-debug-${container_tag}-$commit
 
-buildmanifest mariadb-debug $debugmanifest $container --rm
+buildmanifest mariadb-debug "$debugmanifest" "$container" --rm
 
 buildah rmi "$origbuildimage"
 
@@ -221,10 +218,10 @@ manifest_image_cleanup() {
   t=$1
   # A manifest is an image type that podman can remove
   podman images --filter dangling=true --format '{{.ID}} {{.Digest}}' |
-    while read line; do
+    while read -r line; do
       id=${line% *}
       digest=${line#* }
-      echo id=$id digest=$digest
+      echo id="$id" digest="$digest"
       if [ -n "$(jq ".manifests[].digest  |select(. == \"$digest\")" <"$t")" ]; then
         podman rmi "$id"
       fi
@@ -232,15 +229,17 @@ manifest_image_cleanup() {
   rm "$t"
 }
 
-if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge $expected ]]; then
+if (($(buildah manifest inspect "$devmanifest" | jq '.manifests | length') >= expected)); then
   container_tag=${container_tag%_triggerbb}
   t=$(mktemp)
   buildah manifest inspect "$devmanifest" | tee "${t}"
+  trap 'manifest_image_cleanup "$t"' EXIT
   buildah manifest push --all --rm "$devmanifest" "docker://quay.io/mariadb-foundation/mariadb-devel:${container_tag}"
   manifest_image_cleanup "$t"
 
   t=$(mktemp)
   buildah manifest inspect "$debugmanifest" | tee "${t}"
+  trap 'manifest_image_cleanup "$t"' EXIT
   buildah manifest push --all --rm "$debugmanifest" "docker://quay.io/mariadb-foundation/mariadb-debug:${container_tag}"
   manifest_image_cleanup "$t"
 
@@ -260,3 +259,5 @@ if [[ $(buildah manifest inspect "$devmanifest" | jq '.manifests | length') -ge 
   buildah images --json | jq ".[] | select(.readonly ==false) |  select(.createdatraw | sub(\"(?<full>[^.]*).[0-9]+Z\"; \"\\(.full)Z\") | fromdateiso8601 <= $lastweek) | select( try .names[0]? catch \"\" | startswith(\"localhost/mariadb-\") ) | .id" | xargs --no-run-if-empty buildah manifest rm
   buildah images
 fi
+
+trap - EXIT
