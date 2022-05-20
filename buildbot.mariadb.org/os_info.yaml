@@ -1,0 +1,23 @@
+debian-11:
+  version_name: bullseye
+  arch:
+    - amd64
+    - aarch64
+  type: deb
+ubuntu-1804:
+  version_name: bionic
+  arch:
+    - amd64
+    - aarch64
+  type: deb
+centos-7:
+  version_name: 7
+  arch:
+    - amd64
+  type: rpm
+fedora-35:
+  version_name: 35
+  arch:
+    - amd64
+    - aarch64
+  type: rpm

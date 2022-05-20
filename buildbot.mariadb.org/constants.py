@@ -1,14 +1,71 @@
-github_status_builders = ["amd64-centos-7", "amd64-debian-10", "amd64-fedora-35", "amd64-ubuntu-2004-clang11", "amd64-ubuntu-2004-debug", "amd64-windows"]
+import yaml
 
-release_builders = ["aarch64-centos-7", "aarch64-centos-7-rpm-autobake", "aarch64-debian-9", "aarch64-debian-9-deb-autobake", "aarch64-debian-10", "aarch64-debian-10-deb-autobake", "aarch64-debian-11", "aarch64-debian-11-deb-autobake", "aarch64-debian-sid", "aarch64-debian-sid-deb-autobake", "aarch64-fedora-34", "aarch64-fedora-34-rpm-autobake", "aarch64-fedora-35", "aarch64-fedora-35-rpm-autobake", "aarch64-rhel-8", "aarch64-rhel-8-rpm-autobake", "aarch64-ubuntu-1804", "aarch64-ubuntu-1804-deb-autobake", "aarch64-ubuntu-2110", "aarch64-ubuntu-2110-deb-autobake", "aarch64-ubuntu-2004", "aarch64-ubuntu-2004-deb-autobake", "amd64-debian-sid", "amd64-debian-sid-deb-autobake", "ppc64le-debian-11", "ppc64le-debian-11-deb-autobake", "ppc64le-debian-sid", "ppc64le-debian-sid-deb-autobake", "s390x-ubuntu-2004", "s390x-ubuntu-2004-deb-autobake", "s390x-ubuntu-2204", "s390x-ubuntu-2204-deb-autobake", "s390x-rhel-8", "s390x-rhel-8-rpm-autobake", "s390x-sles-15", "s390x-sles-15-rpm-autobake"]
+with open('/srv/buildbot/mariadb.org-tools/buildbot.mariadb.org/os_info.yaml', 'r') as f:
+    os_info = yaml.safe_load(f)
+
+github_status_builders = [
+        "amd64-centos-7",
+        "amd64-debian-10",
+        "amd64-fedora-35",
+        "amd64-ubuntu-2004-clang11",
+        "amd64-ubuntu-2004-debug",
+        "amd64-windows",
+        ]
+
+release_builders = [
+        "aarch64-centos-7",
+        "aarch64-centos-7-rpm-autobake",
+        "aarch64-debian-9",
+        "aarch64-debian-9-deb-autobake",
+        "aarch64-debian-10",
+        "aarch64-debian-10-deb-autobake",
+        "aarch64-debian-11",
+        "aarch64-debian-11-deb-autobake",
+        "aarch64-debian-sid",
+        "aarch64-debian-sid-deb-autobake",
+        "aarch64-fedora-34",
+        "aarch64-fedora-34-rpm-autobake",
+        "aarch64-fedora-35",
+        "aarch64-fedora-35-rpm-autobake",
+        "aarch64-rhel-8",
+        "aarch64-rhel-8-rpm-autobake",
+        "aarch64-ubuntu-1804",
+        "aarch64-ubuntu-1804-deb-autobake",
+        "aarch64-ubuntu-2110",
+        "aarch64-ubuntu-2110-deb-autobake",
+        "aarch64-ubuntu-2004",
+        "aarch64-ubuntu-2004-deb-autobake",
+        "amd64-debian-sid",
+        "amd64-debian-sid-deb-autobake",
+        "ppc64le-debian-11",
+        "ppc64le-debian-11-deb-autobake",
+        "ppc64le-debian-sid",
+        "ppc64le-debian-sid-deb-autobake",
+        "s390x-ubuntu-2004",
+        "s390x-ubuntu-2004-deb-autobake",
+        "s390x-ubuntu-2204",
+        "s390x-ubuntu-2204-deb-autobake",
+        "s390x-rhel-8",
+        "s390x-rhel-8-rpm-autobake",
+        "s390x-sles-15",
+        "s390x-sles-15-rpm-autobake",
+        ]
 
 builders_autobake=["amd64-centos-7-rpm-autobake", "amd64-centos-stream8-rpm-autobake", "amd64-debian-9-deb-autobake", "x86-debian-9-deb-autobake", "amd64-debian-10-deb-autobake", "amd64-debian-11-deb-autobake", "amd64-debian-sid-deb-autobake", "x86-debian-sid-deb-autobake", "amd64-fedora-34-rpm-autobake", "amd64-fedora-35-rpm-autobake", "amd64-rhel-7-rpm-autobake", "amd64-rhel-8-rpm-autobake", "amd64-opensuse-15-rpm-autobake", "amd64-sles-12-rpm-autobake", "amd64-sles-15-rpm-autobake", "amd64-ubuntu-1804-deb-autobake", "amd64-ubuntu-2004-deb-autobake", "amd64-ubuntu-2110-deb-autobake", "amd64-ubuntu-2204-deb-autobake", "aarch64-ubuntu-1804-deb-autobake", "aarch64-ubuntu-2004-deb-autobake", "aarch64-ubuntu-2204-deb-autobake", "aarch64-ubuntu-2110-deb-autobake", "ppc64le-debian-9-deb-autobake", "ppc64le-debian-10-deb-autobake", "ppc64le-debian-11-deb-autobake", "ppc64le-debian-sid-deb-autobake", "ppc64le-ubuntu-1804-deb-autobake", "ppc64le-ubuntu-2004-deb-autobake", "ppc64le-ubuntu-2110-deb-autobake", "ppc64le-ubuntu-2204-deb-autobake", "ppc64le-centos-7-rpm-autobake", "ppc64le-rhel-7-rpm-autobake", "ppc64le-rhel-8-rpm-autobake", "aarch64-debian-10-deb-autobake", "aarch64-debian-11-deb-autobake", "aarch64-debian-sid-deb-autobake", "aarch64-debian-9-deb-autobake", "aarch64-fedora-34-rpm-autobake", "aarch64-fedora-35-rpm-autobake", "aarch64-centos-7-rpm-autobake", "aarch64-centos-8-rpm-autobake", "aarch64-rhel-7-rpm-autobake", "aarch64-rhel-8-rpm-autobake", "s390x-ubuntu-2004-deb-autobake", "s390x-ubuntu-2204-deb-autobake", "s390x-rhel-8-rpm-autobake", "s390x-sles-15-rpm-autobake"]
 
 builders_big=["amd64-ubuntu-1804-bigtest"]
 
-builders_install=["amd64-debian-11-deb-autobake-install", "amd64-ubuntu-1804-deb-autobake-install", "amd64-centos-7-rpm-autobake-install", "amd64-fedora-35-rpm-autobake-install"]
-
-builders_upgrade=["amd64-ubuntu-1804-deb-autobake-major-upgrade", "amd64-ubuntu-1804-deb-autobake-minor-upgrade", "amd64-centos-7-rpm-autobake-major-upgrade", "amd64-centos-7-rpm-autobake-minor-upgrade"]
+# Generate install builders based on the os_info data
+builders_install = []
+builders_upgrade = []
+for os in os_info:
+    for arch in os_info[os]['arch']:
+        builder_name_install = arch + '-' + os + '-' + os_info[os]['type'] + '-autobake-install'
+        builders_install.append(builder_name_install)
+        builder_name_minor_upgrade = arch + '-' + os + '-' + os_info[os]['type'] + '-autobake-minor-upgrade'
+        builders_upgrade.append(builder_name_minor_upgrade)
+        builder_name_major_upgrade = arch + '-' + os + '-' + os_info[os]['type'] + '-autobake-major-upgrade'
+        builders_upgrade.append(builder_name_major_upgrade)
 
 builders_eco=["amd64-ubuntu-2004-eco-php", "amd64-debian-10-eco-pymysql", "amd64-debian-10-eco-mysqljs", "amd64-ubuntu-2004-eco-dbdeployer"]
 
