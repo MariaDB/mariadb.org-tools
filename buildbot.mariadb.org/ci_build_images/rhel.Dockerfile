@@ -5,6 +5,7 @@
 
 ARG base_image
 FROM registry.access.redhat.com/$base_image
+ARG base_image
 LABEL maintainer="MariaDB Buildbot maintainers"
 
 # Install updates and required packages
@@ -13,8 +14,9 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     subscription-manager register \
     --org="$(cat /run/secrets/rhel_orgid)" \
     --activationkey="$(cat /run/secrets/rhel_keyname)" \
-    && subscription-manager repos --enable "codeready-builder-for-rhel-8-$(uname -m)-rpms" \
-    && rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+    && RHEL_VERSION=$(echo "$base_image" | sed 's/ubi//') \
+    && subscription-manager repos --enable "codeready-builder-for-rhel-$RHEL_VERSION-$(uname -m)-rpms" \
+    && rpm -ivh "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$RHEL_VERSION.noarch.rpm" \
     && dnf -y upgrade \
     && dnf -y groupinstall "Development Tools" \
     && dnf -y install \
@@ -37,7 +39,6 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     libcurl-devel \
     libevent-devel \
     libffi-devel \
-    liburing-devel \
     libxml2-devel \
     libzstd-devel \
     lz4-devel \
@@ -61,6 +62,10 @@ RUN --mount=type=secret,id=rhel_orgid,target=/run/secrets/rhel_orgid \
     wget \
     xz-devel \
     yum-utils \
+    # //TEMP not available on rhel9 \
+    && if [ "$base_image" = "ubi8" ]; then \
+        dnf -y install liburing-devel; \
+    fi \
     && dnf clean all \
     && subscription-manager unregister \
     # dumb-init rpm is not available on rhel \

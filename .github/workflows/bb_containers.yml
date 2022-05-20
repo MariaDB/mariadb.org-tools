@@ -91,8 +91,11 @@ jobs:
           - dockerfile: rhel7.Dockerfile
             image: rhel7
             platforms: linux/amd64, linux/ppc64le
-          - dockerfile: rhel8.Dockerfile
+          - dockerfile: rhel.Dockerfile
             image: ubi8
+            platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
+          - dockerfile: rhel.Dockerfile
+            image: ubi9
             platforms: linux/amd64, linux/arm64/v8, linux/ppc64le
     env:
       BUILD_RHEL: false
@@ -117,6 +120,8 @@ jobs:
             echo "TAG=centos-stream8" >>$GITHUB_ENV
           elif [[ $TAG_TMP = "ubi8" ]]; then
             echo "TAG=rhel8" >>$GITHUB_ENV
+          elif [[ $TAG_TMP = "ubi9" ]]; then
+            echo "TAG=rhel9" >>$GITHUB_ENV
           elif [[ "${{ matrix.platforms }}" = "linux/386" ]]; then
             echo "TAG=${TAG_TMP/:/}-386" >>$GITHUB_ENV
           else
