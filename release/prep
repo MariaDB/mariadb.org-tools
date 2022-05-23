@@ -1438,8 +1438,8 @@ exclude_an_old_release_from_the_yum_dir() {
 #===  FUNCTION  ================================================================
 #          NAME:  update_the_docker_library_mariadb_version
 #   DESCRIPTION:  This function creates a pull request to the Docker Library
-#                 people to do a release, after Ubuntu focus has been pushed
-#                 to the osuosl mirrors.
+#                 people to do a release, after Ubuntu focus/jammy has been pushed
+#                 to the archive mirror.
 #===============================================================================
 update_the_docker_library_mariadb_version() {
   if ! command -v bashbrew
@@ -1456,21 +1456,22 @@ update_the_docker_library_mariadb_version() {
     runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
   pushd ${dir_docker_library}
-    runCommand git checkout next
+    runCommand git fetch
+    runCommand git checkout master
     runCommand git pull
-    if test -d ${major}; then       # only update version if the dir exists
-      runCommand ./update.sh "${num}"
-      # This should show the new release in all versions
-      #runCommand git add ${major}
-      if git commit -m "MariaDB Server ${num}" "${major}" ; then
-        echo "+ git commit -m \"MariaDB Server ${num}\" ${major}"
-        runCommand git push
-      fi
-      message "Check https://github.com/MariaDB/mariadb-docker
-the top commit above the directoy listing should have a dot for the CI that
-will eventually run through to be green"
-      pressAnyKeyToContinue
+    runCommand git merge orgin/next
+    runCommand ./update.sh
+    # This should show the new release in all versions
+    runCommand git diff
+    runCommand git add [0-9]*
+    if git commit -m "MariaDB Server releases ${reldate}" ; then
+      echo "+ git commit -m \"MariaDB Server ${reldate}\""
+      runCommand git push
     fi
+    message "Check https://github.com/MariaDB/mariadb-docker
+the top commit above the directory listing should have a dot for the CI that
+will eventually run through to be green"
+    pressAnyKeyToContinue
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
