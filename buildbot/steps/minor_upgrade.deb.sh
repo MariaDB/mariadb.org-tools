@@ -52,7 +52,7 @@ df -kT
 # Check whether a previous version exists
 #========================================
 
-if ! wget http://mirror.netinch.com/pub/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
   echo "Upgrade warning: could not find the 'Packages' file for a previous version in MariaDB repo, skipping the test"
   exit
@@ -124,7 +124,7 @@ sudo sh -c "echo 'deb http://$mirror/mariadb/repo/$major_version/$dist_name $ver
 # rather than from the default distro repo
 
 sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
-sudo sh -c "echo 'Pin: origin mirror.netinch.com' >> /etc/apt/preferences.d/release"
+sudo sh -c "echo 'Pin: origin mirror.terrahost.no' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
