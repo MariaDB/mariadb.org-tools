@@ -110,7 +110,7 @@ echo "Package_list: $package_list"
 
 
 if [[ "$test_mode" == "columnstore" ]] && [[ "$major_version" == "10.6" ]] ; then
-  sudo sh -c "echo 'deb [arch=amd64,arm64] https://dlm.mariadb.com/repo/mariadb-server/10.6.7/repo/$dist_name $version_name main' >  > /etc/apt/sources.list.d/mariadb_upgrade.list"
+  sudo sh -c "echo 'deb [arch=amd64,arm64] https://dlm.mariadb.com/repo/mariadb-server/10.6.7/repo/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
   repo="dlm.mariadb.com"
 else
   sudo sh -c "echo 'deb http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
