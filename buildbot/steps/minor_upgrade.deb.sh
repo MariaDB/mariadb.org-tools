@@ -84,10 +84,6 @@ server)
   package_list=mariadb-server
   ;;
 columnstore)
-  if [[ "$major_version" == "10.6" ]] ; then
-    rm -f Packages
-    wget https://archive.mariadb.org/mariadb-10.6.7/repo/$dist_name/dists/$version_name/main/binary-$arch/Packages
-  fi
   if ! grep columnstore Packages > /dev/null ; then
     echo "Upgrade warning: Columnstore was not found in packages, the test will not be run"
     exit
@@ -108,20 +104,13 @@ echo "Package_list: $package_list"
 # Prepare apt source configuration for installation of the last release
 #======================================================================
 
-
-if [[ "$test_mode" == "columnstore" ]] && [[ "$major_version" == "10.6" ]] ; then
-  sudo sh -c "echo 'deb [arch=amd64,arm64] https://dlm.mariadb.com/repo/mariadb-server/10.6.7/repo/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
-  repo="dlm.mariadb.com"
-else
-  sudo sh -c "echo 'deb http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
-  repo="mirror.terrahost.no"
-fi
+sudo sh -c "echo 'deb http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
 
 sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
-sudo sh -c "echo 'Pin: origin $repo' >> /etc/apt/preferences.d/release"
+sudo sh -c "echo 'Pin: origin mirror.terrahost.no' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
