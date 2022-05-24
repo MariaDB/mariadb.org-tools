@@ -84,6 +84,10 @@ server)
   package_list=mariadb-server
   ;;
 columnstore)
+  if [[ "$major_version" == "10.6" ]] ; then
+    rm -f Packages
+    wget https://dlm.mariadb.com/2140426/MariaDB/mariadb-10.6.7/repo/debian/dists/buster/main/binary-amd64/Packages
+  fi
   if ! grep columnstore Packages > /dev/null ; then
     echo "Upgrade warning: Columnstore was not found in packages, the test will not be run"
     exit
