@@ -263,10 +263,12 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 ci_dirs_102="kvm-deb-stretch-aarch64:aarch64-debian-9-deb-autobake kvm-deb-bionic-aarch64:aarch64-ubuntu-1804-deb-autobake kvm-rpm-centos74-aarch64:aarch64-centos-7-rpm-autobake"
 ci_dirs_103="${ci_dirs_102} kvm-deb-buster-aarch64:aarch64-debian-10-deb-autobake kvm-deb-focal-aarch64:aarch64-ubuntu-2004-deb-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-impish-aarch64:aarch64-ubuntu-2110-deb-autobake kvm-deb-hirsute-aarch64:aarch64-ubuntu-2104-deb-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-deb-jammy-aarch64:aarch64-ubuntu-2204-deb-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-impish-aarch64:aarch64-ubuntu-2110-deb-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake"
 ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
-ci_dirs_108="${ci_dirs_107}"
+ci_dirs_108="${ci_dirs_107} kvm-deb-jammy-aarch64:aarch64-ubuntu-2204-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
+ci_dirs_109="${ci_dirs_108}"
+ci_dirs_1010="${ci_dirs_109}"
 
 
 #-------------------------------------------------------------------------------
@@ -276,10 +278,12 @@ ci_dirs_108="${ci_dirs_107}"
 bb_dirs_102="kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-deb-stretch-amd64: kvm-deb-stretch-ppc64le: kvm-deb-stretch-x86: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-deb-impish-amd64: kvm-deb-jammy-amd64: kvm-deb-jammy-ppc64le: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
+bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-deb-impish-amd64: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
 bb_dirs_106="${bb_dirs_105}"
 bb_dirs_107="${bb_dirs_106}"
-bb_dirs_108="${bb_dirs_107}"
+bb_dirs_108="${bb_dirs_107} kvm-deb-jammy-amd64: kvm-rpm-fedora36-amd64:"
+bb_dirs_109="${bb_dirs_108}"
+bb_dirs_1010="${bb_dirs_109}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -288,6 +292,8 @@ full_dirs_105="${bb_dirs_105} ${ci_dirs_105}"
 full_dirs_106="${bb_dirs_106} ${ci_dirs_106}"
 full_dirs_107="${bb_dirs_107} ${ci_dirs_107}"
 full_dirs_108="${bb_dirs_108} ${ci_dirs_108}"
+full_dirs_109="${bb_dirs_109} ${ci_dirs_109}"
+full_dirs_1010="${bb_dirs_1010} ${ci_dirs_1010}"
 
 
 ## Enterprise builds should not build solaris10 for now
@@ -601,8 +607,113 @@ shouldI() {
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  remove_a_dir_from_the_local_mirror_dir
+#   DESCRIPTION:  This function displays the dirs in the ${dir_local_mirror}
+#                 directory and prompts for a dir to release, repeating until
+#                 you answer 'n'.
+#===============================================================================
+remove_a_dir_from_the_local_mirror_dir() {
+  local done_removing
+  done_removing=""
+  while [ -z ${done_removing} ];do
+    message "Releases currently in ${dir_local_mirror}"
+    tree -L 1 ${dir_local_mirror}
+    line
+    userInput "What release should I remove? (e.g. mariadb-10.6.7, s to stop)"
+    release_to_remove="${INPUT}"
+    if [ -z ${release_to_remove} ] ; then
+      message "Please enter a release or 's' to stop."
+    else
+      case ${release_to_remove} in
+        s)
+          lowkey_message "Stopping..."
+          done_removing='yes'
+          ;;
+        *)
+          if [ -d ${dir_local_mirror}/${release_to_remove} ] ; then
+            userResponse "Ok to remove ${release_to_remove}? [y/n]"
+            case ${ANSWER} in
+              y)
+                lowkey_message "Removing ${release_to_remove}..."
+                runCommand rm -rf ${dir_local_mirror}/${release_to_remove}
+                ;;
+              n)
+                lowkey_message "Not removing ${release_to_remove}"
+                ;;
+              *)
+                lowkey_message "Please answer [y]es or [n]o."
+                ;;
+            esac
+          else
+            lowkey_message "${release_to_remove} doesn't appear to exist, please try again."
+            pressAnyKeyToContinue
+          fi
+          done_removing=""
+          ;;
+      esac
+    fi
+  done
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  copy_the_release_to_the_local_mirror_dir
+#   DESCRIPTION:  Copy the release to the local mirror prep directory
+#===============================================================================
+copy_the_release_to_the_local_mirror_dir() {
+  runCommand cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  uploader
+#   DESCRIPTION:  Upload a release
+#===============================================================================
+uploader() {
+  local dest
+  local dests
+  dests="$@"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          message "Uploading to ${dest}..."
+          rsync_wrapper "-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          message "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          lowkey_message "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+# Wrapper functions for uploader
+upload_to_the_mirrors() {
+  uploader "${mirrors}"
+}
+
+upload_to_the_archives() {
+  uploader "${archives}"
+}
 
 
+#===  FUNCTION  ================================================================
+#          NAME:  loadDefaults
+#   DESCRIPTION:  Load the defaults file, prep.conf, and if it doesn't exist,
+#                 then create one
+#===============================================================================
 loadDefaults() {
   # Load the paths (if they exist)
   if [ -f ${dir_conf}/prep.conf ]; then
@@ -687,12 +798,10 @@ rsync_wrapper() {
   upload=""
   rsync_body="${@}"
   lowkey_message "Doing a dry run..."
-  set -x
-  rsync --dry-run ${rsync_body}
-  set +x
+  runCommand rsync --dry-run ${rsync_body} | less
   echo
   while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
+    userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
         lowkey_message "Transferring for real..."
@@ -705,7 +814,7 @@ rsync_wrapper() {
         return 0
         ;;
       "n")
-        echo "+ Something went wrong..."
+        lowkey_message "Something went wrong..."
         ANSWER=""
         exit 1
         ;;
@@ -724,16 +833,16 @@ rsync_wrapper_staging() {
   rsync_body_staging="${@}"
   lowkey_message "Doing a dry run..."
   set -x
-  ssh -t -t ${staging_mirror} "rsync --dry-run ${rsync_body_staging}"
+  ssh -t -t ${staging_mirror} "set -x;rsync --dry-run ${rsync_body_staging} | less"
   set +x
   echo
   while [ -z ${upload_staging} ]; do
-    userResponse "Does the above look OK? [y/n]"
+    userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Transferring for real..."
+        lowkey_message "Transferring for real..."
         set -x
-        ssh -t -t ${staging_mirror} "rsync ${rsync_body_staging}"
+        ssh -t -t ${staging_mirror} "set -x;rsync ${rsync_body_staging}"
         set +x
         echo
         upload_staging="yes"
@@ -741,7 +850,7 @@ rsync_wrapper_staging() {
         return 0
         ;;
       "n")
-        echo "+ Something went wrong..."
+        lowkey_message "Something went wrong..."
         ANSWER=""
         exit 1
         ;;
@@ -760,11 +869,11 @@ rsync_wrapper_primary() {
   rsync_body_primary="${@}"
   lowkey_message "Doing a dry run..."
   set -x
-  ssh -t -t ${primary_mirror} "rsync --dry-run ${rsync_body_primary}"
+  ssh -t -t ${primary_mirror} "set -x;rsync --dry-run ${rsync_body_primary} | less"
   set +x
   echo
   while [ -z ${upload_primary} ]; do
-    userResponse "Does the above look OK? [y/n]"
+    userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
         lowkey_message "Transferring for real..."
@@ -777,7 +886,7 @@ rsync_wrapper_primary() {
         return 0
         ;;
       "n")
-        echo "+ Something went wrong..."
+        lowkey_message "Something went wrong..."
         ANSWER=""
         exit 1
         ;;
@@ -1085,7 +1194,7 @@ upload_corp_dir_to_the_staging_mirror() {
   if [ "${galera_suffix}" = "-galera" ]; then
     rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   else
-    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
+    rsync_wrapper "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
   fi
 }
 
@@ -1100,13 +1209,13 @@ upload_to_the_primary_mirror() {
     if [ "${galera_suffix}" = "-galera" ]; then
       rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   else
     if [ "${galera_suffix}" = "-galera" ]; then
       rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
     else
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
+      rsync_wrapper_staging "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
     fi
   fi
 }
@@ -1192,6 +1301,15 @@ activate_the_corp_repos() {
     ssh -t -t ${corp_mirror} "set -x;cd ${corp_mirror_path}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
     set +x
   fi
+}
+
+update_the_archive_symlinks() {
+  for archive_pair in ${archives}; do
+    archive=(${archive_pair//:/ })
+    set -x
+    ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major}"
+    set +x
+  done
 }
 
 create_package_tarballs() {
@@ -2297,6 +2415,7 @@ else
   #  Create Debian Repos
   #-------------------------------------------------------------------------------
   if [ "${create_debian}" != "no" ]; then
+    message "Prepping Debian repo, as requested..."
     ## if the debian repo dir exists, delete it
     #if [ -d ${dir_release}/${dir_name}/repo/debian ]; then
     #  rm -rf "${dir_release}/${dir_name}/repo/debian"
@@ -2307,9 +2426,6 @@ else
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
     echo
 
-    line
-    echo "+ creating Debian repos..."
-    line
     if ${ci_release}; then
       runCommand ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
     else
@@ -2343,15 +2459,14 @@ else
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
     echo
   else
-    line
-    echo "+ Skipping Debian repo creation, as requested..."
-    line
+    message "Skipping Debian repo creation, as requested..."
   fi
 
   #-------------------------------------------------------------------------------
   #  Create Ubuntu Repos
   #-------------------------------------------------------------------------------
   if [ "${create_ubuntu}" != "no" ]; then
+    message "Prepping Ubuntu repo, as requested..."
     ## if the ubuntu repo dir exists, delete it
     #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
     #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
@@ -2361,10 +2476,6 @@ else
     echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
     echo
-
-    line
-    echo "+ creating Ubuntu repos..."
-    line
 
     # This is where the repository is actually updated
     if [ "${is_ent}" = "yes" ];then
@@ -2404,9 +2515,7 @@ else
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
     echo
   else
-    line
-    echo "+ Skipping Ubuntu repo creation, as requested..."
-    line
+    message "Skipping Ubuntu repo creation, as requested..."
   fi
   pushd ${dir_release}/${dir_name}
   echo
@@ -2533,15 +2642,33 @@ shouldI activate_the_corp_staging_repos
 
 echo;echo;echo;echo
 
-shouldI upload_to_the_primary_mirror
-
-echo;echo;echo;echo
-
 shouldI copy_the_corp_mirror_staging_dir_to_prod
 
 echo;echo;echo;echo
 
 shouldI upload_to_the_corp_mirror
+
+echo;echo;echo;echo
+
+#shouldI upload_to_the_primary_mirror
+
+shouldI copy_the_release_to_the_local_mirror_dir
+
+echo;echo;echo;echo
+
+shouldI remove_a_dir_from_the_local_mirror_dir
+
+echo;echo;echo;echo
+
+important_message "Mirrors"
+for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_mirrors
+
+echo;echo;echo;echo
+
+important_message "Archives"
+for archive in ${archives} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_archives
 
 echo;echo;echo;echo
 
@@ -2558,6 +2685,10 @@ shouldI activate_the_deb_repos
 echo;echo;echo;echo
 
 shouldI activate_the_corp_repos
+
+echo;echo;echo;echo
+
+shouldI update_the_archive_symlinks
 
 echo;echo;echo;echo
 
