@@ -65,7 +65,6 @@ galera_suffix=""
 ci_mappings_4="
        gal-aarch64-rhel-7:kvm-rpm-centos74-aarch64-gal
        gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
-    gal-aarch64-fedora-33:kvm-rpm-fedora33-aarch64-gal
     gal-aarch64-fedora-34:kvm-rpm-fedora34-aarch64-gal
     gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
      gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
@@ -78,11 +77,12 @@ ci_mappings_4="
   gal-aarch64-ubuntu-1804:kvm-deb-bionic-aarch64-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-aarch64-ubuntu-2004:kvm-deb-focal-aarch64-gal
-  gal-aarch64-ubuntu-2104:kvm-deb-hirsute-aarch64-gal
-  gal-ppc64le-ubuntu-2104:kvm-deb-hirsute-ppc64le-gal
   gal-aarch64-ubuntu-2110:kvm-deb-impish-aarch64-gal
   gal-aarch64-ubuntu-2204:kvm-deb-jammy-aarch64-gal
+  gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
+    gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
 "
+    #gal-aarch64-fedora-36:kvm-rpm-fedora36-aarch64-gal
   #gal-ppc64le-ubuntu-2110:kvm-deb-impish-ppc64le-gal
 
 ci_mappings_3="
@@ -151,7 +151,6 @@ deb_dists_4="
   bullseye
   buster
   focal
-  hirsute
   impish
   jammy
   sid
@@ -201,16 +200,12 @@ deb_dists_full_4="
   focal-ppc64le
   focal-s390x
 
-  hirsute-aarch64
-  hirsute-amd64
-  hirsute-ppc64le
-
   impish-amd64
-  impish-aarch64
 
   jammy-aarch64
   jammy-amd64
   jammy-ppc64le
+  jammy-s390x
 
   sid-aarch64
   sid-amd64
@@ -225,6 +220,7 @@ deb_dists_full_4="
   trusty-amd64
   trusty-x86
 "
+  #impish-aarch64
 
 rpm_dists_3="
   alma84-amd64
@@ -262,12 +258,10 @@ rpm_dists_4="
   rhel8-aarch64
   rhel8-ppc64le
 
-  fedora33-amd64
   fedora34-amd64
   fedora35-amd64
-  fedora-rawhide-amd64
+  fedora36-amd64
 
-  fedora33-aarch64
   fedora34-aarch64
   fedora35-aarch64
 
@@ -278,6 +272,8 @@ rpm_dists_4="
   sles125-amd64
   sles150-amd64
 "
+  #fedora36-aarch64
+  #fedora-rawhide-amd64
 
 old_rpm_dists="
   sles12-ppc64le
@@ -1042,7 +1038,9 @@ update_galera_version_in_conf_file() {
       RC sed -i "s/ver_galera4_preferred=\"${ver_galera4}\"/ver_galera4_preferred=\"${num}\"/" ${dir_conf}/prep.conf
       ;;
   esac
+  set +e  # Turn off exiting on non-zero status because diff will do that
   RC diff -u ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
+  set -e  # Restore exiting on non-zero status
   local cont
   cont=""
   while [ -z ${cont} ]; do
@@ -1056,8 +1054,10 @@ update_galera_version_in_conf_file() {
         return 0
         ;;
       "n")
-        lowkey_message "Something went wrong..."
+        lowkey_message "Something went wrong, restoring prep.conf file..."
+        RC mv -v ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
         ANSWER=""
+        lowkey_message "Exiting..."
         exit 1
         ;;
       *)
@@ -1067,7 +1067,7 @@ update_galera_version_in_conf_file() {
         ;;
     esac
   done
-
+  return 0
 }
 
 #===  FUNCTION  ================================================================
