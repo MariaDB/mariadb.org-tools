@@ -59,6 +59,7 @@ df -kT
 # Choose a mirror
 #========================================
 
+# We do it this way because ping to mirrors does not work on some VMs
 for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
   if wget http://$m/mariadb/repo ; then
     mirror=$m
@@ -71,6 +72,7 @@ if [ -z "$mirror" ] ; then
   exit 1
 else
   echo "Mirror $mirror will be used"
+  rm -f index.html
 fi
 
 #========================================
