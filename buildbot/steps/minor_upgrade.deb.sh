@@ -367,6 +367,7 @@ case "$major_version" in
   ;;
 esac
 
+cd $HOME
 mkdir galera_download
 cd galera_download
 if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
