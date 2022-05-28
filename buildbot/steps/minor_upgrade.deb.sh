@@ -56,12 +56,30 @@ uname -a
 df -kT
 
 #========================================
+# Choose a mirror
+#========================================
+
+for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
+  if wget http://$m/mariadb/repo ; then
+    mirror=$m
+    break
+  fi
+done
+
+if [ -z "$mirror" ] ; then
+  echo "ERROR: Couldn't find a working mirror containing MariaDB repo, giving up"
+  exit 1
+else
+  echo "Mirror $mirror will be used"
+fi
+
+#========================================
 # Check whether a previous version exists
 #========================================
 
-if ! wget http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
-  echo "Upgrade warning: could not find the 'Packages' file for a previous version in MariaDB repo, skipping the test"
+  echo "Upgrade warning: could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
   exit
 fi
 
@@ -111,13 +129,13 @@ echo "Package_list: $package_list"
 # Prepare apt source configuration for installation of the last release
 #======================================================================
 
-sudo sh -c "echo 'deb http://mirror.terrahost.no/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
+sudo sh -c "echo 'deb http://$mirror/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
 
 sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
-sudo sh -c "echo 'Pin: origin mirror.terrahost.no' >> /etc/apt/preferences.d/release"
+sudo sh -c "echo 'Pin: origin $mirror' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
