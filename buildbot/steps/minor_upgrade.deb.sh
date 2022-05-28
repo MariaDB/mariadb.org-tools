@@ -222,7 +222,7 @@ fi
 # To avoid confusing errors in further logic, do an explicit check
 # whether the service is up and running
 if [[ "$systemd_capability" == "yes" ]] ; then
-  if ! sudo systemctl status mariadb --no-pager ; then
+  if ! sudo systemctl -l status mariadb --no-pager ; then
     sudo journalctl -xe --no-pager
     get_columnstore_logs
     echo "ERROR: mariadb service didn't start properly after installation"
@@ -510,10 +510,10 @@ yes)
   ls -l /lib/systemd/system/mariadb.service
   ls -l /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf
   ls -l /etc/init.d/mysql || true
-  systemctl --no-pager status mariadb.service
-  systemctl --no-pager status mariadb
-  systemctl --no-pager status mysql
-  systemctl --no-pager status mysqld
+  systemctl -l --no-pager status mariadb.service
+  systemctl -l --no-pager status mariadb
+  systemctl -l --no-pager status mysql
+  systemctl -l --no-pager status mysqld
   systemctl --no-pager is-enabled mariadb
   ;;
 no)
