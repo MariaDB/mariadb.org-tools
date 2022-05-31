@@ -119,6 +119,8 @@ columnstore)
     exit
   fi
   package_list="mariadb-server "`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
+  echo "Workaround for MDEV-28711: also force upgrade of libmariadb3"
+  package_list="$package_list libmariadb3"
   ;;
 *)
   echo "ERROR: unknown test mode: $test_mode"
