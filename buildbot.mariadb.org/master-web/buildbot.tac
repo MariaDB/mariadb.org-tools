@@ -23,7 +23,7 @@ if basedir == '.':
 application = service.Application('buildmaster')
 from twisted.python.logfile import LogFile
 from twisted.python.log import ILogObserver, FileLogObserver
-logfile = LogFile.fromFullPath(os.path.join(log_basedir, "master-web-twistd.log"), rotateLength=rotateLength,
+logfile = LogFile.fromFullPath(os.path.join(log_basedir, "master-web.log"), rotateLength=rotateLength,
                                 maxRotatedFiles=maxRotatedFiles)
 application.setComponent(ILogObserver, FileLogObserver(logfile).emit)
 

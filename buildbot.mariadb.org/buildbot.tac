@@ -4,8 +4,9 @@ from twisted.application import service
 from buildbot.master import BuildMaster
 
 basedir = '.'
+log_basedir = '/var/log/buildbot/'
 
-rotateLength = 10000000
+rotateLength = 20000000
 maxRotatedFiles = 30
 configfile = 'master.cfg'
 
@@ -22,7 +23,7 @@ if basedir == '.':
 application = service.Application('buildmaster')
 from twisted.python.logfile import LogFile
 from twisted.python.log import ILogObserver, FileLogObserver
-logfile = LogFile.fromFullPath(os.path.join(basedir, "twistd.log"), rotateLength=rotateLength,
+logfile = LogFile.fromFullPath(os.path.join(log_basedir, "master-docker.log"), rotateLength=rotateLength,
                                 maxRotatedFiles=maxRotatedFiles)
 application.setComponent(ILogObserver, FileLogObserver(logfile).emit)
 
