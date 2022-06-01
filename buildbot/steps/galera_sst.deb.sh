@@ -72,13 +72,13 @@ if [ "$sst_mode" == "mariabackup" ] ; then
   if [ -z "$mbackup" ] ; then
     mbackup=`ls buildbot/debs/binary/ | grep -v ddeb | grep mariadb-backup- | sed -e 's/^\(mariadb-backup-10\.[1-9]\).*/\\1/' | uniq`
     if [ -z "$mbackup" ] ; then
-      echo "Test warning: mariabackup is not available for installing?"
+      echo "Test warning"": mariabackup is not available for installing?"
       exit 1
     fi
   fi
   echo "Installing $mbackup"
   if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y $mbackup socat" ; then
-    echo "Test warning: failed to install MariaBackup"
+    echo "Test warning"": failed to install MariaBackup"
     store_logs
     exit 1
   fi
@@ -87,7 +87,7 @@ elif [ "$sst_mode" == "xtrabackup-v2" ] ; then
   sudo dpkg -i percona-release_${xtrabackup_version}.${version_name}_all.deb
   sudo apt-get update
   if ! sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get install --allow-unauthenticated -y percona-xtrabackup-24 socat" ; then
-    echo "Test warning: could not install XtraBackup, check if it's available for this version/architecture"
+    echo "Test warning"": could not install XtraBackup, check if it's available for this version/architecture"
     store_logs
     exit 1
   fi

@@ -30,7 +30,7 @@ fi
 case $branch in
 *"$development_branch"*)
   if [[ "$test_mode" != "server" ]] ; then
-    echo "Upgrade warning: For non-stable branches the test is only run in 'test' mode"
+    echo "Upgrade warning"": For non-stable branches the test is only run in 'test' mode"
     exit
   fi
   ;;
@@ -81,7 +81,7 @@ fi
 
 if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
-  echo "Upgrade warning: could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
+  echo "Upgrade warning"": could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
   exit
 fi
 
@@ -92,11 +92,11 @@ fi
 case $test_mode in
 all)
   if grep -i columnstore Packages > /dev/null ; then
-    echo "Upgrade warning: Due to MCOL-4120 (Columnstore leaves the server shut down) and other bugs Columnstore upgrade is tested separately"
+    echo "Upgrade warning"": Due to MCOL-4120 (Columnstore leaves the server shut down) and other bugs Columnstore upgrade is tested separately"
   fi
   package_list=`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | sort | uniq | xargs`
   if grep -i spider Packages > /dev/null ; then
-    echo "Upgrade warning: Due to MDEV-14622 Spider will be installed separately after the server"
+    echo "Upgrade warning"": Due to MDEV-14622 Spider will be installed separately after the server"
     spider_package_list=`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | sort | uniq | xargs`
   fi
   if grep -i tokudb Packages > /dev/null ; then
@@ -112,10 +112,10 @@ server)
   ;;
 columnstore)
   if ! grep columnstore Packages > /dev/null ; then
-    echo "Upgrade warning: Columnstore was not found in packages, the test will not be run"
+    echo "Upgrade warning"": Columnstore was not found in packages, the test will not be run"
     exit
   elif [[ "$version_name" == "sid" ]] ; then
-    echo "Upgrade warning: Columnstore isn't necessarily built on Sid, thte test will be skipped"
+    echo "Upgrade warning"": Columnstore isn't necessarily built on Sid, thte test will be skipped"
     exit
   fi
   package_list="mariadb-server "`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
@@ -152,7 +152,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
     res=0
     break
   fi
-  echo "Upgrade warning: apt-get update failed, retrying ($i)"
+  echo "Upgrade warning"": apt-get update failed, retrying ($i)"
   sleep 10
 done
 
@@ -201,7 +201,7 @@ wait_for_mysql_upgrade () {
     fi
   done
   if [[ $res -ne 0 ]] ; then
-    echo "Upgrade warning: mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
+    echo "Upgrade warning"": mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
   fi
 }
 
@@ -233,7 +233,7 @@ if [[ "$systemd_capability" == "yes" ]] ; then
 fi
 
 if [[ "$test_mode" == "all" ]] && [[ "$branch" != *"10."[234]* ]] ; then
-  echo "Upgrade warning: Due to MDEV-23061, an extra server restart is needed"
+  echo "Upgrade warning"": Due to MDEV-23061, an extra server restart is needed"
   sudo systemctl restart mariadb
 fi
 
@@ -295,7 +295,7 @@ connectors_tests () {
       $script_home/steps/3rd-party-client-tests/${script}
       mv /tmp/test.out /tmp/${script}.test.out.$1
     else
-      echo "Upgrade warning: source package for connector ${script%.deb.sh} could not be installed with the $1 server"
+      echo "Upgrade warning"": source package for connector ${script%.deb.sh} could not be installed with the $1 server"
     fi
   done
 }
@@ -347,7 +347,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
     res=0
     break
   fi
-  echo "Upgrade warning: apt-get update failed, retrying ($i)"
+  echo "Upgrade warning"": apt-get update failed, retrying ($i)"
   sleep 10
 done
 
@@ -414,7 +414,7 @@ if [ -n "$spider_package_list" ] ; then
 fi
 
 if [[ "$test_mode" == "columnstore" ]] ; then
-  echo "Upgrade warning: Due to MCOL-4120 an extra server restart is needed"
+  echo "Upgrade warning"": Due to MCOL-4120 an extra server restart is needed"
   sudo systemctl restart mariadb
 fi
 
@@ -561,7 +561,7 @@ case "$branch" in
     diff -U1000 $ldd_baseline /home/buildbot/ldd.new | ( grep -E '^[-+]|^ =' || true )
     if [[ $? -ne 0 ]] ; then
       if [[ "$version_name" == "sid" ]] ; then
-        echo "Upgrade warning: something has changed in the dependencies of binaries or libraries. See the diff"
+        echo "Upgrade warning"": something has changed in the dependencies of binaries or libraries. See the diff"
       else
         echo "ERROR: something has changed in the dependencies of binaries or libraries. See the diff above"
         res=1
