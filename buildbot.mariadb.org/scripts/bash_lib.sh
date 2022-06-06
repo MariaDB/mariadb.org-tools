@@ -100,7 +100,13 @@ deb_setup_mariadb_mirror() {
     bb_log_err "missing the branch variable"
     exit 1
   }
-  bb_log_info "setup MariaDB repository for $1 branch"
+  branch=$1
+  if [[ $branch == "$development_branch" ]]; then
+    prev_released=$((${branch/10./} - 1))
+    branch="10.$prev_released"
+    bb_log_info "using previous $branch released version for development branch $1"
+  fi
+  bb_log_info "setup MariaDB repository for $branch branch"
   command -v wget >/dev/null || {
     bb_log_err "wget command not found"
     exit 1
@@ -109,10 +115,10 @@ deb_setup_mariadb_mirror() {
     bb_log_err "mariadb repository key installation failed"
     exit 1
   }
-  if wget -q --spider "https://deb.mariadb.org/$1"; then
-    sudo sh -c "echo 'deb https://deb.mariadb.org/$1/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb.list"
+  if wget -q --spider "https://deb.mariadb.org/$branch"; then
+    sudo sh -c "echo 'deb https://deb.mariadb.org/$branch/$dist_name $version_name main' >/etc/apt/sources.list.d/mariadb.list"
   else
-    bb_log_warn "deb_setup_mariadb_mirror: $1 branch doesn't exist yet"
+    bb_log_warn "deb_setup_mariadb_mirror: $branch branch doesn't exist yet"
   fi
   set +u
 }
