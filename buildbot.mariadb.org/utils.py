@@ -120,6 +120,12 @@ def ls2list(rc, stdout, stderr):
 
 # Save packages for current branch?
 def savePackage(step):
+    builderName = str(step.getProperty("buildername"))
+
+    # Debug builders do not create the bintar, so there are no packages to save
+    if 'debug' in builderName:
+      return False
+
     return step.getProperty("save_packages") and \
            fnmatch_any(step.getProperty("branch"), savedPackageBranches)
 
