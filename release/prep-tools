@@ -32,8 +32,8 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="bionic bullseye buster focal jammy stretch xenial"
-dists_rhel="6 7 8"
+dists_apt="bionic bullseye buster focal jammy stretch"
+dists_rhel="7 8"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
 url_xtrabackup_24="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup-24"
@@ -263,9 +263,6 @@ update_xtrabackup_24() {
     # Download .deb files and add them to the repository
     for dist in ${dists_apt}; do
       case $dist in
-        bullseye)
-          file="percona-xtrabackup-24_${xtrabackup_24_ver}-1.buster_amd64.deb"
-          ;;
         *)
       file="percona-xtrabackup-24_${xtrabackup_24_ver}-1.${dist}_amd64.deb"
           ;;
