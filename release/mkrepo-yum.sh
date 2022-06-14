@@ -115,8 +115,13 @@ declare -A builder_dir_bb_ppc64=(
   [centos7]=kvm-rpm-centos73-ppc64
 )
 
+declare -A builder_dir_bb_s390x=(
+  [rhel8]=kvm-rpm-rhel8-s390x
+  [sles15]=kvm-zyp-sles15-s390x
+)
+
 case ${ARCHDIR} in
-  *10.5*|*10.6*|*10.7*|*10.8*)
+  *10.8*|*10.9*)
   dists_bb="
     centos7-amd64
     centos7-ppc64
@@ -126,6 +131,41 @@ case ${ARCHDIR} in
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
+    rhel8-s390x
+
+    fedora34-amd64
+    fedora34-aarch64
+    fedora35-amd64
+    fedora35-aarch64
+    fedora36-amd64
+
+    opensuse15-amd64
+
+    sles12-amd64
+    sles15-amd64
+    sles15-s390x
+  "
+  dists_ci="
+    rhel8-aarch64
+
+    fedora34-amd64
+    fedora34-aarch64
+    fedora35-amd64
+    fedora35-aarch64
+  "
+  dists=${dists_bb}
+    ;;
+  *10.5*|*10.6*|*10.7*)
+  dists_bb="
+    centos7-amd64
+    centos7-ppc64
+    centos7-ppc64le
+    centos7-aarch64
+
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
 
     fedora34-amd64
     fedora34-aarch64
@@ -138,6 +178,7 @@ case ${ARCHDIR} in
 
     sles12-amd64
     sles15-amd64
+    sles15-s390x
   "
   dists_ci="
     rhel8-aarch64
@@ -385,10 +426,7 @@ for REPONAME in ${dists}; do
       set_builder_dir centos7 amd64
       runCommand mkdir -vp rhel/7/x86_64
       case ${ARCHDIR} in
-        *10.6*|*10.7*)
-          echo "+ no symlinks for ${ARCHDIR}"
-          ;;
-        *)
+        *10.2*|*10.3*|*10.4*|*10.5*)
       pushd rhel/
         for i in $(seq 0 7); do
           maybe_make_symlink 7 7.${i}
@@ -396,6 +434,9 @@ for REPONAME in ${dists}; do
         maybe_make_symlink 7 7Server
         maybe_make_symlink 7 7Client
       popd
+          ;;
+        *)
+          echo "+ no symlinks for ${ARCHDIR}"
           ;;
       esac
       maybe_make_symlink rhel/7/x86_64 rhel7-amd64
@@ -546,7 +587,6 @@ for REPONAME in ${dists}; do
       maybe_make_symlink rhel/8/aarch64 rhel8-aarch64
       maybe_make_symlink rhel8-aarch64 rhel8-aarch64
       maybe_make_symlink rhel8-aarch64 centos8-aarch64
-      maybe_make_symlink centos8-aarch64 centos8-aarch64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -576,6 +616,19 @@ for REPONAME in ${dists}; do
       runCommand mkdir -vp rhel/8/ppc64le/srpms
       maybe_make_symlink rhel/8/ppc64le rhel8-ppc64le
       maybe_make_symlink rhel8-ppc64le centos8-ppc64le
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'rhel8-s390x')
+      set_builder_dir rhel8 s390x
+      runCommand mkdir -vp rhel/8/s390x
+      maybe_make_symlink rhel/8/s390x rhel8-s390x
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -712,6 +765,19 @@ for REPONAME in ${dists}; do
       # Copy in galera files
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles150-amd64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'sles15-s390x')
+      set_builder_dir sles15 s390x
+      runCommand mkdir -vp sles/15/s390x
+      maybe_make_symlink sles/15/s390x sles15-s390x
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     *)

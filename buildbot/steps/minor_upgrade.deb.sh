@@ -20,10 +20,17 @@ for var in test_mode branch arch dist_name version_name major_version systemd_ca
   fi
 done
 
+galera_arch=$arch
+if [[ "$arch" == "ppc64le" ]] ; then
+  arch=ppc64el
+elif [[ "$arch" == "x86" ]] ; then
+  arch=i386
+fi
+
 case $branch in
 *"$development_branch"*)
   if [[ "$test_mode" != "server" ]] ; then
-    echo "Upgrade warning: For non-stable branches the test is only run in 'test' mode"
+    echo "Upgrade warning"": For non-stable branches the test is only run in 'test' mode"
     exit
   fi
   ;;
@@ -49,12 +56,32 @@ uname -a
 df -kT
 
 #========================================
+# Choose a mirror
+#========================================
+
+# We do it this way because ping to mirrors does not work on some VMs
+for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
+  if wget http://$m/mariadb/repo ; then
+    mirror=$m
+    break
+  fi
+done
+
+if [ -z "$mirror" ] ; then
+  echo "ERROR: Couldn't find a working mirror containing MariaDB repo, giving up"
+  exit 1
+else
+  echo "Mirror $mirror will be used"
+  rm -f index.html
+fi
+
+#========================================
 # Check whether a previous version exists
 #========================================
 
-if ! wget http://mirror.netinch.com/pub/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
-  echo "Upgrade warning: could not find the 'Packages' file for a previous version in MariaDB repo, skipping the test"
+  echo "Upgrade warning"": could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
   exit
 fi
 
@@ -65,11 +92,11 @@ fi
 case $test_mode in
 all)
   if grep -i columnstore Packages > /dev/null ; then
-    echo "Upgrade warning: Due to MCOL-4120 (Columnstore leaves the server shut down) and other bugs Columnstore upgrade is tested separately"
+    echo "Upgrade warning"": Due to MCOL-4120 (Columnstore leaves the server shut down) and other bugs Columnstore upgrade is tested separately"
   fi
   package_list=`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep -vE 'galera|spider|columnstore' | awk '{print $2}' | sort | uniq | xargs`
   if grep -i spider Packages > /dev/null ; then
-    echo "Upgrade warning: Due to MDEV-14622 Spider will be installed separately after the server"
+    echo "Upgrade warning"": Due to MDEV-14622 Spider will be installed separately after the server"
     spider_package_list=`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'spider' | awk '{print $2}' | sort | uniq | xargs`
   fi
   if grep -i tokudb Packages > /dev/null ; then
@@ -85,13 +112,15 @@ server)
   ;;
 columnstore)
   if ! grep columnstore Packages > /dev/null ; then
-    echo "Upgrade warning: Columnstore was not found in packages, the test will not be run"
+    echo "Upgrade warning"": Columnstore was not found in packages, the test will not be run"
     exit
   elif [[ "$version_name" == "sid" ]] ; then
-    echo "Upgrade warning: Columnstore isn't necessarily built on Sid, thte test will be skipped"
+    echo "Upgrade warning"": Columnstore isn't necessarily built on Sid, thte test will be skipped"
     exit
   fi
   package_list="mariadb-server "`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
+  echo "Workaround for MDEV-28711: also force upgrade of libmariadb3"
+  package_list="$package_list libmariadb3"
   ;;
 *)
   echo "ERROR: unknown test mode: $test_mode"
@@ -104,27 +133,13 @@ echo "Package_list: $package_list"
 # Prepare apt source configuration for installation of the last release
 #======================================================================
 
-for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
-  if ping -W 1 -c 5 -i 1 $m ; then
-    mirror=$m
-    break
-  else
-    echo "WARNING: Mirror $m seems to be having troubles"
-  fi
-done
-
-if [ -z "$mirror" ] ; then
-  echo "ERROR: Could not find a mirror to download the release from"
-  exit 1
-fi
-
 sudo sh -c "echo 'deb http://$mirror/mariadb/repo/$major_version/$dist_name $version_name main' > /etc/apt/sources.list.d/mariadb_upgrade.list"
 
 # We need to pin directory to ensure that installation happens from MariaDB repo
 # rather than from the default distro repo
 
 sudo sh -c "echo 'Package: *' > /etc/apt/preferences.d/release"
-sudo sh -c "echo 'Pin: origin mirror.netinch.com' >> /etc/apt/preferences.d/release"
+sudo sh -c "echo 'Pin: origin $mirror' >> /etc/apt/preferences.d/release"
 sudo sh -c "echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/release"
 
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
@@ -137,7 +152,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
     res=0
     break
   fi
-  echo "Upgrade warning: apt-get update failed, retrying ($i)"
+  echo "Upgrade warning"": apt-get update failed, retrying ($i)"
   sleep 10
 done
 
@@ -186,7 +201,7 @@ wait_for_mysql_upgrade () {
     fi
   done
   if [[ $res -ne 0 ]] ; then
-    echo "Upgrade warning: mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
+    echo "Upgrade warning"": mysql_upgrade or alike have not finished in reasonable time, different problems may occur"
   fi
 }
 
@@ -209,7 +224,7 @@ fi
 # To avoid confusing errors in further logic, do an explicit check
 # whether the service is up and running
 if [[ "$systemd_capability" == "yes" ]] ; then
-  if ! sudo systemctl status mariadb --no-pager ; then
+  if ! sudo systemctl -l status mariadb --no-pager ; then
     sudo journalctl -xe --no-pager
     get_columnstore_logs
     echo "ERROR: mariadb service didn't start properly after installation"
@@ -218,7 +233,7 @@ if [[ "$systemd_capability" == "yes" ]] ; then
 fi
 
 if [[ "$test_mode" == "all" ]] && [[ "$branch" != *"10."[234]* ]] ; then
-  echo "Upgrade warning: Due to MDEV-23061, an extra server restart is needed"
+  echo "Upgrade warning"": Due to MDEV-23061, an extra server restart is needed"
   sudo systemctl restart mariadb
 fi
 
@@ -280,7 +295,7 @@ connectors_tests () {
       $script_home/steps/3rd-party-client-tests/${script}
       mv /tmp/test.out /tmp/${script}.test.out.$1
     else
-      echo "Upgrade warning: source package for connector ${script%.deb.sh} could not be installed with the $1 server"
+      echo "Upgrade warning"": source package for connector ${script%.deb.sh} could not be installed with the $1 server"
     fi
   done
 }
@@ -332,7 +347,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
     res=0
     break
   fi
-  echo "Upgrade warning: apt-get update failed, retrying ($i)"
+  echo "Upgrade warning"": apt-get update failed, retrying ($i)"
   sleep 10
 done
 
@@ -354,9 +369,10 @@ case "$major_version" in
   ;;
 esac
 
+cd $HOME
 mkdir galera_download
 cd galera_download
-if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
+if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
   echo "ERROR: Could not download the Galera library"
   exit 1
 fi
@@ -398,7 +414,7 @@ if [ -n "$spider_package_list" ] ; then
 fi
 
 if [[ "$test_mode" == "columnstore" ]] ; then
-  echo "Upgrade warning: Due to MCOL-4120 an extra server restart is needed"
+  echo "Upgrade warning"": Due to MCOL-4120 an extra server restart is needed"
   sudo systemctl restart mariadb
 fi
 
@@ -496,10 +512,10 @@ yes)
   ls -l /lib/systemd/system/mariadb.service
   ls -l /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf
   ls -l /etc/init.d/mysql || true
-  systemctl --no-pager status mariadb.service
-  systemctl --no-pager status mariadb
-  systemctl --no-pager status mysql
-  systemctl --no-pager status mysqld
+  systemctl -l --no-pager status mariadb.service
+  systemctl -l --no-pager status mariadb
+  systemctl -l --no-pager status mysql
+  systemctl -l --no-pager status mysqld
   systemctl --no-pager is-enabled mariadb
   ;;
 no)
@@ -545,7 +561,7 @@ case "$branch" in
     diff -U1000 $ldd_baseline /home/buildbot/ldd.new | ( grep -E '^[-+]|^ =' || true )
     if [[ $? -ne 0 ]] ; then
       if [[ "$version_name" == "sid" ]] ; then
-        echo "Upgrade warning: something has changed in the dependencies of binaries or libraries. See the diff"
+        echo "Upgrade warning"": something has changed in the dependencies of binaries or libraries. See the diff"
       else
         echo "ERROR: something has changed in the dependencies of binaries or libraries. See the diff above"
         res=1

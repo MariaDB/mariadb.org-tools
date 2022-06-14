@@ -198,6 +198,9 @@ set -x
 pushd ${src_dir}
 
 git checkout ${tree}
+if ${rev_flag} ; then
+  git reset --hard ${release_rev}
+fi
 git pull
 git fetch --all --tags
 

@@ -114,6 +114,7 @@ bld_codbc_jammy_amd64= build_linux_connector_odbc_no_test("codbc-jammy-amd64", "
 bld_codbc_fedora34_amd64= build_linux_connector_odbc_no_test("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora35_amd64= build_linux_connector_odbc_no_test("codbc-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora36_amd64= build_linux_connector_odbc_no_test("codbc-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_rhel9_amd64= build_linux_connector_odbc("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # Tests on bionic usually/too often time-out
 bld_codbc_bionic_amd64= build_linux_connector_odbc_no_test("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
@@ -263,6 +264,8 @@ cmake --build . --config RelWithDebInfo
             "category": "connectors"}
 
 bld_centos8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
+
+bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
 bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 

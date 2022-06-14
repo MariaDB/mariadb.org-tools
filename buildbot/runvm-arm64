@@ -34,7 +34,7 @@ my @cpu_fix;
 
 my $opt_port= 2222;
 #my $opt_background= undef;
-my $opt_memory= 3072;
+my $opt_memory= 8192;
 my $opt_smp= 2;
 my $opt_cpu= 'host';
 my $opt_netdev= 'virtio';
@@ -540,7 +540,7 @@ my $retries= 0;
 for (;;) {
   if (defined($opt_baseimage)) {
     my $img= (defined($opt_work_image) ? $opt_work_image : $image);
-    my $res= system_with_print($qimg_exe, 'create', '-o', 'compat=0.10', '-b', $opt_baseimage, '-f', 'qcow2', $img);
+    my $res= system_with_print($qimg_exe, 'create', '-o', 'compat=0.10', '-b', $opt_baseimage, '-f', 'qcow2', '-F', 'qcow2', $img);
     if ($res) {
       print STDERR "Failed to clone base image, aborting\n";
       exit 1;

@@ -1,8 +1,0 @@
-*.log*
-master-private.cfg
-workers
-master-protected-branches
-*.pid
-prof*
-venv
-__pycache__

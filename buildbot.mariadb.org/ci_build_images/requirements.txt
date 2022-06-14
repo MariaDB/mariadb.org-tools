@@ -1,2 +1,0 @@
-twisted[tls]
-buildbot-worker
