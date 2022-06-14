@@ -106,7 +106,7 @@ declare -A builder_dir_ci_ppc64le=(
 declare -A builder_dir_bb_ppc64le=(
   [centos7]=kvm-rpm-centos73-ppc64le [centos8]=kvm-rpm-centos8-ppc64le
   [rhel7]=kvm-rpm-rhel7-ppc64le [rhel8]=kvm-rpm-rhel8-ppc64le
-  [fedora34]=kvm-rpm-fedora34-ppc64le [fedora35]=kvm-rpm-fedora35-ppc64le [fedora36]=ppc64le-fedora-36-rpm-autobake
+  [fedora34]=kvm-rpm-fedora34-ppc64le [fedora35]=kvm-rpm-fedora35-ppc64le [fedora36]=kvm-rpm-fedora36-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles150-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
 )

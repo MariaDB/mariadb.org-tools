@@ -267,7 +267,6 @@ rpm_dists_4="
   fedora34-amd64
   fedora35-amd64
   fedora36-amd64
-  fedora-rawhide-amd64
 
   fedora33-aarch64
   fedora34-aarch64
