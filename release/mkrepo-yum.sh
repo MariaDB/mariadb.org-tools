@@ -171,6 +171,8 @@ case ${ARCHDIR} in
     fedora34-aarch64
     fedora35-amd64
     fedora35-aarch64
+    fedora36-amd64
+    fedora36-aarch64
 
     opensuse15-amd64
 
@@ -185,6 +187,8 @@ case ${ARCHDIR} in
     fedora34-aarch64
     fedora35-amd64
     fedora35-aarch64
+    fedora36-amd64
+    fedora36-aarch64
   "
   dists=${dists_bb}
     ;;
