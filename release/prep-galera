@@ -68,6 +68,7 @@ ci_mappings_4="
     gal-aarch64-fedora-33:kvm-rpm-fedora33-aarch64-gal
     gal-aarch64-fedora-34:kvm-rpm-fedora34-aarch64-gal
     gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
+    gal-aarch64-fedora-36:kvm-rpm-fedora36-aarch64-gal
      gal-aarch64-debian-9:kvm-deb-stretch-aarch64-gal
     gal-aarch64-debian-10:kvm-deb-buster-aarch64-gal
     gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
@@ -265,11 +266,13 @@ rpm_dists_4="
   fedora33-amd64
   fedora34-amd64
   fedora35-amd64
+  fedora36-amd64
   fedora-rawhide-amd64
 
   fedora33-aarch64
   fedora34-aarch64
   fedora35-aarch64
+  fedora36-aarch64
 
   opensuse150-amd64
 
