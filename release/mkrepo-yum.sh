@@ -121,7 +121,7 @@ declare -A builder_dir_bb_s390x=(
 )
 
 case ${ARCHDIR} in
-  *10.8*|*10.9*)
+  *10.6*|*10.7*|*10.8*|*10.9*)
   dists_bb="
     centos7-amd64
     centos7-ppc64
@@ -138,6 +138,7 @@ case ${ARCHDIR} in
     fedora35-amd64
     fedora35-aarch64
     fedora36-amd64
+    fedora36-aarch64
 
     opensuse15-amd64
 
@@ -152,10 +153,12 @@ case ${ARCHDIR} in
     fedora34-aarch64
     fedora35-amd64
     fedora35-aarch64
+    fedora36-amd64
+    fedora36-aarch64
   "
   dists=${dists_bb}
     ;;
-  *10.5*|*10.6*|*10.7*)
+  *10.5*)
   dists_bb="
     centos7-amd64
     centos7-ppc64
@@ -171,8 +174,6 @@ case ${ARCHDIR} in
     fedora34-aarch64
     fedora35-amd64
     fedora35-aarch64
-    fedora36-amd64
-    fedora36-aarch64
 
     opensuse15-amd64
 
@@ -187,8 +188,6 @@ case ${ARCHDIR} in
     fedora34-aarch64
     fedora35-amd64
     fedora35-aarch64
-    fedora36-amd64
-    fedora36-aarch64
   "
   dists=${dists_bb}
     ;;
