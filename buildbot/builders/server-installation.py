@@ -8,6 +8,8 @@ if [ -e /usr/bin/apt ] ; then
   sudo apt install -y curl
 fi
 
+case $HOSTNAME in rhel*) sudo subscription-manager refresh ;; esac
+
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash ; then
   if [ -e /etc/fedora-release ]; then
     source /etc/os-release
