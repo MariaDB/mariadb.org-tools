@@ -18,7 +18,7 @@ cd ../..
 
 def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -61,7 +61,7 @@ connodbc_linux_step4_testsrun
 
 def build_linux_connector_odbc_no_test(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -103,6 +103,7 @@ bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sle
 
 bld_codbc_focal_amd64= build_linux_connector_odbc("codbc-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos7-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_stretch_x64_connector_odbc= build_linux_connector_odbc("codbc-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
@@ -124,7 +125,7 @@ bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-
 
 def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -189,7 +190,7 @@ garbd --version
 
 def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -272,7 +273,7 @@ bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm
 ################################# bld_linux_connector_oddbc ################################
 def bld_linux_connector_odbc(name, kvm_image, cflags, yum, conc_branch, cmake_params, tag):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -337,7 +338,7 @@ cmake --build . --config RelWithDebInfo --target package
 
 def bld_xcomp_linux_connector_odbc(name, kvm_image, conc_branch, cmake_params, tag):
     linux_connector_odbc= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -400,6 +401,6 @@ setarch i386 make package
             "category": "connectors"}
 
 #bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");
-bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("codbc-centos7-x86", "vm-centos7-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
-bld_centos8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("codbc-centos8-x86", "vm-centos8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
+bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("codbc-centos7-x86", "vm-centos74-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
+bld_centos8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("codbc-centos8-x86", "vm-rhel8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel8 ", "v3.1.7");
 
