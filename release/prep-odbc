@@ -19,7 +19,7 @@
 version=${1}
 dir_build=${2}
 
-dir_odbc="connector-odbc-${version}"
+dir_name="connector-odbc-${version}"
 
 # set location of prep.conf and prep.log to XDG-compatible directories and then
 # create them if they don't exist
@@ -31,13 +31,24 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 #  Functions
 #-------------------------------------------------------------------------------
 
+DIV() { echo;echo;LINE;echo;echo;}
+LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
+THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
+RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
+PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
+
+MSG() { LINE;echo "# ${@}";LINE;}
+MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
+MSG_L() { echo "# ${@}";}
+
+
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
-	echo;line;echo ${sum};
+	echo;LINE;echo ${sum};
 	${sum}sum ./mar* >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
-  echo;line;echo
+  DIV
 }
 
 userResponse() {
@@ -63,22 +74,12 @@ loadDefaults() {
 }
 
 usage() {
-  echo;line
-  echo
+  DIV
   echo "usage: $0 <version> <build_dir>"
   echo " e.g.: $0 3.0.1 /ds413/archive/builds/odbc-3.0/e5dd7440815d1ca2f2e96c3c305718fc9b4a8502/"
-  echo;line
+  echo;LINE
   echo
   exit 1
-}
-
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
-
-message() {
-  message="${@}"
-  echo;line;echo "${message}";line;
 }
 
 shouldI() {
@@ -107,7 +108,7 @@ shouldI() {
 }
 
 copy_and_stage_files() {
-  echo;line;echo "fixing permissions";line;
+  MSG "fixing permissions"
 
   for dir in $(sudo find ${dir_build} -type d);do
     sudo chmod -c 755 "${dir}"
@@ -116,50 +117,50 @@ copy_and_stage_files() {
     sudo chmod -c 644 "${file}"
   done
 
-  echo;line;echo "Copying and staging files";line;
+  MSG "Copying and staging files"
   pushd ${co_home}
-    if [[ ! -d "${dir_odbc}" ]];then
-      mkdir -v ${dir_odbc}
+    if [[ ! -d "${dir_name}" ]];then
+      mkdir -v ${dir_name}
     fi
     # Linux files
-    if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_odbc}/ ; then
-      message "Copied Linux x86 files"
+    if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_name}/ ; then
+      MSG "Copied Linux x86 files"
     else
-      message "No Linux x86 files"
+      MSG "No Linux x86 files"
     fi
-    if cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_odbc}/ ; then
-      message "Copied Linux amd64 files"
+    if cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_name}/ ; then
+      MSG "Copied Linux amd64 files"
     else
-      message "ERROR: Linux amd64 files not found"
+      MSG "ERROR: Linux amd64 files not found"
       exit 3
     fi
     # Windows files
-    if cp -avi ${dir_build}/*/*msi ${dir_odbc}/ ; then
-      message "Copied Windows files"
+    if cp -avi ${dir_build}/*/*msi ${dir_name}/ ; then
+      MSG "Copied Windows files"
     else
-      message "ERROR: Windows files not Found"
+      MSG "ERROR: Windows files not Found"
     fi
     # Mac files
-    if cp -avi ${dir_build}/*/*pkg ${dir_odbc}/;then
-      message "Copied MacOS files"
+    if cp -avi ${dir_build}/*/*pkg ${dir_name}/;then
+      MSG "Copied MacOS files"
     else
-      message "No MacOS files"
+      MSG "No MacOS files"
     fi
     # Src files
-    cp -avi ${dir_build}/*/*src.zip ${dir_odbc}/
-    cp -avi ${dir_build}/*/*src.tar.gz ${dir_odbc}/
+    cp -avi ${dir_build}/*/*src.zip ${dir_name}/
+    cp -avi ${dir_build}/*/*src.tar.gz ${dir_name}/
   popd
   echo;echo;echo
 }
 
 prep_org_files() {
   # Prep .org files
-  echo;line;echo "Prepping org files";line;
-  if [[ ! -d "${dir_release}/${dir_odbc}" ]];then
-    mkdir -v ${dir_release}/${dir_odbc}
+  MSG "Prepping org files"
+  if [[ ! -d "${dir_release}/${dir_name}" ]];then
+    mkdir -v ${dir_release}/${dir_name}
   fi
-  cp -avi ${co_home}/${dir_odbc}/*src* ${dir_release}/${dir_odbc}/
-  pushd ${dir_release}/${dir_odbc}
+  cp -avi ${co_home}/${dir_name}/*src* ${dir_release}/${dir_name}/
+  pushd ${dir_release}/${dir_name}
     sumgen
     for file in *;do
       echo "+ gpg2 ${gpg_opts} ${file}"
@@ -171,8 +172,8 @@ prep_org_files() {
 
 prep_com_files() {
   # Prep .com files
-  echo;line;echo "Prepping com files";line;
-  pushd ${co_home}/${dir_odbc}
+  MSG "Prepping com files"
+  pushd ${co_home}/${dir_name}
     sumgen
     for file in *;do
       echo "+ gpg2 ${ent_gpg_opts} ${file}"
@@ -182,20 +183,107 @@ prep_com_files() {
   echo;echo;echo
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  uploader
+#   DESCRIPTION:  Upload a release
+#===============================================================================
+uploader() {
+  local dest
+  local dests
+  dests="$@"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          MSG "Uploading to ${dest}..."
+          rsync_wrapper "-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          MSG "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          MSG_L "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+# Wrapper functions for uploader
+upload_to_the_mirrors() {
+  uploader "${mirrors}"
+}
+
+upload_to_the_archives() {
+  uploader "${archives}"
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  MSG_L "Doing a dry run..."
+  RC rsync --dry-run ${rsync_body} | less
+  echo
+  while [ -z ${upload} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Transferring for real..."
+        set -x
+        RC rsync ${rsync_body}
+        set +x
+        echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+
 upload_to_the_primary_mirror() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/"
-          rsync --dry-run -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/"
+          rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/"
-                rsync -av --delete-after ${dir_release}/${dir_odbc} ${primary_mirror}:data/
+        echo "+ rsync -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/"
+                rsync -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -217,16 +305,16 @@ upload_to_the_corp_mirror_staging_dir() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/"
-          rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_name} ${co_home_corp_staging}/"
+          rsync --dry-run -av --delete-after ${co_home}/${dir_name} ${co_home_corp_staging}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/"
-                rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp_staging}/
+        echo "+ rsync -av --delete-after ${co_home}/${dir_name} ${co_home_corp_staging}/"
+                rsync -av --delete-after ${co_home}/${dir_name} ${co_home_corp_staging}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -249,16 +337,16 @@ upload_to_the_corp_mirror() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/"
-          rsync --dry-run -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${co_home}/${dir_name} ${co_home_corp}/"
+          rsync --dry-run -av --delete-after ${co_home}/${dir_name} ${co_home_corp}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/"
-                rsync -av --delete-after ${co_home}/${dir_odbc} ${co_home_corp}/
+        echo "+ rsync -av --delete-after ${co_home}/${dir_name} ${co_home_corp}/"
+                rsync -av --delete-after ${co_home}/${dir_name} ${co_home_corp}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -283,13 +371,13 @@ upload_to_the_corp_mirror() {
 #                 mariadb.org downloads system.
 #===============================================================================
 generate_the_file_list_pickle_for_org_downloads() {
-  ssh -t -t ${primary_mirror} "set -x; python generate_file_list.py data/ --release=${dir_odbc}";
+  ssh -t -t ${primary_mirror} "set -x; python generate_file_list.py data/ --release=${dir_name}";
 }
 
 update_the_STATUS_file() {
   echo "+ date +%s > ${dir_release}/STATUS"
           date +%s > ${dir_release}/STATUS
-  message "STATUS file updated"
+  MSG "STATUS file updated"
 }
 
 #-------------------------------------------------------------------------------
@@ -316,11 +404,7 @@ set -eu
   # -x  Print a trace of simple commands and their arguments after they are
   #     expanded and before they are executed.
 
-echo;echo;echo
-line
-echo "Preparing MariaDB Connector/ODBC ${version} release..."
-line
-echo
+MSG_I "Preparing MariaDB Connector/ODBC ${version} release..."
 
 shouldI copy_and_stage_files
 echo;echo
@@ -330,6 +414,15 @@ shouldI prep_com_files
 echo;echo
 shouldI upload_to_the_corp_mirror_staging_dir
 echo;echo
+
+MSG_I "Mirrors"
+for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_mirrors
+echo;echo
+MSG_I "Archives"
+for archive in ${archives} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_archives
+
 shouldI upload_to_the_primary_mirror
 echo;echo
 shouldI upload_to_the_corp_mirror
@@ -338,6 +431,6 @@ shouldI generate_the_file_list_pickle_for_org_downloads
 echo;echo
 shouldI update_the_STATUS_file
 echo "+ All done!"
-line;line;line
+LINE;LINE;LINE
 echo;echo;echo
 
