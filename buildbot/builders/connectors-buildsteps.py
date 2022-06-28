@@ -22,6 +22,9 @@ cd ../..
 mkdir build
 cd build
 
+"""
+
+step0_set_test_env= """
 # At least uid has to be exported before cmake run
 export TEST_UID=root
 export TEST_PASSWORD=
@@ -38,6 +41,6 @@ ls
 step4_testsrun= """
 cd ./build/test
 ls
-ctest -VV
+ctest --output-on-failure
 """
 
