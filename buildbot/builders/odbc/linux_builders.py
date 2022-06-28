@@ -1,5 +1,5 @@
 # The default build steps used here are defined in the builders/connectors-buildsteps.py
-connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git") + """
+connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git") + step0_set_test_env + """
 export TEST_DRIVER=maodbc_test
 export TEST_DSN=maodbc_test
 """
