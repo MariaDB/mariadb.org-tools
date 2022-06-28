@@ -1,7 +1,7 @@
 
 ################################# bld_linux_connector_oddbc ################################
 
-conncpp_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git")
+conncpp_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git") + step0_set_test_env
 conncpp_linux_step1_build= step1_build
 conncpp_linux_step2_serverinstall= linux_serverinstall
 conncpp_linux_step3_packagetest= """
