@@ -25,7 +25,7 @@ conncpp_linux_step4_testsrun= step4_testsrun
 
 def bld_linux_connector_cpp(name, kvm_image, cflags, cmake_params):
     linux_connector_cpp= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -89,7 +89,7 @@ bld_fedora36_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora36-amd64",
 
 def bld_linux_connector_cpp_with_hack(name, kvm_image, cflags, cmake_params):
     linux_connector_cpp= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
@@ -136,7 +136,7 @@ bld_centos7_amd64_connector_cpp= bld_linux_connector_cpp_with_hack("ccpp-centos7
 
 def bld_linux_connector_cpp_with_gcc5(name, kvm_image, cflags, cmake_params):
     linux_connector_cpp= BuildFactory()
-    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=qemu64"]
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
         description=["cleaning", "build", "dir"],
         descriptionDone=["clean", "build", "dir"],
