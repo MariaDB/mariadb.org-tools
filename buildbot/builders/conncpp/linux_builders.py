@@ -69,6 +69,7 @@ conncpp_linux_step4_testsrun
 
 ######################## "Normal" builders ######################
 bld_rhel9_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_rhel8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_centos8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_stretch_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-stretch-amd64", "vm-stretch-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 
@@ -81,6 +82,8 @@ bld_impish_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-impish-amd64", "vm
 bld_jammy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_bullseye_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
 bld_fedora34_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora35_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora36_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
