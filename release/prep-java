@@ -20,7 +20,7 @@ version=${1}
 orgmariadbjdbc=${2}
 maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
 
-dir_java="connector-java-${version}"
+dir_name="connector-java-${version}"
 #tarball="mariadb-java-client-${version}.tar.gz"
 tarball="mariadb-java-client-${version}-sources.jar"
 
@@ -34,11 +34,22 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 #  Functions
 #-------------------------------------------------------------------------------
 
+DIV() { echo;echo;LINE;echo;echo;}
+LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
+THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
+RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
+PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
+
+MSG() { LINE;echo "# ${@}";LINE;}
+MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
+MSG_L() { echo "# ${@}";}
+
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
 	${sum}sum ./mar* >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
+  DIV
 }
 
 userResponse() {
@@ -73,15 +84,6 @@ usage() {
   exit 1
 }
 
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
-
-message() {
-  message="${@}"
-  echo;line;echo "${message}";line;
-}
-
 shouldI() {
   local cont
   cont=""
@@ -109,90 +111,78 @@ shouldI() {
 
 unzip_and_stage_files() {
   # Unzip and Stage files
-  message "Unzipping and staging files..."
-  set -x
-  pushd ${cj_home}
+  MSG "Unzipping and staging files..."
+  RC pushd ${cj_home}
     #unzip ${version}*.zip
-    #mv -vi ${version} ${dir_java}
+    #mv -vi ${version} ${dir_name}
     #rm -v ${version}*.zip
-    if [ -d ${dir_java} ]; then
-      rm -rf ${dir_java}
+    if [ -d ${dir_name} ]; then
+      RC rm -rf ${dir_name}
     fi
-    mkdir ${dir_java}
-    pushd ${dir_java}
-      wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
-      wget -N ${maven}/${version}/mariadb-java-client-${version}-sources.jar
-      wget -N ${maven}/${version}/mariadb-java-client-${version}.jar
-    popd
-  popd
-  set +x
+    RC mkdir ${dir_name}
+    RC pushd ${dir_name}
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}-sources.jar
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}.jar
+    RC popd
+  RC popd
   echo;echo;echo
 }
 
 prep_org_files() {
   # Prep .org files
-  message "Prepping org files..."
-  set -x
-  mkdir ${dir_release}/${dir_java}
-  cp -avi ${cj_home}/${dir_java}/${tarball} ${dir_release}/${dir_java}/
-  pushd ${dir_release}/${dir_java}
+  MSG "Prepping org files..."
+  RC mkdir ${dir_release}/${dir_name}
+  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${dir_release}/${dir_name}/
+  RC pushd ${dir_release}/${dir_name}
   sumgen
   for file in *;do
-    gpg2 ${gpg_opts} ${file}
+    RC gpg2 ${gpg_opts} ${file}
   done
   popd
-  set +x
   echo;echo;echo
 }
 
 update_org_current_to_this_release() {
   if [[ -d ${dir_release}/connector-java-current ]]; then
-    rm -rf ${dir_release}/connector-java-current
+    RC rm -rf ${dir_release}/connector-java-current
   fi
-  message "Updating current org release to this one..."
-  set -x
-  mkdir ${dir_release}/connector-java-current
-  cp -avi ${cj_home}/${dir_java}/${tarball} ${dir_release}/connector-java-current/mariadb-java-client-current-sources.jar
-  pushd ${dir_release}/connector-java-current/
+  MSG "Updating current org release to this one..."
+  RC mkdir ${dir_release}/connector-java-current
+  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${dir_release}/connector-java-current/mariadb-java-client-current-sources.jar
+  RC pushd ${dir_release}/connector-java-current/
   sumgen
   for file in *;do
-    gpg2 ${gpg_opts} ${file}
+    RC gpg2 ${gpg_opts} ${file}
   done
   popd
-  set +x
   echo;echo;echo
 }
 
 prep_com_files() {
   # Prep .com files
-  message "Prepping com files..."
-  set -x
-  pushd ${cj_home}/${dir_java}
+  MSG "Prepping com files..."
+  RC pushd ${cj_home}/${dir_name}
   sumgen
   for file in *;do
-    gpg2 ${ent_gpg_opts} ${file}
+    RC gpg2 ${ent_gpg_opts} ${file}
   done
   popd
-  set +x
   echo;echo;echo
 }
 
 upload_to_the_primary_mirror() {
   local upload
   upload=""
-  message "Doing a dry-run..."
-  set -x
-  rsync --dry-run -av --delete-after ${dir_release}/${dir_java} ${dir_release}/connector-java-current ${primary_mirror}:data/
-  set +x
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-java-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
-        set -x
-        rsync -av --delete-after ${dir_release}/${dir_java} ${dir_release}/connector-java-current ${primary_mirror}:data/
-        set +x
+        MSG "Uploading for real..."
+        RC rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-java-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -213,19 +203,15 @@ upload_to_the_primary_mirror() {
 upload_to_the_corp_mirror_staging_dir() {
   local upload
   upload=""
-  message "Doing a dry-run..."
-  set -x
-  rsync --dry-run -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp_staging}/
-  set +x
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${cj_home}/${dir_name} ${cj_home_corp_staging}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
-        set -x
-        rsync -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp_staging}/
-        set +x
+        MSG "Uploading for real..."
+        RC rsync -av --delete-after ${cj_home}/${dir_name} ${cj_home_corp_staging}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -246,19 +232,15 @@ upload_to_the_corp_mirror_staging_dir() {
 upload_to_the_corp_mirror() {
   local upload
   upload=""
-  message "Doing a dry-run..."
-  set -x
-  rsync --dry-run -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
-  set +x
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${cj_home}/${dir_name} ${cj_home_corp}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
-        set -x
-        rsync -av --delete-after ${cj_home}/${dir_java} ${cj_home_corp}/
-        set +x
+        MSG "Uploading for real..."
+        RC rsync -av --delete-after ${cj_home}/${dir_name} ${cj_home_corp}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -283,7 +265,7 @@ upload_to_the_corp_mirror() {
 #                 mariadb.org downloads system.
 #===============================================================================
 generate_the_file_list_pickle_for_org_downloads() {
-  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_java}";
+  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_name}";
 }
 
 #===  FUNCTION  ================================================================
@@ -293,8 +275,100 @@ generate_the_file_list_pickle_for_org_downloads() {
 update_the_STATUS_file() {
   echo "+ date +%s > ${dir_release}/STATUS"
           date +%s > ${dir_release}/STATUS
-  message "STATUS file updated"
+  MSG "STATUS file updated"
 }
+
+#===  FUNCTION  ================================================================
+#          NAME:  uploader
+#   DESCRIPTION:  Upload a release
+#===============================================================================
+uploader() {
+  local dest
+  local dests
+  local rsync_uploader_opts
+  dests="$@"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          MSG "Uploading to ${dest}..."
+          case ${dest} in
+            *hz-archive*)
+              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          MSG "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          MSG_L "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+# Wrapper functions for uploader
+upload_to_the_mirrors() {
+  uploader "${mirrors}"
+}
+
+upload_to_the_archives() {
+  uploader "${archives}"
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  MSG_L "Doing a dry run..."
+  RC rsync --dry-run ${rsync_body} | less
+  echo
+  while [ -z ${upload} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Transferring for real..."
+        RC rsync ${rsync_body}
+        echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -329,6 +403,14 @@ shouldI prep_com_files
 
 shouldI upload_to_the_corp_mirror_staging_dir
 
+MSG_I "Mirrors"
+for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_mirrors
+echo;echo
+MSG_I "Archives"
+for archive in ${archives} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_archives
+
 shouldI upload_to_the_primary_mirror
 
 shouldI upload_to_the_corp_mirror
@@ -337,5 +419,5 @@ shouldI generate_the_file_list_pickle_for_org_downloads
 
 shouldI update_the_STATUS_file
 
-echo "+ All done!"
+MSG "All done!"
 echo;echo;echo

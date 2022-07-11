@@ -190,7 +190,9 @@ prep_com_files() {
 uploader() {
   local dest
   local dests
+  local rsync_uploader_opts
   dests="$@"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
   for dest in ${dests} ; do
     local cont
     cont=""
@@ -199,7 +201,12 @@ uploader() {
       case ${ANSWER} in
         y)
           MSG "Uploading to ${dest}..."
-          rsync_wrapper "-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dest}/"
+          case ${dest} in
+            *hz-archive*)
+              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
@@ -247,9 +254,7 @@ rsync_wrapper() {
     case ${ANSWER} in
       "y")
         MSG_L "Transferring for real..."
-        set -x
         RC rsync ${rsync_body}
-        set +x
         echo
         upload="yes"
         ANSWER=""
