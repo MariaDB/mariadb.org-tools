@@ -72,7 +72,7 @@ fi
 
 set_build_dirs_variables() {
   case ${major} in
-    10.6|10.7|10.8|10.9)
+    10.6|10.7|10.8|10.9|10.10)
       build_dirs_x86=""
       build_dirs_x86_64="
         kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
@@ -671,7 +671,9 @@ copy_the_release_to_the_local_mirror_dir() {
 uploader() {
   local dest
   local dests
+  local rsync_uploader_opts
   dests="$@"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
   for dest in ${dests} ; do
     local cont
     cont=""
@@ -680,7 +682,12 @@ uploader() {
       case ${ANSWER} in
         y)
           message "Uploading to ${dest}..."
-          rsync_wrapper "-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dest}/"
+          case ${dest} in
+            *hz-archive*)
+              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
