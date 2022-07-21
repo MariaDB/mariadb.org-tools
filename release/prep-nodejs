@@ -25,7 +25,7 @@ else
 fi
 
 url="https://github.com/MariaDB/mariadb-connector-nodejs/archive"
-dir_nodejs="connector-nodejs-${version}"
+dir_name="connector-nodejs-${version}"
 
 # set location of prep.conf and prep.log to XDG-compatible directories and then
 # create them if they don't exist
@@ -37,10 +37,20 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 #  Functions
 #-------------------------------------------------------------------------------
 
+DIV() { echo;echo;LINE;echo;echo;}
+LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
+THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
+RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
+PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
+
+MSG() { LINE;echo "# ${@}";LINE;}
+MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
+MSG_L() { echo "# ${@}";}
+
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
 	${sum}sum ./mar* >> ${sum}sums.txt
-	${sum}sum -c ${sum}sums.txt
+	RC ${sum}sum -c ${sum}sums.txt
   done
 }
 
@@ -67,22 +77,11 @@ loadDefaults() {
 }
 
 usage() {
-  set +x
   echo
   echo "usage: $0 <version> <file>"
   echo " e.g.: $0 2.0.1 2.0.1-beta "
   echo
-  set -x
   exit 1
-}
-
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
-
-message() {
-  message="${@}"
-  echo;line;echo "${message}";line;
 }
 
 shouldI() {
@@ -112,86 +111,74 @@ shouldI() {
 
 stage_files() {
   # Stage files
-  message "Staging files..."
-  set -x
-  pushd ${cn_home}
-    mkdir -v ${dir_nodejs}
-    pushd ${dir_nodejs}
-      wget -N ${url}/${release}.tar.gz
-      mv -vi ${release}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
-      wget -N ${url}/${release}.zip
-      mv -vi ${release}.zip mariadb-connector-nodejs-${release}.zip
+  MSG "Staging files..."
+  RC pushd ${cn_home}
+    RC mkdir -v ${dir_name}
+    RC pushd ${dir_name}
+      RC wget -N ${url}/${release}.tar.gz
+      RC mv -vi ${release}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
+      RC wget -N ${url}/${release}.zip
+      RC mv -vi ${release}.zip mariadb-connector-nodejs-${release}.zip
       #cp -avi ${tarball} ./
-    popd
-  popd
-  set +x
+    RC popd
+  RC popd
   echo;echo;echo
 }
 
 prep_org_files() {
   # Prep .org files
-  message "Prepping org files..."
-  set -x
-  cp -avi ${cn_home}/${dir_nodejs} ${dir_release}/
-  pushd ${dir_release}/${dir_nodejs}
+  MSG "Prepping org files..."
+  RC cp -avi ${cn_home}/${dir_name} ${dir_release}/
+  RC pushd ${dir_release}/${dir_name}
   sumgen
   for file in *;do
-    gpg2 ${gpg_opts} ${file}
+    RC gpg2 ${gpg_opts} ${file}
   done
-  popd
-  set +x
+  RC popd
   echo;echo;echo
 }
 
 update_org_current_to_this_release() {
   if [[ -d ${dir_release}/connector-nodejs-current ]]; then
-    rm -rf ${dir_release}/connector-nodejs-current
+    RC rm -rf ${dir_release}/connector-nodejs-current
   fi
-  message "Updating current org release to this one..."
-  set -x
-  mkdir ${dir_release}/connector-nodejs-current
-  cp -avi ${cn_home}/${dir_nodejs}/mariadb-connector-nodejs-${release}.tar.gz ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.tar.gz
-  cp -avi ${cn_home}/${dir_nodejs}/mariadb-connector-nodejs-${release}.zip ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.zip
-  pushd ${dir_release}/connector-nodejs-current/
-  sumgen
-  for file in *;do
-    gpg2 ${gpg_opts} ${file}
-  done
-  popd
-  set +x
+  MSG "Updating current org release to this one..."
+  RC mkdir ${dir_release}/connector-nodejs-current
+  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.tar.gz ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.tar.gz
+  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.zip ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.zip
+  RC pushd ${dir_release}/connector-nodejs-current/
+	sumgen
+	for file in *;do
+	  RC gpg2 ${gpg_opts} ${file}
+	done
+  RC popd
   echo;echo;echo
 }
 
 prep_com_files() {
   # Prep .com files
-  message "Prepping com files..."
-  set -x
-  pushd ${cn_home}/${dir_nodejs}
-  sumgen
-  for file in *;do
-    gpg2 ${ent_gpg_opts} ${file}
-  done
-  popd
-  set +x
+  MSG "Prepping com files..."
+  RC pushd ${cn_home}/${dir_name}
+	sumgen
+	for file in *;do
+	  RC gpg2 ${ent_gpg_opts} ${file}
+	done
+  RC popd
   echo;echo;echo
 }
 
 upload_to_the_primary_mirror() {
   local upload
   upload=""
-  message "Doing a dry-run..."
-  set -x
-  rsync --dry-run -av --delete-after ${dir_release}/${dir_nodejs} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
-  set +x
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
-        set -x
-        rsync -av --delete-after ${dir_release}/${dir_nodejs} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
-        set +x
+        MSG "Uploading for real..."
+        RC rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -213,16 +200,14 @@ upload_to_the_corp_mirror_staging_dir() {
   local upload
   upload=""
   echo;echo;echo;
-  message "Doing a dry-run..."
-  echo "+ rsync --dry-run -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp_staging}/"
-          rsync --dry-run -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp_staging}/
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${cn_home}/${dir_name} ${cn_home_corp_staging}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp_staging}/"
-                rsync -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp_staging}/
+		RC rsync -av --delete-after ${cn_home}/${dir_name} ${cn_home_corp_staging}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -243,19 +228,15 @@ upload_to_the_corp_mirror_staging_dir() {
 upload_to_the_corp_mirror() {
   local upload
   upload=""
-  message "Doing a dry-run..."
-  set -x
-  rsync --dry-run -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp}/
-  set +x
+  MSG "Doing a dry-run..."
+  RC rsync --dry-run -av --delete-after ${cn_home}/${dir_name} ${cn_home_corp}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        message "Uploading for real..."
-        set -x
-        rsync -av --delete-after ${cn_home}/${dir_nodejs} ${cn_home_corp}/
-        set +x
+        MSG "Uploading for real..."
+        RC rsync -av --delete-after ${cn_home}/${dir_name} ${cn_home_corp}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -280,7 +261,7 @@ upload_to_the_corp_mirror() {
 #                 mariadb.org downloads system.
 #===============================================================================
 generate_the_file_list_pickle_for_org_downloads() {
-  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_nodejs}";
+  ssh -t -t ${primary_mirror} "set -x;python generate_file_list.py data/ --release=${dir_name}";
 }
 
 
@@ -291,8 +272,101 @@ generate_the_file_list_pickle_for_org_downloads() {
 update_the_STATUS_file() {
   echo "+ date +%s > ${dir_release}/STATUS"
           date +%s > ${dir_release}/STATUS
-  message "STATUS file updated"
+  MSG "STATUS file updated"
 }
+
+
+#===  FUNCTION  ================================================================
+#          NAME:  uploader
+#   DESCRIPTION:  Upload a release
+#===============================================================================
+uploader() {
+  local dest
+  local dests
+  local rsync_uploader_opts
+  dests="$@"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          MSG "Uploading to ${dest}..."
+          case ${dest} in
+            *hz-archive*)
+              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          MSG "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          MSG_L "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+# Wrapper functions for uploader
+upload_to_the_mirrors() {
+  uploader "${mirrors}"
+}
+
+upload_to_the_archives() {
+  uploader "${archives}"
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  MSG_L "Doing a dry run..."
+  RC rsync --dry-run ${rsync_body} | less
+  echo
+  while [ -z ${upload} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Transferring for real..."
+        RC rsync ${rsync_body}
+        echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -327,6 +401,14 @@ shouldI prep_com_files
 
 shouldI upload_to_the_corp_mirror_staging_dir
 
+MSG_I "Mirrors"
+for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_mirrors
+echo;echo
+MSG_I "Archives"
+for archive in ${archives} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_archives
+
 shouldI upload_to_the_primary_mirror
 
 shouldI upload_to_the_corp_mirror
@@ -335,5 +417,5 @@ shouldI generate_the_file_list_pickle_for_org_downloads
 
 shouldI update_the_STATUS_file
 
-echo "+ All done!"
+MSG "All done!"
 echo;echo;echo
