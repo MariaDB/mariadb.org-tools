@@ -260,10 +260,10 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 #-------------------------------------------------------------------------------
 #ci_dirs_102="aarch64-debian-9-deb-autobake"
 #ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
-ci_dirs_102="kvm-deb-stretch-aarch64:aarch64-debian-9-deb-autobake kvm-deb-bionic-aarch64:aarch64-ubuntu-1804-deb-autobake kvm-rpm-centos74-aarch64:aarch64-centos-7-rpm-autobake"
+ci_dirs_102="kvm-deb-bionic-aarch64:aarch64-ubuntu-1804-deb-autobake kvm-rpm-centos74-aarch64:aarch64-centos-7-rpm-autobake"
 ci_dirs_103="${ci_dirs_102} kvm-deb-buster-aarch64:aarch64-debian-10-deb-autobake kvm-deb-focal-aarch64:aarch64-ubuntu-2004-deb-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-impish-aarch64:aarch64-ubuntu-2110-deb-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake"
 ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-rpm-fedora36-aarch64:aarch64-fedora-36-rpm-autobake"
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107} kvm-deb-jammy-aarch64:aarch64-ubuntu-2204-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
@@ -275,10 +275,10 @@ ci_dirs_1010="${ci_dirs_109}"
 # Dirs for buildbot.askmonty.org 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-deb-stretch-amd64: kvm-deb-stretch-ppc64le: kvm-deb-stretch-x86: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
+bb_dirs_102="kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-deb-impish-amd64: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
+bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
 bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-rpm-fedora36-amd64:"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"

@@ -62,7 +62,7 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
-declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [impish]=kvm-deb-impish-amd64 [jammy]=kvm-deb-jammy-amd64)
+declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64)
 
 declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
 declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64)
@@ -121,10 +121,10 @@ case ${ARCHDIR} in
     ubuntu_dists="bionic focal"
     ;;
   *10.5*|*10.6*|*10.7*)
-    ubuntu_dists="bionic focal impish"
+    ubuntu_dists="bionic focal"
     ;;
   *10.8*|*10.9*)
-    ubuntu_dists="bionic focal impish jammy"
+    ubuntu_dists="bionic focal jammy"
     ;;
   *)
     line
@@ -186,7 +186,7 @@ for dist in ${ubuntu_dists}; do
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'bionic'|'focal'|'impish'|'jammy')
+    'bionic'|'focal'|'jammy')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
   esac
@@ -203,7 +203,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'impish'|'jammy')
+    'bionic'|'focal'|'jammy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;

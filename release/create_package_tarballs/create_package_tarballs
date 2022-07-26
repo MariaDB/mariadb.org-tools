@@ -42,38 +42,20 @@ set -xe
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
 case $1 in
-  *10.0*)
-    debian_ver=""
-    ubuntu_ver=( xenial )
-    rhel_ver=( 7 )
-    sles_ver=( 11 12 )
-    ;;
-  *10.1*)
-    debian_ver=( stretch )
-    ubuntu_ver=( xenial bionic )
-    rhel_ver=( 7 )
-    sles_ver=( 11 12 )
-    ;;
-  *10.2*)
-    debian_ver=( stretch )
-    ubuntu_ver=( bionic )
-    rhel_ver=( 7 )
-    sles_ver=( 12 15 )
-    ;;
   *10.3*|*10.4*)
-    debian_ver=( stretch buster )
+    debian_ver=( buster )
     ubuntu_ver=( bionic focal )
     rhel_ver=( 7 8 )
     sles_ver=( 12 15 )
     ;;
   *10.5*|*10.6*|*10.7*)
-    debian_ver=( stretch buster bullseye )
+    debian_ver=( buster bullseye )
     ubuntu_ver=( bionic focal )
     rhel_ver=( 7 8 )
     sles_ver=( 12 15 )
     ;;
   *)
-    debian_ver=( stretch buster bullseye )
+    debian_ver=( buster bullseye )
     ubuntu_ver=( bionic focal jammy )
     rhel_ver=( 7 8 )
     sles_ver=( 12 15 )
@@ -122,7 +104,7 @@ do_pkgs() {
 
 
 case $rel in
-  'jammy'|'focal'|'bionic'|'xenial'|'stretch'|'buster'|'bullseye'|'7'|'8')
+  'jammy'|'focal'|'bionic'|'xenial'|'buster'|'bullseye'|'7'|'8')
     case $rel in
       '7'|'8')
       altarchs="x86_64 aarch64"

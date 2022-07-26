@@ -232,49 +232,30 @@ fi
 # Remove packages from deprecated distros (if they are present)
 #reprepro --basedir=. --delete clearvanished
 
-declare -A builder_dir_ci_amd64=([stretch]=debian-9-deb-autobake [buster]=debian-10-deb-autobake [bullseye]=debian-11-deb-autobake [sid]=debian-sid-deb-autobake)
-declare -A builder_dir_bb_amd64=([stretch]=kvm-deb-stretch-amd64 [buster]=kvm-deb-buster-amd64 [bullseye]=kvm-deb-bullseye-amd64 [sid]=kvm-deb-sid-amd64)
+declare -A builder_dir_ci_amd64=([buster]=debian-10-deb-autobake [bullseye]=debian-11-deb-autobake [sid]=debian-sid-deb-autobake)
+declare -A builder_dir_bb_amd64=([buster]=kvm-deb-buster-amd64 [bullseye]=kvm-deb-bullseye-amd64 [sid]=kvm-deb-sid-amd64)
 
-declare -A builder_dir_ci_aarch64=([stretch]=aarch64-debian-9-deb-autobake [buster]=aarch64-debian-10-deb-autobake [bullseye]=aarch64-debian-11-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
-declare -A builder_dir_bb_aarch64=([stretch]=kvm-deb-stretch-aarch64 [buster]=kvm-deb-buster-aarch64 [bullseye]=kvm-deb-bullseye-aarch64 [sid]=kvm-deb-sid-aarch64)
+declare -A builder_dir_ci_aarch64=([buster]=aarch64-debian-10-deb-autobake [bullseye]=aarch64-debian-11-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
+declare -A builder_dir_bb_aarch64=([buster]=kvm-deb-buster-aarch64 [bullseye]=kvm-deb-bullseye-aarch64 [sid]=kvm-deb-sid-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([stretch]=ppc64le-debian-9-deb-autobake [buster]=ppc64le-debian-10-deb-autobake [bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([stretch]=kvm-deb-stretch-ppc64le [buster]=kvm-deb-buster-ppc64le [bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
+declare -A builder_dir_ci_ppc64le=([buster]=ppc64le-debian-10-deb-autobake [bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([buster]=kvm-deb-buster-ppc64le [bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
-declare -A builder_dir_ci_x86=([stretch]=32bit-debian-9-deb-autobake [buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
-declare -A builder_dir_bb_x86=([stretch]=kvm-deb-stretch-x86 [buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
+declare -A builder_dir_ci_x86=([buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
+declare -A builder_dir_bb_x86=([buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
 
 case ${TREE} in 
-  '5.5'|'5.5e'|'5.5-galera'|'5.5e-galera')
-    #debian_dists='"squeeze debian6" "wheezy wheezy"'
-    #debian_dists="${squeeze} wheezy"
-    #debian_dists="wheezy"
-    debian_dists=""
-    echo "+ No Packages for Debian for MariaDB ${TREE}"
-    ;;
-  '10.0e'|'10.0e-galera')
-    debian_dists="jessie"
-    ;;
-  '10.0'|'10.0-galera'|'bb-10.0-release')
-    debian_dists="jessie"
-    ;;
-  '10.1'|'bb-10.1-release')
-    debian_dists="jessie stretch"
-    ;;
-  '10.2'|'bb-10.2-release')
-    debian_dists="stretch"
-    ;;
   '10.3'|'bb-10.3-release')
-    debian_dists="stretch buster"
+    debian_dists="buster"
     ;;
   '10.4'|'bb-10.4-release')
-    debian_dists="stretch buster"
+    debian_dists="buster"
     ;;
   '10.5'|'bb-10.5-release')
-    debian_dists="stretch buster bullseye"
+    debian_dists="buster bullseye"
     ;;
-  '10.6'|'bb-10.6-release'|'10.7'|'bb-10.7-release'|*10.8*|*10.9*)
-    debian_dists="stretch buster bullseye sid"
+  '10.6'|'bb-10.6-release'|'10.7'|'bb-10.7-release'|*10.8*|*10.9*|*10.10*)
+    debian_dists="buster bullseye sid"
     ;;
 esac
 
@@ -299,7 +280,7 @@ for dist in ${debian_dists}; do
     'jessie')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
-    'stretch'|'buster'|'bullseye'|'sid')
+    'buster'|'bullseye'|'sid')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
     * )
@@ -311,7 +292,7 @@ for dist in ${debian_dists}; do
   # add ppc64el files
   builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
-    'stretch'|'buster'|'bullseye'|'sid')
+    'buster'|'bullseye'|'sid')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
@@ -319,7 +300,7 @@ for dist in ${debian_dists}; do
   # add aarch64 files
   builder_dir="builder_dir_${build_type}_aarch64[${builder}]"
   case ${builder} in
-    'stretch'|'buster'|'bullseye'|'sid')
+    'buster'|'bullseye'|'sid')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
   esac
@@ -330,7 +311,7 @@ for dist in ${debian_dists}; do
       'buster'|'bullseye')
         echo "+ no x86 packages for ${builder}"
         ;;
-      'stretch'|'sid')
+      'sid')
         for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
         ;;
     esac
@@ -369,7 +350,7 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "stretch"|"buster"|"bullseye")
+            "buster"|"bullseye")
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
               runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes

@@ -39,7 +39,6 @@ bundles="
 ubuntu-xenial-amd64
 ubuntu-bionic-amd64
 
-debian-stretch-amd64
 debian-jessie-amd64
 
 rhel-6-x86_64
@@ -156,11 +155,6 @@ for bundle in ${bundles}; do
       dir="mariadb-tx-3.0-${num}-debian-8"
       dist="debian"
       ver="jessie"
-      ;;
-    debian-stretch-amd64)
-      dir="mariadb-tx-3.0-${num}-debian-9"
-      dist="debian"
-      ver="stretch"
       ;;
     rhel-6-x86_64)
       dir="mariadb-tx-3.0-${num}-rhel-6"
