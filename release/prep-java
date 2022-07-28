@@ -302,6 +302,7 @@ uploader() {
               ;;
           esac
           rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/connector-java-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
