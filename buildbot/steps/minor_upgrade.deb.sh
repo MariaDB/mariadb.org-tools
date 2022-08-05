@@ -300,7 +300,8 @@ connectors_tests () {
   done
 }
 
-if [[ "$test_mode" == "server" ]] ; then
+#if [[ "$test_mode" == "server" ]] ; then
+if [[ "$test_mode" == "never" ]] ; then
   sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
   sudo apt-get update
   sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install -y debhelper dpkg-dev"
@@ -578,7 +579,8 @@ esac
 # Run protocol (3rd-party connectors) tests and store results AFTER upgrade
 #====================================================================================
 
-if [[ "$test_mode" == "server" ]] ; then
+#if [[ "$test_mode" == "server" ]] ; then
+if [[ "$test_mode" == "never" ]] ; then
   sudo sed -ie 's/^# deb-src/deb-src/' /etc/apt/sources.list
   sudo apt-get update
   connectors_tests "new"
