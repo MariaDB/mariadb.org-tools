@@ -539,6 +539,8 @@ case "$branch" in
   echo "Until $development_branch is GA, the list of plugins/engines might be unstable, skipping the check"
   ;;
 *)
+  # TODO: Workaround for fixed status of UUID plugin, remove after summer 2022 release
+  sed -i '^uuid/d' /tmp/plugins.old /tmp/plugins.new
   # Only fail if there are any disappeared/changed engines or plugins
   disappeared_or_changed=`comm -23 /tmp/engines.old /tmp/engines.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
