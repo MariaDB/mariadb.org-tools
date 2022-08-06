@@ -541,7 +541,7 @@ case "$branch" in
   ;;
 *)
   # TODO: Workaround for fixed status of UUID plugin, remove after summer 2022 release
-  sed -i '^/uuid/d' /tmp/plugins.old /tmp/plugins.new
+  sed -i '/^uuid/d' /tmp/plugins.old /tmp/plugins.new
   # Only fail if there are any disappeared/changed engines or plugins
   disappeared_or_changed=`comm -23 /tmp/engines.old /tmp/engines.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
