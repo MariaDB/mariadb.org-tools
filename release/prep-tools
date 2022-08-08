@@ -33,7 +33,7 @@ set -eu
 #------------------------------------------------------------------------------
 
 dists_apt="bionic bullseye buster focal jammy"
-dists_rhel="7 8"
+dists_rhel="7 8 9"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
 url_xtrabackup_24="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup-24"
@@ -295,6 +295,9 @@ update_xtrabackup_24() {
 update_mariadb_tools() {
   userInput "Which version of MariaDB Tools should I add? (e.g. 6.0.0)"
   mariadb_tools_ver="${INPUT}"
+
+  message "Downloading the new mariadb-tools files..."
+  rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${corp_mirror}:${corp_mariadb_tools_path}/${mariadb_tools_ver} ${dir_mariadb_tools}/"
 
   pushd ${dir_mariadb_tools}/${mariadb_tools_ver}/
 
