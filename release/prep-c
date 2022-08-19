@@ -19,7 +19,7 @@
 version=${1}
 dir_build=${2}
 
-dir_c="connector-c-${version}"
+dir_name="connector-c-${version}"
 
 # set location of prep.conf and prep.log to XDG-compatible directories and then
 # create them if they don't exist
@@ -33,11 +33,11 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
-	echo;line;echo ${sum};
+	echo;LINE;echo ${sum};
 	${sum}sum ./mar* >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
-  echo;line;echo
+  DIV
 }
 
 userResponse() {
@@ -69,14 +69,17 @@ usage() {
   exit 1
 }
 
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
 
-message() {
-  message="${@}"
-  echo;line;echo "${message}";line;
-}
+DIV() { echo;echo;LINE;echo;echo;}
+LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
+THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
+RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
+PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
+
+MSG() { LINE;echo "# ${@}";LINE;}
+MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
+MSG_L() { echo "# ${@}";}
+
 
 shouldI() {
   local cont
@@ -104,7 +107,7 @@ shouldI() {
 }
 
 copy_and_stage_files() {
-  echo;line;echo "fixing permissions";line;
+  MSG "fixing permissions"
 
   for dir in $(sudo find ${dir_build} -type d);do
     sudo chmod -c 755 "${dir}"
@@ -113,61 +116,59 @@ copy_and_stage_files() {
     sudo chmod -c 644 "${file}"
   done
 
-  echo;line;echo "Copying and staging files";line;
+  MSG "Copying and staging files"
   pushd ${cc_home}
-    if [[ ! -d "${dir_c}" ]];then
-      mkdir -v ${dir_c}
+    if [[ ! -d "${dir_name}" ]];then
+      mkdir -v ${dir_name}
     fi
     for dir in ${dir_build}/*;do
       echo ${dir}
       case $(basename ${dir}) in 
         cc-centos7-amd64)
-          cp -avi ${dir}/*.gz ${dir_c}/
-          cp -avi ${dir}/*.zip ${dir_c}/
+          cp -avi ${dir}/*.gz ${dir_name}/
+          cp -avi ${dir}/*.zip ${dir_name}/
           ;;
         linux_x86-connector_c)
-          cp -avi ${dir}/*.gz ${dir_c}/
-          cp -avi ${dir}/*.zip ${dir_c}/
+          cp -avi ${dir}/*.gz ${dir_name}/
+          cp -avi ${dir}/*.zip ${dir_name}/
           ;;
         linux_x64-connector_c)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
           ;;
         cc-*-amd64)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
           ;;
         cc-*-x86)
-          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          cp -avi ${dir}/*i386.tar.gz ${dir_name}/
           ;;
         win-connector_c_3)
           echo
-          cp -avi ${dir}/*.msi ${dir_c}/
+          cp -avi ${dir}/*.msi ${dir_name}/
           ;;
         freebsd11_x64-connector_c)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_c}/
+          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
           ;;
         freebsd11_x86-connector_c)
-          cp -avi ${dir}/*i386.tar.gz ${dir_c}/
+          cp -avi ${dir}/*i386.tar.gz ${dir_name}/
           ;;
         *)
-          echo;line
-          echo "+fail: ${dir}"
-          line;echo
+          MSG_I "+ fail: ${dir}"
           ;;
       esac
     done
-    tree ${dir_c}/
+    tree ${dir_name}/
   popd
   echo;echo;echo
 }
 
 prep_org_files() {
   # Prep .org files
-  echo;line;echo "Prepping org files";line;
-  if [[ ! -d "${dir_release}/${dir_c}" ]];then
-    mkdir -v ${dir_release}/${dir_c}
+  MSG "Prepping org files"
+  if [[ ! -d "${dir_release}/${dir_name}" ]];then
+    mkdir -v ${dir_release}/${dir_name}
   fi
-  cp -avi ${cc_home}/${dir_c}/*src* ${dir_release}/${dir_c}/
-  pushd ${dir_release}/${dir_c}
+  cp -avi ${cc_home}/${dir_name}/*src* ${dir_release}/${dir_name}/
+  pushd ${dir_release}/${dir_name}
     sumgen
     for file in *;do
       echo "+ gpg2 ${gpg_opts} ${file}"
@@ -181,11 +182,11 @@ update_org_current_to_this_release() {
   if [[ -d ${dir_release}/connector-c-current ]]; then
     rm -rf ${dir_release}/connector-c-current
   fi
-  message "Updating current org release to this one..."
+  MSG "Updating current org release to this one..."
   set -x
   mkdir ${dir_release}/connector-c-current
-  cp -avi ${cc_home}/${dir_c}/*src.tar.gz ${dir_release}/connector-c-current/mariadb-connector-c-current-src.tar.gz
-  cp -avi ${cc_home}/${dir_c}/*src.zip ${dir_release}/connector-c-current/mariadb-connector-c-current-src.zip
+  cp -avi ${cc_home}/${dir_name}/*src.tar.gz ${dir_release}/connector-c-current/mariadb-connector-c-current-src.tar.gz
+  cp -avi ${cc_home}/${dir_name}/*src.zip ${dir_release}/connector-c-current/mariadb-connector-c-current-src.zip
   pushd ${dir_release}/connector-c-current/
   set +x
   sumgen
@@ -200,8 +201,8 @@ update_org_current_to_this_release() {
 
 prep_com_files() {
   # Prep .com files
-  echo;line;echo "Prepping com files";line;
-  pushd ${cc_home}/${dir_c}
+  MSG "Prepping com files"
+  pushd ${cc_home}/${dir_name}
     sumgen
     for file in *;do
       echo "+ gpg2 ${ent_gpg_opts} ${file}"
@@ -215,16 +216,16 @@ upload_to_the_primary_mirror() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/"
-          rsync --dry-run -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-c-current ${primary_mirror}:data/"
+          rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-c-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/"
-                rsync -av --delete-after ${dir_release}/${dir_c} ${dir_release}/connector-c-current ${primary_mirror}:data/
+        echo "+ rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-c-current ${primary_mirror}:data/"
+                rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-c-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -246,16 +247,16 @@ upload_to_the_corp_mirror_staging_dir() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp_staging}/"
-          rsync --dry-run -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp_staging}/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/"
+          rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp_staging}/"
-                rsync -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp_staging}/
+        echo "+ rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/"
+                rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -278,16 +279,16 @@ upload_to_the_corp_mirror() {
   local upload
   upload=""
   echo;echo;echo;
-  echo;line;echo "Doing a dry-run...";line;
-  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp}/"
-          rsync --dry-run -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp}/
+  MSG "Doing a dry-run..."
+  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/"
+          rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp}/"
-                rsync -av --delete-after ${cc_home}/${dir_c} ${cc_home_corp}/
+        echo "+ rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/"
+                rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/
         echo;echo;echo
         upload="yes"
         return 0
@@ -312,7 +313,7 @@ upload_to_the_corp_mirror() {
 #                 mariadb.org downloads system.
 #===============================================================================
 generate_the_file_list_pickle_for_org_downloads() {
-  ssh -t -t ${primary_mirror} "set -x; python generate_file_list.py data/ --release=${dir_c}";
+  ssh -t -t ${primary_mirror} "set -x; python generate_file_list.py data/ --release=${dir_name}";
 }
 
 #===  FUNCTION  ================================================================
@@ -322,8 +323,101 @@ generate_the_file_list_pickle_for_org_downloads() {
 update_the_STATUS_file() {
   echo "+ date +%s > ${dir_release}/STATUS"
           date +%s > ${dir_release}/STATUS
-  message "STATUS file updated"
+  MSG "STATUS file updated"
 }
+
+#===  FUNCTION  ================================================================
+#          NAME:  uploader
+#   DESCRIPTION:  Upload a release
+#===============================================================================
+uploader() {
+  local dest
+  local dests
+  local rsync_uploader_opts
+  dests="$@"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          MSG "Uploading to ${dest}..."
+          case ${dest} in
+            *hz-archive*)
+              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/connector-c-current ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          MSG "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          MSG_L "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+# Wrapper functions for uploader
+upload_to_the_mirrors() {
+  uploader "${mirrors}"
+}
+
+upload_to_the_archives() {
+  uploader "${archives}"
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  MSG_L "Doing a dry run..."
+  RC rsync --dry-run ${rsync_body} | less
+  echo
+  while [ -z ${upload} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Transferring for real..."
+        RC rsync ${rsync_body}
+        echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Something went wrong..."
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -352,11 +446,7 @@ set -eu
   # -x  Print a trace of simple commands and their arguments after they are
   #     expanded and before they are executed.
 
-echo;echo;echo
-line
-echo "Preparing MariaDB Connector/C ${version} release..."
-line
-echo
+MSG_I "Preparing MariaDB Connector/C ${version} release..."
 
 shouldI copy_and_stage_files
 echo;echo
@@ -368,6 +458,18 @@ shouldI prep_com_files
 echo;echo
 shouldI upload_to_the_corp_mirror_staging_dir
 echo;echo
+
+MSG_I "Mirrors"
+for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_mirrors
+echo;echo
+MSG_I "Archives"
+for archive in ${archives} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_archives
+
+
+
+echo;echo
 shouldI upload_to_the_primary_mirror
 echo;echo
 shouldI upload_to_the_corp_mirror
@@ -375,7 +477,7 @@ echo;echo
 shouldI generate_the_file_list_pickle_for_org_downloads
 echo;echo
 shouldI update_the_STATUS_file
-echo "+ All done!"
-line;line;line
+MSG_I "All done!"
+LINE;LINE;LINE
 echo;echo;echo
 
