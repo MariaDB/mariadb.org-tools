@@ -1,0 +1,159 @@
+# A mapping of email addresses to employers where the domain-map catchall
+# does not fit. Some of these could likely be put in the aliases map instead.
+# First column is the email address, second is the company. A date range at a
+# given company is supported, see andrew@linuxjedi.co.uk as an example.
+# Intention is to sort by first column.
+
+108760288+mariadb-LuisLizardo@users.noreply.github.com MariaDB Corporation
+344369869@qq.com                                    Independent
+35718816+GreaTdANie1@users.noreply.github.com       Tencent
+45011689+heckad@users.noreply.github.com            Independent
+526786050@qq.com                                    Independent
+55976466+yongxin-xu@users.noreply.github.com        Independent
+52912568+CodyBuilder-dev@users.noreply.github.com   Independent
+68223875+haomi123@users.noreply.github.com          Independent
+73822648+ryancaicse@users.noreply.github.com        Independent
+74543075+jesusaplsoftware@users.noreply.github.com  Independent
+84491488@qq.com                                     Independent
+875825800@qq.com                                    Independent
+A00279809@student.ait.ie                            Independent
+a2sin2a2ko@kyoto-y.work                             Independent
+a97410985new@gmail.com                              Independent
+AddisonG@users.noreply.github.com                   Independent
+ajb459684460@gmail.com                              Independent
+alan.cuevamr@gmail.com                              Independent
+alex.fan.q@gmail.com                                Gentoo
+alice.sherepa@gmail.com                             MariaDB Corporation
+andrew@linuxjedi.co.uk                              MariaDB Corporation < 2020-08-15
+andrew@linuxjedi.co.uk                              MariaDB Foundation
+angeloudy@gmail.com                                 Independent
+arkamar@atlas.cz                                    Gentoo
+askeblad@outlook.com                                Independent
+brnrd@freebsd.org                                   FreeBSD
+bertrandop@gmail.com                                Independent
+bluemrp9@gmail.com                                  Independent
+brad@comstyle.com                                   OpenBSD
+caribe@users.noreply.github.com                     Gruppo Mondadori (Mondadori Group)
+claprix@yandex.ru                                   MariaDB Corporation
+contact@leandropacheco.com                          Codership
+cvicentiu@gmail.com                                 MariaDB Foundation
+d8sk4ueum@gmail.com                                 Amazon
+daniel@linux.ibm.com                                IBM < 2020-07-14
+daniel@linux.ibm.com                                MariaDB Foundation
+daniel.nachun@gmail.com                             Independent
+dansolo@mail.ru                                     Independent
+db@dbart.us                                         MariaDB Corporation
+devnexen@gmail.com                                  Independent
+dominik.b.czarnota@gmail.com                        Trail of Bits
+eric@freesa.org                                     MariaDB Foundation
+eirinikos@gmail.com                                 Independent
+faustin@fala.red                                    MariaDB Foundation
+fxcoudert@gmail.com                                 Independent
+gagan.nith@gmail.com                                MariaDB Corporation
+geert@hendrickx.be                                  Independent
+geoff.montee@gmail.com                              MariaDB Corporation
+github@darkain.com                                  Independent
+github@greenman.co.za                               MariaDB Foundation
+h.hata.ai.t@gmail.com                               Independent
+hannu.hartikainen@gmail.com                         HiQ Finland
+hashirsarwarch@gmail.com                            Zulip
+hartmut@php.net                                     MariaDB Corporation
+heckad@yandex.ru                                    Independent
+hollowman@hollowman.ml                              Independent
+hygonsoc@gmail.com                                  Independent
+hzc989@outlook.com                                  Independent
+i@gxdvip.com                                        Independent
+i@waynest.com                                       Independent
+izhaoshuang@163.com                                 Independent
+jani.k.tolonen@gmail.com                            Independent
+jean@phpnet.org                                     Independent
+# Unsure on exact date
+ji@haidongji.com                                    Independent < 2022-05-01
+ji@haidongji.com                                    Amazon
+jonathan.sabbe@gmail.com                            Worldline Global
+jordy@pwning.systems                                Independent
+justin@jagieniak.net                                Independent
+karel.picman@kontron.com                            Kontron
+kituemr@gmail.com                                   Independent
+karmengc@gmail.com                                  Independent
+kartiksoneji@rocketmail.com                         Independent
+kazzix14@gmail.com                                  Independent
+# Unsure on exact date
+kentokushiba@gmail.com                              Independent < 2019-02-01
+kentokushiba@gmail.com                              MariaDB Corporation
+kohei-matsuyama@users.noreply.github.com            Independent
+kuleshovmail@gmail.com                              Independent
+# Unsure on exact dates
+laurynas.biveinis@gmail.com                         Percona < 2011-03-01
+laurynas.biveinis@gmail.com                         Aerospike < 2022-01-01
+laurynas.biveinis@gmail.com                         VilniusDB
+lewart3@gmail.com                                   Independent
+likemartinma@gmail.com                              Scutech Corporation
+lingbinlb@gmail.com                                 Baidu
+liuruoji@gmail.com                                  Huawei
+lovelgw@gmail.com                                   Independent
+lucky.rabbitfoot141@gmail.com                       Independent
+mailthelong@gmail.com                               Independent
+mail@eworm.de                                       Arch Linux
+markus456@gmail.com                                 MariaDB Corporation
+mg@webmail.us                                       Independent
+midenok@gmail.com                                   MariaDB Corporation
+mihyaeru21@gmail.com                                Independent
+mikko.jaakola@hotmail.fi                            Independent
+mocb28@gmail.com                                    GoSecure
+moonset20@gmail.com                                 Independent
+mostafa.hussein91@gmail.com                         Independent
+mschorm@centrum.cz                                  RedHat
+mysqlonarm@gmail.com                                Huawei
+nayuta.yanagisawa@hey.com                           MariaDB Corporation
+nia@NetBSD.org                                      NetBSD
+# Unsure of exact date
+nikitamalyavin@gmail.com                            Tempesta < 2019-06-01
+nikitamalyavin@gmail.com                            MariaDB Corporation
+noel@familie-kuntze.de                              Independent
+odenbach@uni-paderborn.de                           Independent
+# Unsure of exact date
+okokomichaels@outlook.com                           Independent < 2022-01-01
+okokomichaels@outlook.com                           Percona
+oli.sennhauser@bluewin.ch                           FromDual
+# Unsure of exact date
+olernov@gmail.com                                   Teramind < 2021-01-01
+olernov@gmail.com                                   MariaDB Corporation
+# Unsure of exact date
+otto@kekalainen.net                                 MariaDB Foundation < 2021-01-01
+otto@kekalainen.net                                 Amazon
+pali@cpan.org                                       Independent
+patrakov@gmail.com                                  Independent
+pkubaj@users.noreply.github.com                     HardenedBSD
+pmacontrol@68koncept.com                            Independent
+rahulanand16nov@gmail.com                           Independent
+rantal5030@gmail.com                                Independent
+razze@iki.fi                                        MariaDB Corporation
+redtree.dev1112@gmail.com                           Amazon
+rmfalves@gmail.com                                  Independent
+ro@CeBiTec.Uni-Bielefeld.DE                         Independent
+samuel.thibault@ens-lyon.org                        Independent
+sebastian_ml@gmx.net                                Independent
+seppo.jaakola@iki.fi                                Codership
+sergeikrivonos@gmail.com                            MariaDB Corporation
+serzh7214@mail.ru                                   Independent
+sh1ftr@protonmail.ch                                Independent
+shrinidhi.kaushik@gmail.com                         Independent
+sloonz@gmail.com                                    Independent
+splitice@users.noreply.github.com                   Independent
+sryze@protonmail.com                                Independent
+sysprg@gmail.com                                    MariaDB Corporation
+tkngsnsk313320@gmail.com                            Independent
+tomookam@live.jp                                    Amazon
+tuukka.pasanen@ilmi.fi                              MariaDB Foundation
+u16suzu@gmail.com                                   Independent
+unki@users.noreply.github.com                       Independent
+ustun@ustunozgur.com                                Independent
+vlad_lesin@mail.ru                                  MariaDB Corporation
+vladkakurin007@gmail.com                            Independent
+waynestxia@gmail.com                                Independent
+william.devries@gmail.com                           MariaDB Corporation
+wzssyqa@gmail.com                                   Independent
+xdavidwuph@gmail.com                                Independent
+xzhangxian@foxmail.com                              Independent
+zhaorenhai@hotmail.com                              Independent

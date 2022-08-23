@@ -1,0 +1,30 @@
+# This is the email aliases file, mapping secondary addresses
+# onto a single, canonical address.
+#
+# Alias first, then the email address to link it to.
+# Attempting to keep it in alphabetical order based on first column.
+105884371+fluesvamp@users.noreply.github.com    askeblad@outlook.com
+46791326+rucha174@users.noreply.github.com      rucha.deodhar@mariadb.com
+61234003+mysqlonarm@users.noreply.github.com    mysqlonarm@gmail.com
+91733807+sergmariadb@users.noreply.github.com   sergeikrivonos@gmail.com
+abychko@gmail.com                               alexey.bychko@mariadb.com
+andrew@mariadb.org                              andrew@linuxjedi.co.uk
+bar@home.dlink                                  bar@mariadb.com
+chriscalender@gmail.com                         chris@mariadb.com
+git@darkain.com                                 github@darkain.com
+grooverdan@users.sourceforge.net                daniel@linux.ibm.com
+krunalbauskar@gmail.com                         mysqlonarm@gmail.com
+maghermit@maghermit.com                         vladkakurin007@gmail.com
+mkaruza@users.noreply.github.com                mario.karuza@galeracluster.com
+# NOTE: This might cause issues later, but for now it is the only person who did this
+name@localhost.localdomain                      sergeikrivonos@gmail.com
+nayuta.yanagisawa@gmail.com                     nayuta.yanagisawa@hey.com
+olegs@teramind.co                               olernov@gmail.com
+otto@debian.org                                 otto@kekalainen.net
+ruchad1998@gmail.com                            rucha.deodhar@mariadb.com
+sachinsetia1001@gmail.com                       sachin.setiya@mariadb.com
+serzh7214@mail,ru                               serzh7214@mail.ru
+sp1l@users.noreply.github.com                   brnrd@freebsd.org
+stepan@cnt7glr11.localdomain                    stepan.patryshev@mariadb.com
+tmokmss@users.noreply.github.com                tomookam@live.jp
+vicentiu@localhost.localdomain                  vicentiu@mariadb.org

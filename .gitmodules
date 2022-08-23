@@ -1,0 +1,3 @@
+[submodule "metrics/gitdm"]
+	path = metrics/gitdm
+	url = git://git.lwn.net/gitdm.git
