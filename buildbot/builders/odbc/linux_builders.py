@@ -16,7 +16,7 @@ export TEST_SKIP_UNSTABLE_TEST=1
 cd ../..
 """ + step4_testsrun
 
-def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params):
+def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
@@ -56,10 +56,10 @@ connodbc_linux_step4_testsrun
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
-def build_linux_connector_odbc_no_test(name, kvm_image, cflags, cmake_params):
+def build_linux_connector_odbc_no_test(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
@@ -96,28 +96,40 @@ connodbc_linux_step1_build
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_codbc_focal_amd64= build_linux_connector_odbc("codbc-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_focal_aarch64= build_linux_connector_odbc("codbc-focal-aarch64", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_codbc_buster_amd64= build_linux_connector_odbc("codbc-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_buster_aarch64= build_linux_connector_odbc("codbc-buster-aarch64", "vm-buster-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # We can't install server here or this time-outs with high probability
 
 bld_codbc_jammy_amd64= build_linux_connector_odbc_no_test("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_jammy_aarch64= build_linux_connector_odbc_no_test("codbc-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_codbc_fedora34_amd64= build_linux_connector_odbc_no_test("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora35_amd64= build_linux_connector_odbc_no_test("codbc-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora36_amd64= build_linux_connector_odbc_no_test("codbc-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
 #bld_codbc_rhel9_amd64= build_linux_connector_odbc("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_rhel9_amd64= build_linux_connector_odbc_no_test("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_rhel9_aarch64= build_linux_connector_odbc_no_test("codbc-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
 # Tests on bionic usually/too often time-out
 bld_codbc_bionic_amd64= build_linux_connector_odbc_no_test("codbc-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_bionic_aarch64= build_linux_connector_odbc_no_test("codbc-bionic-aarch64", "vm-bionic-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-amd64-notest", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ##################### RPM/DEB builders ###################
