@@ -23,7 +23,7 @@ cd ..
 """
 conncpp_linux_step4_testsrun= step4_testsrun
 
-def bld_linux_connector_cpp(name, kvm_image, cflags, cmake_params):
+def bld_linux_connector_cpp(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_cpp= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
@@ -63,23 +63,30 @@ conncpp_linux_step4_testsrun
     addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 ######################## bld_linux_connector_cpp - END #####################
 
 ######################## "Normal" builders ######################
 bld_rhel9_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
+bld_rhel9_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
+
 bld_rhel8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
-bld_centos8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-centos8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 
 bld_sles15_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_bionic_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bionic-amd64", "vm-bionic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_bionic_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-bionic-aarch64", "vm-bionic-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_focal_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_focal_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-aarch64", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_jammy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_jammy_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_buster_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-aarch64", "vm-buster-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_bullseye_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_fedora34_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
