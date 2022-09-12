@@ -321,8 +321,16 @@ mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_statu
 # - names starting with "mysql*" in the directory where mysql is located;
 # - everything in the plugin directories installed by any MariaDB packages
 
+rm -f /home/buildbot/ldd.old
 set +x
-for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs` ; do echo "=== $i"; ldd $i | sort | sed 's/(.*)//' ; done > /home/buildbot/ldd.old
+for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
+do
+  echo "=== $i" >> /home/buildbot/ldd.old
+  # Changed after MDEV-28592 disks plugin, remove the condition after Q4 2022 (or Q3+ 2022) release
+  if ! [[ "$i" =~ disks\.so ]] ; then
+    ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
+  fi
+done
 set -x
 
 #=========================================
@@ -504,8 +512,16 @@ mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_statu
 
 # Dependency information for new binaries/libraries
 
+rm -f /home/buildbot/ldd.new
 set +x
-for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs` ; do echo "=== $i"; ldd $i | sort | sed 's/(.*)//' ; done > /home/buildbot/ldd.new
+for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
+do
+  echo "=== $i" >> /home/buildbot/ldd.new
+  # Changed after MDEV-28592 disks plugin, remove the condition after Q4 2022 (or Q3+ 2022) release
+  if ! [[ "$i" =~ disks\.so ]] ; then
+    ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
+  fi
+done
 set -x
 
 case "$systemd_capability" in
