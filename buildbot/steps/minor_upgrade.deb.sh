@@ -314,7 +314,7 @@ fi
 
 mysql -uroot -prootpass --skip-column-names -e "select @@version" | awk -F'-' '{ print $1 }' > /tmp/version.old
 mysql -uroot -prootpass --skip-column-names -e "select engine, support, transactions, savepoints from information_schema.engines" | sort > /tmp/engines.old
-mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.old
+mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /home/buildbot/plugins.old
 
 # Store dependency information for old binaries/libraries:
 # - names starting with "mysql*" in the directory where mysqld is located;
@@ -508,7 +508,7 @@ set -e
 
 mysql -uroot -prootpass --skip-column-names -e "select @@version" | awk -F'-' '{ print $1 }' > /tmp/version.new
 mysql -uroot -prootpass --skip-column-names -e "select engine, support, transactions, savepoints from information_schema.engines" | sort > /tmp/engines.new
-mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /tmp/plugins.new
+mysql -uroot -prootpass --skip-column-names -e "select plugin_name, plugin_status, plugin_type, plugin_library, plugin_license from information_schema.all_plugins" | sort > /home/buildbot/plugins.new
 
 # Dependency information for new binaries/libraries
 
@@ -549,7 +549,7 @@ res=0
 
 # This output is for informational purposes
 diff -u /tmp/engines.old /tmp/engines.new
-diff -u /tmp/plugins.old /tmp/plugins.new
+diff -u /home/buildbot/plugins.old /home/buildbot/plugins.new
 
 case "$branch" in
 *"$development_branch"*)
@@ -557,14 +557,14 @@ case "$branch" in
   ;;
 *)
   # TODO: Workaround for fixed status of UUID plugin, remove after summer 2022 release
-  sed -i '/^uuid/d' /tmp/plugins.old /tmp/plugins.new
+  sed -i '/^uuid/d' /home/buildbot/plugins.old /home/buildbot/plugins.new
   # Only fail if there are any disappeared/changed engines or plugins
   disappeared_or_changed=`comm -23 /tmp/engines.old /tmp/engines.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
     echo "ERROR: the lists of engines in the old and new installations differ"
     res=1
   fi
-  disappeared_or_changed=`comm -23 /tmp/plugins.old /tmp/plugins.new | wc -l`
+  disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
     echo "ERROR: the lists of plugins in the old and new installations differ"
     res=1
