@@ -556,15 +556,21 @@ case "$branch" in
   echo "Until $development_branch is GA, the list of plugins/engines might be unstable, skipping the check"
   ;;
 *)
-  # TODO: Workaround for fixed status of UUID plugin, remove after summer 2022 release
-  sed -i '/^uuid/d' /home/buildbot/plugins.old /home/buildbot/plugins.new
   # Only fail if there are any disappeared/changed engines or plugins
   disappeared_or_changed=`comm -23 /tmp/engines.old /tmp/engines.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
     echo "ERROR: the lists of engines in the old and new installations differ"
     res=1
   fi
-  disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
+  # Workaround for MDEV-28605 fix in 10.3/10.4 (remove after Q4 2022 release)
+  # Plugin config files were installed in a wrong dir, so before the patch
+  # the plugins weren't loaded upon server startup, while after the patch the are.
+  # It causes a difference in plugin output.
+  if [[ "$branch" =~ 10\.[34] ]] ; then
+    disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | grep -viE 'RocksDB|TokuDB|OQgraph|GSSAPI' | wc -l`
+  else
+    disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
+  fi
   if [[ $disappeared_or_changed -ne 0 ]] ; then
     echo "ERROR: the lists of plugins in the old and new installations differ"
     res=1
