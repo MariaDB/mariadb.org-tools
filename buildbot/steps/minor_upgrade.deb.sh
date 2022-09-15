@@ -566,7 +566,11 @@ case "$branch" in
   # Plugin config files were installed in a wrong dir, so before the patch
   # the plugins weren't loaded upon server startup, while after the patch the are.
   # It causes a difference in plugin output.
-  if [[ "$branch" =~ 10\.[34] ]] ; then
+  # The problem only existed if there was a pre-installed my.cnf file
+  # on the machine before MariaDB installation. Otherwise MariaDB's my.cnf
+  # would be installed, and it includes mariadb.cnf, which in turn includes mariadb.conf.d.
+  # In buildbot, apparently only bionic was affected.
+  if [ "$version_name" == "bionic" ] && [[ "$branch" =~ 10\.[34] ]] ; then
     disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | grep -viE 'RocksDB|TokuDB|OQgraph|GSSAPI' | wc -l`
   else
     disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
