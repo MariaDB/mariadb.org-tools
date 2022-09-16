@@ -260,13 +260,13 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 #-------------------------------------------------------------------------------
 #ci_dirs_102="aarch64-debian-9-deb-autobake"
 #ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
-ci_dirs_102="kvm-deb-bionic-aarch64:aarch64-ubuntu-1804-deb-autobake kvm-rpm-centos74-aarch64:aarch64-centos-7-rpm-autobake"
-ci_dirs_103="${ci_dirs_102} kvm-deb-buster-aarch64:aarch64-debian-10-deb-autobake kvm-deb-focal-aarch64:aarch64-ubuntu-2004-deb-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake"
+ci_dirs_102=""
+ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora34-aarch64:aarch64-fedora-34-rpm-autobake kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake"
-ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-rpm-fedora36-aarch64:aarch64-fedora-36-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
+ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
-ci_dirs_108="${ci_dirs_107} kvm-deb-jammy-aarch64:aarch64-ubuntu-2204-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
+ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
 
@@ -275,11 +275,11 @@ ci_dirs_1010="${ci_dirs_109}"
 # Dirs for buildbot.askmonty.org 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
-bb_dirs_103="${bb_dirs_102} kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
+bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-aarch64: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
+bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-amd64: kvm-rpm-fedora34-amd64: kvm-rpm-fedora35-amd64:"
-bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-rpm-fedora36-amd64:"
+bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-fedora35-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
+bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora36-amd64: kvm-rpm-fedora36-aarch64:"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
@@ -608,6 +608,88 @@ shouldI() {
 }
 
 #===  FUNCTION  ================================================================
+#          NAME:  sync_the_local_mirror_dir_to_the_mirrors
+#   DESCRIPTION:  This function synchronizes the local mirror dir to the
+#                 mirrors, removing old releases and generally cleaning things
+#                 up. It should only be run AFTER all releases being worked on
+#                 are finished processing and the local mirror dir is in its
+#                 final correct state for the releases.
+#===============================================================================
+sync_the_local_mirror_dir_to_the_mirrors() {
+  local dest
+  local dests
+  local rsync_local_mirror_opts
+  dests="${mirrors}"
+  rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig"
+
+  # update the TIME file just before we start uploading
+  date +%s > ${dir_local_mirror}/TIME
+
+  important_message "Only run this once ALL releases are ready in the local mirror dir!"
+  lowkey_message "If not, answer [n]o to uploading as you could mess up the mirrors!"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          message "Uploading to ${dest}..."
+          case ${dest} in
+            *hz-*)
+              rsync_local_mirror_opts="${rsync_local_mirror_opts} --no-group --no-owner --no-perms"
+              ;;
+          esac
+          rsync_wrapper "${rsync_local_mirror_opts} ${dir_local_mirror}/ ${dest}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          message "Skipping uploading to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          lowkey_message "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  update_the_local_mirror_dir_yum_and_repo_symlinks
+#   DESCRIPTION:  This function updates the repository symlinks in the yum and
+#                 repo directories in the local mirror dir
+#===============================================================================
+update_the_local_mirror_dir_yum_and_repo_symlinks() {
+  pushd ${dir_local_mirror}/yum
+    runCommand tree -L 1
+    if [[ -L ${major} ]]; then
+      runCommand rm -v ${major}*
+    elif [[ -L ${num} ]]; then
+      runCommand rm -v ${major}*
+    fi
+    runCommand ln -sv ../${version_nog}/yum ${major}
+    runCommand ln -sv ../${version_nog}/yum ${num}
+    runCommand tree -L 1
+  popd
+  pushd ${dir_local_mirror}/repo
+    runCommand tree -L 1
+    if [[ -L ${major} ]]; then
+      runCommand rm -v ${major}*
+    elif [[ -L ${num} ]]; then
+      runCommand rm -v ${major}*
+    fi
+    runCommand ln -sv ../${version_nog}/repo ${major}
+    runCommand ln -sv ../${version_nog}/repo ${num}
+    runCommand tree -L 1
+  popd
+}
+
+#===  FUNCTION  ================================================================
 #          NAME:  remove_a_dir_from_the_local_mirror_dir
 #   DESCRIPTION:  This function displays the dirs in the ${dir_local_mirror}
 #                 directory and prompts for a dir to release, repeating until
@@ -661,7 +743,42 @@ remove_a_dir_from_the_local_mirror_dir() {
 #   DESCRIPTION:  Copy the release to the local mirror prep directory
 #===============================================================================
 copy_the_release_to_the_local_mirror_dir() {
-  runCommand cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
+  if [[ -d ${dir_local_mirror}/${dir_name} ]] ; then
+    lowkey_message "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
+  else
+    runCommand cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
+  fi
+  verify_local_mirror_copy_is_good
+}
+
+verify_local_mirror_copy_is_good() {
+  local dry_run_status
+  dry_run_status=""
+  message "Doing an rsync dry-run to verify the local mirror copy is good"
+  lowkey_message "If rsync doesn't find anything to sync then the copy is good."
+  runCommand rsync --dry-run -avP ${dir_release}/${dir_name} ${dir_local_mirror}/
+  while [ -z ${dry_run_status} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        lowkey_message "Local mirror copy is good..."
+        dry_run_status="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        lowkey_message "Local mirror copy is not good. Something went wrong..."
+        lowkey_message "You might want to delete the local mirror copy and re-run this step"
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        dry_run_status=""
+        ;;
+    esac
+  done
 }
 
 #===  FUNCTION  ================================================================
@@ -914,12 +1031,12 @@ rsync_wrapper_primary() {
 upload_this_release_to_the_buildmaster() {
   important_message "Transferring files from here to the ${buildmaster}"
   message "Uploading release to ${buildmaster}..."
-  rsync_wrapper "-av --delete-before ${dir_release}/${dir_name} ${buildmaster}:${dir_release}/"
+  rsync_wrapper "-av --delete-before ${dir_release}/${dir_name} ${buildmaster}:${dir_release_buildmaster}/"
 
   shouldI update_the_STATUS_file
 
   message "Uploading corp release to ${buildmaster}..."
-  rsync_wrapper "-av --delete-before ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp}/"
+  rsync_wrapper "-av --delete-before ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp_buildmaster}/"
   # All done
 }
 
@@ -972,14 +1089,14 @@ pull_this_release_from_the_buildmaster() {
 
   # We can now rsync the builds from the buildmaster
   message "Transferring kvm builds from ${buildmaster}..."
-  rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
+  rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
 
   #message "Transferring other builds from ${buildmaster}..."
   #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
  
   message "Transferring galera from ${buildmaster}..."
   for galera_version in ${ver_galera_real}; do
-    rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}* ${dir_galera}/"
+    rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera_buildmaster}/galera-${galera_version}* ${dir_galera}/"
   done
   #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed ${dir_galera}/"
   #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed-ent ${dir_galera}/"
@@ -1024,6 +1141,7 @@ pull_this_release_from_ci() {
 verify_all_needed_ci_dirs_are_present() {
   message "Checking for presence of all needed ci builds..."
   should_I_quit=0
+  lowkey_message "${dir_archive}/ci/${tree}/${ci_tarbuildnum}/"
   for ci_pair in ${!ci_dirs}; do
     ci_dir=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
@@ -1088,8 +1206,10 @@ mark_this_release_as_a_ci_release() {
 
 verify_the_ci_download() {
   message "Verifying files downloaded from ${ci}..."
-  for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -name sha256sums.txt) ; do
-    runCommand pushd $(dirname ${shafile})
+  #for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -name sha256sums.txt) ; do
+  for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -maxdepth 1 -mindepth 1 -type d) ; do
+    #runCommand pushd $(dirname ${shafile})
+    runCommand pushd ${shafile}
     case $shafile in
       *windows*)
         dos2unix sha256sums.txt
@@ -1314,7 +1434,7 @@ update_the_archive_symlinks() {
   for archive_pair in ${archives}; do
     archive=(${archive_pair//:/ })
     set -x
-    ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major}"
+    ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};cd repo ; rm -v ${major} ; ln -sv ../${dir_name}/repo ${major} ; ln -sv ../${dir_name}/repo ${num} ; cd ../yum/ ; rm -v ${major} ; ln -sv ../${dir_name}/yum ${major} ; rm -v ${num} ; ln -sv ../${dir_name}/yum ${num}"
     set +x
   done
 }
@@ -1489,11 +1609,12 @@ maybe_fix_permissions() {
     dirs_to_chmod="${dir_archive}/${tree}/ ${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8}/${tree}/ ${dir_archive_p8}/${tree}/${rev}"
 
     if [ "${remote_prep}" = "yes" ]; then
+      dirs_to_chmod="${dir_archive_buildmaster}/${tree}/ ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8_buildmaster}/${tree}/ ${dir_archive_p8_buildmaster}/${tree}/${rev}"
 
       # If we're fixing remote permissions, we want to to it with one ssh
       # connection, so everything goes on one line
 
-      ssh -t -t ${buildmaster} "if [ ! -d ${dir_archive_p8}/${tree}/${rev} ]; then sudo mkdir -vp ${dir_archive_p8}/${tree}/${rev};fi;" "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
+      ssh -t -t ${buildmaster} "if [ ! -d ${dir_archive_p8_buildmaster}/${tree}/${rev} ]; then sudo mkdir -vp ${dir_archive_p8_buildmaster}/${tree}/${rev};fi;" "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8_buildmaster}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8_buildmaster}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
 
     else
       # If we're here we are not fixing remote permissions, so we can do things
@@ -1949,12 +2070,12 @@ if [ "${create_bintar}" != "no" ]; then
             runCommand rm -v "${sig_file}"
           done
           # sign the MariaDB source tarball
-          runCommand gpg2 ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
+          runCommand gpg ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
           # sign the sum files as well
-          runCommand gpg2 ${gpg_opts} md5sums.txt
-          runCommand gpg2 ${gpg_opts} sha1sums.txt
-          runCommand gpg2 ${gpg_opts} sha256sums.txt
-          runCommand gpg2 ${gpg_opts} sha512sums.txt
+          runCommand gpg ${gpg_opts} md5sums.txt
+          runCommand gpg ${gpg_opts} sha1sums.txt
+          runCommand gpg ${gpg_opts} sha256sums.txt
+          runCommand gpg ${gpg_opts} sha512sums.txt
           popd
           mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
           echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
@@ -2179,7 +2300,7 @@ if [ "${create_bintar}" != "no" ]; then
         done
         # now that old signatures are gone, sign all files that remain
         for dir_file in $(find . -type f | grep -v orig); do
-          runCommand gpg2 ${gpg_opts} ${dir_file}
+          runCommand gpg ${gpg_opts} ${dir_file}
         done
         popd
         mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
@@ -2352,7 +2473,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       done
       # now that old signatures are gone, sign all files that remain
       for dir_file in $(find . -type f); do
-        gpg2 ${gpg_opts} ${dir_file}
+        gpg ${gpg_opts} ${dir_file}
       done
       echo "+ finished signing ${arch} files"
       echo
@@ -2551,9 +2672,9 @@ else
 
     # Rsync a copy of the previous release to ${HOME}
     if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-before --exclude=*updateinfo.xml.gz ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     else
-      rsync_wrapper "-av --delete-before --exclude=*updateinfo.xml.gz --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-before --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
@@ -2668,6 +2789,10 @@ shouldI remove_a_dir_from_the_local_mirror_dir
 
 echo;echo;echo;echo
 
+shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
+
+echo;echo;echo;echo
+
 important_message "Mirrors"
 for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_mirrors
@@ -2677,6 +2802,11 @@ echo;echo;echo;echo
 important_message "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
+
+echo;echo;echo;echo
+
+important_message "WARNING: Only run the following once ALL releases are ready for upload!"
+shouldI sync_the_local_mirror_dir_to_the_mirrors
 
 echo;echo;echo;echo
 
