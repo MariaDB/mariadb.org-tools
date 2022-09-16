@@ -64,7 +64,7 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
 declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64)
 
-declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
+declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake)
 declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
@@ -114,16 +114,10 @@ case ${ARCHDIR} in
   *10.2*)
     ubuntu_dists="bionic"
     ;;
-  *10.3*)
+  *10.3*|*10.4*|*10.5*)
     ubuntu_dists="bionic focal"
     ;;
-  *10.4*)
-    ubuntu_dists="bionic focal"
-    ;;
-  *10.5*|*10.6*|*10.7*)
-    ubuntu_dists="bionic focal"
-    ;;
-  *10.8*|*10.9*)
+  *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
     ubuntu_dists="bionic focal jammy"
     ;;
   *)
@@ -251,7 +245,7 @@ for dist in ${ubuntu_dists}; do
         # include s390x
         case ${dist} in
           'focal'|'jammy')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_s390x.changes
+            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist}*_s390x.changes
             ;;
         esac
     done
