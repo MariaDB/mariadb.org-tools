@@ -245,16 +245,13 @@ declare -A builder_dir_ci_x86=([buster]=32bit-debian-10-deb-autobake [sid]=32bit
 declare -A builder_dir_bb_x86=([buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
 
 case ${TREE} in 
-  '10.3'|'bb-10.3-release')
+  *10.3*|*10.4*)
     debian_dists="buster"
     ;;
-  '10.4'|'bb-10.4-release')
-    debian_dists="buster"
-    ;;
-  '10.5'|'bb-10.5-release')
+  *10.5*)
     debian_dists="buster bullseye"
     ;;
-  '10.6'|'bb-10.6-release'|'10.7'|'bb-10.7-release'|*10.8*|*10.9*|*10.10*)
+  *)
     debian_dists="buster bullseye sid"
     ;;
 esac
