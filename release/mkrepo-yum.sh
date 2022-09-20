@@ -60,7 +60,7 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=(
-  [centos7]=amd64-centos-7-rpm-autobake [centos8]=amd64-centos-8-rpm-autobake
+  [centos7]=amd64-centos-7-rpm-autobake
   [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
   [fedora35]=amd64-fedora-35-rpm-autobake [fedora36]=amd64-fedora-36-rpm-autobake
@@ -69,7 +69,7 @@ declare -A builder_dir_ci_amd64=(
 )
 
 declare -A builder_dir_bb_amd64=(
-  [centos7]=kvm-rpm-centos74-amd64 [centos8]=kvm-rpm-centos8-amd64
+  [centos7]=kvm-rpm-centos74-amd64
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora35]=kvm-rpm-fedora35-amd64 [fedora36]=kvm-rpm-fedora36-amd64
@@ -80,8 +80,7 @@ declare -A builder_dir_bb_amd64=(
 # - - - - - - - - -
 
 declare -A builder_dir_ci_aarch64=(
-  [centos7]=aarch64-centos-7-rpm-autobake [centos8]=aarch64-centos-8-rpm-autobake
-  [rhel7]=aarch64-rhel-7-rpm-autobake [rhel8]=aarch64-rhel-8-rpm-autobake
+  [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [fedora35]=aarch64-fedora-35-rpm-autobake [fedora36]=aarch64-fedora-36-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
@@ -89,8 +88,7 @@ declare -A builder_dir_ci_aarch64=(
 )
 
 declare -A builder_dir_bb_aarch64=(
-  [centos7]=kvm-rpm-centos74-aarch64 [centos8]=kvm-rpm-centos8-aarch64
-  [rhel7]=kvm-rpm-centos74-aarch64 [rhel8]=kvm-rpm-rhel8-aarch64
+  [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora35]=kvm-rpm-fedora35-aarch64 [fedora36]=kvm-rpm-fedora36-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles150-aarch64
@@ -100,8 +98,7 @@ declare -A builder_dir_bb_aarch64=(
 # - - - - - - - - -
 
 declare -A builder_dir_ci_ppc64le=(
-  [centos7]=ppc64le-centos-7-rpm-autobake [centos8]=ppc64le-centos-8-rpm-autobake
-  [rhel7]=ppc64le-rhel-7-rpm-autobake [rhel8]=ppc64le-rhel-8-rpm-autobake
+  [rhel8]=ppc64le-rhel-8-rpm-autobake
   [rhel9]=ppc64le-rhel-9-rpm-autobake
   [fedora35]=ppc64le-fedora-35-rpm-autobake [fedora36]=ppc64le-fedora-36-rpm-autobake
   [sles12]=ppc64le-sles-12-rpm-autobake [sles15]=ppc64le-sles-15-rpm-autobake
@@ -109,16 +106,11 @@ declare -A builder_dir_ci_ppc64le=(
 )
 
 declare -A builder_dir_bb_ppc64le=(
-  [centos7]=kvm-rpm-centos73-ppc64le [centos8]=kvm-rpm-centos8-ppc64le
-  [rhel7]=kvm-rpm-rhel7-ppc64le [rhel8]=kvm-rpm-rhel8-ppc64le
+  [rhel8]=kvm-rpm-rhel8-ppc64le
   [rhel9]=kvm-rpm-rhel9-ppc64le
   [fedora35]=kvm-rpm-fedora35-ppc64le [fedora36]=kvm-rpm-fedora36-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles150-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
-)
-
-declare -A builder_dir_bb_ppc64=(
-  [centos7]=kvm-rpm-centos73-ppc64
 )
 
 declare -A builder_dir_ci_s390x=(
@@ -137,9 +129,6 @@ case ${ARCHDIR} in
   *10.5*)
   dists_bb="
     centos7-amd64
-    centos7-ppc64
-    centos7-ppc64le
-    centos7-aarch64
 
     rhel8-amd64
     rhel8-aarch64
@@ -171,9 +160,6 @@ case ${ARCHDIR} in
   *10.4*)
   dists_bb="
     centos7-amd64
-    centos7-ppc64
-    centos7-ppc64le
-    centos7-aarch64
 
     rhel8-amd64
     rhel8-aarch64
@@ -192,9 +178,6 @@ case ${ARCHDIR} in
   *10.3*)
   dists_bb="
     centos7-amd64
-    centos7-ppc64
-    centos7-ppc64le
-    centos7-aarch64
 
     rhel8-amd64
     rhel8-aarch64
@@ -213,9 +196,6 @@ case ${ARCHDIR} in
   *10.2*)
   dists_bb="
     centos7-amd64
-    centos7-ppc64
-    centos7-ppc64le
-    centos7-aarch64
 
     opensuse15-amd64
 
@@ -229,9 +209,6 @@ case ${ARCHDIR} in
   *)
   dists_bb="
     centos7-amd64
-    centos7-ppc64
-    centos7-ppc64le
-    centos7-aarch64
 
     rhel8-amd64
     rhel8-aarch64
@@ -599,7 +576,7 @@ for REPONAME in ${dists}; do
       runCommand mkdir -vp rhel/8/aarch64
       maybe_make_symlink rhel/8/aarch64 rhel8-aarch64
       maybe_make_symlink rhel8-aarch64 rhel8-aarch64
-      maybe_make_symlink rhel8-aarch64 centos8-aarch64
+      maybe_make_symlink rhel8-aarch64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -613,7 +590,7 @@ for REPONAME in ${dists}; do
       set_builder_dir rhel8 amd64
       runCommand mkdir -vp rhel/8/x86_64
       maybe_make_symlink rhel/8/x86_64 rhel8-amd64
-      maybe_make_symlink rhel8-amd64 centos8-amd64
+      maybe_make_symlink rhel8-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -628,7 +605,7 @@ for REPONAME in ${dists}; do
       runCommand mkdir -vp rhel/8/ppc64le/rpms
       runCommand mkdir -vp rhel/8/ppc64le/srpms
       maybe_make_symlink rhel/8/ppc64le rhel8-ppc64le
-      maybe_make_symlink rhel8-ppc64le centos8-ppc64le
+      maybe_make_symlink rhel8-ppc64le
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
