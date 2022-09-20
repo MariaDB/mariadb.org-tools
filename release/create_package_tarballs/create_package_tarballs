@@ -190,8 +190,8 @@ do_debs() {
   apt-ftparchive release . | { cat > Release; }
 
   # sign the Release file
-  gpg2 -u 0xF1656F24C74CD1D8 --clearsign -o InRelease Release
-  gpg2 -u 0xF1656F24C74CD1D8 -abs -o Release.gpg Release
+  gpg -u 0xF1656F24C74CD1D8 --clearsign -o InRelease Release
+  gpg -u 0xF1656F24C74CD1D8 -abs -o Release.gpg Release
   # '-abs' == '--armor --detach-sign --sign'
 
   # Copy support files for this repository type.
