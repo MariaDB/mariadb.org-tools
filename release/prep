@@ -275,7 +275,7 @@ ci_dirs_1010="${ci_dirs_109}"
 # Dirs for buildbot.askmonty.org 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos73-ppc64: kvm-rpm-centos73-ppc64le: kvm-rpm-centos74-aarch64: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
+bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
 bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-fedora35-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
@@ -620,7 +620,7 @@ sync_the_local_mirror_dir_to_the_mirrors() {
   local dests
   local rsync_local_mirror_opts
   dests="${mirrors}"
-  rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig"
+  rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig --exclude=sync_from_netcologne.txt"
 
   # update the TIME file just before we start uploading
   date +%s > ${dir_local_mirror}/TIME
@@ -790,7 +790,7 @@ uploader() {
   local dests
   local rsync_uploader_opts
   dests="$@"
-  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt"
   for dest in ${dests} ; do
     local cont
     cont=""
@@ -2697,13 +2697,15 @@ else
 
     # copy the yum dir to the corp release dir
     echo "+ copying the yum dir to the corp release dir"
-    echo "+ rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
-            rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
+    echo "+ rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
+            rsync -a --info=progress2 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
     echo
     echo "+ remove ppc64 and ppc64le versions from corp release (if they were accidentally copied over)"
     pushd ${dir_corp}/${dir_name}/yum/
       rm -v *ppc64*
       rm -vrf */*/ppc64*
+      rm -v *s390x*
+      rm -vrf */*/s390x
     popd
 
     # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
@@ -2781,18 +2783,6 @@ echo;echo;echo;echo
 
 #shouldI upload_to_the_primary_mirror
 
-shouldI copy_the_release_to_the_local_mirror_dir
-
-echo;echo;echo;echo
-
-shouldI remove_a_dir_from_the_local_mirror_dir
-
-echo;echo;echo;echo
-
-shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
-
-echo;echo;echo;echo
-
 important_message "Mirrors"
 for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_mirrors
@@ -2802,6 +2792,20 @@ echo;echo;echo;echo
 important_message "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
+
+echo;echo;echo;echo
+
+important_message "Prep Local Mirror Dir"
+
+shouldI copy_the_release_to_the_local_mirror_dir
+
+echo;echo;echo;echo
+
+shouldI remove_a_dir_from_the_local_mirror_dir
+
+echo;echo;echo;echo
+
+shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
 
 echo;echo;echo;echo
 
