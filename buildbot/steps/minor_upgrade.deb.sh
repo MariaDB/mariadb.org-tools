@@ -326,8 +326,11 @@ set +x
 for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
 do
   echo "=== $i" >> /home/buildbot/ldd.old
-  # Changed after MDEV-28592 disks plugin, remove the condition after Q4 2022 (or Q3+ 2022) release
-  if ! [[ "$i" =~ disks\.so ]] ; then
+  if [[ "$i" =~ auth_gssapi\.so ]] ; then
+  # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
+    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc++.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
+  # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
+  elif ! [[ "$i" =~ disks\.so ]] ; then
     ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
   fi
 done
@@ -517,8 +520,11 @@ set +x
 for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
 do
   echo "=== $i" >> /home/buildbot/ldd.new
-  # Changed after MDEV-28592 disks plugin, remove the condition after Q4 2022 (or Q3+ 2022) release
-  if ! [[ "$i" =~ disks\.so ]] ; then
+  if [[ "$i" =~ auth_gssapi\.so ]] ; then
+  # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
+    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc++.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
+  # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
+  elif ! [[ "$i" =~ disks\.so ]] ; then
     ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
   fi
 done
