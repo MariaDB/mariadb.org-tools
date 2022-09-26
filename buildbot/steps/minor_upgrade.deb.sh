@@ -328,7 +328,7 @@ do
   echo "=== $i" >> /home/buildbot/ldd.old
   if [[ "$i" =~ auth_gssapi\.so ]] ; then
   # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
-    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc++.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
+    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc\+\+.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
   # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
   elif ! [[ "$i" =~ disks\.so ]] ; then
     ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
@@ -522,7 +522,7 @@ do
   echo "=== $i" >> /home/buildbot/ldd.new
   if [[ "$i" =~ auth_gssapi\.so ]] ; then
   # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
-    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc++.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
+    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc\+\+.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
   # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
   elif ! [[ "$i" =~ disks\.so ]] ; then
     ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
