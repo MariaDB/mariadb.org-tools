@@ -385,8 +385,11 @@ cd $HOME
 mkdir galera_download
 cd galera_download
 if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
-  echo "ERROR: Could not download the Galera library"
-  exit 1
+  echo "Test warning"": wget exited with a non-zero code, but it may be bogus"
+  if ! ls deb/binary/galera-[34]_*.deb ; then
+    echo "ERROR: Could not download the Galera library"
+    exit 1
+  fi
 fi
 mv debs ../buildbot/galera-debs
 cd ..
