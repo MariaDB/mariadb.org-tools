@@ -72,17 +72,6 @@ fi
 
 set_build_dirs_variables() {
   case ${major} in
-    10.6|10.7|10.8|10.9|10.10)
-      build_dirs_x86=""
-      build_dirs_x86_64="
-        kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
-        kvm-tarbake-jaunty-x86:source
-      "
-      ci_build_dirs_x86=""
-      ci_build_dirs_x86_64=""
-      ci_build_dirs_aarch64=""
-      ci_build_dirs_ppc64le=""
-      ;;
     10.5)
       build_dirs_x86="
         kvm-bintar-centos6-x86:bintar-linux-x86
@@ -195,7 +184,7 @@ set_build_dirs_variables() {
         ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
         "
       ;;
-    *)
+    10.2)
       ci_build_dirs_x86="
         32bit-debian-9:bintar-debian-9-x86
         32bit-debian-sid:bintar-debian-sid-x86
@@ -252,6 +241,17 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
                    bsd9-64:bintar-bsd9-64
                    opensolaris-511-bintar:bintar-opensolaris-511"
        ;;
+     *)
+      build_dirs_x86=""
+      build_dirs_x86_64="
+        kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
+        kvm-tarbake-jaunty-x86:source
+      "
+      ci_build_dirs_x86=""
+      ci_build_dirs_x86_64=""
+      ci_build_dirs_aarch64=""
+      ci_build_dirs_ppc64le=""
+      ;;
   esac
 }
 
@@ -2159,13 +2159,15 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
+          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
-            runCommand tar -zxf ${version}-linux-systemd-${galera_arch}.tar.gz
-            runCommand mv -vi ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+            runCommand tar -zxf ${version}*-linux-systemd-${galera_arch}.tar.gz
+            runCommand mv -vi ${version}*-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             if [ -d *-linux-${galera_arch} ]; then
-            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+              runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+            elif [ -d *preview-linux-systemd-${galera_arch} ]; then
+              runCommand mv -vi *preview-linux-systemd-${galera_arch} ${version}-linux-systemd-${galera_arch}
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
