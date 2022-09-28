@@ -111,13 +111,12 @@ bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm
 bld_codbc_bullseye_aarch64= build_linux_connector_odbc("codbc-bullseye-aarch64", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_centos8_x64_connector_odbc= build_linux_connector_odbc("codbc-centos8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # We can't install server here or this time-outs with high probability
 
 bld_codbc_jammy_amd64= build_linux_connector_odbc_no_test("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_jammy_aarch64= build_linux_connector_odbc_no_test("codbc-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_fedora34_amd64= build_linux_connector_odbc_no_test("codbc-fedora34-amd64", "vm-fedora34-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora35_amd64= build_linux_connector_odbc_no_test("codbc-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora36_amd64= build_linux_connector_odbc_no_test("codbc-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
@@ -279,7 +278,7 @@ cmake --build . --config RelWithDebInfo
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
@@ -417,5 +416,5 @@ setarch i386 make package
 
 #bld_centos7_x86_connector_odbc= bld_xcomp_linux_connector_odbc("centos7_x86-connector-odbc", "vm-centos7-amd64", "connector_c_2.3", " -DWITH_OPENSSL=OFF -DSYSTEM_NAME=rhel7 ", "v_2.3.7");
 bld_centos7_x86_connector_odbc_new= bld_xcomp_linux_connector_odbc("codbc-centos7-x86", "vm-centos74-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel7 ", "v3.1.7");
-bld_centos8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("codbc-centos8-x86", "vm-rhel8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel8 ", "v3.1.7");
+bld_rhel8_x86_connector_odbc= bld_xcomp_linux_connector_odbc("codbc-rhel8-x86", "vm-rhel8-amd64", "3.0", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON -DSYSTEM_NAME=rhel8 ", "v3.1.7");
 
