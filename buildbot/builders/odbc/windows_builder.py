@@ -1,4 +1,4 @@
-def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
+def bld_windows_connector_odbc(name, cmake_params, skip32bit):
 
   f_win_connector_odbc = BuildFactory()
 
@@ -34,8 +34,42 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_32",
         command=["dojob",
         WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 15 2017\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DWITH_SSL=SCHANNEL -DALL_PLUGINS_STATIC=OFF && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
-#WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" " + cmake_params + " && cmake --build . --config RelWithDebInfo")
-#        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
+        ],
+        doStepIf= not skip32bit,
+        haltOnFailure = True
+	));
+# atm neglecting chance of race between 2 parallel builds - doesn't look like real. atm.
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "test_install_package_32",
+        command=["dojob",
+#WithProperties("pwd && cd win32/wininstall && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='D:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
+          WithProperties("pwd && ls win32\\RelWithDebInfo\\*.dll && md D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin && xcopy /y /f win32\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin || xcopy /y /f win32\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin")
+        ],
+        doStepIf= not skip32bit,
+        haltOnFailure = True
+	));
+
+#mariadb -u %%TEST_UID%% -p%%TEST_PASSWORD%% -e "DROP SCHEMA IF EXISTS %%TEST_SCHEMA%%"
+#mariadb -u %%TEST_UID%% -p%%TEST_PASSWORD%% -e "CREATE SCHEMA %%TEST_SCHEMA%%" || true
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "test_run_32",
+        command=["dojob",
+        WithProperties("""
+SET TEST_DSN=%(branch)s
+SET TEST_PORT=3306
+SET TEST_SCHEMA=odbc%(branch)s
+cd win32/test
+ctest --output-on-failure""")
+        ],
+        doStepIf= not skip32bit,
+        haltOnFailure = True
+	));
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "test_uninstall_package_32",
+        command=["dojob",
+#WithProperties("pwd && cd win32/wininstall && for %%a in (mariadb-connector-odbc-*32*.msi) do  (msiexec /uninstall %%a /qn /norestart")
+        WithProperties("rm D:\\testing\\odbc\\driver\\%(branch)s\\32\\*.dll && rm D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin\\*.dll")
         ],
         doStepIf= not skip32bit,
         haltOnFailure = True
@@ -69,13 +103,6 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         ))
 
   f_win_connector_odbc.addStep(ShellCommand(
-        name= "publish_win32",
-        command=["dojob",
-        WithProperties("cd win32  && xcopy /y /f wininstall\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")]
-  ))
-
-  f_win_connector_odbc.addStep(ShellCommand(
-        name= "publish_win64",
         command=["dojob",
         WithProperties("cd win64 && xcopy /y /f wininstall\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")]
   ))
@@ -114,5 +141,5 @@ def bld_windows_connector_odbc(name, conc_branch, cmake_params, tag, skip32bit):
         'category': "connectors" }
 
 #bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
-bld_win_connector_odbc_new = bld_windows_connector_odbc("codbc-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
-bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("codbc-windows-gnutls", "3.1", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", "05f70d2", True)
+bld_win_connector_odbc_new = bld_windows_connector_odbc("codbc-windows", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", False)
+bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("codbc-windows-gnutls", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", True)
