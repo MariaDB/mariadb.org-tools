@@ -63,7 +63,6 @@ galera_suffix=""
 
 # mappings of dirs from the CI that we need
 ci_mappings_4="
-       gal-aarch64-rhel-7:kvm-rpm-centos74-aarch64-gal
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
     gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
     gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
@@ -75,14 +74,8 @@ ci_mappings_4="
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
-    #gal-aarch64-fedora-36:kvm-rpm-fedora36-aarch64-gal
 
 ci_mappings_3="
-       gal-aarch64-rhel-7:kvm-rpm-centos74-aarch64-gal
-       gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
-    gal-aarch64-debian-10:kvm-deb-buster-aarch64-gal
-  gal-aarch64-ubuntu-1804:kvm-deb-bionic-aarch64-gal
-  gal-aarch64-ubuntu-2004:kvm-deb-focal-aarch64-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
 "
 
