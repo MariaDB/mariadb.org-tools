@@ -575,8 +575,6 @@ for REPONAME in ${dists}; do
       set_builder_dir rhel8 aarch64
       runCommand mkdir -vp rhel/8/aarch64
       maybe_make_symlink rhel/8/aarch64 rhel8-aarch64
-      maybe_make_symlink rhel8-aarch64 rhel8-aarch64
-      maybe_make_symlink rhel8-aarch64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -590,7 +588,6 @@ for REPONAME in ${dists}; do
       set_builder_dir rhel8 amd64
       runCommand mkdir -vp rhel/8/x86_64
       maybe_make_symlink rhel/8/x86_64 rhel8-amd64
-      maybe_make_symlink rhel8-amd64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -605,7 +602,6 @@ for REPONAME in ${dists}; do
       runCommand mkdir -vp rhel/8/ppc64le/rpms
       runCommand mkdir -vp rhel/8/ppc64le/srpms
       maybe_make_symlink rhel/8/ppc64le rhel8-ppc64le
-      maybe_make_symlink rhel8-ppc64le
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
@@ -632,8 +628,6 @@ for REPONAME in ${dists}; do
       set_builder_dir rhel9 aarch64
       runCommand mkdir -vp rhel/9/aarch64
       maybe_make_symlink rhel/9/aarch64 rhel9-aarch64
-      maybe_make_symlink rhel9-aarch64 rhel9-aarch64
-      maybe_make_symlink rhel9-aarch64 centos9-aarch64
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
