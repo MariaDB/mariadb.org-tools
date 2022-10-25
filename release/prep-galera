@@ -1088,7 +1088,7 @@ pull_this_release_from_the_buildmaster() {
 
   # We can now rsync the builds from the buildmaster
   message "Transferring builds from ${buildmaster}..."
-  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive}/${tree}/${rev}/ ${dir_archive}/${tree}/${rev}/"
+  rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive_buildmaster}/${tree}/${rev}/ ${dir_archive}/${tree}/${rev}/"
 
   # We should be done now
   RC tree ${dir_archive}/${tree}/${rev}/
@@ -1184,9 +1184,9 @@ maybe_fix_permissions() {
   if [ "${perms_fixed}" = "no" ]; then
      message "fixing permissions..."
 
-    dirs_to_chmod="${dir_archive}/${tree} ${dir_archive}/${tree}/${rev}"
 
     if [ "${remote_prep}" = "yes" ]; then
+      dirs_to_chmod="${dir_archive_buildmaster}/${tree} ${dir_archive_buildmaster}/${tree}/${rev}"
 
       # If we're fixing remote permissions, we want to to it with one ssh
       # connection, so everything goes on one line
@@ -1194,6 +1194,7 @@ maybe_fix_permissions() {
       ssh -t -t ${buildmaster} "set -x ; sudo chmod -c 755 ${dirs_to_chmod}; sudo find ${dir_archive}/${tree}/${rev} -type d -exec sudo chmod -c 755 {} \; ; find ${dir_archive}/${tree}/${rev} -type f -exec sudo chmod -c 644 {} \;"
 
     else
+      dirs_to_chmod="${dir_archive}/${tree} ${dir_archive}/${tree}/${rev}"
       # If we're here we are not fixing remote permissions, so we can do things
       # on separate lines, which makes everything more readable
 
@@ -1269,6 +1270,7 @@ fi
 
 dir_name="${version}"
 dir_archive="${dir_archive_galera}"
+dir_archive_buildmaster="${dir_archive_galera_buildmaster}"
 
 case ${tree} in
   "mariadb-3.x")
