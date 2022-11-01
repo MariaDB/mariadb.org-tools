@@ -71,7 +71,8 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "publish_win32",
         command=["dojob",
-        WithProperties("cd win32  && xcopy /y /f wininstall\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")]
+        WithProperties("cd win32  && xcopy /y /f wininstall\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")],
+        doStepIf= not skip32bit
   ))
 
   f_win_connector_cpp.addStep(ShellCommand(
@@ -129,4 +130,4 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         'factory': f_win_connector_cpp,
         'category': "connectors" }
 
-bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", False)
+bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", True)
