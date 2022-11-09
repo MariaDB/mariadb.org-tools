@@ -1,4 +1,3 @@
-# ConfigMap holding information about configuration files for primary/secondary and dockerinit
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,7 +21,7 @@ data:
 
   primary.sql: |
     CREATE USER 'repluser'@'%' IDENTIFIED BY 'replsecret';
-    GRANT REPLICATION REPLICA ON *.* TO 'repluser'@'%';
+    GRANT REPLICATION SLAVE ON *.* TO 'repluser'@'%';
     CREATE DATABASE primary_db;
 
   secondary.sql: |
@@ -32,9 +31,8 @@ data:
     MASTER_HOST='mariadb-sts-0.mariadb-service.default.svc.cluster.local',
     MASTER_USER='repluser',
     MASTER_PASSWORD='replsecret',
+    MASTER_PORT=3306,
     MASTER_CONNECT_RETRY=10;
-
-# Secret holds information about root password
 ---
 apiVersion: v1
 kind: Secret
@@ -43,8 +41,6 @@ metadata:
 type: Opaque
 data:
   mariadb-root-password: c2VjcmV0 # echo -n 'secret'|base64
-
-# Headless service
 ---
 apiVersion: v1
 kind: Service
@@ -59,8 +55,6 @@ spec:
   clusterIP: None
   selector:
     app: mariadb
-
-# Statefulset
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -86,7 +80,7 @@ spec:
         - "-c"
         - |
           set -ex
-          echo 'Starting init-mariadb';
+          echo 'Starting init';
           # Check config map to directory that already exists 
           # (but must be used as a volume for main container)
           ls /mnt/config-map
@@ -96,21 +90,36 @@ spec:
           # Copy appropriate conf.d files from config-map to 
           # mariadb-config volume (emptyDir) depending on pod number
           if [[ $ordinal -eq 0 ]]; then
-            # This file holds SQL for connecting to primary
             cp /mnt/config-map/primary.cnf /etc/mysql/conf.d/server-id.cnf
             # Create the users needed for replication on primary on a volume
             # initdb (emptyDir)
             cp /mnt/config-map/primary.sql /docker-entrypoint-initdb.d
           else
-            # This file holds SQL for connecting to secondary
             cp /mnt/config-map/replica.cnf /etc/mysql/conf.d/server-id.cnf
             # On replicas use secondary configuration on initdb volume
             cp /mnt/config-map/secondary.sql /docker-entrypoint-initdb.d
+
+            # Here we should check for mariadb-dump files from previous peer
+            if [[ -d dump-peer-$(($ordinal-1)).sql ]]; then
+              # We should know in advance root password
+              mariadb-dump -uroot -psecret < /etc/mysql/conf.d/dump-peer-$(($ordinal-1)).sql
+            fi
           fi
           # Add an offset to avoid reserved server-id=0 value.
           echo server-id=$((3000 + $ordinal)) >> etc/mysql/conf.d/server-id.cnf
+          # cp /mnt/config-map/mariadb.cnf /etc/mysql/conf.d
+          # Execute the script if needed (maybe for galera)
+          # ./mnt/config-map/init.sh
+
           ls /etc/mysql/conf.d/
           cat /etc/mysql/conf.d/server-id.cnf
+        env:
+        # Using Secrets
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-root-password
         volumeMounts:
           - name: mariadb-config-map
             mountPath: /mnt/config-map
@@ -118,6 +127,37 @@ spec:
             mountPath: /etc/mysql/conf.d/
           - name: initdb
             mountPath: /docker-entrypoint-initdb.d
+      - name: init-dump-mariadb
+       # From previous peer get the dump file and apply
+        image: mariadb
+        imagePullPolicy: Always
+        command:
+        - bash
+        - "-c"
+        - |
+          set -ex
+          echo "Start MariaDB dump"
+          # Skip the clone if data already exists.
+          [[ -d /var/lib/mysql/mysql ]] && exit 0
+          # Skip the clone on primary (ordinal index 0).
+          [[ `hostname` =~ -([0-9]+)$ ]]
+          ordinal=${BASH_REMATCH[1]}
+          [[ $ordinal -eq 0 ]] && exit 0
+          # Clone data from previous peer
+          # 1. we have to know FQDN (host)
+          # 2. we have to know root password
+          echo "Check that conf.d is non-empty - it should be from previous init-container"
+          cd /etc/mysql/conf.d/
+          ls ./
+          file_name=
+          mariadb-dump -hmariadb-sts-$(($ordinal-1)).mariadb-service.default.svc.cluster.local -uroot -psecret --all-databases > dump-peer-$(($ordinal-1)).sql
+          echo "Check that we have file created"
+          ls ./
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql
+        - name: mariadb-config
+          mountPath: /etc/mysql/conf.d
       restartPolicy: Always
       containers:
       - name: mariadb
@@ -133,14 +173,8 @@ spec:
               name: mariadb-secret
               key: mariadb-root-password
         - name: MYSQL_INITDB_SKIP_TZINFO
-          value: "1"
-        # Create mysql user for healthcheck.sh
-        - name: MARIADB_MYSQL_LOCALHOST_USER
-          value: "1"
-        # Give mysql user grants
-        - name: MARIADB_MYSQL_LOCALHOST_GRANTS
-          value: "REPLICA MONITOR"
-        # Mount volume from persistent volume claim
+          value: "yes"
+        # Mount volumes from persistent volume claim
         volumeMounts:
         - name: datadir
           mountPath: /var/lib/mysql/
@@ -148,15 +182,6 @@ spec:
           mountPath: /etc/mysql/conf.d/
         - name: initdb
           mountPath: /docker-entrypoint-initdb.d
-        livenessProbe:
-          exec:
-            command:
-            - /usr/local/bin/healthcheck.sh
-            - --su=mysql
-            - --connect
-            - --innodb_initialized
-          initialDelaySeconds: 20
-          periodSeconds: 25
       volumes:
       - name: mariadb-config-map
         configMap:
