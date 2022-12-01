@@ -9,9 +9,9 @@ git --version
 rm -Rf build
 rm -Rf src
 rm -Rf install_test
-time git clone --depth 1 -b %(branch)s \"""" + reponame +"""" src
+time git clone -b %(branch)s \"""" + reponame +"""" src
 cd src
-[-z "%(revision)s"] && git checkout %(revision)s
+! [ -z "%(revision)s" ] && git reset --hard %(revision)s
 
 git submodule init
 git submodule update
