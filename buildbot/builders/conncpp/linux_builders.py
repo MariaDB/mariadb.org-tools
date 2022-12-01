@@ -173,10 +173,11 @@ conncpp_linux_step0_checkout + """
 export CC=/usr/bin/gcc-5
 export CXX=/usr/bin/g++-5
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-conncpp_linux_step1_build +
-conncpp_linux_step2_serverinstall +
-conncpp_linux_step3_packagetest +
-conncpp_linux_step4_testsrun
+conncpp_linux_step1_build
+#+
+#conncpp_linux_step2_serverinstall +
+#conncpp_linux_step3_packagetest +
+#conncpp_linux_step4_testsrun
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
