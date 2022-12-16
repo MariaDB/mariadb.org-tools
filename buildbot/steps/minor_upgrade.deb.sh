@@ -326,13 +326,7 @@ set +x
 for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
 do
   echo "=== $i" >> /home/buildbot/ldd.old
-  if [[ "$i" =~ auth_gssapi\.so ]] ; then
-  # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
-    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc\+\+.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
-  # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
-  elif ! [[ "$i" =~ disks\.so ]] ; then
-    ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
-  fi
+  ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.old
 done
 set -x
 
@@ -523,13 +517,7 @@ set +x
 for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -v 'mysql-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
 do
   echo "=== $i" >> /home/buildbot/ldd.new
-  if [[ "$i" =~ auth_gssapi\.so ]] ; then
-  # Auth GSSAPI dependencies changed after 1b7434492655757c281bbab5748312cc0f8074db (fix for srpm), remove after Q4 2022 release
-    ldd $i | grep -vE 'libgcc_s.so.1|libm.so.6|libstdc\+\+.so.6' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
-  # Disk plugin dependencies changed after MDEV-28592, remove the condition after Q4 2022 (or Q3+ 2022) release
-  elif ! [[ "$i" =~ disks\.so ]] ; then
-    ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
-  fi
+  ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.new
 done
 set -x
 
@@ -571,19 +559,7 @@ case "$branch" in
     echo "ERROR: the lists of engines in the old and new installations differ"
     res=1
   fi
-  # Workaround for MDEV-28605 fix in 10.3/10.4 (remove after Q4 2022 release)
-  # Plugin config files were installed in a wrong dir, so before the patch
-  # the plugins weren't loaded upon server startup, while after the patch the are.
-  # It causes a difference in plugin output.
-  # The problem only existed if there was a pre-installed my.cnf file
-  # on the machine before MariaDB installation. Otherwise MariaDB's my.cnf
-  # would be installed, and it includes mariadb.cnf, which in turn includes mariadb.conf.d.
-  # In buildbot, apparently only bionic was affected.
-  if [ "$version_name" == "bionic" ] && [[ "$branch" =~ 10\.[34] ]] ; then
-    disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | grep -viE 'RocksDB|TokuDB|OQgraph|GSSAPI' | wc -l`
-  else
-    disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
-  fi
+  disappeared_or_changed=`comm -23 /home/buildbot/plugins.old /home/buildbot/plugins.new | wc -l`
   if [[ $disappeared_or_changed -ne 0 ]] ; then
     echo "ERROR: the lists of plugins in the old and new installations differ"
     res=1
