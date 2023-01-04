@@ -269,6 +269,8 @@ ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
+ci_dirs_1011="${ci_dirs_1010}"
+ci_dirs_1012="${ci_dirs_1011}"
 
 
 #-------------------------------------------------------------------------------
@@ -284,6 +286,8 @@ bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
+bb_dirs_1011="${bb_dirs_1010}"
+bb_dirs_1012="${bb_dirs_1011}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -294,6 +298,8 @@ full_dirs_107="${bb_dirs_107} ${ci_dirs_107}"
 full_dirs_108="${bb_dirs_108} ${ci_dirs_108}"
 full_dirs_109="${bb_dirs_109} ${ci_dirs_109}"
 full_dirs_1010="${bb_dirs_1010} ${ci_dirs_1010}"
+full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
+full_dirs_1012="${bb_dirs_1012} ${ci_dirs_1012}"
 
 
 ## Enterprise builds should not build solaris10 for now
@@ -2704,9 +2710,9 @@ else
     echo
     echo "+ remove ppc64 and ppc64le versions from corp release (if they were accidentally copied over)"
     pushd ${dir_corp}/${dir_name}/yum/
-      rm -v *ppc64*
+      rm -vf *ppc64*
       rm -vrf */*/ppc64*
-      rm -v *s390x*
+      rm -vf *s390x*
       rm -vrf */*/s390x
     popd
 
