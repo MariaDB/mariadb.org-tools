@@ -104,9 +104,12 @@ do_pkgs() {
 
 
 case $rel in
-  'jammy'|'focal'|'bionic'|'xenial'|'buster'|'bullseye'|'7'|'8'|'9')
+  'jammy'|'focal'|'bionic'|'buster'|'bullseye'|'7'|'8'|'9')
     case $rel in
-      '7'|'8'|'9')
+      '7')
+        altarchs="x86_64"
+        ;;
+      '8'|'9')
       altarchs="x86_64 aarch64"
       ;;
       *)
