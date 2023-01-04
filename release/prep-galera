@@ -64,6 +64,8 @@ galera_suffix=""
 # mappings of dirs from the CI that we need
 ci_mappings_4="
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
+         gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
+         gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
     gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
     gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
@@ -220,6 +222,11 @@ rpm_dists_4="
   rhel8-aarch64
   rhel8-ppc64le
   rhel8-s390x
+
+  rhel9-amd64
+  rhel9-aarch64
+  rhel9-ppc64le
+  rhel9-s390x
 
   fedora35-amd64
   fedora36-amd64
@@ -649,7 +656,6 @@ prepare_the_rpm_packages() {
   # Create symlinks
   for dir in ${dir_release}/${dir_name}-signed/rpm/ ${dir_release}/${dir_name}-signed-ent/rpm/ ; do
     pushd ${dir}
-      ln -sv centos74-aarch64 centos7-aarch64
       ln -sv centos74-amd64 centos7-amd64
       ln -sv opensuse150-amd64 opensuse15-amd64
       ln -sv sles125-amd64 sles12-amd64
@@ -799,6 +805,7 @@ prepare_the_yum_repository() {
   RC ln -sv centos74-amd64 rhel7-amd64
   RC ln -sv rhel8-aarch64 rocky84-aarch64
   RC ln -sv rhel8-aarch64 alma84-aarch64
+  RC ln -sv rhel9-aarch64 rocky9-aarch64
   message "Finished preparing the yum repository"
 }
 
