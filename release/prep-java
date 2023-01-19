@@ -132,9 +132,9 @@ unzip_and_stage_files() {
 prep_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
-  RC mkdir ${dir_release}/${dir_name}
-  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${dir_release}/${dir_name}/
-  RC pushd ${dir_release}/${dir_name}
+  RC mkdir ${cj_home_org}/${dir_name}
+  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/${dir_name}/
+  RC pushd ${cj_home_org}/${dir_name}
   sumgen
   for file in *;do
     RC gpg ${gpg_opts} ${file}
@@ -144,13 +144,13 @@ prep_org_files() {
 }
 
 update_org_current_to_this_release() {
-  if [[ -d ${dir_release}/connector-java-current ]]; then
-    RC rm -rf ${dir_release}/connector-java-current
+  if [[ -d ${cj_home_org}/connector-java-current ]]; then
+    RC rm -rf ${cj_home_org}/connector-java-current
   fi
   MSG "Updating current org release to this one..."
-  RC mkdir ${dir_release}/connector-java-current
-  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${dir_release}/connector-java-current/mariadb-java-client-current-sources.jar
-  RC pushd ${dir_release}/connector-java-current/
+  RC mkdir ${cj_home_org}/connector-java-current
+  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/connector-java-current/mariadb-java-client-current-sources.jar
+  RC pushd ${cj_home_org}/connector-java-current/
   sumgen
   for file in *;do
     RC gpg ${gpg_opts} ${file}
@@ -175,14 +175,14 @@ upload_to_the_primary_mirror() {
   local upload
   upload=""
   MSG "Doing a dry-run..."
-  RC rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-java-current ${primary_mirror}:data/
+  RC rsync --dry-run -av --delete-after ${cj_home_org}/${dir_name} ${cj_home_org}/connector-java-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
         MSG "Uploading for real..."
-        RC rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-java-current ${primary_mirror}:data/
+        RC rsync -av --delete-after ${cj_home_org}/${dir_name} ${cj_home_org}/connector-java-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -273,8 +273,8 @@ generate_the_file_list_pickle_for_org_downloads() {
 #   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
 #===============================================================================
 update_the_STATUS_file() {
-  echo "+ date +%s > ${dir_release}/STATUS"
-          date +%s > ${dir_release}/STATUS
+  echo "+ date +%s > ${cj_home_org}/STATUS"
+          date +%s > ${cj_home_org}/STATUS
   MSG "STATUS file updated"
 }
 
@@ -301,8 +301,8 @@ uploader() {
               rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
               ;;
           esac
-          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
-          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/connector-java-current ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${cj_home_org}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${cj_home_org}/connector-java-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
