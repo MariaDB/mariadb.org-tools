@@ -137,7 +137,7 @@ prep_org_files() {
   RC pushd ${dir_release}/${dir_name}
   sumgen
   for file in *;do
-    RC gpg2 ${gpg_opts} ${file}
+    RC gpg ${gpg_opts} ${file}
   done
   popd
   echo;echo;echo
@@ -153,7 +153,7 @@ update_org_current_to_this_release() {
   RC pushd ${dir_release}/connector-java-current/
   sumgen
   for file in *;do
-    RC gpg2 ${gpg_opts} ${file}
+    RC gpg ${gpg_opts} ${file}
   done
   popd
   echo;echo;echo
@@ -165,7 +165,7 @@ prep_com_files() {
   RC pushd ${cj_home}/${dir_name}
   sumgen
   for file in *;do
-    RC gpg2 ${ent_gpg_opts} ${file}
+    RC gpg ${ent_gpg_opts} ${file}
   done
   popd
   echo;echo;echo
