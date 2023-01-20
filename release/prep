@@ -2106,7 +2106,7 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
+          # All releases include Galera now
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar
             runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
@@ -2121,14 +2121,6 @@ if [ "${create_bintar}" != "no" ]; then
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
-          else
-            echo "not a galera release, but still unpacking, re-packing so the dir name is correct"
-            runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
-            runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
-            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
-            runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
-            runCommand rm -rf ${version}-linux-glibc_214-${galera_arch}
-          fi
 
           # since we renamed them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
