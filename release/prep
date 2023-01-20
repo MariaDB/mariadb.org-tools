@@ -2316,9 +2316,9 @@ if [ "${create_bintar}" != "no" ]; then
     fi
   done
 
+  # All releases include Galera now
   # if we are creating a Galera release we need to copy in the galera source and
   # packages (for those not using the repositories)
-  if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
     message "transferring Galera source and package files..."
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
@@ -2339,7 +2339,6 @@ if [ "${create_bintar}" != "no" ]; then
     done
     lowkey_message "done transferring Galera source and package files"
     echo
-  fi
 
   message "done transfering bintar & source packages"
   echo
