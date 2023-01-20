@@ -250,6 +250,10 @@ for dist in ${ubuntu_dists}; do
         esac
     done
   fi
+
+  # Copy in CMAPI package
+  runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
+
 done
 
 # Create sums of .deb packages

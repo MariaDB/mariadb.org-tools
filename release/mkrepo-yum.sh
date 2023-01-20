@@ -444,6 +444,9 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/centos74-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
 
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+
       # Copy in other files
       case ${ARCHDIR} in
         *10.5*|*10.6*|*10.7*)
@@ -487,6 +490,9 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+
       # Copy in other files
       case ${ARCHDIR} in
         *10.5*|*10.6*|*10.7*)
@@ -584,6 +590,10 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
+
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
+
     'rhel8-amd64')
       set_builder_dir rhel8 amd64
       runCommand mkdir -vp rhel/8/x86_64
@@ -596,6 +606,10 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+
       ;;
     'rhel8-ppc64le')
       set_builder_dir rhel8 ppc64le
@@ -636,6 +650,10 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
+
       ;;
     'rhel9-amd64')
       set_builder_dir rhel9 amd64
@@ -649,6 +667,10 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+
       ;;
     'rhel9-ppc64le')
       set_builder_dir rhel9 ppc64le
@@ -704,6 +726,10 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
+
+      # Copy in CMAPI package
+      copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.${fedora_arch_real}.rpm ./${REPONAME}/rpms/"
+
       ;;
     'opensuse150-amd64'|'opensuse15-amd64')
       set_builder_dir opensuse15 amd64
