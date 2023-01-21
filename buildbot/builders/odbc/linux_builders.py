@@ -7,14 +7,78 @@ connodbc_linux_step1_build= step1_build
 connodbc_linux_step2_serverinstall= linux_serverinstall
 #Step 3 - package quality test step - to add
 connodbc_linux_step3_packagetest= ""
-connodbc_linux_step4_testsrun= """cd ./build/test
+connodbc_linux_step4_1_testenvertup= """cd ./build/test
 cat odbcinst.ini
 cat odbc.ini
 export ODBCINI="$PWD/odbc.ini"
 export ODBCSYSINI=$PWD
 export TEST_SKIP_UNSTABLE_TEST=1
 cd ../..
-""" + step4_testsrun
+"""
+connodbc_linux_step4_testsrun= connodbc_linux_step4_1_testenvertup + step4_testsrun
+connodbc_linux_step4_valgrindtest= """
+cd ./build/test
+ls -l
+for odbctest in ./odbc_*; do
+  if [ -x "$odbctest" ]; then
+    memcheck="$odbctest.memcheck"
+    valgrind --leak-check=full $odbctest 2> $memcheck | grep -B 5 "not ok" || true
+#cat $memcheck
+    leaked1=$(grep "definitely lost: " $memcheck | sed -e 's/^==[0-9]*==//' -e 's/[^0-9]//g' -e 's/00/0/')
+    leaked2=$(grep "indirectly lost: " $memcheck | sed -e 's/^==[0-9]*==//' -e 's/[^0-9]//g' -e 's/00/0/')
+    echo "Definetely: $leaked1 indirectly: $leaked2"
+
+    if [ "$leaked1" -gt 0 ] || [ "$leaked2" -gt 0 ]; then
+      echo "$odbctest Leaked"
+      HASLEAKS=1
+    else
+      echo "$odbctest is clean"
+    fi
+  fi
+done
+if [ ! -z $HASLEAKS ]; then
+  false
+fi
+"""
+
+def connector_odbc_valgrind_memcheck(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
+    linux_connector_odbc= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_odbc.addStep(Compile(
+        description=["building", "linux-connctor_odbc"],
+        descriptionDone=["build", "linux-connector_odbc"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """"
+sudo apt-get update
+sudo apt-get install -y valgrind
+""" +
+connodbc_linux_step0_checkout + """
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build +
+connodbc_linux_step2_serverinstall +
+connodbc_linux_step4_1_testenvertup +
+connodbc_linux_step4_valgrindtest),
+        ]))
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_odbc,
+            "slavenames": slaves,
+            "category": "connectors"}
 
 def build_linux_connector_odbc(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_odbc= BuildFactory()
@@ -98,6 +162,8 @@ connodbc_linux_step1_build
             'factory': linux_connector_odbc,
             "slavenames": slaves,
             "category": "connectors"}
+
+bld_codbc_amd64_valgrind= connector_odbc_valgrind_memcheck("codbc-focal-amd64-memcheck", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
