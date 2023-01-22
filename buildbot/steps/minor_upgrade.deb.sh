@@ -30,7 +30,7 @@ fi
 case $branch in
 *"$development_branch"*)
   if [[ "$test_mode" != "server" ]] ; then
-    echo "Upgrade warning"": For non-stable branches the test is only run in 'test' mode"
+    echo "Test warning"": For non-stable branches the test is only run in 'server' mode"
     exit
   fi
   ;;
@@ -81,7 +81,7 @@ fi
 
 if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
 then
-  echo "Upgrade warning"": could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
+  echo "Test warning"": could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet? Skipping the test"
   exit
 fi
 
@@ -112,10 +112,10 @@ server)
   ;;
 columnstore)
   if ! grep columnstore Packages > /dev/null ; then
-    echo "Upgrade warning"": Columnstore was not found in packages, the test will not be run"
+    echo "Test warning"": Columnstore was not found in packages, the test will not be run"
     exit
   elif [[ "$version_name" == "sid" ]] ; then
-    echo "Upgrade warning"": Columnstore isn't necessarily built on Sid, thte test will be skipped"
+    echo "Test warning"": Columnstore isn't necessarily built on Sid, thte test will be skipped"
     exit
   fi
   package_list="mariadb-server "`grep -B 1 'Source: mariadb' Packages | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
