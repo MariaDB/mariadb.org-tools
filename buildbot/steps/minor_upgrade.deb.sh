@@ -5,10 +5,10 @@
 #===============
 # This test can be performed in four modes:
 # - 'server' -- only mariadb-server is installed (with whatever dependencies it pulls) and upgraded.
+# - 'server+galera' -- only mariadb-server is installed (with whatever dependencies it pulls) and upgraded,
+#                      plus galera library is upgraded from the last release to the last build
 #               It also tests compatibility with available 3rd-party connectors
 # - 'all'    -- all provided packages are installed and upgraded, except for Columnstore
-# - 'deps'   -- only a limited set of main packages is installed and upgraded,
-#               to make sure upgrade does not require new dependencies
 # - 'columnstore' -- mariadb-server and mariadb-plugin-columnstore are installed
 #===============
 
@@ -104,11 +104,12 @@ all)
     sudo sh -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled" || true
   fi
   ;;
-deps)
-  package_list="mariadb-server mariadb-client mariadb-common mariadb-test mysql-common libmysqlclient18"
-  ;;
-server)
+server*)
   package_list=mariadb-server
+  ;;
+deps*)
+  echo "Test warning"": We are not doing it anymore"
+  exit
   ;;
 columnstore)
   if ! grep columnstore Packages > /dev/null ; then
@@ -336,14 +337,8 @@ set -x
 
 chmod -cR go+r ~/buildbot/debs
 
-if [[ "$test_mode" == "deps" ]] ; then
-  # For the dependency check, only keep the local repo
-  sudo sh -c "grep -iE 'deb .*file|deb-src .*file' /etc/apt/sources.list.backup > /etc/apt/sources.list"
-  sudo rm -rf /etc/apt/sources.list.d/*
-else
-  sudo cp /etc/apt/sources.list.backup /etc/apt/sources.list
-  sudo rm /etc/apt/sources.list.d/mariadb_upgrade.list
-fi
+sudo cp /etc/apt/sources.list.backup /etc/apt/sources.list
+sudo rm /etc/apt/sources.list.d/mariadb_upgrade.list
 sudo rm /etc/apt/preferences.d/release
 
 # Sometimes apt-get update fails because the repo is being updated.
@@ -362,43 +357,45 @@ if [[ $res -ne 0 ]] ; then
   exit $res
 fi
 
+
+if [ "$test_mode" == "server+galera" ] ; then
 #==================================================================
 # Download Galera library for the new packages and prepare the repo
 #==================================================================
+  case "$major_version" in
+  *10.[2-3]*)
+    GALERA_VERSION=3
+    ;;
+  *)
+    GALERA_VERSION=4
+    ;;
+  esac
 
-case "$major_version" in
-*10.[2-3]*)
-  GALERA_VERSION=3
-  ;;
-*)
-  GALERA_VERSION=4
-  ;;
-esac
-
-cd $HOME
-mkdir galera_download
-cd galera_download
-if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
-  echo "Test warning"": wget exited with a non-zero code, but it may be bogus"
-  if ! ls debs/binary/galera-[34]_*.deb ; then
-    echo "ERROR: Could not download the Galera library"
-    exit 1
+  cd $HOME
+  mkdir galera_download
+  cd galera_download
+  if ! wget https://hasky.askmonty.org/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
+    echo "Test warning"": wget exited with a non-zero code, but it may be bogus"
+    if ! ls debs/binary/galera-[34]_*.deb ; then
+      echo "ERROR: Could not download the Galera library"
+      exit 1
+    fi
   fi
-fi
-mv debs ../buildbot/galera-debs
-cd ..
-rm -rf galera_download
-sudo sh -c 'echo "deb [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs binary/" >> /etc/apt/sources.list'
-sudo sh -c 'echo "deb-src [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs source/" >> /etc/apt/sources.list'
+  mv debs ../buildbot/galera-debs
+  cd ..
+  rm -rf galera_download
+  sudo sh -c 'echo "deb [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs binary/" >> /etc/apt/sources.list'
+  sudo sh -c 'echo "deb-src [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs source/" >> /etc/apt/sources.list'
 
-cd buildbot
-chmod -cR go+r debs galera-debs
+  cd buildbot
+  chmod -cR go+r debs galera-debs
 
-if [ -e debs/binary/Packages.gz ] ; then
-    gunzip debs/binary/Packages.gz
-fi
-if [ -e galera-debs/binary/Packages.gz ] ; then
-    gunzip galera-debs/binary/Packages.gz
+  if [ -e debs/binary/Packages.gz ] ; then
+      gunzip debs/binary/Packages.gz
+  fi
+  if [ -e galera-debs/binary/Packages.gz ] ; then
+      gunzip galera-debs/binary/Packages.gz
+  fi
 fi
 
 #=========================
