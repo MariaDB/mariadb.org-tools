@@ -13,7 +13,7 @@
 #===============
 
 # Mandatory variables
-for var in test_mode branch arch dist_name version_name major_version systemd_capability ; do
+for var in test_mode branch arch dist_name version_name major_version ; do
   if [ -z "${!var}" ] ; then
     echo "ERROR: $var variable is not defined"
     exit 1
@@ -40,9 +40,7 @@ esac
 
 echo "Architecture, distribution and version based on VM name: $arch $dist_name $version_name"
 
-echo "Test properties"
-echo "  Systemd capability $systemd_capability"
-echo "  Major version $major_version"
+echo "Major version $major_version"
 echo "Current test mode: $test_mode"
 
 script_path=`readlink -f $0`
@@ -226,13 +224,11 @@ fi
 
 # To avoid confusing errors in further logic, do an explicit check
 # whether the service is up and running
-if [[ "$systemd_capability" == "yes" ]] ; then
-  if ! sudo systemctl -l status mariadb --no-pager ; then
-    sudo journalctl -xe --no-pager
-    get_columnstore_logs
-    echo "ERROR: mariadb service didn't start properly after installation"
-    exit 1
-  fi
+if ! sudo systemctl -l status mariadb --no-pager ; then
+  sudo journalctl -xe --no-pager
+  get_columnstore_logs
+  echo "ERROR: mariadb service didn't start properly after installation"
+  exit 1
 fi
 
 if [[ "$test_mode" == "all" ]] && [[ "$branch" != *"10."[234]* ]] ; then
@@ -520,25 +516,14 @@ do
 done
 set -x
 
-case "$systemd_capability" in
-yes)
-  ls -l /lib/systemd/system/mariadb.service
-  ls -l /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf
-  ls -l /etc/init.d/mysql || true
-  systemctl -l --no-pager status mariadb.service
-  systemctl -l --no-pager status mariadb
-  systemctl -l --no-pager status mysql
-  systemctl -l --no-pager status mysqld
-  systemctl --no-pager is-enabled mariadb
-  ;;
-no)
-  echo "Steps related to systemd will be skipped"
-  ;;
-*)
-  echo "ERROR: It should never happen, check your configuration (systemdCapability property is not set or is set to a wrong value)"
-  exit 1
-  ;;
-esac
+ls -l /lib/systemd/system/mariadb.service
+ls -l /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf
+ls -l /etc/init.d/mysql || true
+systemctl -l --no-pager status mariadb.service
+systemctl -l --no-pager status mariadb
+systemctl -l --no-pager status mysql
+systemctl -l --no-pager status mysqld
+systemctl --no-pager is-enabled mariadb
 
 set +e
 res=0
