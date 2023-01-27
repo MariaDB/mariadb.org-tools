@@ -25,6 +25,8 @@ if [[ "$arch" == "ppc64le" ]] ; then
   arch=ppc64el
 elif [[ "$arch" == "x86" ]] ; then
   arch=i386
+elif [[ "$arch" == "aarch64" ]] ; then
+  arch=arm64
 fi
 
 case $branch in
