@@ -82,7 +82,7 @@ server)
   ;;
 columnstore)
   # Sets 'columnstore_package_list'
-  get_columnstore_package_list
+  get_columnstore_package_list "Packages"
   if [ -z "$columnstore_package_list" ] ; then
     echo "Test warning"": Columnstore was not found in packages"
     exit
