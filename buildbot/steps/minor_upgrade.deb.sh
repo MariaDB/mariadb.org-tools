@@ -443,7 +443,7 @@ fi
 #====================================================================================
 
 if [[ "$test_mode" == "server" ]] ; then
-  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y mariadb-test mariadb-test-data"
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y mariadb-test mariadb-test-data mariadb-backup"
 fi
 
 #====================================================================================
