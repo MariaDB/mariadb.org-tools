@@ -345,7 +345,7 @@ fi
 # (version, plugins, engines, dependencies)
 #====================================================================================
 
-get_server_info "old"
+get_server_info "new"
 
 #====================================================================================
 # Some more service checks
