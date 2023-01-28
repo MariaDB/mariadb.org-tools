@@ -24,13 +24,6 @@ get_latest_galera()
   fi
 
   galera_arch=$arch
-  if [[ "$arch" == "ppc64le" ]] ; then
-    arch=ppc64el
-  elif [[ "$arch" == "x86" ]] ; then
-    arch=i386
-  elif [[ "$arch" == "aarch64" ]] ; then
-    arch=arm64
-  fi
 
   case "$major_version" in
   *10.3*)
@@ -60,6 +53,24 @@ get_latest_galera()
   fi
   sudo sh -c 'echo "deb [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs binary/" >> /etc/apt/sources.list'
   sudo sh -c 'echo "deb-src [trusted=yes allow-insecure=yes] file:///home/buildbot/buildbot/galera-debs source/" >> /etc/apt/sources.list'
+}
+
+#==================================================================
+# In releases and otherwise stored builds architecture may look
+# different from the buildbot configuration
+#==================================================================
+
+set_server_arch()
+{
+  if [[ "$arch" == "ppc64le" ]] ; then
+    server_arch=ppc64el
+  elif [[ "$arch" == "x86" ]] ; then
+    server_arch=i386
+  elif [[ "$arch" == "aarch64" ]] ; then
+    server_arch=arm64
+  else
+    server_arch=$arch
+  fi
 }
 
 #==================================================================

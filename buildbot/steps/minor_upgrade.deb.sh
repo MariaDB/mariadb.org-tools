@@ -26,7 +26,9 @@ case $branch in
   ;;
 esac
 
-echo "Architecture, distribution and version based on VM name: $arch $dist_name $version_name"
+set_server_arch
+
+echo "Architecture, distribution and version based on VM name: $arch ($server_arch) $dist_name $version_name"
 
 echo "Major version $major_version"
 echo "Current test mode: $test_mode"
@@ -60,9 +62,9 @@ fi
 # Check whether a previous version exists
 #========================================
 
-if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-$arch/Packages
+if ! wget http://$mirror/mariadb/repo/$major_version/$dist_name/dists/$version_name/main/binary-${server_arch}/Packages
 then
-  echo "ERROR: could not find the 'Packages' file for a previous version. Maybe $version_name-$arch is a new platform, or $major_version was not released yet?"
+  echo "ERROR: could not find the 'Packages' file for a previous version. Maybe $version_name-${server_arch} is a new platform, or $major_version was not released yet?"
   exit 1
 fi
 
@@ -386,8 +388,8 @@ case "$branch" in
   set -o pipefail
   if [ "$test_mode" == "all" ] || [ "$test_mode" == "columnstore" ] ; then
     set -o pipefail
-    if [ -e $script_home/baselines/ldd.${major_version}.${version_name}.${arch} ]; then
-      ldd_baseline=$script_home/baselines/ldd.${major_version}.${version_name}.${arch}
+    if [ -e $script_home/baselines/ldd.${major_version}.${version_name}.${server_arch} ]; then
+      ldd_baseline=$script_home/baselines/ldd.${major_version}.${version_name}.${server_arch}
     else
       ldd_baseline=/home/buildbot/ldd.old
     fi
