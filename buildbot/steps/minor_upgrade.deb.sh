@@ -430,6 +430,14 @@ if [[ "$test_mode" == "server" ]] ; then
 fi
 
 #====================================================================================
+# In server mode we will use the VM for furhter MTR tests, so need MTR
+#====================================================================================
+
+if [[ "$test_mode" == "server" ]] ; then
+  sudo sh -c "DEBIAN_FRONTEND=noninteractive MYSQLD_STARTUP_TIMEOUT=180 apt-get -o Dpkg::Options::=--force-confnew install --allow-unauthenticated -y mariadb-test mariadb-test-data"
+fi
+
+#====================================================================================
 # Check that the server version was modified by the server upgrade
 #====================================================================================
 
