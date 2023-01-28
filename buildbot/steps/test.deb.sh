@@ -105,11 +105,9 @@ get_package_list()
 get_columnstore_package_list()
 {
   packages_file=$1
-  if ! grep columnstore $packages_file > /dev/null ; then
-    echo "Test warning"": Columnstore was not found in packages, the test will not be run"
-    exit
+  if grep columnstore $packages_file > /dev/null ; then
+    columnstore_package_list=`grep -B 1 'Source: mariadb' $packages_file | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
   fi
-  columnstore_package_list=`grep -B 1 'Source: mariadb' $packages_file | grep 'Package:' | grep 'columnstore' | awk '{print $2}' | sort | uniq | xargs`
 }
 
 #==================================================================

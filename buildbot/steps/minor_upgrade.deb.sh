@@ -83,6 +83,10 @@ server)
 columnstore)
   # Sets 'columnstore_package_list'
   get_columnstore_package_list
+  if [ -z "$columnstore_package_list" ] ; then
+    echo "Test warning"": Columnstore was not found in packages"
+    exit
+  fi
   package_list="mariadb-server $columnstore_package_list"
   ;;
 *)
