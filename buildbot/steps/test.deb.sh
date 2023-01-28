@@ -192,7 +192,7 @@ get_server_info()
 
 check_environment()
 {
-  dpkg -l | grep -iE 'maria|mysql|galera'
+  dpkg -l | grep -iE 'maria|mysql|galera' || true
   lsb_release -a
   uname -a
   df -kT
