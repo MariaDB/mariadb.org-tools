@@ -37,7 +37,7 @@ get_latest_galera()
   cd $HOME
   mkdir galera_download
   cd galera_download
-  if ! wget https://buildbot.mariadb.net/archive/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=4 --no-check-certificate ; then
+  if ! wget https://buildbot.mariadb.net/archive/builds/mariadb-${GALERA_VERSION}.x/latest/kvm-deb-${version_name}-${galera_arch}-gal/debs/ --recursive -np -R "index.html*" -nH --cut-dirs=5 --no-check-certificate ; then
     echo "Test warning"": wget exited with a non-zero code, but it may be bogus"
     if ! ls debs/binary/galera-[34]_*.deb ; then
       echo "ERROR: Could not download the Galera library"
