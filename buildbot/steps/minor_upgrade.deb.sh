@@ -247,6 +247,9 @@ chmod -cR go+r debs
 if [ -e debs/binary/Packages.gz ] ; then
   gunzip debs/binary/Packages.gz
 fi
+if [ -e debs/source/Sources.gz ] ; then
+  gunzip debs/source/Sources.gz
+fi
 
 #=========================
 # Install the new packages
