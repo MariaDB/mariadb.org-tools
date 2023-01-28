@@ -92,6 +92,7 @@ get_package_list()
 #==================================================================
 
 get_columnstore_package_list()
+{
   packages_file=$1
   if ! grep columnstore $packages_file > /dev/null ; then
     echo "Test warning"": Columnstore was not found in packages, the test will not be run"
@@ -125,7 +126,8 @@ run_apt_get_update()
 # Collect columnstore logs
 #==================================================================
 
-get_columnstore_logs() {
+get_columnstore_logs()
+{
   if [ -n "$columnstore_package_list" ] ; then
     sudo ls -l /dev/shm/
     echo "Storing Columnstore logs in columnstore_logs"
@@ -156,7 +158,8 @@ get_columnstore_logs() {
 # First argument is "old" or "new"
 #==================================================================
 
-get_server_info() {
+get_server_info()
+{
   new_or_old=$1
 
   set -e
@@ -178,7 +181,8 @@ get_server_info() {
 # Some information about the machine, can be useful for diagnostics
 #==================================================================
 
-check_environment() {
+check_environment()
+{
   dpkg -l | grep -iE 'maria|mysql|galera'
   lsb_release -a
   uname -a
@@ -193,7 +197,8 @@ check_environment() {
 # with SQL we are going to execute
 #==================================================================
 
-wait_for_mysql_upgrade () {
+wait_for_mysql_upgrade()
+{
   res=1
   for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ; do
     sleep 3
