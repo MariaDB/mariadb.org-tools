@@ -66,7 +66,6 @@ ci_mappings_4="
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
          gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
-    gal-aarch64-fedora-35:kvm-rpm-fedora35-aarch64-gal
     gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
@@ -74,6 +73,7 @@ ci_mappings_4="
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
+  gal-aarch64-ubuntu-2210:kvm-deb-kinetic-aarch64-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
 
@@ -141,6 +141,7 @@ deb_dists_4="
   buster
   focal
   jammy
+  kinetic
   sid
   trusty
 "
@@ -187,6 +188,9 @@ deb_dists_full_4="
   jammy-ppc64le
   jammy-s390x
 
+  kinetic-aarch64
+  kinetic-amd64
+
   sid-aarch64
   sid-amd64
   sid-ppc64le
@@ -210,7 +214,7 @@ rpm_dists_3="
   rocky84-amd64
 
   sles125-amd64
-  sles150-amd64
+  sles15-amd64
 "
 
 rpm_dists_4="
@@ -229,17 +233,19 @@ rpm_dists_4="
   rhel9-s390x
 
   fedora35-amd64
-  fedora36-amd64
 
-  fedora35-aarch64
+  fedora36-amd64
   fedora36-aarch64
+
+  fedora37-amd64
+  fedora37-aarch64
 
   opensuse150-amd64
 
   rocky84-amd64
 
   sles125-amd64
-  sles150-amd64
+  sles15-amd64
   sles15-s390x
 "
   #fedora36-aarch64
@@ -619,7 +625,7 @@ prepare_the_rpm_packages() {
   RC rm -v .rpmmacros
   RC ln -sv .rpmmacros-std .rpmmacros
   RC cd ${dir_release}/${dir_name}-signed/rpm/
-  RC rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
+  RC rpmsign --addsign --key-id=${gpg_key_2016} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   echo "About to sign the rpms..."
@@ -659,7 +665,7 @@ prepare_the_rpm_packages() {
       ln -sv centos74-amd64 centos7-amd64
       ln -sv opensuse150-amd64 opensuse15-amd64
       ln -sv sles125-amd64 sles12-amd64
-      ln -sv sles150-amd64 sles15-amd64
+      ln -sv sles15-amd64 sles150-amd64
     popd
   done
 
@@ -786,19 +792,19 @@ prepare_the_yum_repository() {
         # SLES 11 doesn't support newer sha256 checksums
         RC createrepo -s sha --database --pretty ${dist}
         RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
-        RC gpg --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
+        RC gpg --detach-sign --armor -u ${gpg_key_2016} ${dist}/repodata/repomd.xml
         ;;
       *)
         RC mv -vi ${dist} ~/ && cd ~/
         RC createrepo --database --pretty ${dist}
         RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
-        RC gpg --detach-sign --armor -u ${gpg_key} ${dist}/repodata/repomd.xml
+        RC gpg --detach-sign --armor -u ${gpg_key_2016} ${dist}/repodata/repomd.xml
         ;;
     esac
   done
 
   # one final thing: create symlinks so buildbot tests work
-  RC ln -sv sles150-amd64 sles15-amd64
+  RC ln -sv sles15-amd64 sles150-amd64
   RC ln -sv sles125-amd64 sles12-amd64
   RC ln -sv opensuse150-amd64 opensuse15-amd64
   RC ln -sv centos74-amd64 centos7-amd64
@@ -1063,7 +1069,7 @@ pull_this_release_from_the_buildmaster() {
   important_message "Pulling this release from ${buildmaster} to here..."
 
   # Fix permissions on the buildmaster
-  maybe_fix_permissions
+  #maybe_fix_permissions
 
   # Create the local directories if they don't exist
   lowkey_message "Making sure local directories exist..."
@@ -1286,7 +1292,7 @@ shouldI pull_this_release_from_the_buildmaster
 shouldI pull_this_release_from_the_ci
 shouldI verify_the_ci_download
 shouldI copy_ci_downloads_to_buildmaster_dir
-maybe_fix_permissions
+#maybe_fix_permissions
 maybe_create_release_dir
 shouldI prepare_the_source_tarball
 shouldI prepare_the_bintar_packages
