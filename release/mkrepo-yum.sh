@@ -589,11 +589,11 @@ for REPONAME in ${dists}; do
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
-      ;;
 
       # Copy in CMAPI package
       copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
 
+      ;;
     'rhel8-amd64')
       set_builder_dir rhel8 amd64
       runCommand mkdir -vp rhel/8/x86_64
