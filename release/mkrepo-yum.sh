@@ -64,6 +64,7 @@ declare -A builder_dir_ci_amd64=(
   [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
   [fedora35]=amd64-fedora-35-rpm-autobake [fedora36]=amd64-fedora-36-rpm-autobake
+  [fedora37]=amd64-fedora-37-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
   [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
 )
@@ -73,6 +74,7 @@ declare -A builder_dir_bb_amd64=(
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora35]=kvm-rpm-fedora35-amd64 [fedora36]=kvm-rpm-fedora36-amd64
+  [fedora37]=kvm-rpm-fedora37-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles150-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
 )
@@ -83,6 +85,7 @@ declare -A builder_dir_ci_aarch64=(
   [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [fedora35]=aarch64-fedora-35-rpm-autobake [fedora36]=aarch64-fedora-36-rpm-autobake
+  [fedora37]=aarch64-fedora-37-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
   [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
 )
@@ -91,6 +94,7 @@ declare -A builder_dir_bb_aarch64=(
   [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora35]=kvm-rpm-fedora35-aarch64 [fedora36]=kvm-rpm-fedora36-aarch64
+  [fedora37]=kvm-rpm-fedora37-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles150-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
 )
@@ -101,6 +105,7 @@ declare -A builder_dir_ci_ppc64le=(
   [rhel8]=ppc64le-rhel-8-rpm-autobake
   [rhel9]=ppc64le-rhel-9-rpm-autobake
   [fedora35]=ppc64le-fedora-35-rpm-autobake [fedora36]=ppc64le-fedora-36-rpm-autobake
+  [fedora37]=ppc64le-fedora-37-rpm-autobake
   [sles12]=ppc64le-sles-12-rpm-autobake [sles15]=ppc64le-sles-15-rpm-autobake
   [opensuse15]=ppc64le-opensuse-15-rpm-autobake [opensuse42]=ppc64le-opensuse-42-rpm-autobake
 )
@@ -109,6 +114,7 @@ declare -A builder_dir_bb_ppc64le=(
   [rhel8]=kvm-rpm-rhel8-ppc64le
   [rhel9]=kvm-rpm-rhel9-ppc64le
   [fedora35]=kvm-rpm-fedora35-ppc64le [fedora36]=kvm-rpm-fedora36-ppc64le
+  [fedora37]=kvm-rpm-fedora37-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles150-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
 )
@@ -224,6 +230,8 @@ case ${ARCHDIR} in
     fedora35-aarch64
     fedora36-amd64
     fedora36-aarch64
+    fedora37-amd64
+    fedora37-aarch64
 
     opensuse15-amd64
 
@@ -704,12 +712,15 @@ for REPONAME in ${dists}; do
       case ${REPONAME} in
         fedora35-amd64) fedora_ver=35 ; fedora_arch=amd64 ;;
         fedora36-amd64) fedora_ver=36 ; fedora_arch=amd64 ;;
+        fedora37-amd64) fedora_ver=37 ; fedora_arch=amd64 ;;
 
         fedora35-aarch64) fedora_ver=35 ; fedora_arch=aarch64 ;;
         fedora36-aarch64) fedora_ver=36 ; fedora_arch=aarch64 ;;
+        fedora37-aarch64) fedora_ver=37 ; fedora_arch=aarch64 ;;
 
         fedora35-ppc64le) fedora_ver=35 ; fedora_arch=ppc64le ;;
         fedora36-ppc64le) fedora_ver=36 ; fedora_arch=ppc64le ;;
+        fedora37-ppc64le) fedora_ver=37 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
@@ -910,6 +921,9 @@ for DIR in ${dists}; do
       ;;
     fedora36*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 36
+      ;;
+    fedora37*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 37
       ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
