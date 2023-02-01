@@ -431,9 +431,9 @@ prepare_the_bintar_packages() {
   RC cd ${dir_release}/${dir_name}-signed/bintar/
   lowkey_message "About to sign the bintars..."
   pressAnyKeyToContinue
-  for file in galera*.tar.gz ; do RC "gpg ${gpg_opts} ${file}";done
+  for file in galera*.tar.gz ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # copy the sum files over and sign them
-  for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
 
   # sign the ent-bintars
   cd ${dir_release}/${dir_name}-signed-ent/bintar/
@@ -476,9 +476,9 @@ prepare_the_source_tarball() {
     # sign the source tarball
     echo "About to sign the source tarball..."
     pressAnyKeyToContinue
-    RC gpg ${gpg_opts} ${version}.tar.gz
+    RC gpg ${gpg_opts_2016} ${version}.tar.gz
     # sign the sum files as well
-    for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts} ${sum}sums.txt";done
+    for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
 
     # Copy to the -signed folder
     RC cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed/
@@ -536,9 +536,9 @@ prepare_the_deb_packages() {
   # sign the deb files
   echo "About to sign the debs..."
   pressAnyKeyToContinue
-  for file in galera* ; do RC "gpg ${gpg_opts} ${file}";done
+  for file in galera* ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
 
 
   # sign the deb files for mariadb.com (aka MariaDB Enterprise)
@@ -605,9 +605,9 @@ prepare_the_rpm_packages() {
   # sign the rpms
   echo "About to sign the rpms..."
   pressAnyKeyToContinue
-  for file in ./*/*.rpm ; do RC "gpg ${gpg_opts} ${file}";done
+  for file in ./*/*.rpm ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
   
   #-------------------------------------------------------------------------------
   #  sign and sum rpm files for mariadb.org
@@ -624,9 +624,9 @@ prepare_the_rpm_packages() {
   # sign the rpms
   echo "About to sign the rpms..."
   pressAnyKeyToContinue
-  for file in ./*/*.rpm ; do RC "gpg ${gpg_opts} ${file}";done
+  for file in ./*/*.rpm ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
-  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts} ${sum}sums.txt";done
+  for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
 
 
   #-------------------------------------------------------------------------------
@@ -841,7 +841,7 @@ cat >> ${dir_log}/prep.log <<END
 # dir_release/dir_name="${dir_release}/${dir_name}"
 # dir_archive="${dir_archive}"
 # dir_release="${dir_release}"
-# gpg_opts="${gpg_opts}"
+# gpg_opts="${gpg_opts_2016}"
 # ent_gpg_opts="${ent_gpg_opts}"
 END
 chown ${USER}: ${dir_log}/prep.log
