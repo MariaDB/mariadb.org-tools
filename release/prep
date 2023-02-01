@@ -1979,8 +1979,7 @@ else
   else
     dir_name="${version}" # normal releases use ${version} as ${dir_name}
   fi
-  gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor" 
-  #gpg_opts="--quiet -u 0xF1656F24C74CD1D8 --detach-sign --armor" # new GPG key for Sid
+  gpg_opts="--quiet -u 0xF1656F24C74CD1D8 --detach-sign --armor"
 fi
 
 if [ ${log} = "yes" ]; then
