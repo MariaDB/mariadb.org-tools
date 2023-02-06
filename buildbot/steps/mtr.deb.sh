@@ -43,7 +43,7 @@ if [ "$test_set" == "default" ] ; then
   sudo rm /etc/apt/sources.list.d/percona* && sudo apt-get update
   mtr_opts="$mtr_opts --parallel=4"
 elif [ "$test_set" == "galera" ] ; then
-  case "%(branch)s" in
+  case "$branch" in
   *10.[2-3]*)
     galera_suites=galera,wsrep,wsrep_info,galera_3nodes
     ;;
