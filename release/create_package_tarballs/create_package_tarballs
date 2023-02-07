@@ -42,6 +42,13 @@ set -xe
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
 case $1 in
+  *10.10*|*10.11*)
+    # need separate 10.10/11 because e.g. 10.10.3 is caught by the next glob
+    debian_ver=( buster bullseye )
+    ubuntu_ver=( bionic focal jammy )
+    rhel_ver=( 7 8 9 )
+    sles_ver=( 12 15 )
+    ;;
   *10.3*|*10.4*)
     debian_ver=( buster )
     ubuntu_ver=( bionic focal )
