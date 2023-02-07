@@ -177,6 +177,13 @@ for dist in ${ubuntu_dists}; do
   echo + ${dist}
   line
 
+  case ${dist} in
+    bionic)  dist_alt='ubu1804' ;;
+    focal)   dist_alt='ubu2004' ;;
+    jammy)   dist_alt='ubu2204' ;;
+    kinetic) dist_alt='ubu2210' ;;
+  esac
+
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
@@ -218,34 +225,39 @@ for dist in ${ubuntu_dists}; do
       *10.2*|*10.3*)
         ver_galera_real=${ver_galera}
         galera_name='galera-3'
+        dist_filename=${dist}
         ;;
       *)
         ver_galera_real=${ver_galera4}
         galera_name='galera-4'
+        dist_filename=${dist_alt}
         ;;
     esac
     for gv in ${ver_galera_real}; do
         # include amd64
-        runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
+        runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
 
         # include ppc64le
         case ${dist} in
           'bionic'|'focal'|'jammy')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
+            runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
           'bionic'|'focal'|'jammy'|'kinetic')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
+            runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
             ;;
         esac
 
         # include s390x
         case ${dist} in
-          'focal'|'jammy')
-            runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist}*_s390x.changes
+          'focal')
+            runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*focal*_s390x.changes
+            ;;
+          'jammy')
+            runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist_filename}*_s390x.changes
             ;;
         esac
     done
