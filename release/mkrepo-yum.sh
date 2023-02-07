@@ -75,7 +75,7 @@ declare -A builder_dir_bb_amd64=(
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora35]=kvm-rpm-fedora35-amd64 [fedora36]=kvm-rpm-fedora36-amd64
   [fedora37]=kvm-rpm-fedora37-amd64
-  [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles150-amd64
+  [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
 )
 
@@ -95,7 +95,7 @@ declare -A builder_dir_bb_aarch64=(
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora35]=kvm-rpm-fedora35-aarch64 [fedora36]=kvm-rpm-fedora36-aarch64
   [fedora37]=kvm-rpm-fedora37-aarch64
-  [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles150-aarch64
+  [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
 )
 
@@ -115,7 +115,7 @@ declare -A builder_dir_bb_ppc64le=(
   [rhel9]=kvm-rpm-rhel9-ppc64le
   [fedora35]=kvm-rpm-fedora35-ppc64le [fedora36]=kvm-rpm-fedora36-ppc64le
   [fedora37]=kvm-rpm-fedora37-ppc64le
-  [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles150-ppc64le
+  [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles15-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
 )
 
@@ -838,7 +838,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles150-amd64/galera*.rpm ${REPONAME}/rpms/"
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles15-s390x')
