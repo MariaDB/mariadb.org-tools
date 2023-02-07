@@ -270,6 +270,12 @@ for dist in ${debian_dists}; do
     builder="${dist}"
   fi
 
+  case ${dist} in
+    buster)   dist_alt='deb10' ;;
+    bullseye) dist_alt='deb11' ;;
+    sid)      dist_alt='debsid' ;;
+  esac
+
 
   # add amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${builder}]"
@@ -332,10 +338,12 @@ for dist in ${debian_dists}; do
       *10.2*|*10.3*)
         ver_galera_real=${ver_galera}
         galera_name='galera-3'
+        dist_filename=${dist}
         ;;
       *)
         ver_galera_real=${ver_galera4}
         galera_name='galera-4'
+        dist_filename=${dist_alt}
         ;;
     esac
     for gv in ${ver_galera_real}; do
@@ -347,18 +355,13 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "buster"|"bullseye")
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
-              ;;
-            "sid")
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
-              runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_ppc64el.changes
-              runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_arm64.changes
+            "buster"|"bullseye"|"sid")
+              runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
+              runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
+              runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
               ;;
             *) 
-              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_amd64.changes
+              runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
               ;;
           esac
 
@@ -370,8 +373,11 @@ for dist in ${debian_dists}; do
               'buster'|'bullseye')
                 echo "+ no x86 packages for ${dist}"
                 ;;
+              'sid')
+                runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_i386.changes
+                ;;
               *)
-                runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist}*_i386.changes
+                runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_i386.changes
                 ;;
             esac
           fi
