@@ -19,10 +19,8 @@ done
 
 case $branch in
 *"$development_branch"*)
-  if [[ "$test_mode" != "server" ]] ; then
-    echo "Test warning"": For non-stable branches the test is only run in 'server' mode"
-    exit
-  fi
+  echo "Test warning"": minor upgrade is not executed for development branches (nothing to upgrade from)"
+  exit
   ;;
 esac
 
