@@ -368,6 +368,104 @@ rsync_wrapper() {
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  remove_a_dir_from_the_local_mirror_dir
+#   DESCRIPTION:  This function displays the dirs in the ${dir_local_mirror}
+#                 directory and prompts for a dir to release, repeating until
+#                 you answer 'n'.
+#===============================================================================
+remove_a_dir_from_the_local_mirror_dir() {
+  local done_removing
+  done_removing=""
+  while [ -z ${done_removing} ];do
+    MSG "Releases currently in ${dir_local_mirror}"
+    tree -L 1 ${dir_local_mirror}
+    line
+    userInput "What release should I remove? (e.g. mariadb-10.6.7, s to stop)"
+    release_to_remove="${INPUT}"
+    if [ -z ${release_to_remove} ] ; then
+      MSG "Please enter a release or 's' to stop."
+    else
+      case ${release_to_remove} in
+        s)
+          MSG_L "Stopping..."
+          done_removing='yes'
+          ;;
+        *)
+          if [ -d ${dir_local_mirror}/${release_to_remove} ] ; then
+            userResponse "Ok to remove ${release_to_remove}? [y/n]"
+            case ${ANSWER} in
+              y)
+                MSG_L "Removing ${release_to_remove}..."
+                RC rm -rf ${dir_local_mirror}/${release_to_remove}
+                ;;
+              n)
+                MSG_L "Not removing ${release_to_remove}"
+                ;;
+              *)
+                MSG_L "Please answer [y]es or [n]o."
+                ;;
+            esac
+          else
+            MSG_L "${release_to_remove} doesn't appear to exist, please try again."
+            pressAnyKeyToContinue
+          fi
+          done_removing=""
+          ;;
+      esac
+    fi
+  done
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  copy_the_release_to_the_local_mirror_dir
+#   DESCRIPTION:  Copy the release to the local mirror prep directory
+#===============================================================================
+copy_the_release_to_the_local_mirror_dir() {
+  if [[ -d ${dir_local_mirror}/${dir_name} ]] ; then
+    MSG_L "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
+  else
+    RC cp -ail ${cn_home_org}/${dir_name} ${dir_local_mirror}/
+  fi
+  RC rsync -av ${cn_home_org}/connector-nodejs-current ${dir_local_mirror}/
+  verify_local_mirror_copy_is_good
+}
+
+verify_local_mirror_copy_is_good() {
+  local dry_run_status
+  dry_run_status=""
+  MSG "Doing an rsync dry-run to verify the local mirror copy is good"
+  MSG_L "If rsync doesn't find anything to sync then the copy is good."
+  for dir in ${dir_name} connector-nodejs-current ; do
+    RC rsync --dry-run -avP ${cn_home_org}/${dir} ${dir_local_mirror}/
+    LINE
+  done
+  while [ -z ${dry_run_status} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Local mirror copy is good..."
+        dry_run_status="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Local mirror copy is not good. Something went wrong..."
+        MSG_L "You might want to delete the local mirror copy and re-run this step"
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        dry_run_status=""
+        ;;
+    esac
+  done
+}
+
+
+
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -410,13 +508,11 @@ MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 
-shouldI upload_to_the_primary_mirror
-
 shouldI upload_to_the_corp_mirror
 
-shouldI generate_the_file_list_pickle_for_org_downloads
+shouldI copy_the_release_to_the_local_mirror_dir
 
-shouldI update_the_STATUS_file
+shouldI remove_a_dir_from_the_local_mirror_dir
 
 MSG "All done!"
 echo;echo;echo
