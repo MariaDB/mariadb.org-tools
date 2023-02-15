@@ -128,28 +128,28 @@ stage_files() {
 prep_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
-  RC cp -avi ${cn_home}/${dir_name} ${dir_release}/
-  RC pushd ${dir_release}/${dir_name}
+  RC cp -avi ${cn_home}/${dir_name} ${cn_home_org}/
+  RC pushd ${cn_home_org}/${dir_name}
   sumgen
   for file in *;do
-    RC gpg2 ${gpg_opts} ${file}
+    RC gpg ${gpg_opts} ${file}
   done
   RC popd
   echo;echo;echo
 }
 
 update_org_current_to_this_release() {
-  if [[ -d ${dir_release}/connector-nodejs-current ]]; then
-    RC rm -rf ${dir_release}/connector-nodejs-current
+  if [[ -d ${cn_home_org}/connector-nodejs-current ]]; then
+    RC rm -rf ${cn_home_org}/connector-nodejs-current
   fi
   MSG "Updating current org release to this one..."
-  RC mkdir ${dir_release}/connector-nodejs-current
-  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.tar.gz ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.tar.gz
-  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.zip ${dir_release}/connector-nodejs-current/mariadb-connector-nodejs-current.zip
-  RC pushd ${dir_release}/connector-nodejs-current/
+  RC mkdir ${cn_home_org}/connector-nodejs-current
+  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.tar.gz ${cn_home_org}/connector-nodejs-current/mariadb-connector-nodejs-current.tar.gz
+  RC cp -avi ${cn_home}/${dir_name}/mariadb-connector-nodejs-${release}.zip ${cn_home_org}/connector-nodejs-current/mariadb-connector-nodejs-current.zip
+  RC pushd ${cn_home_org}/connector-nodejs-current/
 	sumgen
 	for file in *;do
-	  RC gpg2 ${gpg_opts} ${file}
+	  RC gpg ${gpg_opts} ${file}
 	done
   RC popd
   echo;echo;echo
@@ -161,7 +161,7 @@ prep_com_files() {
   RC pushd ${cn_home}/${dir_name}
 	sumgen
 	for file in *;do
-	  RC gpg2 ${ent_gpg_opts} ${file}
+	  RC gpg ${ent_gpg_opts} ${file}
 	done
   RC popd
   echo;echo;echo
@@ -171,14 +171,14 @@ upload_to_the_primary_mirror() {
   local upload
   upload=""
   MSG "Doing a dry-run..."
-  RC rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
+  RC rsync --dry-run -av --delete-after ${cn_home_org}/${dir_name} ${cn_home_org}/connector-nodejs-current ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
         MSG "Uploading for real..."
-        RC rsync -av --delete-after ${dir_release}/${dir_name} ${dir_release}/connector-nodejs-current ${primary_mirror}:data/
+        RC rsync -av --delete-after ${cn_home_org}/${dir_name} ${cn_home_org}/connector-nodejs-current ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -270,8 +270,8 @@ generate_the_file_list_pickle_for_org_downloads() {
 #   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
 #===============================================================================
 update_the_STATUS_file() {
-  echo "+ date +%s > ${dir_release}/STATUS"
-          date +%s > ${dir_release}/STATUS
+  echo "+ date +%s > ${cn_home_org}/STATUS"
+          date +%s > ${cn_home_org}/STATUS
   MSG "STATUS file updated"
 }
 
@@ -299,7 +299,8 @@ uploader() {
               rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
               ;;
           esac
-          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${cn_home_org}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${cn_home_org}/connector-nodejs-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;

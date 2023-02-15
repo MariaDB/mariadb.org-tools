@@ -156,11 +156,11 @@ copy_and_stage_files() {
 prep_org_files() {
   # Prep .org files
   MSG "Prepping org files"
-  if [[ ! -d "${dir_release}/${dir_name}" ]];then
-    mkdir -v ${dir_release}/${dir_name}
+  if [[ ! -d "${co_home_org}/${dir_name}" ]];then
+    mkdir -v ${co_home_org}/${dir_name}
   fi
-  cp -avi ${co_home}/${dir_name}/*src* ${dir_release}/${dir_name}/
-  pushd ${dir_release}/${dir_name}
+  cp -avi ${co_home}/${dir_name}/*src* ${co_home_org}/${dir_name}/
+  pushd ${co_home_org}/${dir_name}
     sumgen
     for file in *;do
       echo "+ gpg2 ${gpg_opts} ${file}"
@@ -206,7 +206,7 @@ uploader() {
               rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
               ;;
           esac
-          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${co_home_org}/${dir_name} ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
@@ -280,15 +280,15 @@ upload_to_the_primary_mirror() {
   upload=""
   echo;echo;echo;
   MSG "Doing a dry-run..."
-  echo "+ rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/"
-          rsync --dry-run -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/
+  echo "+ rsync --dry-run -av --delete-after ${co_home_org}/${dir_name} ${primary_mirror}:data/"
+          rsync --dry-run -av --delete-after ${co_home_org}/${dir_name} ${primary_mirror}:data/
   echo;echo;echo
   while [ -z ${upload} ]; do
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        echo "+ rsync -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/"
-                rsync -av --delete-after ${dir_release}/${dir_name} ${primary_mirror}:data/
+        echo "+ rsync -av --delete-after ${co_home_org}/${dir_name} ${primary_mirror}:data/"
+                rsync -av --delete-after ${co_home_org}/${dir_name} ${primary_mirror}:data/
         echo;echo;echo
         upload="yes"
         return 0
@@ -380,8 +380,8 @@ generate_the_file_list_pickle_for_org_downloads() {
 }
 
 update_the_STATUS_file() {
-  echo "+ date +%s > ${dir_release}/STATUS"
-          date +%s > ${dir_release}/STATUS
+  echo "+ date +%s > ${co_home_org}/STATUS"
+          date +%s > ${co_home_org}/STATUS
   MSG "STATUS file updated"
 }
 
