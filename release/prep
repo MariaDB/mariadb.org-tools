@@ -263,7 +263,7 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-fedora35-aarch64:aarch64-fedora-35-rpm-autobake kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
 ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-deb-kinetic-aarch64:aarch64-ubuntu-2210-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
@@ -277,7 +277,7 @@ ci_dirs_1012="${ci_dirs_1011}"
 # Dirs for buildbot.askmonty.org 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles150-amd64:"
+bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
 bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-fedora35-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
@@ -901,12 +901,12 @@ line() {
 
 important_message() {
   message="${@}"
-  echo;echo;thickline;echo "+ ${message}";thickline;
+  echo;echo;thickline;echo -e "+ ${message}";thickline;
 }
 
 message() {
   message="${@}"
-  line;echo "+ ${message}";line;
+  line;echo -e "+ ${message}";line;
 }
 
 lowkey_message() {
@@ -1075,9 +1075,6 @@ pull_this_release_from_the_buildmaster() {
 
   important_message "Transferring files on ${buildmaster} to here"
 
-  # Fix permissions on the buildmaster
-  maybe_fix_permissions
-
   # Create the local directories if they don't exist
   lowkey_message "Making sure local directories exist..."
   if [ ! -d ${dir_archive}/${tree}/build-${tarbuildnum} ]; then
@@ -1223,7 +1220,11 @@ verify_the_ci_download() {
         sed -i '/^$/d' sha256sums.txt
         ;;
     esac
-    runCommand sha256sum --quiet -c sha256sums.txt
+    if [[ -f sha256sums.txt ]] ; then
+      runCommand sha256sum --quiet -c sha256sums.txt
+    else
+      lowkey_message "\e[31m⚠  sha256sums.txt missing for ${shafile}\e[0m"
+    fi
     runCommand popd
     line
   done
@@ -2002,9 +2003,6 @@ eval $(gpg-agent --daemon)
 #-------------------------------------------------------------------------------
 if [ "${create_bintar}" != "no" ]; then
   maybe_create_release_dir      # Create release dirs if they don't exist
-  if ${ci_release}; then
-  maybe_fix_permissions         # fix permissions if needed
-  fi
   pushd ${dir_release}/${dir_name}
   line
   echo "+ transfering bintar & source packages..."
@@ -2358,7 +2356,6 @@ fi
 if [ "${galera_suffix}" != "-galera" ]; then
   if [ "${create_win}" != "no" ]; then
     maybe_create_release_dir
-    #maybe_fix_permissions # fix permissions if they haven't already been fixed
     pushd ${dir_release}/${dir_name}
     line
     echo "+ transfering Windows packages..."
@@ -2390,7 +2387,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
           fi
         else
           message "Packages are on the local filesystem"
-          runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
+          runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
         fi
 
         if ! ${ci_release};then
@@ -2407,7 +2404,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
               runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
               else
                 # Win packages are on the local filesystem
-                runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+                runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
               fi
               ;;
           esac
@@ -2423,9 +2420,6 @@ if [ "${galera_suffix}" != "-galera" ]; then
           runCommand rm -v md5sums.txt*
         fi
       runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
-      else
-        # Win packages are on the local filesystem
-        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt .
       fi
       fi
     done
@@ -2436,17 +2430,7 @@ if [ "${galera_suffix}" != "-galera" ]; then
       if ${ci_release};then
         md5sum ./mariadb* > md5sums.txt
       else
-      runCommand dos2unix md5sums.txt
-      grep ${arch} md5sums.txt > md5sums.txt.tmp
-      mv -v md5sums.txt.tmp md5sums.txt
-      #pwd
-      #cat md5sums.txt
-      #echo
-      #echo
-      #rm -v md5sums.txt
-      #md5sum mariadb* >> md5sums.txt
-      #cat md5sums.txt
-      #echo
+      md5sum mariadb* >> md5sums.txt
       md5sum -c md5sums.txt
       fi
       sha1sum ./mariadb* > sha1sums.txt
