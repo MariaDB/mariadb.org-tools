@@ -331,13 +331,13 @@ if [ "${create_yum}" != "no" ]; then
     case ${DIR} in
       'sles114-amd64'|'sles114-x86')
         # sles114 doesn't support newer sha256 checksums
-        runCommand createrepo -s sha --database --pretty ${DIR}
+        runCommand createrepo_c -s sha --database --pretty ${DIR}
         ;;
       *)
-        runCommand createrepo --database --pretty ${DIR}
+        runCommand createrepo_c --database --pretty ${DIR}
         ;;
     esac
-    #runCommand createrepo --update --database --pretty ${DIR}
+    #runCommand createrepo_c --update --database --pretty ${DIR}
     if [ -e ${DIR}/repodata/repomd.xml.asc ]; then
       runCommand rm -v ${DIR}/repodata/repomd.xml.asc
     fi

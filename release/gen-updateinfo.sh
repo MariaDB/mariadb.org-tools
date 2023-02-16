@@ -5,7 +5,7 @@
 # 1 - put this script into directory with prepared rpms or
 # specify it manually using --repository <PATH_TO_REPO>
 #
-# 2 - 'prepared rpms' means that dir must be already indexed with `createrepo`
+# 2 - 'prepared rpms' means that dir must be already indexed with `createrepo_c`
 # and rpms must be already signed to do not change md5/sha256 sums later
 #
 # 3 - run this script to generate updateinfo xml file

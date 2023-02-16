@@ -790,13 +790,13 @@ prepare_the_yum_repository() {
       'sles114-amd64'|'sles114-x86')
         mv -vi ${dist} ~/ && cd ~/
         # SLES 11 doesn't support newer sha256 checksums
-        RC createrepo -s sha --database --pretty ${dist}
+        RC createrepo_c -s sha --database --pretty ${dist}
         RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
         RC gpg --detach-sign --armor -u ${gpg_key_2016} ${dist}/repodata/repomd.xml
         ;;
       *)
         RC mv -vi ${dist} ~/ && cd ~/
-        RC createrepo --database --pretty ${dist}
+        RC createrepo_c --database --pretty ${dist}
         RC mv -vi ${dist} ${dir_release}/${dir_name}/${repo}/rpm/ && cd ${dir_release}/${dir_name}/${repo}/rpm/
         RC gpg --detach-sign --armor -u ${gpg_key_2016} ${dist}/repodata/repomd.xml
         ;;

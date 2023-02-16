@@ -8,7 +8,7 @@
 
 # DEPENDENCIES:
 # apt-ftparchive
-# createrepo
+# createrepo_c
 
 # NOTE: Right now, this script only supports x86-64!
 
@@ -242,7 +242,7 @@ do_rpms() {
 
   
   # Create the repository
-  createrepo .
+  createrepo_c .
 
   # Copy support files for this repository type.
   cp -Rv "$pwd"/"$os"_files/* .

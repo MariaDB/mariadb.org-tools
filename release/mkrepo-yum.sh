@@ -888,10 +888,10 @@ for DIR in ${dists}; do
   # Create the repository and sign the repomd.xml file
   case ${DIR} in
     'sles114-amd64'|'sles114-x86')
-      runCommand createrepo -s sha --update --database --pretty ${DIR}
+      runCommand createrepo_c -s sha --update --database --pretty ${DIR}
       ;;
     *)
-      runCommand createrepo --update --database --pretty ${DIR}
+      runCommand createrepo_c --update --database --pretty ${DIR}
       ;;
   esac
 
