@@ -6,9 +6,9 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name = "remove_old_build",
         command=["dojob", "pwd && rm -rf" , 
-        WithProperties("d:\\buildbot\\%(buildername)s\\build")],
+        WithProperties("c:\\buildbot\\build\\%(buildername)s\\build")],
         timeout = 4*3600,
-        haltOnFailure = True
+        haltOnFailure = False
   ));
 
   f_win_connector_cpp.addStep(SetPropertyFromCommand(
@@ -33,7 +33,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 15 2017\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DWITH_SSL=SCHANNEL && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win32\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DWITH_SSL=SCHANNEL && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
 #WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 14 2015\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/t http://timestamp.verisign.com/scripts/timstamp.dll -f c:\certs\Mariadb_code_signing_2019.pfx -p Pass1worD!!\" " + cmake_params + " && cmake --build . --config RelWithDebInfo")
 #        WithProperties("cd win32 && del CMakeCache.txt && cmake ..\\src -G \"Visual Studio 14 2015\" -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build . --clean-first --config RelWithDebInfo --target package")
         ],
@@ -45,7 +45,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_64",
         command=["dojob",
 #        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -90,7 +90,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "create_upload_dir",
         command=["dojob",
-        WithProperties("if not exist \"d:\\buildbot\\win-connector_cpp\\build\\%(revision)s\" mkdir d:\\buildbot\\win-connector_cpp\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* d:\\buildbot\\win-connector_cpp\\build\\%(revision)s")]
+        WithProperties("if not exist \"c:\\buildbot\\win-connector_cpp\\build\\%(revision)s\" mkdir c:\\buildbot\\win-connector_cpp\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* c:\\buildbot\\win-connector_cpp\\build\\%(revision)s")]
   ))
 
   f_win_connector_cpp.addStep(ShellCommand(
@@ -104,7 +104,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "build_package_64_debug",
         command=["dojob",
-        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=0 -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
+        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=0 -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
           ],
         haltOnFailure = True
 	));
