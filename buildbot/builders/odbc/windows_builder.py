@@ -33,7 +33,7 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 15 2017\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DWITH_SSL=SCHANNEL -DALL_PLUGINS_STATIC=OFF && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win32\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DWITH_SSL=SCHANNEL -DALL_PLUGINS_STATIC=OFF && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
         ],
         doStepIf= not skip32bit,
         haltOnFailure = True
@@ -78,7 +78,7 @@ ctest --output-on-failure""")
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_64",
         command=["dojob",
-#        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
+#        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 17 2022\" -A\"Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
         WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 15 2017 Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/a\" -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=OFF " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
@@ -87,13 +87,13 @@ ctest --output-on-failure""")
 #  f_win_connector_odbc.addStep(ShellCommand(
 #        name= "sign_packages32",
 #        command=["dojob",
-#        WithProperties("cd win32 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
+#        WithProperties("cd win32 && \"C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
 #  ))
 
 #  f_win_connector_odbc.addStep(ShellCommand(
 #        name= "sign_packages64",
 #        command=["dojob",
-#        WithProperties("cd win64 && \"C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Bin\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
+#        WithProperties("cd win64 && \"C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll wininstall\\*.msi")]
 #  ))
 
   f_win_connector_odbc.addStep(ShellCommand(
