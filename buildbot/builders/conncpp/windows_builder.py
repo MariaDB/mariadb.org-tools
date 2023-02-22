@@ -96,7 +96,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "create_tmp_upload_dir",
         command=["dojob",
-        WithProperties("if not exist \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\bb\\%(buildername)s\\build\\%(revision)s")]
+        WithProperties("if not exist \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s")]
   ))
 
   addPackageUploadStepWin(f_win_connector_cpp, 'win')
@@ -104,7 +104,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "build_package_64_debug",
         command=["dojob",
-        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win64\" -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=0 -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
+        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=0 -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
           ],
         haltOnFailure = True
 	));
