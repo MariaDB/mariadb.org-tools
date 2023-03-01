@@ -3,7 +3,7 @@
 #
 #          FILE:  prep-nodejs
 # 
-#         USAGE:  ./prep-nodejs <version> <file>
+#         USAGE:  ./prep-nodejs <commit> <version> <release>
 # 
 #   DESCRIPTION:  This script is used to prepare files for a MariaDB
 #                 Connector/Node.js release
@@ -16,14 +16,17 @@
 #-------------------------------------------------------------------------------
 #  Variables
 #-------------------------------------------------------------------------------
-version=${1}
+commit=${1}
 
-if [ ! ${2} ];then
+version=${2}
+
+if [ ! ${3} ];then
   release=${version}
 else
-  release=${2}
+  release=${3}
 fi
 
+url_staging="https://github.com/mariadb-corporation/mariadb-connector-nodejs/archive"
 url="https://github.com/MariaDB/mariadb-connector-nodejs/archive"
 dir_name="connector-nodejs-${version}"
 
@@ -109,10 +112,31 @@ shouldI() {
   done
 }
 
-stage_files() {
-  # Stage files
-  MSG "Staging files..."
+prep_files_for_staging() {
+  MSG "Prepping staging files..."
   RC pushd ${cn_home}
+    if [ -d ${dir_name} ] ; then
+      RC rm -rf ${dir_name}
+    fi
+    RC mkdir -v ${dir_name}
+    RC pushd ${dir_name}
+      RC wget -N ${url_staging}/${commit}.tar.gz
+      RC mv -vi ${commit}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
+      RC wget -N ${url_staging}/${commit}.zip
+      RC mv -vi ${commit}.zip mariadb-connector-nodejs-${release}.zip
+    RC popd
+  RC popd
+  echo;echo;echo
+  shouldI prep_com_files
+  shouldI upload_to_the_corp_mirror_staging_dir
+}
+
+prep_files_for_prod() {
+  MSG "Prepping prod files..."
+  RC pushd ${cn_home}
+    if [ -d ${dir_name} ] ; then
+      RC rm -rf ${dir_name}
+    fi
     RC mkdir -v ${dir_name}
     RC pushd ${dir_name}
       RC wget -N ${url}/${release}.tar.gz
@@ -490,7 +514,9 @@ set -eu
   # -x  Print a trace of simple commands and their arguments after they are
   #     expanded and before they are executed.
 
-shouldI stage_files
+shouldI prep_files_for_staging
+
+shouldI prep_files_for_prod
 
 shouldI prep_org_files
 
@@ -498,7 +524,7 @@ shouldI update_org_current_to_this_release
 
 shouldI prep_com_files
 
-shouldI upload_to_the_corp_mirror_staging_dir
+shouldI upload_to_the_corp_mirror
 
 MSG_I "Mirrors"
 for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
@@ -507,8 +533,6 @@ echo;echo
 MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
-
-shouldI upload_to_the_corp_mirror
 
 shouldI copy_the_release_to_the_local_mirror_dir
 
