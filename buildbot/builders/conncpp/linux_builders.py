@@ -95,7 +95,6 @@ bld_buster_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-aarch64",
 bld_bullseye_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_bullseye_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-bullseye-aarch64", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_fedora35_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora35-amd64", "vm-fedora35-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora36_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora37_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora37-amd64", "vm-fedora37-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
