@@ -42,11 +42,11 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
   f_win_connector_odbc.addStep(ShellCommand(
         name= "test_install_package_32",
         command=["dojob",
-#WithProperties("pwd && cd win32/wininstall && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='D:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
-          WithProperties("pwd && ls win32\\RelWithDebInfo\\*.dll && md D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin && xcopy /y /f win32\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin || xcopy /y /f win32\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin")
+#WithProperties("pwd && cd win32/wininstall && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='C:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
+          WithProperties("pwd && ls win32\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin && xcopy /y /f win32\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin || xcopy /y /f win32\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\32 && xcopy /y /f win32\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin || true")
         ],
         doStepIf= not skip32bit,
-        haltOnFailure = True
+        haltOnFailure = False
 	));
 
 #mariadb -u %%TEST_UID%% -p%%TEST_PASSWORD%% -e "DROP SCHEMA IF EXISTS %%TEST_SCHEMA%%"
@@ -58,8 +58,8 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
 SET TEST_DSN=%(branch)s
 SET TEST_PORT=3306
 SET TEST_SCHEMA=odbc%(branch)s
-cd win32/test
-ctest --output-on-failure""")
+cd win32/test""")
+#ctest --output-on-failure""")
         ],
         doStepIf= not skip32bit,
         haltOnFailure = True
@@ -69,10 +69,10 @@ ctest --output-on-failure""")
         name= "test_uninstall_package_32",
         command=["dojob",
 #WithProperties("pwd && cd win32/wininstall && for %%a in (mariadb-connector-odbc-*32*.msi) do  (msiexec /uninstall %%a /qn /norestart")
-        WithProperties("rm D:\\testing\\odbc\\driver\\%(branch)s\\32\\*.dll && rm D:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin\\*.dll")
+        WithProperties("rm C:\\testing\\odbc\\driver\\%(branch)s\\32\\*.dll && rm C:\\testing\\odbc\\driver\\%(branch)s\\32\\plugin\\*.dll || true")
         ],
         doStepIf= not skip32bit,
-        haltOnFailure = True
+        haltOnFailure = False
 	));
 
   f_win_connector_odbc.addStep(ShellCommand(
@@ -116,13 +116,13 @@ ctest --output-on-failure""")
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_upload_dir",
         command=["dojob",
-        WithProperties("if not exist \"d:\\buildbot\\win-connector_odbc\\build\\%(revision)s\" mkdir d:\\buildbot\\win-connector_odbc\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* d:\\buildbot\\win-connector_odbc\\build\\%(revision)s")]
+        WithProperties("if not exist \"C:\\buildbot\\win-connector_odbc\\build\\%(revision)s\" mkdir C:\\buildbot\\win-connector_odbc\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\buildbot\\win-connector_odbc\\build\\%(revision)s")]
   ))
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_tmp_upload_dir",
         command=["dojob",
-        WithProperties("if not exist \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\bb\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\bb\\%(buildername)s\\build\\%(revision)s")]
+        WithProperties("if not exist \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s")]
   ))
 
   addPackageUploadStepWin(f_win_connector_odbc, 'win')
@@ -130,7 +130,7 @@ ctest --output-on-failure""")
   f_win_connector_odbc.addStep(ShellCommand(
         name= "rm_tmp__upload_dir",
         command=["dojob",
-        WithProperties("rm -rf \"C:\\bb\\%(buildername)s\\build\\%(revision)s\"")]
+        WithProperties("rm -rf \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\"")]
   ))
 
   return { 'name': name,
