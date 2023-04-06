@@ -110,11 +110,11 @@ shouldI() {
 copy_and_stage_files() {
   MSG "fixing permissions"
 
-  for dir in $(sudo find ${dir_build} -type d);do
-    sudo chmod -c 755 "${dir}"
+  for dir in $(sudo -u buildbot find ${dir_build} -type d);do
+    sudo -u buildbot chmod -c 755 "${dir}"
   done
-  for file in $(sudo find ${dir_build} -type f);do
-    sudo chmod -c 644 "${file}"
+  for file in $(sudo -u buildbot find ${dir_build} -type f);do
+    sudo -u buildbot chmod -c 644 "${file}"
   done
 
   MSG "Copying and staging files"
