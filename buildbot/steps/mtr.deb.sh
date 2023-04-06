@@ -23,7 +23,7 @@ then
   echo "Warning: Could not install gdb, proceeding without it"
 fi
 
-cd /usr/share/mysql/mysql-test
+cd /usr/share/mysql/mysql-test || cd /usr/share/mariadb/mariadb-test
 
 mtr_opts=" --verbose-restart --force --retry=2 --max-save-core=0 --max-save-datadir=1 --vardir=""$(readlink -f /dev/shm/var)"
 
