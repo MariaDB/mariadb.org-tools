@@ -163,8 +163,8 @@ prep_org_files() {
   pushd ${co_home_org}/${dir_name}
     sumgen
     for file in *;do
-      echo "+ gpg2 ${gpg_opts} ${file}"
-              gpg2 ${gpg_opts} ${file}
+      echo "+ gpg ${gpg_opts} ${file}"
+              gpg ${gpg_opts} ${file}
     done
   popd
   echo;echo;echo
@@ -176,8 +176,8 @@ prep_com_files() {
   pushd ${co_home}/${dir_name}
     sumgen
     for file in *;do
-      echo "+ gpg2 ${ent_gpg_opts} ${file}"
-              gpg2 ${ent_gpg_opts} ${file}
+      echo "+ gpg ${ent_gpg_opts} ${file}"
+              gpg ${ent_gpg_opts} ${file}
     done
   popd
   echo;echo;echo
