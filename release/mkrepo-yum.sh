@@ -453,11 +453,11 @@ for REPONAME in ${dists}; do
 
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*|*10.7*)
-          echo "+ no jemalloc for ${ARCHDIR}"
+        *10.3*|*10.4*)
+      copy_files "${dir_jemalloc}/jemalloc-centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
           ;;
         *)
-      copy_files "${dir_jemalloc}/jemalloc-centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          echo "+ no jemalloc for ${ARCHDIR}"
           ;;
       esac
       copy_files "${dir_libzstd}/centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
@@ -499,11 +499,11 @@ for REPONAME in ${dists}; do
 
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*|*10.7*)
-          echo "+ no jemalloc for ${ARCHDIR}"
+        *10.3*|*10.4*)
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
           ;;
         *)
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          echo "+ no jemalloc for ${ARCHDIR}"
           ;;
       esac
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
@@ -526,11 +526,11 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*|*10.7*)
-          echo "+ no jemalloc for ${ARCHDIR}"
+        *10.3*|*10.4*)
+      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
           ;;
         *)
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          echo "+ no jemalloc for ${ARCHDIR}"
           ;;
       esac
       copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
@@ -572,11 +572,11 @@ for REPONAME in ${dists}; do
       
       # Copy in other files
       case ${ARCHDIR} in
-        *10.5*|*10.6*|*10.7*)
-          echo "+ no jemalloc for ${ARCHDIR}"
+        *10.3*|*10.4*)
+      copy_files "${dir_jemalloc}/jemalloc-centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
           ;;
         *)
-      copy_files "${dir_jemalloc}/jemalloc-centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
+          echo "+ no jemalloc for ${ARCHDIR}"
           ;;
       esac
       copy_files "${dir_libzstd}/centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
