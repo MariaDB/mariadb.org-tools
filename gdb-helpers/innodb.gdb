@@ -112,3 +112,51 @@ end
 document space_list_show_opened_106
 Iterates fil_system.space_list.
 end
+
+define find_page_105
+  set $id=((unsigned long long)$arg0)<<32|$arg1
+  set $chunk=buf_pool.chunks
+  set $i=buf_pool.n_chunks
+  set $found=0
+  while ($i-- && !$found)
+    set $j = $chunk->size
+    set $b = $chunk->blocks
+    while ($j--)
+      if ($b->page.id_.m_id==$id)
+        print $b
+        set $found=1
+        loop_break
+      end
+      set $b++
+    end
+    set $chunk++
+  end
+end
+
+document find_page_105
+Buffer pool look-up: find_page_105 space_id page_no"
+end
+
+define find_page_102
+  set $buf_pool=$arg0
+  set $space=$arg1
+  set $page=$arg2
+
+  set $chunk=$buf_pool->chunks
+  set $i=$buf_pool->n_chunks
+  while ($i--)
+    set $j = $chunk->size
+    set $b = $chunk->blocks
+    while ($j--)
+      if ($b->page.id.m_space==$space && $b->page.id.m_page_no==$page)
+        print $b
+      end
+      set $b++
+    end
+    set $chunk++
+  end
+end
+
+document find_page_102
+Buffer pool look-up: find_page_102 buf_pool_ptr space_id page_no"
+end
