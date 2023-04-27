@@ -120,6 +120,9 @@ prep_files_for_staging() {
     fi
     RC mkdir ${dir_name}
     RC pushd ${dir_name}
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}-sources.jar
+      RC wget -N ${maven}/${version}/mariadb-java-client-${version}.jar
       RC wget -N ${url_staging}/${commit}.tar.gz
       RC mv -vi ${commit}.tar.gz mariadb-connector-j-${version}.tar.gz
       RC wget -N ${url_staging}/${commit}.zip
