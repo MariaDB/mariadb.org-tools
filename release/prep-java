@@ -17,9 +17,12 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-orgmariadbjdbc=${2}
+commit=${2}
+orgmariadbjdbc=${3}
 maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
 
+url_staging="https://github.com/mariadb-corporation/mariadb-connector-j/archive"
+url="https://github.com/MariaDB/mariadb-connector-j/archive"
 dir_name="connector-java-${version}"
 #tarball="mariadb-java-client-${version}.tar.gz"
 tarball="mariadb-java-client-${version}-sources.jar"
@@ -109,13 +112,27 @@ shouldI() {
   done
 }
 
-unzip_and_stage_files() {
-  # Unzip and Stage files
-  MSG "Unzipping and staging files..."
+prep_files_for_staging() {
+  MSG "Prepping staging files..."
   RC pushd ${cj_home}
-    #unzip ${version}*.zip
-    #mv -vi ${version} ${dir_name}
-    #rm -v ${version}*.zip
+    if [ -d ${dir_name} ]; then
+      RC rm -rf ${dir_name}
+    fi
+    RC mkdir ${dir_name}
+    RC pushd ${dir_name}
+      RC wget -N ${url_staging}/${commit}.tar.gz
+      RC mv -vi ${commit}.tar.gz mariadb-connector-j-${version}.tar.gz
+      RC wget -N ${url_staging}/${commit}.zip
+      RC mv -vi ${commit}.zip mariadb-connector-j-${version}.zip
+    RC popd
+  RC popd
+  echo;echo;echo
+}
+
+prep_files_for_prod() {
+  # Unzip and Stage files
+  MSG "Prepping files for prod..."
+  RC pushd ${cj_home}
     if [ -d ${dir_name} ]; then
       RC rm -rf ${dir_name}
     fi
@@ -124,6 +141,10 @@ unzip_and_stage_files() {
       RC wget -N ${maven}/${version}/mariadb-java-client-${version}-javadoc.jar
       RC wget -N ${maven}/${version}/mariadb-java-client-${version}-sources.jar
       RC wget -N ${maven}/${version}/mariadb-java-client-${version}.jar
+      RC wget -N ${url}/${version}.tar.gz
+      RC mv -vi ${version}.tar.gz mariadb-connector-j-${version}.tar.gz
+      RC wget -N ${url}/${version}.zip
+      RC mv -vi ${version}.zip mariadb-connector-j-${version}.zip
     RC popd
   RC popd
   echo;echo;echo
@@ -394,7 +415,9 @@ set -eu
   # -x  Print a trace of simple commands and their arguments after they are
   #     expanded and before they are executed.
 
-shouldI unzip_and_stage_files
+shouldI prep_files_for_staging
+
+shouldI prep_files_for_prod
 
 shouldI prep_org_files
 
