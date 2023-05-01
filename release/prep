@@ -271,6 +271,8 @@ ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
 ci_dirs_1011="${ci_dirs_1010}"
 ci_dirs_1012="${ci_dirs_1011}"
+ci_dirs_110="${ci_dirs_1012}"
+ci_dirs_111="${ci_dirs_110}"
 
 
 #-------------------------------------------------------------------------------
@@ -288,6 +290,8 @@ bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
 bb_dirs_1011="${bb_dirs_1010}"
 bb_dirs_1012="${bb_dirs_1011}"
+bb_dirs_110="${bb_dirs_1012}"
+bb_dirs_111="${bb_dirs_110}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -300,6 +304,8 @@ full_dirs_109="${bb_dirs_109} ${ci_dirs_109}"
 full_dirs_1010="${bb_dirs_1010} ${ci_dirs_1010}"
 full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
 full_dirs_1012="${bb_dirs_1012} ${ci_dirs_1012}"
+full_dirs_110="${bb_dirs_110} ${ci_dirs_110}"
+full_dirs_111="${bb_dirs_111} ${ci_dirs_111}"
 
 
 ## Enterprise builds should not build solaris10 for now
