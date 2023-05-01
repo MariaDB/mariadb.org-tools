@@ -24,8 +24,7 @@ maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadb
 url_staging="https://github.com/mariadb-corporation/mariadb-connector-j/archive"
 url="https://github.com/MariaDB/mariadb-connector-j/archive"
 dir_name="connector-java-${version}"
-#tarball="mariadb-java-client-${version}.tar.gz"
-tarball="mariadb-java-client-${version}-sources.jar"
+tarballs="mariadb-connector-j-3.1.4.tar.gz mariadb-connector-j-3.1.4.zip"
 
 # set location of prep.conf and prep.log to XDG-compatible directories and then
 # create them if they don't exist
@@ -157,7 +156,9 @@ prep_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
   RC mkdir ${cj_home_org}/${dir_name}
-  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/${dir_name}/
+  for tarball in ${tarballs} ; do
+    RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/${dir_name}/
+  done
   RC pushd ${cj_home_org}/${dir_name}
   sumgen
   for file in *;do
@@ -173,7 +174,16 @@ update_org_current_to_this_release() {
   fi
   MSG "Updating current org release to this one..."
   RC mkdir ${cj_home_org}/connector-java-current
-  RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/connector-java-current/mariadb-java-client-current-sources.jar
+  for tarball in ${tarballs} ; do
+    case ${tarball} in
+      *zip)
+        RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/connector-java-current/mariadb-connector-j-current.zip
+        ;;
+      *tar.gz)
+        RC cp -avi ${cj_home}/${dir_name}/${tarball} ${cj_home_org}/connector-java-current/mariadb-connector-j-current.tar.gz
+        ;;
+    esac
+  done
   RC pushd ${cj_home_org}/connector-java-current/
   sumgen
   for file in *;do
@@ -195,36 +205,7 @@ prep_com_files() {
   echo;echo;echo
 }
 
-upload_to_the_primary_mirror() {
-  local upload
-  upload=""
-  MSG "Doing a dry-run..."
-  RC rsync --dry-run -av --delete-after ${cj_home_org}/${dir_name} ${cj_home_org}/connector-java-current ${primary_mirror}:data/
-  echo;echo;echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        MSG "Uploading for real..."
-        RC rsync -av --delete-after ${cj_home_org}/${dir_name} ${cj_home_org}/connector-java-current ${primary_mirror}:data/
-        echo;echo;echo
-        upload="yes"
-        return 0
-        ;;
-      "n")
-        echo "Something went wrong..."
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
-}
-
-upload_to_the_corp_mirror_staging_dir() {
+upload_to_staging() {
   local upload
   upload=""
   MSG "Doing a dry-run..."
@@ -253,7 +234,7 @@ upload_to_the_corp_mirror_staging_dir() {
   done
 }
 
-upload_to_the_corp_mirror() {
+upload_to_prod() {
   local upload
   upload=""
   MSG "Doing a dry-run..."
@@ -428,7 +409,9 @@ shouldI update_org_current_to_this_release
 
 shouldI prep_com_files
 
-shouldI upload_to_the_corp_mirror_staging_dir
+shouldI upload_to_staging
+
+shouldI upload_to_prod
 
 MSG_I "Mirrors"
 for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
@@ -438,13 +421,9 @@ MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 
-shouldI upload_to_the_primary_mirror
+#shouldI generate_the_file_list_pickle_for_org_downloads
 
-shouldI upload_to_the_corp_mirror
-
-shouldI generate_the_file_list_pickle_for_org_downloads
-
-shouldI update_the_STATUS_file
+#shouldI update_the_STATUS_file
 
 MSG "All done!"
 echo;echo;echo
