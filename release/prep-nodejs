@@ -127,8 +127,7 @@ prep_files_for_staging() {
     RC popd
   RC popd
   echo;echo;echo
-  shouldI prep_com_files
-  shouldI upload_to_the_corp_mirror_staging_dir
+  shouldI sign_com_files
 }
 
 prep_files_for_prod() {
@@ -147,9 +146,10 @@ prep_files_for_prod() {
     RC popd
   RC popd
   echo;echo;echo
+  shouldI sign_com_files
 }
 
-prep_org_files() {
+prep_and_sign_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
   RC cp -avi ${cn_home}/${dir_name} ${cn_home_org}/
@@ -179,9 +179,9 @@ update_org_current_to_this_release() {
   echo;echo;echo
 }
 
-prep_com_files() {
+sign_com_files() {
   # Prep .com files
-  MSG "Prepping com files..."
+  MSG "Signing com files..."
   RC pushd ${cn_home}/${dir_name}
 	sumgen
 	for file in *;do
@@ -191,36 +191,7 @@ prep_com_files() {
   echo;echo;echo
 }
 
-upload_to_the_primary_mirror() {
-  local upload
-  upload=""
-  MSG "Doing a dry-run..."
-  RC rsync --dry-run -av --delete-after ${cn_home_org}/${dir_name} ${cn_home_org}/connector-nodejs-current ${primary_mirror}:data/
-  echo;echo;echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        MSG "Uploading for real..."
-        RC rsync -av --delete-after ${cn_home_org}/${dir_name} ${cn_home_org}/connector-nodejs-current ${primary_mirror}:data/
-        echo;echo;echo
-        upload="yes"
-        return 0
-        ;;
-      "n")
-        echo "Something went wrong..."
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
-}
-
-upload_to_the_corp_mirror_staging_dir() {
+upload_to_staging() {
   local upload
   upload=""
   echo;echo;echo;
@@ -249,7 +220,7 @@ upload_to_the_corp_mirror_staging_dir() {
   done
 }
 
-upload_to_the_corp_mirror() {
+upload_to_prod() {
   local upload
   upload=""
   MSG "Doing a dry-run..."
@@ -515,16 +486,13 @@ set -eu
   #     expanded and before they are executed.
 
 shouldI prep_files_for_staging
+shouldI upload_to_staging
 
 shouldI prep_files_for_prod
+shouldI upload_to_prod
 
-shouldI prep_org_files
-
+shouldI prep_and_sign_org_files
 shouldI update_org_current_to_this_release
-
-shouldI prep_com_files
-
-shouldI upload_to_the_corp_mirror
 
 MSG_I "Mirrors"
 for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
@@ -534,8 +502,8 @@ MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 
-shouldI copy_the_release_to_the_local_mirror_dir
 
+shouldI copy_the_release_to_the_local_mirror_dir
 shouldI remove_a_dir_from_the_local_mirror_dir
 
 MSG "All done!"
