@@ -152,7 +152,7 @@ prep_files_for_prod() {
 prep_and_sign_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
-  RC cp -avi ${cn_home}/${dir_name} ${cn_home_org}/
+  RC rsync -av --exclude=*asc ${cn_home}/${dir_name} ${cn_home_org}/
   RC pushd ${cn_home_org}/${dir_name}
   sumgen
   for file in *;do
