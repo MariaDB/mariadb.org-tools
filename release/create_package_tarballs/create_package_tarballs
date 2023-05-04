@@ -42,10 +42,16 @@ set -xe
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
 case $1 in
-  *10.10*|*10.11*)
+  *10.11*|*11.0|*11.1*)
+    debian_ver=( buster bullseye )
+    ubuntu_ver=( bionic focal jammy kinetic lunar )
+    rhel_ver=( 7 8 9 )
+    sles_ver=( 12 15 )
+    ;;
+  *10.10*)
     # need separate 10.10/11 because e.g. 10.10.3 is caught by the next glob
     debian_ver=( buster bullseye )
-    ubuntu_ver=( bionic focal jammy )
+    ubuntu_ver=( bionic focal jammy kinetic )
     rhel_ver=( 7 8 9 )
     sles_ver=( 12 15 )
     ;;
@@ -63,7 +69,7 @@ case $1 in
     ;;
   *)
     debian_ver=( buster bullseye )
-    ubuntu_ver=( bionic focal jammy )
+    ubuntu_ver=( bionic focal jammy kinetic )
     rhel_ver=( 7 8 9 )
     sles_ver=( 12 15 )
     ;;
@@ -111,7 +117,7 @@ do_pkgs() {
 
 
 case $rel in
-  'jammy'|'focal'|'bionic'|'buster'|'bullseye'|'7'|'8'|'9')
+  'lunar'|'kinetic'|'jammy'|'focal'|'bionic'|'buster'|'bullseye'|'7'|'8'|'9')
     case $rel in
       '7')
         altarchs="x86_64"
@@ -170,6 +176,8 @@ do_debs() {
     bionic)   rel_alt=ubu1804 ;;
     focal)    rel_alt=ubu2004 ;;
     jammy)    rel_alt=ubu2204 ;;
+    kinetic)  rel_alt=ubu2210 ;;
+    lunar)    rel_alt=ubu2304 ;;
   esac
 
   for dist in ${rel} ${rel_alt} ; do
