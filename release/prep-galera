@@ -74,6 +74,8 @@ ci_mappings_4="
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
   gal-aarch64-ubuntu-2210:kvm-deb-kinetic-aarch64-gal
+  gal-aarch64-ubuntu-2304:kvm-deb-lunar-aarch64-gal
+        gal-s390x-sles-12:kvm-zyp-sles12-s390x-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
 
@@ -142,6 +144,7 @@ deb_dists_4="
   focal
   jammy
   kinetic
+  lunar
   sid
   trusty
 "
@@ -190,6 +193,9 @@ deb_dists_full_4="
 
   kinetic-aarch64
   kinetic-amd64
+
+  lunar-aarch64
+  lunar-amd64
 
   sid-aarch64
   sid-amd64
@@ -245,6 +251,7 @@ rpm_dists_4="
   rocky84-amd64
 
   sles125-amd64
+  sles12-s390x
   sles15-amd64
   sles15-s390x
 "

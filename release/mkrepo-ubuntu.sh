@@ -117,8 +117,11 @@ case ${ARCHDIR} in
   *10.3*|*10.4*|*10.5*)
     ubuntu_dists="bionic focal"
     ;;
-  *10.6*|*10.7*|*10.8*|*10.9*|*10.10*|*10.11*|*10.12*|*11.0*)
+  *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
     ubuntu_dists="bionic focal jammy kinetic"
+    ;;
+  *10.11*|*10.12*|*11.0*|*11.1*)
+    ubuntu_dists="bionic focal jammy kinetic luna"
     ;;
   *)
     line
@@ -182,12 +185,13 @@ for dist in ${ubuntu_dists}; do
     focal)   dist_alt='ubu2004' ;;
     jammy)   dist_alt='ubu2204' ;;
     kinetic) dist_alt='ubu2210' ;;
+    lunar)   dist_alt='ubu2304' ;;
   esac
 
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'bionic'|'focal'|'jammy'|'kinetic')
+    'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
   esac
@@ -204,7 +208,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'jammy'|'kinetic')
+    'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -246,7 +250,7 @@ for dist in ${ubuntu_dists}; do
 
         # include arm64 (aarch64)
         case ${dist} in
-          'bionic'|'focal'|'jammy'|'kinetic')
+          'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
             ;;
         esac
