@@ -64,7 +64,7 @@ declare -A builder_dir_ci_amd64=(
   [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
   [fedora35]=amd64-fedora-35-rpm-autobake [fedora36]=amd64-fedora-36-rpm-autobake
-  [fedora37]=amd64-fedora-37-rpm-autobake
+  [fedora37]=amd64-fedora-37-rpm-autobake [fedora38]=amd64-fedora-38-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
   [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
 )
@@ -74,7 +74,7 @@ declare -A builder_dir_bb_amd64=(
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora35]=kvm-rpm-fedora35-amd64 [fedora36]=kvm-rpm-fedora36-amd64
-  [fedora37]=kvm-rpm-fedora37-amd64
+  [fedora37]=kvm-rpm-fedora37-amd64 [fedora38]=kvm-rpm-fedora38-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
 )
@@ -86,6 +86,7 @@ declare -A builder_dir_ci_aarch64=(
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [fedora36]=aarch64-fedora-36-rpm-autobake
   [fedora37]=aarch64-fedora-37-rpm-autobake
+  [fedora38]=aarch64-fedora-38-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
   [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
 )
@@ -95,6 +96,7 @@ declare -A builder_dir_bb_aarch64=(
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora36]=kvm-rpm-fedora36-aarch64
   [fedora37]=kvm-rpm-fedora37-aarch64
+  [fedora38]=kvm-rpm-fedora38-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
 )
@@ -122,12 +124,14 @@ declare -A builder_dir_bb_ppc64le=(
 declare -A builder_dir_ci_s390x=(
   [rhel8]=s390x-rhel-8-rpm-autobake
   [rhel9]=s390x-rhel-9-rpm-autobake
+  [sles12]=s390x-sles-12-rpm-autobake
   [sles15]=s390x-sles-15-rpm-autobake
 )
 
 declare -A builder_dir_bb_s390x=(
   [rhel8]=kvm-rpm-rhel8-s390x
   [rhel9]=kvm-rpm-rhel9-s390x
+  [sles12]=kvm-zyp-sles12-s390x
   [sles15]=kvm-zyp-sles15-s390x
 )
 
@@ -156,6 +160,8 @@ case ${ARCHDIR} in
   "
   dists_ci="
     rhel8-aarch64
+
+    sles12-s390x
 
     fedora35-amd64
   "
@@ -229,6 +235,8 @@ case ${ARCHDIR} in
     fedora36-aarch64
     fedora37-amd64
     fedora37-aarch64
+    fedora38-amd64
+    fedora38-aarch64
 
     opensuse15-amd64
 
@@ -836,6 +844,19 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
+    'sles12-s390x')
+      set_builder_dir sles12 s390x
+      runCommand mkdir -vp sles/12/s390x
+      maybe_make_symlink sles/12/s390x sles12-s390x
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
     'sles15-s390x')
       set_builder_dir sles15 s390x
       runCommand mkdir -vp sles/15/s390x
@@ -919,6 +940,9 @@ for DIR in ${dists}; do
       ;;
     fedora37*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 37
+      ;;
+    fedora38*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 38
       ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
