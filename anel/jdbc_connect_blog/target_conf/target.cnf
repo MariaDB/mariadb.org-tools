@@ -1,0 +1,5 @@
+[mysqld]
+plugin_load_add=ha_connect.so
+plugin_dir=/usr/lib/mysql/plugin/
+connect_jvm_path=/usr/lib/jvm/java-11-openjdk-amd64/lib/server/
+connect_class_path=/usr/share/mysql/mysql-test/plugin/connect/connect/std_data/JavaWrappers.jar:/usr/share/java/mariadb-java-client-2.7.4.jar

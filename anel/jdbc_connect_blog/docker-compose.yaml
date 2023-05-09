@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-source
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD="Y"
+    volumes:
+      - ./mariadb_conf:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD', "mariadb-admin", "--password=", "--protocol", "tcp", "ping"]
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-source
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD="Y"
+    volumes:
+      - ./mysql_conf:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD', "mysqladmin", "--password=", "--protocol", "tcp", "ping"]
+
+  jdbc_target:
+    build:
+      context: .
+      args:
+        mariadb_version: "latest"
+      dockerfile: ./Dockerfile
+    container_name: mariadb-target
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD="Y"
+    volumes:
+      - ./target_data/:/docker-entrypoint-initdb.d
+      - ./target_conf/:/etc/mysql/conf.d/
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
