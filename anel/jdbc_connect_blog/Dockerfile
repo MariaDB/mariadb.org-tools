@@ -2,7 +2,7 @@ ARG mariadb_version=latest
 FROM "mariadb:$mariadb_version"
 
 RUN apt-get update && \
-    apt install openjdk-11-jdk-headless \
+    apt install openjdk-11-jre-headless \
                 mariadb-plugin-connect \
                 mariadb-test-data \
                 libmariadb-java -y && \
