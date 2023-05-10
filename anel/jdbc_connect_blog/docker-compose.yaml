@@ -5,19 +5,21 @@ services:
     image: mariadb:latest
     container_name: mariadb-source
     environment:
-      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD="Y"
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+      - MARIADB_DATABASE=db_maria
     volumes:
-      - ./mariadb_conf:/docker-entrypoint-initdb.d
+      - ./mariadb_data:/docker-entrypoint-initdb.d:z
     healthcheck:
-      test: ['CMD', "mariadb-admin", "--password=", "--protocol", "tcp", "ping"]
+      test: ['CMD', "healthcheck.sh", "--connect"]
 
   mysql:
     image: mysql:latest
     container_name: mysql-source
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD="Y"
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_DATABASE=db_mysql
     volumes:
-      - ./mysql_conf:/docker-entrypoint-initdb.d
+      - ./mysql_data:/docker-entrypoint-initdb.d:z
     healthcheck:
       test: ['CMD', "mysqladmin", "--password=", "--protocol", "tcp", "ping"]
 
@@ -29,10 +31,11 @@ services:
       dockerfile: ./Dockerfile
     container_name: mariadb-target
     environment:
-      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD="Y"
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+      - MARIADB_DATABASE=test
     volumes:
-      - ./target_data/:/docker-entrypoint-initdb.d
-      - ./target_conf/:/etc/mysql/conf.d/
+      - ./target_data/:/docker-entrypoint-initdb.d:z
+      - ./target_conf/:/etc/mysql/conf.d/:z
 
     depends_on:
       mariadb:
