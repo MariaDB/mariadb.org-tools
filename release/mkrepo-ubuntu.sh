@@ -61,11 +61,11 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [kinetic]=ubuntu-2210-deb-autobake)
-declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [kinetic]=kvm-deb-kinetic-amd64)
+declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [kinetic]=ubuntu-2210-deb-autobake [lunar]=ubuntu-2304-deb-autobake)
+declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [kinetic]=kvm-deb-kinetic-amd64 [lunar]=kvm-deb-lunar-amd64)
 
-declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [kinetic]=aarch64-ubuntu-2210-deb-autobake)
-declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [kinetic]=kvm-deb-kinetic-aarch64)
+declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [kinetic]=aarch64-ubuntu-2210-deb-autobake [lunar]=aarch64-ubuntu-2304-deb-autobake)
+declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [kinetic]=kvm-deb-kinetic-aarch64 [lunar]=kvm-deb-lunar-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
 declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [jammy]=kvm-deb-jammy-ppc64le)
@@ -121,7 +121,7 @@ case ${ARCHDIR} in
     ubuntu_dists="bionic focal jammy kinetic"
     ;;
   *10.11*|*10.12*|*11.0*|*11.1*)
-    ubuntu_dists="bionic focal jammy kinetic luna"
+    ubuntu_dists="bionic focal jammy kinetic lunar"
     ;;
   *)
     line
