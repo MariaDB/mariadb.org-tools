@@ -63,7 +63,7 @@ declare -A builder_dir_ci_amd64=(
   [centos7]=amd64-centos-7-rpm-autobake
   [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
-  [fedora35]=amd64-fedora-35-rpm-autobake [fedora36]=amd64-fedora-36-rpm-autobake
+  [fedora36]=amd64-fedora-36-rpm-autobake
   [fedora37]=amd64-fedora-37-rpm-autobake [fedora38]=amd64-fedora-38-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
   [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
@@ -73,7 +73,7 @@ declare -A builder_dir_bb_amd64=(
   [centos7]=kvm-rpm-centos74-amd64
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
-  [fedora35]=kvm-rpm-fedora35-amd64 [fedora36]=kvm-rpm-fedora36-amd64
+  [fedora36]=kvm-rpm-fedora36-amd64
   [fedora37]=kvm-rpm-fedora37-amd64 [fedora38]=kvm-rpm-fedora38-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
@@ -150,11 +150,10 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora35-amd64
-
     opensuse15-amd64
 
     sles12-amd64
+    sles12-s390x
     sles15-amd64
     sles15-s390x
   "
@@ -163,7 +162,6 @@ case ${ARCHDIR} in
 
     sles12-s390x
 
-    fedora35-amd64
   "
   dists=${dists_bb}
     ;;
@@ -230,7 +228,6 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora35-amd64
     fedora36-amd64
     fedora36-aarch64
     fedora37-amd64
@@ -241,13 +238,13 @@ case ${ARCHDIR} in
     opensuse15-amd64
 
     sles12-amd64
+    sles12-s390x
     sles15-amd64
     sles15-s390x
   "
   dists_ci="
     rhel8-aarch64
 
-    fedora35-amd64
     fedora36-amd64
   "
   dists=${dists_bb}
@@ -714,16 +711,17 @@ for REPONAME in ${dists}; do
 
     fedora*)
       case ${REPONAME} in
-        fedora35-amd64) fedora_ver=35 ; fedora_arch=amd64 ;;
         fedora36-amd64) fedora_ver=36 ; fedora_arch=amd64 ;;
         fedora37-amd64) fedora_ver=37 ; fedora_arch=amd64 ;;
+        fedora38-amd64) fedora_ver=38 ; fedora_arch=amd64 ;;
 
         fedora36-aarch64) fedora_ver=36 ; fedora_arch=aarch64 ;;
         fedora37-aarch64) fedora_ver=37 ; fedora_arch=aarch64 ;;
+        fedora38-aarch64) fedora_ver=38 ; fedora_arch=aarch64 ;;
 
-        fedora35-ppc64le) fedora_ver=35 ; fedora_arch=ppc64le ;;
         fedora36-ppc64le) fedora_ver=36 ; fedora_arch=ppc64le ;;
         fedora37-ppc64le) fedora_ver=37 ; fedora_arch=ppc64le ;;
+        fedora38-ppc64le) fedora_ver=38 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
@@ -931,9 +929,6 @@ for DIR in ${dists}; do
       ;;
     rhel9*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 9
-      ;;
-    fedora35*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 35
       ;;
     fedora36*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 36
