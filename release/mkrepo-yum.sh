@@ -316,8 +316,8 @@ copy_files() {
   # This function takes as an argument, the file portion of an rsync command
 
   # copy the files from the source to the destination
-  echo "+ rsync -a --info=progress2 --keep-dirlinks ${@}"
-          rsync -a --info=progress2 --keep-dirlinks ${@}
+  echo "+ rsync -a --info=progress2 --keep-dirlinks --exclude=repodata ${@}"
+          rsync -a --info=progress2 --keep-dirlinks --exclude=repodata ${@}
 
 }
 
