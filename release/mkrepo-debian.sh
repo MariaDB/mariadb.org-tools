@@ -248,7 +248,7 @@ case ${TREE} in
   *10.3*|*10.4*)
     debian_dists="buster"
     ;;
-  *10.5*)
+  *10.5*|*10.6*|*10.8*|*10.9*|*10.10*)
     debian_dists="buster bullseye"
     ;;
   *)
@@ -283,8 +283,11 @@ for dist in ${debian_dists}; do
     'jessie')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
-    'buster'|'bullseye'|'sid')
+    'buster'|'bullseye')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
+      ;;
+    'sid')
+      runCommand reprepro --basedir=. --ignore=wrongdistribution --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
     * )
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
@@ -295,16 +298,22 @@ for dist in ${debian_dists}; do
   # add ppc64el files
   builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
-    'buster'|'bullseye'|'sid')
+    'buster'|'bullseye')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      ;;
+    'sid')
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. --ignore=wrongdistribution includedeb ${dist} $i ; done
       ;;
   esac
 
   # add aarch64 files
   builder_dir="builder_dir_${build_type}_aarch64[${builder}]"
   case ${builder} in
-    'buster'|'bullseye'|'sid')
+    'buster'|'bullseye')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+      ;;
+    'sid')
+      for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. --ignore=wrongdistribution includedeb ${dist} $i ; done
       ;;
   esac
 
@@ -315,7 +324,7 @@ for dist in ${debian_dists}; do
         echo "+ no x86 packages for ${builder}"
         ;;
       'sid')
-        for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+        for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. --ignore=wrongdistribution includedeb ${dist} $i ; done
         ;;
     esac
 
