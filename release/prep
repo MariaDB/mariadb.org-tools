@@ -264,12 +264,12 @@ ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
 ci_dirs_105="${ci_dirs_104} kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles12-s390x:s390x-sles-12-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
-ci_dirs_106="${ci_dirs_105} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-deb-kinetic-aarch64:aarch64-ubuntu-2210-deb-autobake"
+ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-deb-kinetic-aarch64:aarch64-ubuntu-2210-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
@@ -282,7 +282,7 @@ ci_dirs_111="${ci_dirs_110}"
 bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-fedora35-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
+bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
 bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-deb-kinetic-amd64: kvm-rpm-fedora36-amd64: kvm-rpm-fedora36-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64:"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
@@ -1387,6 +1387,17 @@ upload_to_the_yum_mirrors() {
   for yum_mirror in ${yum_mirrors} ;do 
     ssh -t -t ${yum_primary_mirror} "set -x;rsync -a --info=progress2 --delete-before ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
   done
+  set +x
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  trigger_the_primary_mirror
+#   DESCRIPTION:  Run the trigger-mariadb command on the primary mirror to
+#                 trigger a sync to the primary mirror's CDN
+#===============================================================================
+trigger_the_primary_mirror() {
+  set -x
+  ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
 }
 
@@ -2603,11 +2614,12 @@ else
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/ubuntu/
-      vi conf/distributions # remove deprecated distros
-      reprepro -V --basedir . --delete clearvanished
+      runCommand vi conf/distributions # remove deprecated distros
+      runCommand reprepro -V --basedir . --delete clearvanished
       # remove the now missing entries from the sum files
       for sum in md5 sha1 sha256 sha512;do
         sed -i '/ppc64el/d' ${sum}sums.txt
+        sed -i '/s390x/d' ${sum}sums.txt
       done
     popd
 
@@ -2792,15 +2804,17 @@ shouldI sync_the_local_mirror_dir_to_the_mirrors
 
 echo;echo;echo;echo
 
-shouldI upload_to_the_yum_mirrors
+#shouldI upload_to_the_yum_mirrors
+#
+#echo;echo;echo;echo
+#
+#shouldI activate_the_yum_repos
+#
+#echo;echo;echo;echo
+#
+#shouldI activate_the_deb_repos
 
-echo;echo;echo;echo
-
-shouldI activate_the_yum_repos
-
-echo;echo;echo;echo
-
-shouldI activate_the_deb_repos
+shouldI trigger_the_primary_mirror
 
 echo;echo;echo;echo
 
