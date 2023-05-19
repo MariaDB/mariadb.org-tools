@@ -23,6 +23,24 @@ services:
     healthcheck:
       test: ['CMD', "mysqladmin", "--password=", "--protocol", "tcp", "ping"]
 
+  oracle:
+    image: oracle/database:18.4.0-xe
+    container_name: oracle-source
+    ports:
+      - 1521:1521
+    environment:
+      - ORACLE_PWD=oracle
+    volumes:
+      - ./oracle_data:/opt/oracle/scripts/startup
+    healthcheck:
+      # test: ['CMD', "$ORACLE_BASE/$CHECK_DB_FILE >/dev/null || exit 1"]
+      # test: ['CMD', "sqlplus", "-L", "system/oracle@//localhost:1521/XE", "@healthcheck.sql"]
+      test: ['CMD',"/opt/oracle/checkDBStatus.sh"]
+      start_period: 5m
+      interval: 2m
+      timeout: 30s
+      retries: 5
+
   jdbc_target:
     build:
       context: .
@@ -41,4 +59,6 @@ services:
       mariadb:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      oracle:
         condition: service_healthy

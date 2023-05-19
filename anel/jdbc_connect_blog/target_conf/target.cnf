@@ -1,4 +1,5 @@
 [mariadb]
 plugin_load_add=ha_connect.so
 connect_jvm_path=/usr/lib/jvm/java-11-openjdk-amd64/lib/server/
-connect_class_path=/usr/share/mysql/mysql-test/plugin/connect/connect/std_data/JavaWrappers.jar:/usr/share/java/mariadb-java-client.jar
+#connect_class_path=/usr/share/mysql/mysql-test/plugin/connect/connect/std_data/JavaWrappers.jar:/usr/share/java/mariadb-java-client.jar:/usr/share/java/ojdbc11.jar
+connect_class_path=/usr/share/mysql/mysql-test/plugin/connect/connect/std_data/JavaWrappers.jar:/usr/share/java/mariadb-java-client.jar:/usr/share/java/ojdbc11.jar
