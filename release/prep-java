@@ -54,6 +54,15 @@ sumgen() {
   DIV
 }
 
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
 userResponse() {
   question="${@}"
   read -p "${question} " -n 1
