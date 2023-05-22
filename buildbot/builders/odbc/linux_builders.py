@@ -163,7 +163,10 @@ connodbc_linux_step1_build
             "slavenames": slaves,
             "category": "connectors"}
 
-bld_codbc_amd64_valgrind= connector_odbc_valgrind_memcheck("codbc-focal-amd64-memcheck", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_amd64_valgrind= connector_odbc_valgrind_memcheck("codbc-focal-amd64-memcheck", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_amd64_asan= build_linux_connector_odbc("codbc-linux-amd64-asan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_ASAN=ON");
+bld_codbc_amd64_ubsan= build_linux_connector_odbc("codbc-linux-amd64-ubsan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_UBSAN=ON");
+bld_codbc_amd64_msan= build_linux_connector_odbc("codbc-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
 
 bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
@@ -180,7 +183,7 @@ bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-am
 bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # We can't install server here or this time-outs with high probability
 
-bld_codbc_jammy_amd64= build_linux_connector_odbc_no_test("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_jammy_amd64= build_linux_connector_odbc("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_aarch64= build_linux_connector_odbc_no_test("codbc-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_codbc_kinetic_amd64= build_linux_connector_odbc_no_test("codbc-kinetic-amd64", "vm-kinetic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");

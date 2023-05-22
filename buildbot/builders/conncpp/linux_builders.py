@@ -68,6 +68,10 @@ conncpp_linux_step4_testsrun
 ######################## bld_linux_connector_cpp - END #####################
 
 ######################## "Normal" builders ######################
+bld_amd64_asan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-asan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_ASAN=ON");
+bld_amd64_ubsan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-ubsan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_UBSAN=ON");
+bld_amd64_msan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
+
 bld_rhel9_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_rhel9_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
 
