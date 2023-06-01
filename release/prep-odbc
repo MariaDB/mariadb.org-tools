@@ -134,6 +134,12 @@ copy_and_stage_files() {
       MSG "ERROR: Linux amd64 files not found"
       exit 3
     fi
+    if cp -avi ${dir_build}/*/*aarch64.tar.gz ${dir_name}/ ; then
+      MSG "Copied Linux aarch64 files"
+    else
+      MSG "ERROR: Linux aarch64 files not found"
+      exit 3
+    fi
     # Windows files
     if cp -avi ${dir_build}/*/*msi ${dir_name}/ ; then
       MSG "Copied Windows files"
