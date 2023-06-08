@@ -1187,6 +1187,7 @@ verify_all_needed_dirs_are_present() {
 copy_ci_downloads_to_buildmaster_dir() {
   verify_all_needed_ci_dirs_are_present
   message "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
+  pressAnyKeyToContinue
 
   for ci_pair in ${!ci_dirs}; do
     ci_dir=(${ci_pair//:/ })
@@ -1923,7 +1924,12 @@ else
   version_nog="mariadb-${num}"
 fi
 
+case ${HOSTNAME} in
+  ${buildmaster} ) ;;
+  *)
 shouldI pull_this_release_from_the_buildmaster
+    ;;
+esac
 
 shouldI pull_this_release_from_ci
 
@@ -2842,8 +2848,13 @@ shouldI generate_the_file_list_pickle_for_org_downloads
 echo;echo;echo;echo
 
 #if [ "${skip_staging}" = "no" ]; then
+case ${HOSTNAME} in
+  ${buildmaster} ) ;;
+  *)
   shouldI upload_this_release_to_the_buildmaster
   echo;echo;echo;echo
+  ;;
+esac
 #fi
   shouldI update_the_STATUS_file
 
