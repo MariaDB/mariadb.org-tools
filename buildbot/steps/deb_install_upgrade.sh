@@ -285,7 +285,6 @@ test_mode=`echo $test_mode | sed -e 's/minor-upgrade-//'`
 if [ "$test_mode" != "install" ] && [[ "$branch" =~ "$development_branch" ]] ; then
   echo "Test warning"": minor upgrade is not executed for development branches (nothing to upgrade from)"
   exit
-  ;;
 fi
 
 set_server_arch
