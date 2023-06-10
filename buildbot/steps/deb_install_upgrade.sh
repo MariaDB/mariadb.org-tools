@@ -548,9 +548,11 @@ fi
 # Make sure that the new server is running
 #================================
 
-if mysql -uroot -prootpass -e "select @@version" | grep `cat /tmp/version.old` ; then
-  echo "ERROR: The server was not upgraded or was not restarted after upgrade"
-  exit 1
+if [ "$test_mode" != "install" ] ; then
+  if mysql -uroot -prootpass -e "select @@version" | grep `cat /tmp/version.old` ; then
+    echo "ERROR: The server was not upgraded or was not restarted after upgrade"
+    exit 1
+  fi
 fi
 
 #===================================================
