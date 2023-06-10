@@ -259,6 +259,16 @@ connectors_tests () {
   done
 }
 
+set_password() {
+  if [[ "$branch" != *"10."[23]* ]] ; then
+  # 10.4+ uses unix_socket by default
+    sudo mysql -e "set password=password('rootpass')"
+  else
+  # Even without unix_socket, on some of VMs the password might be not pre-created as expected. This command should normally fail.
+    mysql -uroot -e "set password = password('rootpass')" >> /dev/null 2>&1
+  fi
+}
+
 ################################
 # End of functions
 ################################
@@ -433,13 +443,8 @@ else
   # Check that the server is functioning and create some structures
   #================================================================
 
-  if [[ "$branch" != *"10."[23]* ]] ; then
-  # 10.4+ uses unix_socket by default
-    sudo mysql -e "set password=password('rootpass')"
-  else
-  # Even without unix_socket, on some of VMs the password might be not pre-created as expected. This command should normally fail.
-    mysql -uroot -e "set password = password('rootpass')" >> /dev/null 2>&1
-  fi
+  # Set pre-defined password for root
+  set_password
 
   # Print "have_xx" capabilitites for the old server
 
@@ -529,26 +534,21 @@ if [ -n "$spider_package_list" ] ; then
   wait_for_mysql_upgrade
 fi
 
-#==========================================================
-# Wait till mysql_upgrade, mysqlcheck and such are finished
-#==========================================================
+# For installation test, set the password to a pre-defined value.
+# For upgrade test, it was already done before upgrade;
+# instead wait for mysql upgrade to avoid clashes, run it again just
+# in case for unstable versions (it shouldn't be necessary upon minor
+# upgrade for stable versions), and then check
+# that the running server has the new version
 
-# Again, wait till mysql_upgrade is finished, to avoid clashes;
-# and for non-stable versions, it might be necessary, so run it again
-# just in case it was omitted
+if [ "$test_mode" == "install" ] ; then
+  set_password
+else
 
-wait_for_mysql_upgrade
-
-# run mysql_upgrade for non GA branches
-if [[ "$major_version" == "$development_branch" ]] ; then
-  sudo mysql_upgrade -uroot -prootpass
-fi
-
-#================================
-# Make sure that the new server is running
-#================================
-
-if [ "$test_mode" != "install" ] ; then
+  wait_for_mysql_upgrade
+  if [[ "$major_version" == "$development_branch" ]] ; then
+    sudo mysql_upgrade -uroot -prootpass
+  fi
   if mysql -uroot -prootpass -e "select @@version" | grep `cat /tmp/version.old` ; then
     echo "ERROR: The server was not upgraded or was not restarted after upgrade"
     exit 1
