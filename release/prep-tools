@@ -211,7 +211,7 @@ upload_to_the_corp_mirror() {
 #   DESCRIPTION:  Transfer files from the local host to the buildmaster
 #===============================================================================
 upload_this_release_to_the_buildmaster() {
-  rsync_wrapper "-av --delete-after --exclude=exclude ${dir_tools}/ ${buildmaster}:${dir_tools}/"
+  rsync_wrapper "-av --delete-after --exclude=exclude ${dir_tools}/ ${buildmaster}:${dir_tools_buildmaster}/"
 }
 
 
@@ -327,6 +327,48 @@ update_mariadb_tools() {
   popd
 }
 
+update_mariadb_shell() {
+  userInput "Which version of MariaDB Shell should I add? (e.g. 23.02.1)"
+  mariadb_shell_ver="${INPUT}"
+
+  message "Downloading the new mariadb-shell files..."
+  rsync_wrapper "-av --delete-after --exclude=exclude --exclude=*.orig ${corp_mirror}:${corp_mariadb_shell_path}/${mariadb_shell_ver} ${dir_mariadb_shell}/"
+
+  pushd ${dir_mariadb_shell}/${mariadb_shell_ver}/
+
+    # Add .deb files to the repository
+    for dist in ${dists_apt}; do
+      case ${dist} in
+        buster)   dist_dir="debian-10-amd64" ;;
+        bullseye) dist_dir="debian-11-amd64" ;;
+        bionic)   dist_dir="ubuntu-1804-amd64" ;;
+        focal)    dist_dir="ubuntu-2004-amd64" ;;
+        jammy)    dist_dir="ubuntu-2204-amd64" ;;
+      esac
+      runCommand reprepro --basedir=${dir_tools}/apt/ --priority standard --keepunreferencedfiles includedeb ${dist} ${dist_dir}/mariadb-shell*.deb
+    done
+
+    # Sign the rpm (in case it hasn't been signed yet)
+    runCommand rpmsign --addsign --key-id=${ent_gpg_key} */mariadb-shell*.rpm
+
+    # Add .rpm file to the repositories
+    for dist in ${dists_rhel}; do
+      # Update the rpm repository
+      pushd ${dir_tools}/rhel/${dist}/
+        pushd x86_64/rpms/
+          runCommand rm -vf mariadb-shell*.rpm
+          runCommand cp -avi ${dir_mariadb_shell}/${mariadb_shell_ver}/rhel-${dist}-x86_64/mariadb-shell*.rpm .
+        popd
+        runCommand createrepo_c --database --pretty x86_64
+        runCommand rm -vf x86_64/repodata/repomd.xml.asc
+        runCommand gpg2 --detach-sign --armor -u ${ent_gpg_key} x86_64/repodata/repomd.xml
+      popd
+    done
+
+  popd
+}
+
+
 div() {
   echo;echo;thickline;echo;echo
 }
@@ -381,6 +423,10 @@ shouldI update_socat
 div
 
 shouldI update_mariadb_tools
+
+div
+
+shouldI update_mariadb_shell
 
 div
 
