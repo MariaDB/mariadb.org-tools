@@ -30,18 +30,6 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
-
-DIV() { echo;echo;LINE;echo;echo;}
-LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
-THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
-RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
-PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
-
-MSG() { LINE;echo "# ${@}";LINE;}
-MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
-MSG_L() { echo "# ${@}";}
-
-
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
 	echo;LINE;echo ${sum};
@@ -66,10 +54,16 @@ loadDefaults() {
       . ${dir_conf}/prep.conf
   else
     echo
-    echo "The file ${dir_conf}/prep.conf does not exist in your home."
-    echo "The prep script creates a default template of this file when run."
+    echo "ERROR: ${dir_conf}/prep.conf preferences file not found"
     echo "Exiting..."
     exit 1
+  fi
+  if [ -f ${dir_conf}/common ]; then
+      . ${dir_conf}/common
+  else
+    echo "ERROR: ${dir_conf}/common functions file not found"
+    echo "Exiting..."
+    exit 2
   fi
 }
 
@@ -182,8 +176,7 @@ prep_com_files() {
   pushd ${co_home}/${dir_name}
     sumgen
     for file in *;do
-      echo "+ gpg ${ent_gpg_opts} ${file}"
-              gpg ${ent_gpg_opts} ${file}
+      RC gpg ${ent_gpg_opts} ${file}
     done
   popd
   echo;echo;echo
@@ -312,7 +305,7 @@ upload_to_the_primary_mirror() {
   done
 }
 
-upload_to_the_corp_mirror_staging_dir() {
+upload_to_staging() {
   local upload
   upload=""
   echo;echo;echo;
@@ -344,7 +337,7 @@ upload_to_the_corp_mirror_staging_dir() {
 }
 
 
-upload_to_the_corp_mirror() {
+upload_to_prod() {
   local upload
   upload=""
   echo;echo;echo;
@@ -423,7 +416,9 @@ shouldI prep_org_files
 echo;echo
 shouldI prep_com_files
 echo;echo
-shouldI upload_to_the_corp_mirror_staging_dir
+shouldI upload_to_staging
+echo;echo
+shouldI upload_to_prod
 echo;echo
 
 MSG_I "Mirrors"
@@ -433,14 +428,7 @@ echo;echo
 MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
-
-shouldI upload_to_the_primary_mirror
 echo;echo
-shouldI upload_to_the_corp_mirror
-echo;echo
-shouldI generate_the_file_list_pickle_for_org_downloads
-echo;echo
-shouldI update_the_STATUS_file
 echo "+ All done!"
 LINE;LINE;LINE
 echo;echo;echo
