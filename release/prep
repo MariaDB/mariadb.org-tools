@@ -9,14 +9,8 @@
 #                where things are when it is time to prepare a release. It also
 #                ensures no steps are forgotten, and prevents many errors.
 # 
-#       OPTIONS: ---
-#  REQUIREMENTS: ---
-#          BUGS: ---
-#         NOTES: ---
-#        AUTHOR: Daniel Bartholomew (db), dbart@mariadb.org
-#  ORGANIZATION: 
+#        AUTHOR: Daniel Bartholomew (dbart), dbart'at'mariadb(dot)com
 #       CREATED: 03/16/2015 20:37
-#      REVISION:  ---
 #===============================================================================
 
 umask 002
