@@ -2,7 +2,7 @@
 
 file=/etc/yum.repos.d/mariadb.repo
 install_cmd='yum install MariaDB-server'
-gpgkey=https://downloads.mariadb.com/MariaDB/yum/RPM-GPG-KEY-MariaDB
+gpgkey=https://supplychain.mariadb.com/MariaDB-Server-GPG-KEY
 
 err() {
   msg=$1

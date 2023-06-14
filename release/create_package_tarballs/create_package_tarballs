@@ -41,6 +41,10 @@ set -xe
 # This is the "matrix" of support OSs/versions. There's no clean support right now
 # for different OSs/versions for different versions of MariaDB Server, but if packages
 # for a particular supported 
+
+rpm_ver_cmapi=( 8 9 )
+deb_ver_cmapi=( bullseye focal jammy kinetic lunar )
+
 case $1 in
   *10.11*|*11.0|*11.1*)
     debian_ver=( buster bullseye )
@@ -181,9 +185,15 @@ do_debs() {
   esac
 
   for dist in ${rel} ${rel_alt} ; do
-  find pool/ \( -name "*${dist}_${arch}.deb" -o -name "*${dist}_all.deb" \) \
-      -a '!' \( -name '*dbg*' -o -name 'mariadb-test*' \) \
-      -exec cp -t "/tmp/$newdir" {} +
+    if [[ ${deb_ver_cmapi[@]} =~ ${rel} ]] ; then
+      find pool/ \( -name "*${dist}_${arch}.deb" -o -name "*${dist}_all.deb" -o -name "*cmapi*${arch}.deb" \) \
+          -a '!' \( -name '*dbg*' -o -name 'mariadb-test*' \) \
+          -exec cp -t "/tmp/$newdir" {} +
+    else
+      find pool/ \( -name "*${dist}_${arch}.deb" -o -name "*${dist}_all.deb" \) \
+          -a '!' \( -name '*dbg*' -o -name 'mariadb-test*' \) \
+          -exec cp -t "/tmp/$newdir" {} +
+    fi
   done
 
   # Hop into the work directory and generate the package metadata.
@@ -191,7 +201,7 @@ do_debs() {
 
   # DEB repos now contains multiple versions, remove all files except the
   # current versions
-  find . -name '*mariadb*' -a '!' -name "*mariadb*${version}*" -exec rm -v {} +
+  find . -name '*mariadb*' -a '!' \( -name "*mariadb*${version}*" -o -name "*cmapi*" \) -exec rm -v {} +
 
   find . -name '*mysql*' -a '!' -name "*mysql*${version}*" -exec rm -v {} +
 
@@ -221,8 +231,8 @@ do_rpms() {
   unset gpgkey
   # Hacky, temporary support for MariaDB Enterprise Server/Cluster packages
   case $dir in
-    *mariadb-enterprise* ) gpgkey=https://downloads.mariadb.com/MariaDB/MariaDB-Enterprise-GPG-KEY ;;
-    * ) gpgkey=https://downloads.mariadb.com/MariaDB/yum/RPM-GPG-KEY-MariaDB ;;
+    *mariadb-enterprise* ) gpgkey=https://supplychain.mariadb.com/MariaDB-Enterprise-GPG-KEY ;;
+    * ) gpgkey=https://supplychain.mariadb.com/MariaDB-Server-GPG-KEY ;;
   esac
   sed -i "0,/gpgkey=/{s#gpgkey=.*#gpgkey=$gpgkey#}" "$pwd"/"$os"_files/setup_repository
 
@@ -234,7 +244,11 @@ do_rpms() {
 
   # RPM repos now contains multiple versions, remove all MariaDB files except
   # the current version
-  find . -name 'MariaDB-*' -a '!' -name "MariaDB*${version}*" -exec rm -v {} +
+  if [[ ${rpm_ver_cmapi[@]} =~ ${rel} ]] ; then
+    find . -name 'MariaDB-*' -a '!' \( -name "MariaDB*${version}*" -o -name "*cmapi*" \) -exec rm -v {} +
+  else
+    find . -name 'MariaDB-*' -a '!' -name "MariaDB*${version}*" -exec rm -v {} +
+  fi
 
   # Also remove old galera versions
   case $version in
