@@ -82,7 +82,7 @@ fi
 #
 # ref package is needed to get required metadata before any file
 # is processed in directory. Cannot be empty
-[[ -z "${REFPACKAGE}" ]] && REFPACKAGE="$(find ${REPOPATH} -type f -name 'MariaDB-server*.rpm' ! -name '*debuginfo*' | tail -n 1)"
+[[ -z "${REFPACKAGE}" ]] && REFPACKAGE="$(find ${REPOPATH} -type f -name 'MariaDB*server*.rpm' ! -name '*debuginfo*' | tail -n 1)"
 [[ -n "${REFPACKAGE}" ]] && echo "=> Reference package is set to ${REFPACKAGE}..."
 
 RPMS=$(find ${REPOPATH} -type f -name '*.rpm')
