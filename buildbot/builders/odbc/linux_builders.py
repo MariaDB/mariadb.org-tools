@@ -179,6 +179,9 @@ bld_codbc_buster_aarch64= build_linux_connector_odbc("codbc-buster-aarch64", "vm
 bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_bullseye_aarch64= build_linux_connector_odbc("codbc-bullseye-aarch64", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
+bld_codbc_bookworm_amd64= build_linux_connector_odbc("codbc-bookworm-amd64", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_bookworm_aarch64= build_linux_connector_odbc("codbc-bookworm-aarch64", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+
 bld_centos7_x64_connector_odbc_new= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # We can't install server here or this time-outs with high probability
