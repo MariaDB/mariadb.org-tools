@@ -330,6 +330,12 @@ echo "Architecture, distribution and version based on VM name: $arch ($server_ar
 echo "Major version $major_version"
 echo "Current test mode: $test_mode"
 
+# TODO-4042
+if [ "$version_name" == "bookworm" ] && [ "$test_mode" != "install" ] ; then
+  echo "Test warning"": Debian 12 Bookworm is a new system, there is nothing to upgrade from yet"
+  exit
+fi
+
 script_path=`readlink -f $0`
 script_home=`dirname $script_path`
 
