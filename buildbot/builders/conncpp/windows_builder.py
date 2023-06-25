@@ -45,7 +45,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_64",
         command=["dojob",
 #        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 10 Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DINSTALL_PLUGINDIR=plugin -DCONC_WITH_UNIT_TESTS=OFF -DWITH_SSL=SCHANNEL" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -112,7 +112,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
   f_win_connector_cpp.addStep(ShellCommand(
         name= "test_with_built_release",
         command=["dojob",
-        WithProperties("cd win64d\\test && ls -l mariadbcpp.dll && copy ..\\..\\win64\\RelWithDebInfo\\mariadbcpp.dll .\\ && ls -l mariadbcpp.dll && ctest --VV")
+        WithProperties("cd win64d\\test && ls -l mariadbcpp.dll && copy ..\\..\\win64\\RelWithDebInfo\\mariadbcpp.dll .\\ && ls -l mariadbcpp.dll && ctest --output-on-failure")
           ],
         haltOnFailure = True
 	));
@@ -130,4 +130,4 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         'factory': f_win_connector_cpp,
         'category': "connectors" }
 
-bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "3.1", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", "v3.1.7", True)
+bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "3.1", "", "v3.1.7", True)
