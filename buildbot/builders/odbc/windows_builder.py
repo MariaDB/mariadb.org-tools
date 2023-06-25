@@ -56,10 +56,11 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
         command=["dojob",
         WithProperties("""
 SET TEST_DSN=%(branch)s
+SET TEST_DRIVER=%(branch)s
 SET TEST_PORT=3306
 SET TEST_SCHEMA=odbc%(branch)s
-cd win32/test""")
-#ctest --output-on-failure""")
+cd win32/test
+ctest --output-on-failure""")
         ],
         doStepIf= not skip32bit,
         haltOnFailure = True
