@@ -6,7 +6,7 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
   f_win_connector_odbc.addStep(ShellCommand(
         name = "remove_old_build",
         command=["dojob", "pwd && rm -rf" , 
-        WithProperties("d:\\buildbot\\%(buildername)s\\build")],
+        WithProperties("d:\\buildbot\\%(buildername)s\\build || true")],
         timeout = 4*3600,
         haltOnFailure = True
   ));
