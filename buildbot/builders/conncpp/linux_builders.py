@@ -1,5 +1,5 @@
 
-################################# bld_linux_connector_oddbc ################################
+################################# bld_linux_connector_cpp ################################
 
 conncpp_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git") + step0_set_test_env
 conncpp_linux_step1_build= step1_build
@@ -68,9 +68,9 @@ conncpp_linux_step4_testsrun
 ######################## bld_linux_connector_cpp - END #####################
 
 ######################## "Normal" builders ######################
-bld_amd64_asan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-asan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_ASAN=ON");
-bld_amd64_ubsan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-ubsan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_UBSAN=ON");
-bld_amd64_msan_connector_cpp= build_linux_connector_odbc("ccpp-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
+bld_amd64_asan_connector_cpp= bld_linux_connector_cpp("ccpp-linux-amd64-asan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_ASAN=ON");
+bld_amd64_ubsan_connector_cpp= bld_linux_connector_cpp("ccpp-linux-amd64-ubsan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_UBSAN=ON");
+bld_amd64_msan_connector_cpp= bld_linux_connector_cpp("ccpp-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
 
 bld_rhel9_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_rhel9_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
@@ -203,5 +203,181 @@ conncpp_linux_step1_build
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-amd64", "vm-sles125-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-amd64", "vm-sles125-amd64", "", " -DWITH_SSL=OPENSSL");
+
+##################### RPM/DEB builders ###################
+
+def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params):
+    linux_connector_cpp= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-install.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_cpp.addStep(Compile(
+        description=["building", "linux-connctor_cpp"],
+        descriptionDone=["build", "linux-connector_cpp"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_checkout + """
+mv ../src/libmariadb ../
+mkdir ../concbuild
+cd ../concbuild
+cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
+cmake --build . --config RelWithDebInfo
+sudo make install
+cd ../build
+cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+conncpp_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
+        ]))
+    linux_connector_cpp.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*rpm`")],
+        ))
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    linux_connector_cpp.addStep(Test(
+        description=["testing", "install"],
+        descriptionDone=["test", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_checkout + """
+mv ../src/libmariadb ../
+mkdir ../concbuild
+cd ../concbuild
+cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
+cmake --build . --config RelWithDebInfo
+sudo make install
+cd ../build
+cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+conncpp_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
+        ]))
+    linux_connector_cpp.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*rpm`")],
+        ))
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    linux_connector_cpp.addStep(Test(
+        description=["testing", "install"],
+        descriptionDone=["test", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" $(find . -name mariadb*cpp*rpm ) buildbot@localhost:buildbot/",
+        WithProperties("""
+set -ex
+ls
+cd buildbot
+ls
+if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
+sudo yum -y --nogpgcheck install %(bindistname)s
+garbd --version
+""")]))
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_cpp,
+            "slavenames": connector_slaves,
+            "category": "connectors"}
+
+def bld_connector_cpp_deb(name, kvm_image, cflags, cmake_params):
+    linux_connector_cpp= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_cpp.addStep(Compile(
+        description=["building", "linux-connctor_cpp"],
+        descriptionDone=["build", "linux-connector_cpp"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_checkout + """
+mv ../src/libmariadb ../
+mkdir ../concbuild
+cd ../concbuild
+cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
+cmake --build . --config RelWithDebInfo
+sudo make install
+cd ../build
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+conncpp_linux_step1_build
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
+        ]))
+    linux_connector_cpp.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*deb`")],
+        ))
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    linux_connector_cpp.addStep(Test(
+        description=["testing", "install"],
+        descriptionDone=["test", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb buildbot@localhost:buildbot/",
+        WithProperties("""
+set -ex
+ls
+cd buildbot
+ls
+for i in 1 2 3 4 5 6 7 8 9 10 ; do
+  if sudo apt-get update ; then
+      break
+  fi
+  echo "Installation warning: apt-get update failed, retrying ($i)"
+  sleep 10
+done
+
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_checkout + """
+rm -rf ../src/libmariadb
+sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y cmake"
+cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" """ + cmake_params + """ ../src
+cmake --build . --config RelWithDebInfo
+""" + conncpp_linux_step2_serverinstall + conncpp_linux_step4_testsrun)]))
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_cpp,
+            "slavenames": connector_slaves,
+            "category": "connectors"}
+
+bld_rhel8_x64_connector_cpp_rpm= bld_connector_cpp_rpm("cpp-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
+
+bld_rhel9_x64_connector_cpp_rpm= bld_connector_cpp_rpm("cpp-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
+
+bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("cpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 
