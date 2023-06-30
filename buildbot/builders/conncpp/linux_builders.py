@@ -330,8 +330,9 @@ cd ../concbuild
 cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
 cmake --build . --config RelWithDebInfo
 sudo make install
+ls /usr/local/lib/*maria* /usr/local/include/maria* || true
 cd ../build
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 conncpp_linux_step1_build
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
@@ -367,7 +368,7 @@ export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 conncpp_linux_step0_checkout + """
 rm -rf ../src/libmariadb
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y cmake"
-cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" """ + cmake_params + """ ../src
+cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" """ + cmake_params + """ ../src
 cmake --build . --config RelWithDebInfo
 """ + conncpp_linux_step2_serverinstall + conncpp_linux_step4_testsrun)]))
     return {'name': name, 'builddir': name,
@@ -375,9 +376,9 @@ cmake --build . --config RelWithDebInfo
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_rhel8_x64_connector_cpp_rpm= bld_connector_cpp_rpm("cpp-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_rhel8_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 
-bld_rhel9_x64_connector_cpp_rpm= bld_connector_cpp_rpm("cpp-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_rhel9_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
-bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("cpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("ccpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 
