@@ -5,8 +5,8 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
 
   f_win_connector_cpp.addStep(ShellCommand(
         name = "remove_old_build",
-        command=["dojob", "pwd" , 
-        WithProperties("rm -rf c:\\buildbot\\build\\%(buildername)s\\build")],
+        command=["dojob", 
+        WithProperties("pwd && ls && rm -rf c:\\buildbot\\build\\%(buildername)s\\build\\* && ls")],
         timeout = 4*3600,
         haltOnFailure = False
   ));
