@@ -332,7 +332,7 @@ cmake --build . --config RelWithDebInfo
 sudo make install
 ls /usr/local/lib/*maria* /usr/local/include/maria* || true
 cd ../build
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS_PRIVATE_DIRS=/usr/local/lib/mariadb""" + cmake_params + """ ../src""" +
 conncpp_linux_step1_build
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
