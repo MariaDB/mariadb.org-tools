@@ -36,7 +36,7 @@ export TEST_VERBOSE=true
 """
 step1_build= """
 cmake --build . --config RelWithDebInfo --target package
-ls -l mariadb-connector-*
+ls -l mariadb-connector-* || ls -l mariadb*deb || ls -l mariadb*rpm
 ls
 """
 step4_testsrun= """
