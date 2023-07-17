@@ -1,0 +1,62 @@
+version: '2'
+services:
+  donor:
+    #build:
+    #  context: ./
+    #  args:
+    #    BASE: quay.io/mariadb-foundation/mariadb-devel:10.6
+    #image: mariadb:test
+    #image: quay.io/mariadb-foundation/mariadb-devel:10.6
+    image: mariadb:10.4
+    environment:
+      MARIADB_ROOT_PASSWORD: secret
+      MARIADB_DATABSE: test
+      MARIADB_USER: test
+      MARIADB_PASSWORD: test
+    command: --wsrep-new-cluster --wsrep-provider=/usr/lib/libgalera_smm.so --wsrep_cluster_address=gcomm://donor --binlog_format=ROW --innodb_autoinc_lock_mode=2 --wsrep_on=ON --wsrep_sst_method=mariabackup --wsrep_sst_auth=root:secret
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+    volumes:
+      - 'donor:/var/lib/mysql'
+  joiner:
+    #image: 'mariadb:test'
+    #image: quay.io/mariadb-foundation/mariadb-devel:10.6
+    image: mariadb:10.4
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+    command: --wsrep-provider=/usr/lib/libgalera_smm.so --wsrep_cluster_address=gcomm://donor --binlog_format=ROW --innodb_autoinc_lock_mode=2 --wsrep_on=ON --wsrep_sst_method=mariabackup --wsrep_sst_auth=root:secret
+    volumes:
+      - 'joiner:/var/lib/mysql'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+    depends_on:
+      donor:
+        condition: service_healthy
+  joiner2:
+    #build:
+    #  context: ./
+    #  args:
+    #    BASE: quay.io/mariadb-foundation/mariadb-devel:10.6
+    #image: mariadb:test_joiner2
+    #image: quay.io/mariadb-foundation/mariadb-devel:10.6
+    image: mariadb:10.4
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+    command: --wsrep-provider=/usr/lib/libgalera_smm.so --wsrep_cluster_address=gcomm://donor --binlog_format=ROW --innodb_autoinc_lock_mode=2 --wsrep_on=ON --wsrep-sst-donor=donor --wsrep_sst_method=mariabackup --wsrep_sst_auth=root:secret
+    volumes:
+      - 'joiner2:/var/lib/mysql'
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--galera"]
+    depends_on:
+      donor:
+        condition: service_healthy
+      joiner:
+        condition: service_healthy
+volumes:
+  donor:
+    driver: local
+  joiner:
+    driver: local
+  joiner2:
+    driver: local
+
