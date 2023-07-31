@@ -1,5 +1,5 @@
 
-################################# bld_linux_connector_oddbc ################################
+execfile("/etc/buildbot/builders/cc-installation.py");
 
 def step0_checkout(reponame):
     return """
