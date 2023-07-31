@@ -1,0 +1,117 @@
+c['schedulers'].append(AnyBranchScheduler(
+    name="connector_odbc_current",
+    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-odbc" : ("master", "develop")}),
+    treeStableTimer=60,
+    builderNames=[
+                  "codbc-centos7-amd64",
+                  "codbc-rhel9-amd64", "codbc-windows",
+                  "codbc-rhel9-aarch64",
+                  "codbc-rhel8-amd64",
+                  "codbc-rhel8-aarch64",
+                  "codbc-rocky8-aarch64",
+                  "codbc-bionic-amd64", "codbc-focal-amd64", "codbc-focal-amd64-deb",
+                  "codbc-bionic-aarch64", "codbc-focal-aarch64",
+                  "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
+                  "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
+                  "codbc-bookworm-aarch64","codbc-bookworm-amd64",
+                  "codbc-kinetic-amd64",
+                  "codbc-lunar-amd64",
+                  "codbc-sles15-amd64", "codbc-sles12-amd64", "codbc-macos",
+                  "codbc-fedora36-amd64", "codbc-fedora37-amd64",
+                  "codbc-fedora38-amd64", "codbc-focal-amd64-memcheck", "codbc-source-package",
+                  "codbc-linux-amd64-asan", "codbc-linux-amd64-ubsan", "codbc-linux-amd64-msan",
+                  ]))
+c['schedulers'].append(AnyBranchScheduler(
+    name="connector_cpp",
+    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-cpp" : ("master", "develop")}),
+    treeStableTimer=60,
+    builderNames=[
+                  "ccpp-centos7-amd64",
+                  "ccpp-rhel8-amd64",
+                  "ccpp-rhel8-aarch64", "ccpp-rocky8-aarch64",
+                  "ccpp-rhel9-amd64",
+                  "ccpp-rhel9-aarch64",
+                  "ccpp-bionic-amd64", "ccpp-focal-amd64",
+                  "ccpp-bionic-aarch64", "ccpp-focal-aarch64",
+                  "ccpp-jammy-amd64", "ccpp-buster-amd64", "ccpp-bullseye-amd64",
+                  "ccpp-jammy-aarch64", "ccpp-buster-aarch64", "ccpp-bullseye-aarch64",
+                  "ccpp-bookworm-aarch64","ccpp-bookworm-amd64",
+                  "ccpp-kinetic-amd64",
+                  "ccpp-lunar-amd64",
+                  "ccpp-sles15-amd64", "ccpp-sles12-amd64", "ccpp-macos", 
+                  "ccpp-fedora36-amd64", "ccpp-fedora37-amd64",
+                  "ccpp-fedora38-amd64",
+                  "ccpp-source-package", "ccpp-windows", "ccpp-linux-amd64-asan", "ccpp-linux-amd64-ubsan", "ccpp-linux-amd64-msan",
+                  "ccpp-focal-amd64-deb","ccpp-rhel9-amd64-rpm",
+                  ]))
+odbccppForceBuilderNames= [
+                           "codbc-source-package"
+                          ,"codbc-centos7-amd64"
+                          ,"codbc-rhel8-amd64"
+                          ,"codbc-rhel8-aarch64"
+                          ,"codbc-rocky8-aarch64"
+                          ,"codbc-rhel9-amd64"
+                          ,"codbc-rhel9-aarch64"
+                          ,"codbc-sles15-amd64"
+                          ,"codbc-sles15-amd64-notest"
+                          ,"codbc-bionic-amd64"
+                          ,"codbc-bionic-aarch64"
+                          ,"codbc-focal-amd64"
+                          ,"codbc-focal-aarch64"
+                          ,"codbc-focal-amd64-deb"
+                          ,"codbc-jammy-amd64"
+                          ,"codbc-jammy-aarch64"
+                          ,"codbc-kinetic-amd64"
+                          ,"codbc-lunar-amd64"
+                          ,"codbc-macos"
+                          ,"codbc-buster-amd64"
+                          ,"codbc-buster-aarch64"
+                          ,"codbc-bullseye-amd64"
+                          ,"codbc-bullseye-aarch64"
+                          ,"codbc-bookworm-amd64"
+                          ,"codbc-bookworm-aarch64"
+                          ,"codbc-fedora36-amd64"
+                          ,"codbc-fedora37-amd64"
+                          ,"codbc-fedora38-amd64"
+                          ,"codbc-sles12-amd64"
+                          ,"codbc-windows"
+                          ,"codbc-focal-amd64-memcheck"
+                          ,"codbc-linux-amd64-asan"
+                          ,"codbc-linux-amd64-ubsan"
+                          ,"codbc-linux-amd64-msan"
+                          ,"codbc-windows-gnutls"
+                          ##########################################################################
+                          ,"ccpp-linux-amd64-asan"
+                          ,"ccpp-linux-amd64-ubsan"
+                          ,"ccpp-linux-amd64-msan"
+                          ,"ccpp-rhel8-amd64"
+                          ,"ccpp-rhel8-aarch64"
+                          ,"ccpp-rocky8-aarch64"
+                          ,"ccpp-rhel9-amd64"
+                          ,"ccpp-rhel9-aarch64"
+                          ,"ccpp-sles15-amd64"
+                          ,"ccpp-bionic-amd64"
+                          ,"ccpp-bionic-aarch64"
+                          ,"ccpp-focal-amd64"
+                          ,"ccpp-focal-aarch64"
+                          ,"ccpp-jammy-amd64"
+                          ,"ccpp-jammy-aarch64"
+                          ,"ccpp-kinetic-amd64"
+                          ,"ccpp-lunar-amd64"
+                          ,"ccpp-buster-amd64"
+                          ,"ccpp-buster-aarch64"
+                          ,"ccpp-bullseye-amd64"
+                          ,"ccpp-bullseye-aarch64"
+                          ,"ccpp-bookworm-amd64"
+                          ,"ccpp-bookworm-aarch64"
+                          ,"ccpp-fedora36-amd64"
+                          ,"ccpp-fedora37-amd64"
+                          ,"ccpp-fedora38-amd64"
+                          ,"ccpp-sles12-amd64"
+                          ,"ccpp-centos7-amd64"
+                          ,"ccpp-windows"
+                          ,"ccpp-macos"
+                          ,"ccpp-source-package"
+                          ,"ccpp-focal-amd64-deb"
+                          ,"ccpp-rhel9-amd64-rpm"
+                          ]

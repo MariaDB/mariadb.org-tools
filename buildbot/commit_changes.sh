@@ -22,6 +22,7 @@ age=7200 # how old, in seconds, the file must be to auto-commit; 7200 = 2 hours
 #file="maria-master.cfg"  # The file this script is monitoring
 files="maria-master.cfg
        builders/bld_xenial_valgrind.py
+       builders/cc-installation.py
        builders/connectors-buildsteps.py
        builders/rpm_fact_extra_steps.py
        builders/server-installation.py
@@ -34,6 +35,8 @@ files="maria-master.cfg
        builders/odbc/linux_builders.py
        builders/odbc/windows_builder.py
        builders/odbc/src_builder.py
+       builders/odbccpp_builders.py
+       builders/odbccpp_schedulers.py
        builders/qa/__init__.py
        builders/qa/qa_builders.py
        builders/qa/qa_schedulers.py"
