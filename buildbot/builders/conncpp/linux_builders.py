@@ -2,6 +2,7 @@
 ################################# bld_linux_connector_cpp ################################
 
 conncpp_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git") + step0_set_test_env
+conncpp_linux_step0_ccinstall= linux_ccinstall
 conncpp_linux_step1_build= step1_build
 conncpp_linux_step2_serverinstall= linux_serverinstall
 conncpp_linux_step3_packagetest= """
@@ -365,20 +366,15 @@ def bld_connector_cpp_deb(name, kvm_image, cflags, cmake_params):
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_ccinstall +
 conncpp_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-cmake --version
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-cmake --build . --config RelWithDebInfo
-sudo make install
-ls /usr/local/lib/*maria* /usr/local/include/maria* || true
+rm -rf ../src/libmariadb
 cd ../build
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCPACK_DEBIAN_PACKAGE_SHLIBDEPS_PRIVATE_DIRS=/usr/local/lib/mariadb -DCMAKE_INSTALL_RPATH=/usr/local/lib/mariadb""" + cmake_params + """ ../src""" +
+#-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 conncpp_linux_step1_build
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb buildbot@localhost:/home/buildbot/build/test/cjportedtests .",
         ]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -392,7 +388,7 @@ conncpp_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb */cjportedtests buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
@@ -409,21 +405,14 @@ done
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 conncpp_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y cmake openssl libssl-dev"
-cmake --version
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-#-DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/openssl"
-cmake --build . --config RelWithDebInfo
-sudo make install
-ls /usr/local/lib/*maria* /usr/local/include/maria* || true
-cd ../build
+ls /usr/lib/*/maria* /usr/include/maria* || true
+#cd ../build
 
-cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" """ + cmake_params + """ ../src
-cmake --build . --config RelWithDebInfo
-""" + conncpp_linux_step2_serverinstall + conncpp_linux_step4_testsrun)]))
+#cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src
+#cmake --build . --config RelWithDebInfo
+""" + conncpp_linux_step2_serverinstall + """
+./cjportedtests
+""")]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": connector_slaves,
