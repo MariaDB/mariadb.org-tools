@@ -80,7 +80,7 @@ make
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_src_connector_odbc= build_src_connector_odbc("codbc-source-package", "vm-buster-amd64");
+bld_codbc_src= build_src_connector_odbc("codbc-source-package", "vm-buster-amd64");
 #sudo apt-get update
 #sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y --force-yes -m unixodbc-dev"
 
