@@ -142,5 +142,5 @@ ctest --output-on-failure""")
         'category': "connectors" }
 
 #bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
-bld_win_connector_odbc_new = bld_windows_connector_odbc("codbc-windows", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", False)
-bld_win_connector_odbc_gnutls = bld_windows_connector_odbc("codbc-windows-gnutls", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", True)
+bld_codbc_windows= bld_windows_connector_odbc("codbc-windows", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", False)
+bld_codbc_windows_gnutls= bld_windows_connector_odbc("codbc-windows-gnutls", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", True)
