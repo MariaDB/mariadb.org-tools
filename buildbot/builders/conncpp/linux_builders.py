@@ -372,9 +372,13 @@ rm -rf ../src/libmariadb
 cd ../build
 #-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
 cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
-conncpp_linux_step1_build
+conncpp_linux_step1_build + """
+mkdir artefacts
+cp mariadb*cpp*deb test/cjportedtests ./artefacts
+ls -l artefacts
+"""
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb buildbot@localhost:/home/buildbot/build/test/cjportedtests .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -388,7 +392,7 @@ conncpp_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb */cjportedtests buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb ./cjportedtests buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
@@ -405,7 +409,7 @@ done
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 conncpp_linux_step0_checkout + """
-ls /usr/lib/*/maria* /usr/include/maria* || true
+ls /usr/lib/*/*maria* /usr/include/maria* || true
 #cd ../build
 
 #cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src
