@@ -2,7 +2,9 @@ serverVersionToInstall= "10.6"
 linux_serverinstall= """
 # Installing server to run tests
 if [ -e /usr/bin/apt ] ; then
-  sudo apt update
+  if ! sudo apt update ; then
+    echo "Warning - apt update failed"
+  fi
 # This package is required to run following script
   sudo apt install -y apt-transport-https
   sudo apt install -y curl
