@@ -926,6 +926,7 @@ rsync_wrapper() {
   upload=""
   rsync_body="${@}"
   lowkey_message "Doing a dry run..."
+  lowkey_message "rsync --dry-run ${rsync_body}"
   runCommand rsync --dry-run ${rsync_body} | less
   echo
   while [ -z ${upload} ]; do
@@ -960,6 +961,7 @@ rsync_wrapper_staging() {
   upload_staging=""
   rsync_body_staging="${@}"
   lowkey_message "Doing a dry run..."
+  lowkey_message "ssh -t -t ${staging_mirror} \"set -x;rsync --dry-run ${rsync_body_staging}\""
   set -x
   ssh -t -t ${staging_mirror} "set -x;rsync --dry-run ${rsync_body_staging} | less"
   set +x
