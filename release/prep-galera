@@ -67,6 +67,7 @@ ci_mappings_4="
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
          gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
     gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
+    gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
@@ -139,6 +140,7 @@ deb_dists_3="
 
 deb_dists_4="
   bionic
+  bookworm
   bullseye
   buster
   focal
@@ -172,6 +174,10 @@ deb_dists_full_4="
   bionic-aarch64
   bionic-amd64
   bionic-ppc64le
+
+  bookworm-aarch64
+  bookworm-amd64
+  bookworm-ppc64le
 
   bullseye-aarch64
   bullseye-amd64
