@@ -272,8 +272,8 @@ for dist in ${ubuntu_dists}; do
     'focal'|'jammy'|'kinetic'|'lunar')
       case ${ARCHDIR} in
         *11.1*)
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb
           ;;
       esac
       ;;

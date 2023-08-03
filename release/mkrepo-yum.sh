@@ -597,7 +597,7 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/8/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
@@ -618,7 +618,7 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/8/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
@@ -666,7 +666,7 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/9/MariaDB-columnstore-cmapi-${ver_cmapi}.aarch64.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
@@ -687,7 +687,7 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/9/MariaDB-columnstore-cmapi-${ver_cmapi}.x86_64.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
