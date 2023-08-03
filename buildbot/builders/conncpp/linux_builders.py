@@ -403,18 +403,15 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do
       break
   fi
   echo "Installation warning: apt-get update failed, retrying ($i)"
-  sleep 10
+  sleep 6
 done
 
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-conncpp_linux_step0_checkout + """
+step0_set_test_env + """
 ls /usr/lib/*/*maria* /usr/include/maria* || true
-#cd ../build
-
-#cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src
-#cmake --build . --config RelWithDebInfo
 """ + conncpp_linux_step2_serverinstall + """
+cd build || true
 ./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
