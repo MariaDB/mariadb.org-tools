@@ -67,8 +67,10 @@ if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
 fi
 
 if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
-  sudo apt update
-  sudo apt install -y apt-transport-https
+  if ! sudo apt update ; then
+    echo "Warning - apt update failed"
+  fi
+#  sudo apt install -y apt-transport-https
   sudo apt install -y mariadb-server
 fi
 
