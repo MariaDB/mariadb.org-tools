@@ -411,7 +411,8 @@ export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 step0_set_test_env + """
 ls /usr/lib/*/*maria* /usr/include/maria* || true
 """ + conncpp_linux_step2_serverinstall + """
-cd build || true
+cd buildbot || true
+ldd ./cjportedtests
 ./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
