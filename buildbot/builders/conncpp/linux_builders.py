@@ -374,7 +374,7 @@ cd ../build
 cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 conncpp_linux_step1_build + """
 mkdir artefacts
-cp mariadb*cpp*deb test/cjportedtests ./artefacts
+cp mariadb*cpp*deb test/cjportedtests test/sql.properties test/cmj-testblob.dat ./artefacts
 ls -l artefacts
 """
 ),
@@ -392,7 +392,7 @@ ls -l artefacts
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb ./cjportedtests buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb ./cjportedtests ./sql.properties ./cmj-testblob.dat buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
