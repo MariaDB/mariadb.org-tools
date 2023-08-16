@@ -58,8 +58,11 @@ gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
 fi
 
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
-  if ! sudo dnf install -y libmariadb-dev; then
-    sudo yum install -y libmariadb-dev
+  if ! sudo dnf install -y ; then
+    sudo yum install -y MariaDB-devel;
+    sudo rpm -ql MariaDB-devel
+  else
+    sudo dnf repoquery -l MariaDB-devel
   fi
 fi
 
@@ -71,7 +74,7 @@ if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
 fi
 
 if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
-  sudo zypper install -y libmariadb-dev
+  sudo zypper install -y MariaDB-shared
 fi
 """
 
