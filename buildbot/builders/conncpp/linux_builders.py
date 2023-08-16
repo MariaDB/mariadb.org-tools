@@ -275,45 +275,19 @@ def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params):
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-conncpp_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-cmake --build . --config RelWithDebInfo
-sudo make install
+conncpp_linux_step0_ccinstall +
+step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git", False) + """
+rm -rf ../src/libmariadb
 cd ../build
-cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-conncpp_linux_step1_build
+#-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
+cmake RPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+conncpp_linux_step1_build + """
+mkdir artefacts
+cp mariadb*cpp*rpm test/cjportedtests test/sql.properties ./artefacts
+ls -l artefacts
+"""
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
-        ]))
-    linux_connector_cpp.addStep(SetPropertyFromCommand(
-        property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*rpm`")],
-        ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
-    linux_connector_cpp.addStep(Test(
-        description=["testing", "install"],
-        descriptionDone=["test", "install"],
-        logfiles={"kernel": "kernel_"+getport()+".log"},
-        env={"TERM": "vt102"},
-        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
-        "rm -Rf buildbot && mkdir buildbot",
-        WithProperties("""
-export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-conncpp_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-cmake --build . --config RelWithDebInfo
-sudo make install
-cd ../build
-cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-conncpp_linux_step1_build
-),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -327,15 +301,23 @@ conncpp_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" $(find . -name mariadb*cpp*rpm ) buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*rpm ./cjportedtests ./sql.properties buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
 cd buildbot
 ls
+rpm -qlp %(bindistname)s
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
 garbd --version
+""" +
+step0_set_test_env + """
+ls /usr/lib/*/*maria* /usr/include/maria* || true
+""" + conncpp_linux_step2_serverinstall + """
+cd buildbot || true
+ldd ./cjportedtests
+./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
@@ -367,14 +349,14 @@ def bld_connector_cpp_deb(name, kvm_image, cflags, cmake_params):
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
 conncpp_linux_step0_ccinstall +
-conncpp_linux_step0_checkout + """
+step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git", False) + """
 rm -rf ../src/libmariadb
 cd ../build
 #-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
 cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 conncpp_linux_step1_build + """
 mkdir artefacts
-cp mariadb*cpp*deb test/cjportedtests test/sql.properties test/cmj-testblob.dat ./artefacts
+cp mariadb*cpp*deb test/cjportedtests test/sql.properties ./artefacts
 ls -l artefacts
 """
 ),
@@ -392,22 +374,22 @@ ls -l artefacts
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb ./cjportedtests ./sql.properties ./cmj-testblob.dat buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*cpp*deb ./cjportedtests ./sql.properties buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
 cd buildbot
 ls
-for i in 1 2 3 4 5 6 7 8 9 10 ; do
+for i in 1 2 3 ; do
   if sudo apt-get update ; then
       break
   fi
   echo "Installation warning: apt-get update failed, retrying ($i)"
   sleep 6
 done
-
+dpkg -L ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
-export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+""" +
 step0_set_test_env + """
 ls /usr/lib/*/*maria* /usr/include/maria* || true
 """ + conncpp_linux_step2_serverinstall + """
