@@ -1,8 +1,8 @@
 
 execfile("/etc/buildbot/builders/cc-installation.py");
 
-def step0_checkout(reponame):
-    return """
+def step0_checkout(reponame, withSubmodule=True):
+    result= """
 set -ex
 if [ -e ~/libssl-dev*.deb ] ; then sudo dpkg -i ~/libssl-dev*.deb ; fi
 git --version
@@ -12,13 +12,17 @@ rm -Rf install_test
 time git clone -b %(branch)s \"""" + reponame +"""" src
 cd src
 ! [ -z "%(revision)s" ] && git reset --hard %(revision)s
-
+"""
+    if withSubmodule:
+        result=result + """
 git submodule init
 git submodule update
 cd libmariadb
 git fetch --all --tags --prune
 git log | head -n5
-cd ../..
+cd .."""
+    return result + """
+cd ..
 mkdir build
 cd build
 
