@@ -3,6 +3,7 @@ connodbc_linux_step0_checkout= step0_checkout("https://github.com/MariaDB-Corpor
 export TEST_DRIVER=maodbc_test
 export TEST_DSN=maodbc_test
 """
+connodbc_linux_step0_ccinstall= linux_ccinstall
 connodbc_linux_step1_build= step1_build
 connodbc_linux_step2_serverinstall= linux_serverinstall
 #Step 3 - package quality test step - to add
@@ -239,18 +240,19 @@ def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-connodbc_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-cmake --build . --config RelWithDebInfo
-sudo make install
+connodbc_linux_step0_ccinstall +
+step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git", False) + """
+rm -rf ../src/libmariadb
 cd ../build
-cmake RPM=On -DCPACK_GENERATOR=RPM -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-connodbc_linux_step1_build
+
+cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build + """
+mkdir artefacts
+cp mariadb*odbc*rpm test/odbc_basic test/odbc*ini ./artefacts
+ls -l artefacts
+"""
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*rpm .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -264,15 +266,29 @@ connodbc_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" $(find . -name mariadb*odbc*rpm ) buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
 cd buildbot
 ls
+rpm -qlp %(bindistname)s
+dnf repoquery -l mariadb-connector-c || true
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
-garbd --version
+""" +
+step0_set_test_env + """
+export TEST_DRIVER=maodbc_test
+export TEST_DSN=maodbc_test
+ls /usr/lib*/*maria* /usr/lib*/*maodbc* /usr/include/maria* || true
+""" + connodbc_linux_step2_serverinstall + """
+cd buildbot || true
+export ODBCINI=$PWD/odbc.ini
+export ODBCSYSINI=$PWD
+cat $ODBCINI
+cat $ODBCSYSINI/odbcinst.ini
+ldd ./odbc_basic
+./odbc_basic
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
@@ -303,18 +319,19 @@ def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params):
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
 export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-connodbc_linux_step0_checkout + """
-mv ../src/libmariadb ../
-mkdir ../concbuild
-cd ../concbuild
-cmake ../libmariadb -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_UNIT_TESTS=Off
-cmake --build . --config RelWithDebInfo
-sudo make install
+connodbc_linux_step0_ccinstall +
+step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git", False) + """
+rm -rf ../src/libmariadb
 cd ../build
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DWITH_UNIT_TESTS=Off -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-connodbc_linux_step1_build
+ 
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
+connodbc_linux_step1_build + """
+mkdir artefacts
+cp mariadb*odbc*deb test/odbc_basic test/odbc*ini ./artefacts
+ls -l artefacts
+"""
 ),
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*deb .",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -328,36 +345,41 @@ connodbc_linux_step1_build
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*deb buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*deb ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
 cd buildbot
 ls
-for i in 1 2 3 4 5 6 7 8 9 10 ; do
+for i in 1 2 3 ; do
   if sudo apt-get update ; then
       break
   fi
   echo "Installation warning: apt-get update failed, retrying ($i)"
-  sleep 10
+  sleep 6
 done
-
+dpkg -c ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y unixodbc"
-export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
-connodbc_linux_step0_checkout + """
-rm -rf ../src/libmariadb
-sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y cmake"
-cmake -DBUILD_TESTS_ONLY=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb" """ + cmake_params + """ ../src
-cmake --build . --config RelWithDebInfo
-""" + connodbc_linux_step2_serverinstall + connodbc_linux_step4_testsrun)]))
+""" +
+step0_set_test_env + """
+export TEST_DRIVER=maodbc_test
+export TEST_DSN=maodbc_test
+ls /usr/lib/*/*maria* /usr/lib/*/*maodbc* || true
+""" + connodbc_linux_step2_serverinstall + """
+cd buildbot || true
+export ODBCINI=$PWD/odbc.ini
+export ODBCSYSINI=$PWD
+cat $ODBCINI
+cat $ODBCSYSINI/odbcinst.ini
+ldd ./odbc_basic
+./odbc_basic
+""")]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
             "slavenames": connector_slaves,
             "category": "connectors"}
 
 bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
-
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
 bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
