@@ -280,7 +280,7 @@ step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git
 rm -rf ../src/libmariadb
 cd ../build
 #-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
-cmake RPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 conncpp_linux_step1_build + """
 mkdir artefacts
 cp mariadb*cpp*rpm test/cjportedtests test/sql.properties ./artefacts
@@ -308,9 +308,9 @@ ls
 cd buildbot
 ls
 rpm -qlp %(bindistname)s
+dnf repoquery -l mariadb-connector-c || true
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
-garbd --version
 """ +
 step0_set_test_env + """
 ls /usr/lib/*/*maria* /usr/include/maria* || true
@@ -387,7 +387,7 @@ for i in 1 2 3 ; do
   echo "Installation warning: apt-get update failed, retrying ($i)"
   sleep 6
 done
-dpkg -L ./%(bindistname)s
+dpkg -c ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 """ +
 step0_set_test_env + """
