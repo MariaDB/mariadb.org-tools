@@ -32,7 +32,7 @@ set -eu
 # Options (set these before running the script)
 #------------------------------------------------------------------------------
 
-dists_apt="bionic bullseye buster focal jammy"
+dists_apt="bionic bullseye bookworm buster focal jammy"
 dists_rhel="7 8 9"
 dists_sles="12 15"
 url_xtrabackup_23="http://repo.percona.com/apt/pool/main/p/percona-xtrabackup"
@@ -341,6 +341,7 @@ update_mariadb_shell() {
       case ${dist} in
         buster)   dist_dir="debian-10-amd64" ;;
         bullseye) dist_dir="debian-11-amd64" ;;
+        bookworm) dist_dir="debian-12-amd64" ;;
         bionic)   dist_dir="ubuntu-1804-amd64" ;;
         focal)    dist_dir="ubuntu-2004-amd64" ;;
         jammy)    dist_dir="ubuntu-2204-amd64" ;;

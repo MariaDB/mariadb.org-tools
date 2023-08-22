@@ -46,8 +46,8 @@ rpm_ver_cmapi=( 8 9 )
 deb_ver_cmapi=( bullseye focal jammy kinetic lunar )
 
 case $1 in
-  *10.11*|*11.0|*11.1*)
-    debian_ver=( buster bullseye )
+  *10.11*|*11.0*|*11.1*|*11.2*)
+    debian_ver=( buster bullseye bookworm )
     ubuntu_ver=( bionic focal jammy kinetic lunar )
     rhel_ver=( 7 8 9 )
     sles_ver=( 12 15 )
@@ -121,7 +121,7 @@ do_pkgs() {
 
 
 case $rel in
-  'lunar'|'kinetic'|'jammy'|'focal'|'bionic'|'buster'|'bullseye'|'7'|'8'|'9')
+  'lunar'|'kinetic'|'jammy'|'focal'|'bionic'|'buster'|'bullseye'|'bookworm'|'7'|'8'|'9')
     case $rel in
       '7')
         altarchs="x86_64"
@@ -177,6 +177,7 @@ do_debs() {
   case ${rel} in
     buster)   rel_alt=deb10   ;;
     bullseye) rel_alt=deb11   ;;
+    bookworm) rel_alt=deb12   ;;
     bionic)   rel_alt=ubu1804 ;;
     focal)    rel_alt=ubu2004 ;;
     jammy)    rel_alt=ubu2204 ;;

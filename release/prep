@@ -282,7 +282,7 @@ bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
-bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64"
+bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64: kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64:"
 bb_dirs_110="${bb_dirs_1011}"
 bb_dirs_111="${bb_dirs_110}"
 
