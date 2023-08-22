@@ -144,7 +144,6 @@ bld_bullseye_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-bullseye-aarch
 bld_bookworm_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-bookworm-amd64", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_bookworm_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-bookworm-aarch64", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_fedora36_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora36-amd64", "vm-fedora36-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora37_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora37-amd64", "vm-fedora37-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora38_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora38-amd64", "vm-fedora38-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 

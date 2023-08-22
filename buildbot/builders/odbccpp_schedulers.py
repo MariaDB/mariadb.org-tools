@@ -18,7 +18,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-kinetic-amd64",
                   "codbc-lunar-amd64",
                   "codbc-sles15-amd64", "codbc-sles12-amd64", "codbc-macos",
-                  "codbc-fedora36-amd64", "codbc-fedora37-amd64",
+                  "codbc-fedora37-amd64",
                   "codbc-fedora38-amd64", "codbc-focal-amd64-memcheck", "codbc-source-package",
                   "codbc-linux-amd64-asan", "codbc-linux-amd64-ubsan", "codbc-linux-amd64-msan",
                   ]))
@@ -40,7 +40,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-kinetic-amd64",
                   "ccpp-lunar-amd64",
                   "ccpp-sles15-amd64", "ccpp-sles12-amd64", "ccpp-macos", 
-                  "ccpp-fedora36-amd64", "ccpp-fedora37-amd64",
+                  "ccpp-fedora37-amd64",
                   "ccpp-fedora38-amd64",
                   "ccpp-source-package", "ccpp-windows", "ccpp-linux-amd64-asan", "ccpp-linux-amd64-ubsan", "ccpp-linux-amd64-msan",
                   "ccpp-focal-amd64-deb","ccpp-rhel9-amd64-rpm",
@@ -69,7 +69,6 @@ odbccppForceBuilderNames= [
                           ,"codbc-bullseye-aarch64"
                           ,"codbc-bookworm-amd64"
                           ,"codbc-bookworm-aarch64"
-                          ,"codbc-fedora36-amd64"
                           ,"codbc-fedora37-amd64"
                           ,"codbc-fedora38-amd64"
                           ,"codbc-sles12-amd64"
@@ -103,7 +102,6 @@ odbccppForceBuilderNames= [
                           ,"ccpp-bullseye-aarch64"
                           ,"ccpp-bookworm-amd64"
                           ,"ccpp-bookworm-aarch64"
-                          ,"ccpp-fedora36-amd64"
                           ,"ccpp-fedora37-amd64"
                           ,"ccpp-fedora38-amd64"
                           ,"ccpp-sles12-amd64"
