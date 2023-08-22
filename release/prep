@@ -267,6 +267,7 @@ ci_dirs_1011="${ci_dirs_1010} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kv
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
+ci_dirs_112="${ci_dirs_111}"
 
 
 #-------------------------------------------------------------------------------
@@ -285,6 +286,7 @@ bb_dirs_1010="${bb_dirs_109}"
 bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64: kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64:"
 bb_dirs_110="${bb_dirs_1011}"
 bb_dirs_111="${bb_dirs_110}"
+bb_dirs_112="${bb_dirs_111}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -298,6 +300,7 @@ full_dirs_1010="${bb_dirs_1010} ${ci_dirs_1010}"
 full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
 full_dirs_110="${bb_dirs_110} ${ci_dirs_110}"
 full_dirs_111="${bb_dirs_111} ${ci_dirs_111}"
+full_dirs_112="${bb_dirs_112} ${ci_dirs_112}"
 
 
 ## Enterprise builds should not build solaris10 for now

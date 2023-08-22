@@ -403,7 +403,7 @@ for dist in ${debian_dists}; do
   case ${dist} in
     "bullseye")
       case ${ARCHDIR} in
-        *11.1*)
+        *11.1*|*11.2*)
           # Copy in CMAPI package
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb

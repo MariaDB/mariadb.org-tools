@@ -120,7 +120,7 @@ case ${ARCHDIR} in
   *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
     ubuntu_dists="bionic focal jammy kinetic"
     ;;
-  *10.11*|*10.12*|*11.0*|*11.1*)
+  *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
     ubuntu_dists="bionic focal jammy kinetic lunar"
     ;;
   *)
@@ -271,7 +271,7 @@ for dist in ${ubuntu_dists}; do
   case ${dist} in
     'focal'|'jammy'|'kinetic'|'lunar')
       case ${ARCHDIR} in
-        *11.1*)
+        *11.1*|*11.2*)
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/${dist}/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb
           ;;
