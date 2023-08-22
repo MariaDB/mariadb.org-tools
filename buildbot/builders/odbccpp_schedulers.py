@@ -15,7 +15,6 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
                   "codbc-bookworm-aarch64","codbc-bookworm-amd64",
-                  "codbc-kinetic-amd64",
                   "codbc-lunar-amd64",
                   "codbc-sles15-amd64", "codbc-sles12-amd64", "codbc-macos",
                   "codbc-fedora37-amd64",
@@ -37,7 +36,6 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-jammy-amd64", "ccpp-buster-amd64", "ccpp-bullseye-amd64",
                   "ccpp-jammy-aarch64", "ccpp-buster-aarch64", "ccpp-bullseye-aarch64",
                   "ccpp-bookworm-aarch64","ccpp-bookworm-amd64",
-                  "ccpp-kinetic-amd64",
                   "ccpp-lunar-amd64",
                   "ccpp-sles15-amd64", "ccpp-sles12-amd64", "ccpp-macos", 
                   "ccpp-fedora37-amd64",
@@ -60,7 +58,6 @@ odbccppForceBuilderNames= [
                           ,"codbc-focal-amd64-deb"
                           ,"codbc-jammy-amd64"
                           ,"codbc-jammy-aarch64"
-                          ,"codbc-kinetic-amd64"
                           ,"codbc-lunar-amd64"
                           ,"codbc-macos"
                           ,"codbc-buster-amd64"
@@ -94,7 +91,6 @@ odbccppForceBuilderNames= [
                           ,"ccpp-focal-aarch64"
                           ,"ccpp-jammy-amd64"
                           ,"ccpp-jammy-aarch64"
-                          ,"ccpp-kinetic-amd64"
                           ,"ccpp-lunar-amd64"
                           ,"ccpp-buster-amd64"
                           ,"ccpp-buster-aarch64"

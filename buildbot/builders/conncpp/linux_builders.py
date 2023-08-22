@@ -131,8 +131,6 @@ bld_focal_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-aarch64", "
 bld_jammy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_jammy_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_kinetic_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-kinetic-amd64", "vm-kinetic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-
 bld_lunar_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-lunar-amd64", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
