@@ -1294,17 +1294,12 @@ copy_the_previous_release_to_the_current_release_on_the_mirrors() {
   echo;echo
 
   message "Primary Mirror"
-  ssh -t -t ${primary_mirror} "set -x ; rsync -a --info=progress2 --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists data/mariadb-${prev_release}/ data/${dir_name}/"
+  ssh -t -t ${primary_mirror} "set -x ; cp -ail data/mariadb-${prev_release} data/${dir_name}"
 
   echo;echo
 
   message "Corp Mirror Staging"
-  ssh -t -t ${corp_mirror} "set -x; rsync -a --info=progress2 --exclude=source --exclude='win*packages' --exclude='bintar*' --exclude=repodata --exclude=db --exclude=dists ${corp_mirror_path}/mariadb-${prev_release}/ ${corp_mirror_path_staging}/${dir_name}/"
-
-  echo;echo
-
-  message "Yum Mirror"
-  ssh -t -t ${yum_primary_mirror} "set -x ; rsync -a --info=progress2 --exclude=repodata --exclude=db --exclude=dists ${yum_mirror_path}/${prev_release}/ ${yum_mirror_path}/${num}/"
+  ssh -t -t ${corp_mirror} "set -x; cp -ail ${corp_mirror_path}/mariadb-${prev_release} ${corp_mirror_path_staging}/${dir_name}"
 
   echo;echo
 
