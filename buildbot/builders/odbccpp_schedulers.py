@@ -9,9 +9,9 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-rhel8-amd64",
                   "codbc-rhel8-aarch64",
                   "codbc-rocky8-aarch64",
-                  "codbc-bionic-amd64", "codbc-focal-amd64", "codbc-focal-amd64-deb",
+                  "codbc-focal-amd64", "codbc-focal-amd64-deb",
                   "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm",
-                  "codbc-bionic-aarch64", "codbc-focal-aarch64",
+                  "codbc-focal-aarch64",
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
                   "codbc-bookworm-aarch64","codbc-bookworm-amd64",
@@ -32,8 +32,8 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-rhel8-aarch64", "ccpp-rocky8-aarch64",
                   "ccpp-rhel9-amd64",
                   "ccpp-rhel9-aarch64",
-                  "ccpp-bionic-amd64", "ccpp-focal-amd64",
-                  "ccpp-bionic-aarch64", "ccpp-focal-aarch64",
+                  "ccpp-focal-amd64",
+                  "ccpp-focal-aarch64",
                   "ccpp-jammy-amd64", "ccpp-buster-amd64", "ccpp-bullseye-amd64",
                   "ccpp-jammy-aarch64", "ccpp-buster-aarch64", "ccpp-bullseye-aarch64",
                   "ccpp-bookworm-aarch64","ccpp-bookworm-amd64",
@@ -55,8 +55,6 @@ odbccppForceBuilderNames= [
                           ,"codbc-rhel9-aarch64"
                           ,"codbc-sles15-amd64"
                           ,"codbc-sles15-amd64-notest"
-                          ,"codbc-bionic-amd64"
-                          ,"codbc-bionic-aarch64"
                           ,"codbc-focal-amd64"
                           ,"codbc-focal-aarch64"
                           ,"codbc-focal-amd64-deb"
@@ -93,8 +91,6 @@ odbccppForceBuilderNames= [
                           ,"ccpp-rhel9-amd64"
                           ,"ccpp-rhel9-aarch64"
                           ,"ccpp-sles15-amd64"
-                          ,"ccpp-bionic-amd64"
-                          ,"ccpp-bionic-aarch64"
                           ,"ccpp-focal-amd64"
                           ,"ccpp-focal-aarch64"
                           ,"ccpp-jammy-amd64"
