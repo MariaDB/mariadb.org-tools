@@ -238,9 +238,14 @@ step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.gi
 rm -rf ../src/libmariadb
 cd ../build
 
-cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-connodbc_linux_step1_build + """
 mkdir artefacts
+cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
+if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
+  make package_source
+  mv *src*rpm ./artefacts/
+fi
+""" +
+connodbc_linux_step1_build + """
 cp mariadb*odbc*rpm test/odbc_basic test/odbc*ini ./artefacts
 ls -l artefacts
 """
@@ -259,7 +264,7 @@ ls -l artefacts
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./*src*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
@@ -269,6 +274,9 @@ rpm -qlp %(bindistname)s
 dnf repoquery -l mariadb-connector-c || true
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
+if ! odbcinst -i -d ; then
+  cat /etc/odbcinst.ini || true
+fi
 """ +
 step0_set_test_env + """
 export TEST_DRIVER=maodbc_test
@@ -353,6 +361,9 @@ for i in 1 2 3 ; do
 done
 dpkg -c ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
+if ! odbcinst -i -d ; then
+  cat /etc/odbcinst.ini || true
+fi
 """ +
 step0_set_test_env + """
 export TEST_DRIVER=maodbc_test
