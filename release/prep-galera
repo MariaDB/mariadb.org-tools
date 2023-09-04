@@ -743,6 +743,7 @@ END
       *aarch64) dist_arch='arm64' ;;
       *ppc64le) dist_arch='ppc64el' ;;
       *x86) dist_arch='i386' ;;
+      *s390x) dist_arch='s390x' ;;
       *)
         echo ${dist}
         echo 'We should not be here. Error with setting ${dist_arch}'
