@@ -254,7 +254,7 @@ ls -l artefacts
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*rpm`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*[^s][^r][^c].rpm`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     linux_connector_odbc.addStep(Test(
@@ -336,7 +336,7 @@ ls -l artefacts
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*deb`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*[^s][^r][^c].deb`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     linux_connector_odbc.addStep(Test(
