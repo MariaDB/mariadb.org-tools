@@ -241,6 +241,7 @@ cd ../build
 mkdir artefacts
 cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
+#  cmake --build . --target=package_source
   make package_source
   mv *src*rpm ./artefacts/
 fi
@@ -258,8 +259,8 @@ ls -l artefacts
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     linux_connector_odbc.addStep(Test(
-        description=["testing", "install"],
-        descriptionDone=["test", "install"],
+        description=["testing bin rpm", "install"],
+        descriptionDone=["test bin rpm", "install"],
         logfiles={"kernel": "kernel_"+getport()+".log"},
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
@@ -271,6 +272,8 @@ ls
 cd buildbot
 ls
 rpm -qlp %(bindistname)s
+rpm -qpR %(bindistname)s
+
 dnf repoquery -l mariadb-connector-c || true
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
@@ -290,6 +293,49 @@ cat $ODBCINI
 cat $ODBCSYSINI/odbcinst.ini
 ldd ./odbc_basic
 ./odbc_basic
+""")]))
+    linux_connector_odbc.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*src*rpm`")],
+        ))
+    addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    linux_connector_odbc.addStep(Test(
+        description=["testing src rpm", "install"],
+        descriptionDone=["test src rpm", "install"],
+        logfiles={"kernel": "kernel_"+getport()+".log"},
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
+        WithProperties("""
+set -ex
+ls
+cd buildbot
+ls
+rpm -qlp %(bindistname)s
+rpm -qpR %(bindistname)s
+if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
+sudo dnf --setopt=install_weak_deps=False install -y rpm-build perl-generators
+sudo dnf --setopt=install_weak_deps=False builddep -y %(bindistname)s || true
+#sudo yum -y --nogpgcheck install %(bindistname)s
+rpmbuild --rebuild %(bindistname)s
+
+if ! odbcinst -i -d ; then
+  cat /etc/odbcinst.ini || true
+fi
+""" +
+step0_set_test_env + """
+export TEST_DRIVER=maodbc_test
+export TEST_DSN=maodbc_test
+ls /usr/lib*/*maria* /usr/lib*/*maodbc* /usr/include/maria* || true
+""" + connodbc_linux_step2_serverinstall + """
+cd buildbot || true
+export ODBCINI=$PWD/odbc.ini
+export ODBCSYSINI=$PWD
+cat $ODBCINI
+cat $ODBCSYSINI/odbcinst.ini
+ldd ./odbc_basic
+#./odbc_basic
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
@@ -324,8 +370,12 @@ connodbc_linux_step0_ccinstall +
 step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git", False) + """
 rm -rf ../src/libmariadb
 cd ../build
+
+LSBID="$(lsb_release -si  | tr '[:upper:]' '[:lower:]')"
+LSBVERSION="$(lsb_release -sr | sed -e "s#\.##g")"
+#LSBNAME="$(lsb_release -sc)"
  
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=${LSBID:0:3}${LSBVERSION} -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 connodbc_linux_step1_build + """
 mkdir artefacts
 cp mariadb*odbc*deb test/odbc_basic test/odbc*ini ./artefacts
