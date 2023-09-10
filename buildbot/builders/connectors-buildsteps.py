@@ -1,4 +1,5 @@
 
+execfile("/etc/buildbot/builders/server-installation.py");
 execfile("/etc/buildbot/builders/cc-installation.py");
 
 def step0_checkout(reponame, withSubmodule=True):
