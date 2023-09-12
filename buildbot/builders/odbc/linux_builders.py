@@ -371,11 +371,7 @@ step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.gi
 rm -rf ../src/libmariadb
 cd ../build
 
-LSBID="$(lsb_release -si  | tr '[:upper:]' '[:lower:]')"
-LSBVERSION="$(lsb_release -sr | sed -e "s#\.##g")"
-#LSBNAME="$(lsb_release -sc)"
- 
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=${LSBID:0:3}${LSBVERSION} -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$ID$VERSION_ID -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 connodbc_linux_step1_build + """
 mkdir artefacts
 cp mariadb*odbc*deb test/odbc_basic test/odbc*ini ./artefacts
