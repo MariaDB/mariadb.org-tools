@@ -1,5 +1,13 @@
 serverVersionToInstall= "10.6"
-linux_serverinstall= """
+
+debubuntu_versionid= """
+if LSB_VID=$(lsb_release -sr 2> /dev/null); then
+  VERSION_ID=$(sed -e "s/\.//g" <<< "$LSB_VID")
+  ID=$(lsb_release -si  | tr '[:upper:]' '[:lower:]')
+  ID=${ID:0:3}
+fi
+"""
+linux_repoinstall= """
 # Installing server to run tests
 if [ -e /usr/bin/apt ] ; then
   if ! sudo apt update ; then
@@ -10,7 +18,14 @@ if [ -e /usr/bin/apt ] ; then
   sudo apt install -y curl
 fi
 
-case $HOSTNAME in rhel*) sudo subscription-manager refresh ;; esac
+case $HOSTNAME in rhel*)
+  ID=rhel
+  VERSION_ID=$(cat /etc/redhat-release | awk '{print $6}' | sed -e "s/\..*//g")
+
+  sudo subscription-manager refresh 
+  if [ $VERSION_ID == 9 ]; then
+    sudo subscription-manager repos --enable=codeready-builder-for-rhel-9-x86_64-rpms
+  fi ;; esac
 
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --skip-maxscale; then
   if [ -e /etc/fedora-release ]; then
@@ -58,7 +73,9 @@ gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
     sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu hirsute main'
   fi
 fi
+""" + debubuntu_versionid
 
+linux_serverinstall= linux_repoinstall + """
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
   if ! sudo dnf install -y MariaDB-server ; then
     sudo yum install -y MariaDB-server
