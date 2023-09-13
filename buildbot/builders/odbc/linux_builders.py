@@ -239,7 +239,7 @@ rm -rf ../src/libmariadb
 cd ../build
 
 mkdir artefacts
-cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DCMAKE_C_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-I/usr/include/mariadb -I/usr/include/mysql" -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
+cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
 #  cmake --build . --target=package_source
   make package_source
