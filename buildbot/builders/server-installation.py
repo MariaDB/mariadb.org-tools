@@ -75,7 +75,7 @@ gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
 fi
 """ + debubuntu_versionid
 
-linux_serverinstall= linux_repoinstall + """
+linux_shallow_serverinstall= """
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
   if ! sudo dnf install -y MariaDB-server ; then
     sudo yum install -y MariaDB-server
@@ -106,4 +106,6 @@ echo $SOCKETPATH
 
 cd ..
 """
+
+linux_serverinstall= linux_repoinstall + linux_shallow_serverinstall
 
