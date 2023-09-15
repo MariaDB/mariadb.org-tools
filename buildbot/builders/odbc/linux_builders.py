@@ -274,7 +274,8 @@ ls
 rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
 
-dnf repoquery -l mariadb-connector-c || true
+#dnf repoquery -l mariadb-connector-c || true
+
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo yum -y --nogpgcheck install %(bindistname)s
 if ! odbcinst -i -d ; then
@@ -316,8 +317,8 @@ rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo dnf --setopt=install_weak_deps=False install -y rpm-build perl-generators
+""" + linux_repoinstall + """
 sudo dnf --setopt=install_weak_deps=False builddep -y %(bindistname)s || true
-#sudo yum -y --nogpgcheck install %(bindistname)s
 rpmbuild --rebuild %(bindistname)s
 
 if ! odbcinst -i -d ; then
@@ -328,7 +329,7 @@ step0_set_test_env + """
 export TEST_DRIVER=maodbc_test
 export TEST_DSN=maodbc_test
 ls /usr/lib*/*maria* /usr/lib*/*maodbc* /usr/include/maria* || true
-""" + connodbc_linux_step2_serverinstall + """
+""" + linux_shallow_serverinstall + """
 cd buildbot || true
 export ODBCINI=$PWD/odbc.ini
 export ODBCSYSINI=$PWD
