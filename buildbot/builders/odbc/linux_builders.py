@@ -237,25 +237,28 @@ connodbc_linux_step0_ccinstall +
 step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git", False) + """
 rm -rf ../src/libmariadb
 cd ../build
-
 mkdir artefacts
+mkdir rpms srpms
 cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
 #  cmake --build . --target=package_source
   make package_source
-  mv *src*rpm ./artefacts/
+  mv *src*rpm ./srpms/
 fi
 """ +
 connodbc_linux_step1_build + """
-cp mariadb*odbc*rpm test/odbc_basic test/odbc*ini ./artefacts
+mv mariadb*odbc*rpm rpms
+mv test/odbc_basic test/odbc*ini ./artefacts
 ls -l artefacts
 """
 ),
+        "= rm -Rf rpms srpms && mkdir rpms srpms",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/*rpms . && ls ./*rpms",
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*[^s][^r][^c].rpm`")],
+        command=["sh", "-c", WithProperties("cp rpms/*rpm ./ > /dev/null && basename `ls mariadb*odbc*.rpm`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     linux_connector_odbc.addStep(Test(
@@ -265,7 +268,7 @@ ls -l artefacts
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./*src*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" rpms/mariadb*odbc*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
@@ -297,7 +300,7 @@ ldd ./odbc_basic
 """)]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*src*rpm`")],
+        command=["sh", "-c", WithProperties("cp srpms/*rpm ./ > /dev/null && basename `ls mariadb*odbc*src*rpm`")],
         ))
     addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
     linux_connector_odbc.addStep(Test(
@@ -307,7 +310,7 @@ ldd ./odbc_basic
         env={"TERM": "vt102"},
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-install.qcow2"] + args + ["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" */mariadb*odbc*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" rpms srpms/*rpm ./odbc_basic ./odbc*ini buildbot@localhost:buildbot/",
         WithProperties("""
 set -ex
 ls
@@ -320,7 +323,19 @@ sudo dnf --setopt=install_weak_deps=False install -y rpm-build perl-generators
 """ + linux_repoinstall + """
 sudo dnf --setopt=install_weak_deps=False builddep -y %(bindistname)s || true
 rpmbuild --rebuild %(bindistname)s
+# removing source rpm - it's not needed any more
+ls
+rm %(bindistname)s
+ls ./*.rpm ./rpmbuild/RPMS || true
+# compare requirements to ensure rebuilt rpms got all libraries right
+echo rpms/*.rpm           |xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//; /MariaDB-compat/d'|sort -u>requires-vendor.txt
+echo ~/rpmbuild/RPMS/*.rpm|xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//                   '|sort -u>requires-rebuilt.txt
+diff -u requires-*.txt
 
+# check if rpm filenames match (won't be true on centos7)
+# and if they do, compare more, e.g. file lists and scriptlets
+
+echo "All done"
 if ! odbcinst -i -d ; then
   cat /etc/odbcinst.ini || true
 fi
