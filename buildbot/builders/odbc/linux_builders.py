@@ -330,6 +330,9 @@ ls ./*.rpm ./rpmbuild/RPMS || true
 # compare requirements to ensure rebuilt rpms got all libraries right
 echo rpms/*.rpm           |xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//; /MariaDB-compat/d'|sort -u>requires-vendor.txt
 echo ~/rpmbuild/RPMS/*.rpm|xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//                   '|sort -u>requires-rebuilt.txt
+cat requires-vendor.txt
+echo "------------------------"
+cat requires-rebuilt.txt
 diff -u requires-*.txt
 
 # check if rpm filenames match (won't be true on centos7)
