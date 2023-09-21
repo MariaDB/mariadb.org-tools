@@ -268,7 +268,10 @@ def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params):
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
-export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+export CFLAGS="${CFLAGS}"""+ cflags + """"
+mkdir padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX
+cd padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX
+""" +
 conncpp_linux_step0_ccinstall +
 step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git", False) + """
 rm -rf ../src/libmariadb
@@ -290,8 +293,8 @@ ls -l artefacts
 """
 ),
         "= rm -Rf rpms srpms && mkdir rpms srpms",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/*rpms . && ls ./*rpms",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/build/*rpms . && ls ./*rpms",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
@@ -326,7 +329,7 @@ ldd ./cjportedtests
 """)]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("cp srpms/*rpm ./ > /dev/null && basename `ls mariadb*odbc*src*rpm`")],
+        command=["sh", "-c", WithProperties("cp srpms/*rpm ./ > /dev/null && basename `ls mariadb*src*rpm`")],
         ))
     addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
     linux_connector_cpp.addStep(Test(
@@ -446,7 +449,8 @@ ls /usr/lib/*/*maria* /usr/include/maria* || true
 """ + conncpp_linux_step2_serverinstall + """
 cd buildbot || true
 ldd ./cjportedtests
-./cjportedtests
+# if we want to run tests yet here - we need to install or copy libmariadbcpp.so to some foundable location
+#./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
