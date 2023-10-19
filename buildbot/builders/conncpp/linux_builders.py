@@ -133,6 +133,8 @@ bld_jammy_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-aarch64", "
 
 bld_lunar_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-lunar-amd64", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
+bld_mantic_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-mantic-amd64", "vm-mantic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+
 bld_buster_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-amd64", "vm-buster-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_buster_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-buster-aarch64", "vm-buster-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
