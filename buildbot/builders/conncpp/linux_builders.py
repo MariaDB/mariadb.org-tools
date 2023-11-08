@@ -146,6 +146,7 @@ bld_bookworm_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-bookworm-aarch
 
 bld_fedora37_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora37-amd64", "vm-fedora37-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_fedora38_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora38-amd64", "vm-fedora38-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_fedora39_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-fedora39-amd64", "vm-fedora39-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 ##################### Building with the hack for platforms with old gcc ##################
 
