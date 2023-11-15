@@ -258,35 +258,37 @@ ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
 ci_dirs_105="${ci_dirs_104} kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles12-s390x:s390x-sles-12-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
-ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-deb-kinetic-aarch64:aarch64-ubuntu-2210-deb-autobake"
+ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake kvm-deb-mantic-aarch64:aarch64-ubuntu-2310-deb-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
 ci_dirs_112="${ci_dirs_111}"
+ci_dirs_113="${ci_dirs_112}"
 
 
 #-------------------------------------------------------------------------------
-# Dirs for buildbot.askmonty.org 
+# Dirs for buildbot.mariadb.net 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-deb-bionic-aarch64: kvm-deb-bionic-amd64: kvm-deb-bionic-ppc64le: kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
+bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
 bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
 bb_dirs_104="${bb_dirs_103}"
 bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
-bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-deb-kinetic-amd64: kvm-rpm-fedora36-amd64: kvm-rpm-fedora36-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64:"
+bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora36-amd64: kvm-rpm-fedora36-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64:"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
-bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64: kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64:"
+bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64: kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64: kvm-deb-mantic-amd64:"
 bb_dirs_110="${bb_dirs_1011}"
 bb_dirs_111="${bb_dirs_110}"
 bb_dirs_112="${bb_dirs_111}"
+bb_dirs_113="${bb_dirs_112}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -301,6 +303,7 @@ full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
 full_dirs_110="${bb_dirs_110} ${ci_dirs_110}"
 full_dirs_111="${bb_dirs_111} ${ci_dirs_111}"
 full_dirs_112="${bb_dirs_112} ${ci_dirs_112}"
+full_dirs_113="${bb_dirs_113} ${ci_dirs_113}"
 
 
 ## Enterprise builds should not build solaris10 for now
@@ -627,7 +630,7 @@ sync_the_local_mirror_dir_to_the_mirrors() {
   local dests
   local rsync_local_mirror_opts
   dests="${mirrors}"
-  rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig --exclude=sync_from_netcologne.txt"
+  rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig --exclude=zoneinfo --exclude=sync_from_netcologne.txt"
 
   # update the TIME file just before we start uploading
   date +%s > ${dir_local_mirror}/TIME

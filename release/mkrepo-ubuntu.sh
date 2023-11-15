@@ -61,20 +61,20 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([bionic]=ubuntu-1804-deb-autobake [focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [kinetic]=ubuntu-2210-deb-autobake [lunar]=ubuntu-2304-deb-autobake)
-declare -A builder_dir_bb_amd64=([bionic]=kvm-deb-bionic-amd64 [focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [kinetic]=kvm-deb-kinetic-amd64 [lunar]=kvm-deb-lunar-amd64)
+declare -A builder_dir_ci_amd64=([focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [lunar]=ubuntu-2304-deb-autobake [mantic]=ubuntu-2310-deb-autobake)
+declare -A builder_dir_bb_amd64=([focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [lunar]=kvm-deb-lunar-amd64 [mantic]=kvm-deb-mantic-amd64)
 
-declare -A builder_dir_ci_aarch64=([bionic]=aarch64-ubuntu-1804-deb-autobake [focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [kinetic]=aarch64-ubuntu-2210-deb-autobake [lunar]=aarch64-ubuntu-2304-deb-autobake)
-declare -A builder_dir_bb_aarch64=([bionic]=kvm-deb-bionic-aarch64 [focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [kinetic]=kvm-deb-kinetic-aarch64 [lunar]=kvm-deb-lunar-aarch64)
+declare -A builder_dir_ci_aarch64=([focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [lunar]=aarch64-ubuntu-2304-deb-autobake [mantic]=aarch64-ubuntu-2310-deb-autobake)
+declare -A builder_dir_bb_aarch64=([focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [lunar]=kvm-deb-lunar-aarch64 [mantic]=kvm-deb-mantic-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([bionic]=pc9-ubuntu-1804-deb-autobake [focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([bionic]=kvm-deb-bionic-ppc64le [focal]=kvm-deb-focal-ppc64le [jammy]=kvm-deb-jammy-ppc64le)
+declare -A builder_dir_ci_ppc64le=([focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([focal]=kvm-deb-focal-ppc64le [jammy]=kvm-deb-jammy-ppc64le)
 
 declare -A builder_dir_ci_s390x=([focal]=s390x-ubuntu-2004-deb-autobake [jammy]=s390x-ubuntu-2204-deb-autobake)
 declare -A builder_dir_bb_s390x=([focal]=kvm-deb-focal-s390x [jammy]=kvm-deb-jammy-s390x)
 
-declare -A builder_dir_ci_x86=([bionic]=32bit-ubuntu-1804-deb-autobake [focal]=32bit-ubuntu-2004-deb-autobake)
-declare -A builder_dir_bb_x86=([bionic]=kvm-deb-bionic-x86 [focal]=kvm-deb-focal-x86)
+declare -A builder_dir_ci_x86=([focal]=32bit-ubuntu-2004-deb-autobake)
+declare -A builder_dir_bb_x86=([focal]=kvm-deb-focal-x86)
 
 #-------------------------------------------------------------------------------
 #  Functions
@@ -112,16 +112,16 @@ loadDefaults() {
 # Set the appropriate dists based on the ${ARCHDIR} of the packages
 case ${ARCHDIR} in
   *10.2*)
-    ubuntu_dists="bionic"
+    ubuntu_dists=""
     ;;
   *10.3*|*10.4*|*10.5*)
-    ubuntu_dists="bionic focal"
+    ubuntu_dists="focal"
     ;;
   *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
-    ubuntu_dists="bionic focal jammy kinetic"
+    ubuntu_dists="focal jammy"
     ;;
   *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
-    ubuntu_dists="bionic focal jammy kinetic lunar"
+    ubuntu_dists="focal jammy lunar mantic"
     ;;
   *)
     line
@@ -181,17 +181,16 @@ for dist in ${ubuntu_dists}; do
   line
 
   case ${dist} in
-    bionic)  dist_alt='ubu1804' ;;
     focal)   dist_alt='ubu2004' ;;
     jammy)   dist_alt='ubu2204' ;;
-    kinetic) dist_alt='ubu2210' ;;
     lunar)   dist_alt='ubu2304' ;;
+    mantic)  dist_alt='ubu2310' ;;
   esac
 
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
+    'focal'|'jammy'|'lunar'|'mantic')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
   esac
@@ -199,7 +198,7 @@ for dist in ${ubuntu_dists}; do
   # Include ppc64le debs
   builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'jammy')
+    'focal'|'jammy')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -208,7 +207,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
+    'focal'|'jammy'|'lunar'|'mantic')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -243,24 +242,21 @@ for dist in ${ubuntu_dists}; do
 
         # include ppc64le
         case ${dist} in
-          'bionic'|'focal'|'jammy')
+          'focal'|'jammy')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'bionic'|'focal'|'jammy'|'kinetic'|'lunar')
+          'focal'|'jammy'|'lunar'|'mantic')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
             ;;
         esac
 
         # include s390x
         case ${dist} in
-          'focal')
-            runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*focal*_s390x.changes
-            ;;
-          'jammy')
+          'focal'|'jammy')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist_filename}*_s390x.changes
             ;;
         esac
@@ -269,12 +265,17 @@ for dist in ${ubuntu_dists}; do
 
   # Copy in CMAPI package
   case ${dist} in
-    'focal'|'jammy'|'kinetic'|'lunar')
+    'focal'|'jammy'|'lunar'|'mantic')
       case ${ARCHDIR} in
-        *11.1*|*11.2*)
+        *11.1*)
           # should be ${dist}, but currently we use jammy package (Aug 2023)
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/jammy/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/jammy/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*arm64.deb
+          ;;
+        *11.2*|*11.3*)
+          # should be ${dist}, but currently we use jammy package (Aug 2023)
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.2*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.2*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*arm64.deb
           ;;
       esac
       ;;
