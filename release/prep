@@ -2603,7 +2603,7 @@ else
     # remove ppc64el from repo config and update repo
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/debian/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/debian/
-      vi conf/distributions   # delete sid, if necessary
+      editor conf/distributions   # delete sid, if necessary
       reprepro -V --basedir . --delete clearvanished
       # remove the now missing entries from the sum files
       for sum in md5 sha1 sha256 sha512;do
@@ -2660,7 +2660,7 @@ else
     sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
     pushd ${dir_corp}/${dir_name}/repo/ubuntu/
-      runCommand vi conf/distributions # remove deprecated distros
+      runCommand editor conf/distributions # remove deprecated distros
       runCommand reprepro -V --basedir . --delete clearvanished
       # remove the now missing entries from the sum files
       for sum in md5 sha1 sha256 sha512;do
