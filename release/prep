@@ -2881,9 +2881,9 @@ case $tree in
     ;;
 esac
 
-echo;echo;echo;echo
-
-shouldI generate_the_file_list_pickle_for_org_downloads
+#echo;echo;echo;echo
+#
+#shouldI generate_the_file_list_pickle_for_org_downloads
 
 echo;echo;echo;echo
 
@@ -2896,7 +2896,7 @@ case ${HOSTNAME} in
   ;;
 esac
 #fi
-  shouldI update_the_STATUS_file
+#  shouldI update_the_STATUS_file
 
 echo "+ all done!"
 echo;echo;echo;echo
