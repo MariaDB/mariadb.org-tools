@@ -71,11 +71,12 @@ ci_mappings_4="
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
+   gal-x86-debian-sid:kvm-deb-sid-x86-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
-  gal-aarch64-ubuntu-2210:kvm-deb-kinetic-aarch64-gal
   gal-aarch64-ubuntu-2304:kvm-deb-lunar-aarch64-gal
+  gal-aarch64-ubuntu-2310:kvm-deb-mantic-aarch64-gal
         gal-s390x-sles-12:kvm-zyp-sles12-s390x-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
@@ -132,14 +133,12 @@ done
 shift $(($OPTIND - 1))
 
 deb_dists_3="
-  bionic
   buster
   focal
   trusty
 "
 
 deb_dists_4="
-  bionic
   bookworm
   bullseye
   buster
@@ -152,10 +151,6 @@ deb_dists_4="
 "
 
 deb_dists_full_3="
-  bionic-aarch64
-  bionic-amd64
-  bionic-ppc64le
-
   buster-aarch64
   buster-amd64
   buster-ppc64le
@@ -171,10 +166,6 @@ deb_dists_full_3="
 
 
 deb_dists_full_4="
-  bionic-aarch64
-  bionic-amd64
-  bionic-ppc64le
-
   bookworm-aarch64
   bookworm-amd64
   bookworm-ppc64le
@@ -197,11 +188,11 @@ deb_dists_full_4="
   jammy-ppc64le
   jammy-s390x
 
-  kinetic-aarch64
-  kinetic-amd64
-
   lunar-aarch64
   lunar-amd64
+
+  mantic-aarch64
+  mantic-amd64
 
   sid-aarch64
   sid-amd64
@@ -244,11 +235,14 @@ rpm_dists_4="
   rhel9-ppc64le
   rhel9-s390x
 
-  fedora36-amd64
-  fedora36-aarch64
-
   fedora37-amd64
   fedora37-aarch64
+
+  fedora38-amd64
+  fedora38-aarch64
+
+  fedora39-amd64
+  fedora39-aarch64
 
   opensuse150-amd64
 
@@ -1169,6 +1163,18 @@ copy_ci_downloads_to_buildmaster_dir() {
     fi
     if [ -d ${dir_source} ]; then
       RC cp -ai ${dir_source} ${dir_dest}
+      # Downloads from ci don't have the same directory layout as old buildbot,
+      # or a Packages.gz file, so we need to create it
+      RC pushd ${dir_dest}
+        if [ ! -d binary ] ; then
+          if [ -e Packages ] ; then
+            if [ -e Packages.gz ] ; then
+              RC rm -v Packages.gz
+            fi
+            RC gzip -k Packages
+          fi
+        fi
+      RC popd
     else
       important_message "${dir_source} does not exist"
       exit 1
