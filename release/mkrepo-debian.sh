@@ -403,11 +403,17 @@ for dist in ${debian_dists}; do
   case ${dist} in
     "bullseye")
       case ${ARCHDIR} in
-        *11.1*|*11.2*)
+        *11.1*)
           # Copy in CMAPI package
           # should be ${dist}, but currently we use jammy package (Aug 2023)
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/jammy/mariadb-columnstore-cmapi-${ver_cmapi}.x86_64.deb
-          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/jammy/mariadb-columnstore-cmapi-${ver_cmapi}.aarch64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*arm64.deb
+          ;;
+        *11.2*|*11.3*)
+          # Copy in CMAPI package
+          # should be ${dist}, but currently we use jammy package (Aug 2023)
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.2*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
+          runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.2*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*arm64.deb
           ;;
       esac
       ;;
