@@ -1063,6 +1063,22 @@ update_the_STATUS_file() {
 }
 
 #===  FUNCTION  ================================================================
+#          NAME:  update_the_debian_distributions_file
+#   DESCRIPTION:  Simple function to edit the distributions file on Ubuntu
+#===============================================================================
+update_the_debian_distributions_file() {
+  editor ${dir_release}/mariadb-${prev_release}/repo/debian/conf/distributions
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  update_the_ubuntu_distributions_file
+#   DESCRIPTION:  Simple function to edit the distributions file on Ubuntu
+#===============================================================================
+update_the_ubuntu_distributions_file() {
+  editor ${dir_release}/mariadb-${prev_release}/repo/ubuntu/conf/distributions
+}
+
+#===  FUNCTION  ================================================================
 #          NAME:  pull_this_release_from_the_buildmaster
 #   DESCRIPTION:  Transfer files over from the buildmaster before prepping
 #===============================================================================
@@ -2543,6 +2559,8 @@ else
     #  rm -rf "${dir_release}/${dir_name}/repo/debian"
     #fi
 
+    shouldI update_the_debian_distributions_file
+
     # trying updating the previous repo instead of creating a new one every time
     echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
@@ -2593,6 +2611,7 @@ else
     #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
     #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
     #fi
+    shouldI update_the_ubuntu_distributions_file
 
     # trying updating the previous repo instead of creating a new one every time
     echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
