@@ -11,8 +11,8 @@ connodbc_linux_step3_packagetest= ""
 connodbc_linux_step4_1_testenvertup= """cd ./build/test
 cat odbcinst.ini
 cat odbc.ini
-ls ../driver/*
-find ../driver -name libmaodbc.so | xargs ldd
+ls ../driver/* || ls ../
+find ../ -name libmaodbc.so | xargs ldd || true
 export ODBCINI="$PWD/odbc.ini"
 export ODBCSYSINI=$PWD
 export TEST_SKIP_UNSTABLE_TEST=1
