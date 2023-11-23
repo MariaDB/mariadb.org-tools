@@ -1,0 +1,5 @@
+[Galera-mariadb-4.x]
+name=Galera mariadb-4.x repo (build )
+baseurl=https://ci.dev.mariadb.org/galera/mariadb-4.x/e0529a8366bb4d4aaf56f9426612cd825531674f/gal-amd64-rhel-8/rpms
+gpgcheck=0
+module_hotfixes = 1
