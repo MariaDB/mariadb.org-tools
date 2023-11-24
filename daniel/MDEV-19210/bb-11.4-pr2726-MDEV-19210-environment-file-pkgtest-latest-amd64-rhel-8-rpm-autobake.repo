@@ -1,5 +1,5 @@
 [MariaDB-bb-11.4-pr2726-MDEV-19210-environment-file-pkgtest]
-name=MariaDB bb-11.4-pr2726-MDEV-19210-environment-file-pkgtest repo (build 40454)
-baseurl=https://ci.mariadb.org/40454/amd64-rhel-8-rpm-autobake/rpms
+name=MariaDB bb-11.4-pr2726-MDEV-19210-environment-file-pkgtest repo (build 40904)
+baseurl=https://ci.mariadb.org/40904/amd64-rhel-8-rpm-autobake/rpms
 gpgcheck=0
 module_hotfixes = 1
