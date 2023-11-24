@@ -11,6 +11,7 @@ odbccppBuilders= [
                   bld_codbc_focal_amd64,
                   bld_codbc_focal_aarch64,
                   bld_codbc_focal_amd64_deb,
+                  bld_codbc_jammy_amd64_deb,
                   bld_rhel8_x64_connector_odbc_rpm,
                   bld_rhel9_x64_connector_odbc_rpm,
                   bld_codbc_jammy_amd64,
