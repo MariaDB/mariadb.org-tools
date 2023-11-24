@@ -1,0 +1,17 @@
+services:
+  node1:
+    build: .
+    volumes:
+     - v1:/var/lib/mysql
+  node2:
+    build: .
+    volumes:
+     - v2:/var/lib/mysql
+  node3:
+    build: .
+    volumes:
+     - v3:/var/lib/mysql
+volumes:
+  v1: {}
+  v2: {}
+  v3: {}
