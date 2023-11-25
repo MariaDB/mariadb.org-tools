@@ -32,7 +32,8 @@ for odbctest in ./odbc_*; do
     echo "Definetely: $leaked1 indirectly: $leaked2"
 
     if [ "$leaked1" -gt 0 ] || [ "$leaked2" -gt 0 ]; then
-      echo "$odbctest Leaked"
+      echo "------------------ $odbctest Leaked --------------"
+      cat $memcheck
       HASLEAKS=1
     else
       echo "$odbctest is clean"
@@ -476,6 +477,7 @@ step0_set_test_env + """
 export TEST_DRIVER=maodbc_test
 export TEST_DSN=maodbc_test
 ls /usr/lib/*/*maria* /usr/lib/*/*maodbc* || true
+find /usr/lib -name libmaodbc.so | xargs ldd || true
 """ + connodbc_linux_step2_serverinstall + """
 cd buildbot || true
 export ODBCINI=$PWD/odbc.ini
