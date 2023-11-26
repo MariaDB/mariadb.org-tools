@@ -16,6 +16,7 @@ find ../ -name libmaodbc.so | xargs ldd || true
 export ODBCINI="$PWD/odbc.ini"
 export ODBCSYSINI=$PWD
 export TEST_SKIP_UNSTABLE_TEST=1
+./odbc_basic
 cd ../..
 """
 connodbc_linux_step4_testsrun= connodbc_linux_step4_1_testenvertup + step4_testsrun
