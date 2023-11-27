@@ -466,8 +466,9 @@ for i in 1 2 3 ; do
       break
   fi
   echo "Installation warning: apt-get update failed, retrying ($i)"
-  sleep 6
+  sleep 5
 done
+dpkg -I ./%(bindistname)s
 dpkg -c ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 if ! odbcinst -i -d ; then
