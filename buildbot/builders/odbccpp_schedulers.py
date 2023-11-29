@@ -10,8 +10,8 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-rhel8-aarch64",
                   "codbc-rocky8-aarch64",
                   "codbc-focal-amd64",
-                  "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb",
-                  "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm",
+                  "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb", "codbc-bookworm-amd64-deb", "codbc-lunar-amd64-deb", "codbc-bullseye-amd64-deb",
+                  "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm", "codbc-centos7-amd64-rpm",
                   "codbc-focal-aarch64",
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
@@ -59,6 +59,9 @@ odbccppForceBuilderNames= [
                           ,"codbc-focal-aarch64"
                           ,"codbc-focal-amd64-deb"
                           ,"codbc-jammy-amd64-deb"
+                          ,"codbc-bookworm-amd64-deb"
+                          ,"codbc-lunar-amd64-deb"
+                          ,"codbc-bullseye-amd64-deb"
                           ,"codbc-jammy-amd64"
                           ,"codbc-jammy-aarch64"
                           ,"codbc-lunar-amd64"
@@ -80,6 +83,7 @@ odbccppForceBuilderNames= [
                           ,"codbc-windows-gnutls"
                           ,"codbc-rhel8-amd64-rpm"
                           ,"codbc-rhel9-amd64-rpm"
+                          ,"codbc-centos7-amd64-rpm"
                           ##########################################################################
                           ,"ccpp-linux-amd64-asan"
                           ,"ccpp-linux-amd64-ubsan"
