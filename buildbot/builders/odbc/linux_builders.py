@@ -494,9 +494,13 @@ ldd ./odbc_basic
             "slavenames": connector_slaves,
             "category": "connectors"}
 
+bld_centos7_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
 bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_amd64_deb= build_connector_odbc_deb("codbc-jammy-amd64-deb", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_lunar_amd64_deb= build_connector_odbc_deb("codbc-lunar-amd64-deb", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_bookworm_amd64_deb= build_connector_odbc_deb("codbc-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_bullseye_amd64_deb= build_connector_odbc_deb("codbc-bullseye-amd64-deb", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL");
 
