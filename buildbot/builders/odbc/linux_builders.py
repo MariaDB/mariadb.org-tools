@@ -252,7 +252,7 @@ bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-
 
 ##################### RPM/DEB builders ###################
 
-def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params):
+def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params, install_deps=False):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
