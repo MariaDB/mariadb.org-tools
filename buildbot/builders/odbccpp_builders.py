@@ -66,5 +66,8 @@ odbccppBuilders= [
                   bld_centos7_amd64_connector_cpp,
                   bld_src_connector_cpp,
                   bld_cpp_focal_amd64_deb,
-                  bld_rhel9_x64_connector_cpp_rpm
+                  bld_cpp_bookworm_amd64_deb,
+                  bld_rhel8_x64_connector_cpp_rpm,
+                  bld_rhel9_x64_connector_cpp_rpm,
+                  bld_centos7_x64_connector_cpp_rpm
                  ]
