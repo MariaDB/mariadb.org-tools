@@ -364,7 +364,7 @@ rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo dnf --setopt=install_weak_deps=False install -y rpm-build perl-generators
-""" + linux_repoinstall + """
+""" + cc_repoinstall + """
 sudo dnf --setopt=install_weak_deps=False builddep -y %(bindistname)s || true
 rpmbuild --rebuild %(bindistname)s
 # removing source rpm - it's not needed any more
@@ -494,7 +494,7 @@ ldd ./odbc_basic
             "slavenames": connector_slaves,
             "category": "connectors"}
 
-bld_centos7_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_centos7_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 
