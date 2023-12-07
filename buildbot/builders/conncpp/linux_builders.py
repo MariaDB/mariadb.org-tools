@@ -247,7 +247,7 @@ bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-a
 
 ##################### RPM/DEB builders ###################
 
-def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params):
+def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params, install_deps=False):
     linux_connector_cpp= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
@@ -279,7 +279,7 @@ conncpp_linux_step0_ccinstall +
 step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git", False) + """
 rm -rf ../src/libmariadb
 cd ../build
-#-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
+mkdir artefacts
 mkdir rpms srpms
 cmake -DRPM=On -DCPACK_GENERATOR=RPM -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src
 if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
@@ -289,7 +289,6 @@ if grep -qw CPACK_RPM_SOURCE_PKG_BUILD_PARAMS CPackSourceConfig.cmake; then
 fi
 """ +
 conncpp_linux_step1_build + """
-mkdir artefacts
 mv mariadb*cpp*rpm rpms
 mv test/cjportedtests test/sql.properties ./artefacts
 ls -l artefacts
@@ -319,8 +318,9 @@ cd buildbot
 ls
 rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
-#dnf repoquery -l mariadb-connector-c || true
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
+""" + conncpp_linux_step0_ccinstall if install_deps else cc_repoinstall +
+"""
 sudo yum -y --nogpgcheck install %(bindistname)s
 """ +
 step0_set_test_env + """
@@ -352,15 +352,19 @@ rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
 sudo dnf --setopt=install_weak_deps=False install -y rpm-build perl-generators
-""" + linux_repoinstall + """
+"""  + cc_repoinstall + """
 sudo dnf --setopt=install_weak_deps=False builddep -y %(bindistname)s || true
 rpmbuild --rebuild %(bindistname)s
 # removing source rpm - it's not needed any more
+ls
 rm %(bindistname)s
 ls ~/rpmbuild/RPMS || true
 # compare requirements to ensure rebuilt rpms got all libraries right
 echo rpms/*.rpm           |xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//; /MariaDB-compat/d'|sort -u>requires-vendor.txt
 echo ~/rpmbuild/RPMS/*.rpm|xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//                   '|sort -u>requires-rebuilt.txt
+cat requires-vendor.txt
+echo "------------------------"
+cat requires-rebuilt.txt
 diff -u requires-*.txt
 
 # check if rpm filenames match (won't be true on centos7)
@@ -368,14 +372,14 @@ diff -u requires-*.txt
 
 echo "All done"
 
-""" +
-step0_set_test_env + """
-ls /usr/lib*/*maria* /usr/include/maria* || true
-""" + linux_shallow_serverinstall + """
-cd buildbot || true
-ldd ./cjportedtests
-./cjportedtests
-""")]))
+######  I don't think this test needs this+
+#step0_set_test_env + 
+#ls /usr/lib*/*maria* /usr/include/maria* || true
+# + linux_shallow_serverinstall + 
+#cd buildbot || true
+#ldd ./cjportedtests
+#./cjportedtests
+""" if not install_deps else """echo "Skipping build from source rpm on centos7" """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": connector_slaves,
@@ -410,7 +414,7 @@ step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git
 rm -rf ../src/libmariadb
 cd ../build
 #-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/local/lib/mariadb -I/usr/local/include/mariadb" 
-cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
+cmake -DDEB=On -DCPACK_GENERATOR=DEB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMARIADB_LINK_DYNAMIC=On -DPACKAGE_PLATFORM_SUFFIX=$ID$VERSION_ID -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-L/usr/lib/x86_64-linux-gnu -I/usr/include/mariadb" """ + cmake_params + """ ../src""" +
 conncpp_linux_step1_build + """
 mkdir artefacts
 cp mariadb*cpp*deb test/cjportedtests test/sql.properties ./artefacts
@@ -442,18 +446,20 @@ for i in 1 2 3 ; do
       break
   fi
   echo "Installation warning: apt-get update failed, retrying ($i)"
-  sleep 6
+  sleep 5
 done
+dpkg -I ./%(bindistname)s
 dpkg -c ./%(bindistname)s
 sudo sh -c "DEBIAN_FRONTEND=noninteractive apt-get install --allow-unauthenticated -y ./%(bindistname)s"
 """ +
 step0_set_test_env + """
 ls /usr/lib/*/*maria* /usr/include/maria* || true
+find /usr/lib -name libmariadbcpp.so | xargs ldd || true
 """ + conncpp_linux_step2_serverinstall + """
 cd buildbot || true
 ldd ./cjportedtests
 # if we want to run tests yet here - we need to install or copy libmariadbcpp.so to some foundable location
-#./cjportedtests
+./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
@@ -461,8 +467,9 @@ ldd ./cjportedtests
             "category": "connectors"}
 
 bld_rhel8_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
-
 bld_rhel9_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_centos7_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 
 bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("ccpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_cpp_bookworm_amd64_deb= bld_connector_cpp_deb("ccpp-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
 
