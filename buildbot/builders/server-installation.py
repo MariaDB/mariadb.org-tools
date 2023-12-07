@@ -7,7 +7,8 @@ if LSB_VID=$(lsb_release -sr 2> /dev/null); then
   ID=${ID:0:3}
 fi
 """
-linux_repoinstall= """
+def repo_install(version):
+    return """
 # Installing server to run tests
 if [ -e /usr/bin/apt ] ; then
   if ! sudo apt update ; then
@@ -52,25 +53,25 @@ gpgcheck = 1\\" > /etc/yum.repos.d/mariadb.repo"
     USEAPT=1
     sudo apt-get install -y software-properties-common gnupg-curl
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu xenial main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + version + """/ubuntu xenial main'
   fi
   if grep -i groovy /etc/os-release ; then
     USEAPT=1
     sudo apt-get install -y software-properties-common
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu groovy main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + version + """/ubuntu groovy main'
   fi
   if grep -i impish /etc/os-release ; then
     USEAPT=1
     sudo apt-get install -y software-properties-common
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu impish main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + version + """/ubuntu impish main'
   fi
   if grep -i hirsute /etc/os-release ; then
     USEAPT=1
     sudo apt-get install -y software-properties-common
     sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + serverVersionToInstall + """/ubuntu hirsute main'
+    sudo add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] https://mirrors.ukfast.co.uk/sites/mariadb/repo/""" + version + """/ubuntu hirsute main'
   fi
 fi
 """ + debubuntu_versionid
@@ -106,6 +107,6 @@ echo $SOCKETPATH
 
 cd ..
 """
-
-linux_serverinstall= linux_repoinstall + linux_shallow_serverinstall
+server_repoinstall= repo_install(serverVersionToInstall)
+linux_serverinstall= server_repoinstall + linux_shallow_serverinstall
 
