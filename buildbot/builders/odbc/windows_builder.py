@@ -105,6 +105,11 @@ ctest --output-on-failure""")
 
   f_win_connector_odbc.addStep(ShellCommand(
         command=["dojob",
+        WithProperties("cd win32 && xcopy /y /f packaging\\windows\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s")],
+        doStepIf= not skip32bit
+  ))
+  f_win_connector_odbc.addStep(ShellCommand(
+        command=["dojob",
         WithProperties("cd win64 && xcopy /y /f packaging\\windows\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")]
   ))
 
