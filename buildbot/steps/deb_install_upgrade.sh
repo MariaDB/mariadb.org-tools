@@ -188,9 +188,8 @@ get_server_info()
   set +x
   for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -vE 'mysql-test|mariadb-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
   do
-    # Q3 2023 workaround, MDEV-30483
-    if [ "$new_or_old" == "new" ] && [[ $i =~ type_mysql_timestamp.so ]] && grep -E "10.6.14|10.8.8|10.9.7|10.10.5|10.11.4|11.0.2|11.1.1" /tmp/version.old ; then
-      echo "Skipping the new type_mysql_timestamp.so which isn't present in the previous version"
+    # Q1 2024 workaround
+    if [[ $i =~ "test_sql_service" ]] ; then
       continue
     fi
     echo "=== $i" >> /home/buildbot/ldd.$new_or_old
