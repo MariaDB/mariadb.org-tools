@@ -69,19 +69,18 @@ elif [ "$test_set" == "s3" ] ; then
     echo "Test warning"": S3 engine not found, tests will be skipped"
     exit
   fi
- 
-  if ! wget ftp://ftp.askmonty.org/public/minio/minio-linux-${arch} -O ~/minio ; then
-    echo "ERROR: Could not download MinIO server for Linux ${arch}"
-    echo "Check if it is available at http://dl.min.io/server/minio/release and store as ftp://ftp.askmonty.org/public/minio/minio-linux-${arch}"
+
+  cd ~/
+  if ! curl -O https://buildbot.mariadb.net/archive/minio-linux-${arch}.tar.gz ; then
+    echo "ERROR: Could not download MinIO for Linux ${arch}"
+    echo "Check if it is available at http://dl.min.io/server/minio/release and store as https://buildbot.mariadb.net/archive/minio-linux-${arch}.tar.gz"
     exit 1
   fi
+  tar zxf minio-linux-${arch}.tar.gz
+  chmod a+x ./minio ./mc
+  cd -
   chmod a+x ~/minio
   MINIO_ACCESS_KEY=minio MINIO_SECRET_KEY=minioadmin ~/minio server /tmp/shared 2>&1 &
-  if ! wget ftp://ftp.askmonty.org/public/minio/mc-linux-${arch} -O ~/mc ; then
-    echo "ERROR: Could not download MinIO client for Linux ${arch}"
-    echo "Check if it is available at http://dl.min.io/client/mc/release/ and store as ftp://ftp.askmonty.org/public/minio/mc-linux-${arch}"
-    exit 1
-  fi
   chmod a+x ~/mc
 
   # Try a few times in case the server hasn't finished initializing yet
