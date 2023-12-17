@@ -27,9 +27,10 @@ case $HOSTNAME in rhel*)
   if [ $VERSION_ID == 9 ]; then
     sudo subscription-manager repos --enable=codeready-builder-for-rhel-9-x86_64-rpms
   fi ;; esac
-
+SPACKAGE_NAME=MariaDB-server
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --skip-maxscale; then
   if [ -e /etc/fedora-release ]; then
+    SPACKAGE_NAME=mariadb-server
     source /etc/os-release
     case $ID$VERSION_ID in fedora35) 
         sudo sh -c "echo \\"#galera test repo
@@ -78,8 +79,8 @@ fi
 
 linux_shallow_serverinstall= """
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
-  if ! sudo dnf install -y MariaDB-server ; then
-    sudo yum install -y MariaDB-server
+  if ! sudo dnf install -y $SPACKAGE_NAME; then
+    sudo yum install -y $SPACKAGE_NAME
   fi
   sudo systemctl start mariadb
 fi
