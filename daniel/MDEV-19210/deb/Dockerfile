@@ -10,3 +10,4 @@ RUN echo "deb [trusted=yes] https://ci.mariadb.org/galera/mariadb-4.x/7dce514998
 RUN apt-get update && apt-get install -y mariadb-server
 
 COPY mariadb.cnf /etc/mysql/mariadb.conf.d/
+VOLUME /var/lib/mysql
