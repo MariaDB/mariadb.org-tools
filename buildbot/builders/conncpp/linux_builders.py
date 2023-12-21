@@ -319,12 +319,12 @@ ls
 rpm -qlp %(bindistname)s
 rpm -qpR %(bindistname)s
 if [ -f /usr/bin/subscription-manager ] ; then sudo subscription-manager refresh ;fi
-""" + conncpp_linux_step0_ccinstall if install_deps else cc_repoinstall +
+""" + (conncpp_linux_step0_ccinstall if install_deps else cc_repoinstall) +
 """
 sudo yum -y --nogpgcheck install %(bindistname)s
 """ +
 step0_set_test_env + """
-ls /usr/lib/*/*maria* /usr/include/maria* || true
+ls -l /usr/lib*/*maria* /usr/include/maria* || true
 """ + conncpp_linux_step2_serverinstall + """
 cd buildbot || true
 ldd ./cjportedtests
@@ -360,8 +360,8 @@ ls
 rm %(bindistname)s
 ls ~/rpmbuild/RPMS || true
 # compare requirements to ensure rebuilt rpms got all libraries right
-echo rpms/*.rpm           |xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//; /MariaDB-compat/d'|sort -u>requires-vendor.txt
-echo ~/rpmbuild/RPMS/*.rpm|xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//                   '|sort -u>requires-rebuilt.txt
+echo rpms/*.rpm           |xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//; /MariaDB-compat/d'|sort -u|grep -v "/bin/sh">requires-vendor.txt
+echo ~/rpmbuild/RPMS/*.rpm|xargs -n1 rpm -q --requires -p|sed -e 's/>=.*/>=/; s/([A-Z0-9._]*)([0-9]*bit)$//                   '|sort -u|grep -v "/bin/sh">requires-rebuilt.txt
 cat requires-vendor.txt
 echo "------------------------"
 cat requires-rebuilt.txt
