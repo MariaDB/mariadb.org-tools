@@ -19,6 +19,13 @@ if [ -e /usr/bin/apt ] ; then
   sudo apt install -y curl
 fi
 
+source /etc/os-release
+
+SPACKAGE_NAME=MariaDB-server
+if [ "$ID" = "rocky" ]; then
+  SPACKAGE_NAME=mariadb-server
+fi
+
 case $HOSTNAME in rhel*)
   ID=rhel
   VERSION_ID=$(cat /etc/redhat-release | awk '{print $6}' | sed -e "s/\..*//g")
@@ -27,11 +34,9 @@ case $HOSTNAME in rhel*)
   if [ $VERSION_ID == 9 ]; then
     sudo subscription-manager repos --enable=codeready-builder-for-rhel-9-x86_64-rpms
   fi ;; esac
-SPACKAGE_NAME=MariaDB-server
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --skip-maxscale; then
   if [ -e /etc/fedora-release ]; then
     SPACKAGE_NAME=mariadb-server
-    source /etc/os-release
     case $ID$VERSION_ID in fedora35) 
         sudo sh -c "echo \\"#galera test repo
 [galera]
