@@ -46,8 +46,6 @@ services:
     command: node2 production_sales sales secret
 
 volumes:
-  master:
-    driver: local
   node1:
     driver: local
   node2:
