@@ -1,8 +1,8 @@
 version: '3'
 x-common-variables: &common-variables
-  MARIADB_USER: monitor
-  MARIADB_PASSWORD: password
-  MARIADB_DATABASE: testdb
+  MARIADB_USER: sales
+  MARIADB_PASSWORD: secret
+  MARIADB_DATABASE: production_sales
   MARIADB_RANDOM_ROOT_PASSWORD: 1
 
 x-common-attributes: &common-attributes
@@ -16,27 +16,34 @@ x-common-attributes: &common-attributes
     timeout: 5s
     retries: 3
 
+x-data-generator: &data-generator
+  build:
+    dockerfile: Dockerfile.generator
+    context: .
+
 services:
-  master:
-    <<: *common-attributes
-    hostname: master
-    volumes:
-      - 'master:/var/lib/mysql'
-    depends_on:
-      node1:
-        condition: service_healthy
-      node2:
-        condition: service_healthy
 
   node1:
     <<: *common-attributes
     volumes:
       - 'node1:/var/lib/mysql'
+  generatornode1:
+    <<: *data-generator
+    depends_on:
+      node1:
+        condition: service_healthy
+    command: node1 production_sales sales secret
 
   node2:
     <<: *common-attributes
     volumes:
       - 'node2:/var/lib/mysql'
+  generatornode2:
+    <<: *data-generator
+    depends_on:
+      node2:
+        condition: service_healthy
+    command: node2 production_sales sales secret
 
 volumes:
   master:
