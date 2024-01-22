@@ -2,7 +2,8 @@ _mtr_complete_testnames ()
 {
   dir=$1
   [ -d $dir/t ] && dir=$dir/t
-  testnames=$( cd $dir && echo *.test | sed -e 's/\.test\>//g' )
+  testnames+=$( cd $dir && echo *.test | sed -e 's/\.test\>//g' )
+  testnames+=' '
 }
 _mtr_all_suites ()
 {
@@ -14,6 +15,7 @@ _mtr_complete()
   [ -d main ] && main=main || main=.
   cur=$2
   prev=$3
+  testnames=
   case $prev:$cur in
     *:--*)
       opts=$( ./mtr --list )
@@ -27,7 +29,6 @@ _mtr_complete()
       for dir in {../{storage,plugin}/*/mysql-test,suite}/${cur%.*}; do
         if [ -d $dir ]; then
           _mtr_complete_testnames $dir
-          break
         fi
       done
       COMPREPLY=( $( compgen -P ${cur%.*}. -W "$testnames" -- ${cur#*.}) )
