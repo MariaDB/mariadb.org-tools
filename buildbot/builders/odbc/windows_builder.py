@@ -33,7 +33,8 @@ def bld_windows_connector_odbc(name, cmake_params, skip32bit):
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_32",
         command=["dojob",
-        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win32\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DWITH_SSL=SCHANNEL -DALL_PLUGINS_STATIC=ON && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        #-DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
+        WithProperties("pwd && rm -rf win32 && mkdir win32 && cd win32 && del CMakeCache.txt && cmake ../src -G \"Visual Studio 17 2022\" -A\"Win32\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SSL=SCHANNEL -DALL_PLUGINS_STATIC=ON && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
         ],
         doStepIf= not skip32bit,
         haltOnFailure = True
@@ -79,23 +80,11 @@ ctest --output-on-failure""")
   f_win_connector_odbc.addStep(ShellCommand(
         name= "build_package_64",
         command=["dojob",
-#        WithProperties("cd .. && rm -rf win64 && mkdir win64 && cd win64 && cmake ../build -G \"Visual Studio 17 2022\" -A\"Win64\" -DWIX_DIR=C:\georg\wix38\ && cmake --build . --config RelWithDebInfo")
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\" -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=ON " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        #-DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=ON " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
-#### Commenting signing steps, as signing is done as build process now(due do wthese steps do not work atm)
-#  f_win_connector_odbc.addStep(ShellCommand(
-#        name= "sign_packages32",
-#        command=["dojob",
-#        WithProperties("cd win32 && \"C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll packaging/windows\\*.msi")]
-#  ))
-
-#  f_win_connector_odbc.addStep(ShellCommand(
-#        name= "sign_packages64",
-#        command=["dojob",
-#        WithProperties("cd win64 && \"C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\signtool\" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll packaging/windows\\*.msi")]
-#  ))
 
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_publish_dir",
@@ -113,11 +102,6 @@ ctest --output-on-failure""")
         WithProperties("cd win64 && xcopy /y /f packaging\\windows\\*.msi c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s &&  md5sums c:/build_archive/%(buildername)s/%(branch)s/%(revision)s")]
   ))
 
-#f_win_connector_odbc.addStep(ShellCommand(
-#        name= "create_upload_dir",
-#        command=["dojob",
-#        WithProperties("mkdir c:\\bzr\\bb-win32\\connector_odbc\\build\\%(revision)s && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* c:\\bzr\\bb-win32\\connector_odbc\\build\\%(revision)s")]
-#        ))
 ### Copying also to the location where buildbot will really look for file to upload, and them rm -rf it
   f_win_connector_odbc.addStep(ShellCommand(
         name= "create_upload_dir",
