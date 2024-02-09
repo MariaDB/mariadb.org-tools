@@ -347,7 +347,7 @@ check_environment
 
 if [ "$test_mode" != "install" ] ; then
   # We do it this way because ping to mirrors does not work on some VMs
-  for m in "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.23m.com" "mirrors.xtom.nl" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
+  for m in "mirror.23m.com" "mirrors.xtom.nl" "mirrors.xtom.ee" "mirror.kumi.systems" "mirror.mva-n.net" "mirrors.gigenet.com" ; do
     if wget http://$m/mariadb/repo ; then
       mirror=$m
       break
