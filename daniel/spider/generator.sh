@@ -1,12 +1,9 @@
 #!/bin/bash
 set -x -v
-host=$1
-shift
-db=$1
-shift
-user=$1
-shift
-password=$1
+host=$MARIADB_HOST
+db=$MARIADB_DATABASE
+user=$MARIADB_USER
+password=$MARIADB_PASSWORD
 
 while true
 do
