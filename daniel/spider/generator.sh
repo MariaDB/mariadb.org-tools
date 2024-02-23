@@ -1,6 +1,10 @@
 #!/bin/bash
 set -x -v
-host=$MARIADB_HOST
+if [ -n "$MARIADB_HOST" ]; then
+  host=$MARIADB_HOST
+else
+  host=db-euus-${POP,,}-0
+fi
 db=$MARIADB_DATABASE
 user=$MARIADB_USER
 password=$MARIADB_PASSWORD
