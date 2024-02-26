@@ -18,6 +18,8 @@ odbccppBuilders= [
                   bld_centos7_x64_connector_odbc_rpm,
                   bld_rhel8_x64_connector_odbc_rpm,
                   bld_rhel9_x64_connector_odbc_rpm,
+                  bld_rhel8_arm64_connector_odbc_rpm,
+                  bld_rhel9_arm64_connector_odbc_rpm,
                   bld_codbc_jammy_amd64,
                   bld_codbc_jammy_aarch64,
                   bld_codbc_lunar_amd64,
@@ -34,6 +36,7 @@ odbccppBuilders= [
                   bld_codbc_rhel8_amd64,
                   bld_codbc_rhel8_aarch64,
                   bld_codbc_rocky8_aarch64,
+                  bld_codbc_alma8_amd64,
                   bld_codbc_sles12_amd64,
                   bld_codbc_windows,
                   bld_codbc_windows_gnutls,
@@ -44,6 +47,7 @@ odbccppBuilders= [
                   bld_amd64_msan_connector_cpp,
                   bld_win_connector_cpp,
                   bld_rhel8_amd64_connector_cpp,
+                  bld_alma8_amd64_connector_cpp,
                   bld_rhel8_aarch64_connector_cpp,
                   bld_rocky8_aarch64_connector_cpp,
                   bld_rhel9_amd64_connector_cpp,
@@ -69,5 +73,7 @@ odbccppBuilders= [
                   bld_cpp_bookworm_amd64_deb,
                   bld_rhel8_x64_connector_cpp_rpm,
                   bld_rhel9_x64_connector_cpp_rpm,
+                  bld_rhel8_arm64_connector_cpp_rpm,
+                  bld_rhel9_arm64_connector_cpp_rpm,
                   bld_centos7_x64_connector_cpp_rpm
                  ]
