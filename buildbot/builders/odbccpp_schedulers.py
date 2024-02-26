@@ -6,12 +6,12 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-centos7-amd64",
                   "codbc-rhel9-amd64", "codbc-windows",
                   "codbc-rhel9-aarch64",
-                  "codbc-rhel8-amd64",
+                  "codbc-rhel8-amd64","codbc-alma84-amd64",
                   "codbc-rhel8-aarch64",
                   "codbc-rocky8-aarch64",
                   "codbc-focal-amd64",
                   "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb", "codbc-bookworm-amd64-deb", "codbc-lunar-amd64-deb", "codbc-bullseye-amd64-deb",
-                  "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm", "codbc-centos7-amd64-rpm",
+                  "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm", "codbc-centos7-amd64-rpm", "codbc-rhel8-aarch64-rpm", "codbc-rhel9-aarch64-rpm",
                   "codbc-focal-aarch64",
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
@@ -30,7 +30,7 @@ c['schedulers'].append(AnyBranchScheduler(
     builderNames=[
                   "ccpp-centos7-amd64",
                   "ccpp-rhel8-amd64",
-                  "ccpp-rhel8-aarch64", "ccpp-rocky8-aarch64",
+                  "ccpp-rhel8-aarch64", "ccpp-rocky8-aarch64","ccpp-alma84-amd64",
                   "ccpp-rhel9-amd64",
                   "ccpp-rhel9-aarch64",
                   "ccpp-focal-amd64",
@@ -43,7 +43,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-fedora37-amd64",
                   "ccpp-fedora38-amd64",
                   "ccpp-source-package", "ccpp-windows", "ccpp-linux-amd64-asan", "ccpp-linux-amd64-ubsan", "ccpp-linux-amd64-msan",
-                  "ccpp-focal-amd64-deb","ccpp-bookworm-amd64-deb","ccpp-rhel8-amd64-rpm","ccpp-rhel9-amd64-rpm","ccpp-centos7-amd64-rpm",
+                  "ccpp-focal-amd64-deb","ccpp-bookworm-amd64-deb","ccpp-rhel8-amd64-rpm","ccpp-rhel9-amd64-rpm","ccpp-centos7-amd64-rpm","ccpp-rhel8-aarch64-rpm","ccpp-rhel9-aarch64-rpm",
                   ]))
 odbccppForceBuilderNames= [
                            "codbc-source-package"
@@ -51,6 +51,7 @@ odbccppForceBuilderNames= [
                           ,"codbc-rhel8-amd64"
                           ,"codbc-rhel8-aarch64"
                           ,"codbc-rocky8-aarch64"
+                          ,"codbc-alma84-amd64"
                           ,"codbc-rhel9-amd64"
                           ,"codbc-rhel9-aarch64"
                           ,"codbc-sles15-amd64"
@@ -83,6 +84,8 @@ odbccppForceBuilderNames= [
                           ,"codbc-windows-gnutls"
                           ,"codbc-rhel8-amd64-rpm"
                           ,"codbc-rhel9-amd64-rpm"
+                          ,"codbc-rhel8-aarch64-rpm"
+                          ,"codbc-rhel9-aarch64-rpm"
                           ,"codbc-centos7-amd64-rpm"
                           ##########################################################################
                           ,"ccpp-linux-amd64-asan"
@@ -91,6 +94,7 @@ odbccppForceBuilderNames= [
                           ,"ccpp-rhel8-amd64"
                           ,"ccpp-rhel8-aarch64"
                           ,"ccpp-rocky8-aarch64"
+                          ,"ccpp-alma84-amd64"
                           ,"ccpp-rhel9-amd64"
                           ,"ccpp-rhel9-aarch64"
                           ,"ccpp-sles15-amd64"
@@ -116,5 +120,7 @@ odbccppForceBuilderNames= [
                           ,"ccpp-bookworm-amd64-deb"
                           ,"ccpp-rhel8-amd64-rpm"
                           ,"ccpp-rhel9-amd64-rpm"
+                          ,"ccpp-rhel8-aarch64-rpm"
+                          ,"ccpp-rhel9-aarch64-rpm"
                           ,"ccpp-centos7-amd64-rpm"
                           ]
