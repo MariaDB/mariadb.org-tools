@@ -248,7 +248,7 @@ bld_sles12_amd64_connector_cpp= bld_linux_connector_cpp_with_gcc5("ccpp-sles12-a
 
 ##################### RPM/DEB builders ###################
 
-def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params, install_deps=False):
+def bld_connector_cpp_rpm(name, kvm_image, cflags, cmake_params, install_deps=False, slaves=connector_slaves):
     linux_connector_cpp= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
@@ -383,10 +383,10 @@ echo "All done"
 """ if not install_deps else """echo "Skipping build from source rpm on centos7" """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
-def bld_connector_cpp_deb(name, kvm_image, cflags, cmake_params):
+def bld_connector_cpp_deb(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_cpp= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_cpp.addStep(ShellCommand(
@@ -426,7 +426,7 @@ ls -l artefacts
         ]))
     linux_connector_cpp.addStep(SetPropertyFromCommand(
         property="bindistname",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*deb`")],
+        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*.deb`")],
         ))
     addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
     linux_connector_cpp.addStep(Test(
@@ -464,15 +464,22 @@ ldd ./cjportedtests
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
 bld_rhel8_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel9_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
-bld_rhel8_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-aarch64-rpm", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL");
-bld_rhel9_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-aarch64-rpm", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL");
+bld_rhel8_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-aarch64-rpm", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_rhel9_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-aarch64-rpm", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_centos7_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 
 bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("ccpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_cpp_jammy_amd64_deb= bld_connector_cpp_deb("ccpp-jammy-amd64-deb", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_cpp_bookworm_amd64_deb= bld_connector_cpp_deb("ccpp-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_cpp_bullseye_amd64_deb= bld_connector_cpp_deb("ccpp-bullseye-amd64-deb", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL");
+
+bld_cpp_focal_arm64_deb= bld_connector_cpp_deb("ccpp-focal-aarch64-deb", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_cpp_jammy_arm64_deb= bld_connector_cpp_deb("ccpp-jammy-aarch64-deb", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_cpp_bookworm_arm64_deb= bld_connector_cpp_deb("ccpp-bookworm-aarch64-deb", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_cpp_bullseye_arm64_deb= bld_connector_cpp_deb("ccpp-bullseye-aarch64-deb", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 
