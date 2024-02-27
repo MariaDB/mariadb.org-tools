@@ -11,6 +11,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-rocky8-aarch64",
                   "codbc-focal-amd64",
                   "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb", "codbc-bookworm-amd64-deb", "codbc-lunar-amd64-deb", "codbc-bullseye-amd64-deb",
+                  "codbc-focal-aarch64-deb", "codbc-jammy-aarch64-deb", "codbc-bookworm-aarch64-deb", "codbc-bullseye-aarch64-deb",
                   "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm", "codbc-centos7-amd64-rpm", "codbc-rhel8-aarch64-rpm", "codbc-rhel9-aarch64-rpm",
                   "codbc-focal-aarch64",
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
@@ -43,7 +44,10 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-fedora37-amd64",
                   "ccpp-fedora38-amd64",
                   "ccpp-source-package", "ccpp-windows", "ccpp-linux-amd64-asan", "ccpp-linux-amd64-ubsan", "ccpp-linux-amd64-msan",
-                  "ccpp-focal-amd64-deb","ccpp-bookworm-amd64-deb","ccpp-rhel8-amd64-rpm","ccpp-rhel9-amd64-rpm","ccpp-centos7-amd64-rpm","ccpp-rhel8-aarch64-rpm","ccpp-rhel9-aarch64-rpm",
+                  "ccpp-focal-amd64-deb", "ccpp-jammy-amd64-deb", "ccpp-bookworm-amd64-deb", "ccpp-bullseye-amd64-deb",
+                  "ccpp-focal-aarch64-deb", "ccpp-jammy-aarch64-deb", "ccpp-bookworm-aarch64-deb", "ccpp-bullseye-aarch64-deb",
+                  "ccpp-rhel8-amd64-rpm","ccpp-rhel9-amd64-rpm","ccpp-centos7-amd64-rpm",
+                  "ccpp-rhel8-aarch64-rpm","ccpp-rhel9-aarch64-rpm",
                   ]))
 odbccppForceBuilderNames= [
                            "codbc-source-package"
@@ -63,6 +67,10 @@ odbccppForceBuilderNames= [
                           ,"codbc-bookworm-amd64-deb"
                           ,"codbc-lunar-amd64-deb"
                           ,"codbc-bullseye-amd64-deb"
+                          ,"codbc-focal-aarch64-deb"
+                          ,"codbc-jammy-aarch64-deb"
+                          ,"codbc-bookworm-aarch64-deb"
+                          ,"codbc-bullseye-aarch64-deb"
                           ,"codbc-jammy-amd64"
                           ,"codbc-jammy-aarch64"
                           ,"codbc-lunar-amd64"
@@ -117,7 +125,13 @@ odbccppForceBuilderNames= [
                           ,"ccpp-macos"
                           ,"ccpp-source-package"
                           ,"ccpp-focal-amd64-deb"
+                          ,"ccpp-jammy-amd64-deb"
                           ,"ccpp-bookworm-amd64-deb"
+                          ,"ccpp-bullseye-amd64-deb"
+                          ,"ccpp-focal-aarch64-deb"
+                          ,"ccpp-jammy-aarch64-deb"
+                          ,"ccpp-bookworm-aarch64-deb"
+                          ,"ccpp-bullseye-aarch64-deb"
                           ,"ccpp-rhel8-amd64-rpm"
                           ,"ccpp-rhel9-amd64-rpm"
                           ,"ccpp-rhel8-aarch64-rpm"
