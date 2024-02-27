@@ -226,7 +226,7 @@ bld_codbc_bookworm_aarch64= build_linux_connector_odbc("codbc-bookworm-aarch64",
 
 bld_codbc_centos7_x64= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "ccpp-alma84-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "vm-alma84-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 # We can't install server here or this time-outs with high probability
 
 bld_codbc_jammy_amd64= build_linux_connector_odbc("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
@@ -253,7 +253,7 @@ bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-
 
 ##################### RPM/DEB builders ###################
 
-def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params, install_deps=False):
+def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params, install_deps=False, slaves=connector_slaves):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
@@ -403,10 +403,10 @@ ldd ./odbc_basic
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
-def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params):
+def build_connector_odbc_deb(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_odbc= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
     linux_connector_odbc.addStep(ShellCommand(
@@ -492,18 +492,22 @@ ldd ./odbc_basic
 """)]))
     return {'name': name, 'builddir': name,
             'factory': linux_connector_odbc,
-            "slavenames": connector_slaves,
+            "slavenames": slaves,
             "category": "connectors"}
 
 bld_centos7_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
-bld_rhel8_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-aarch64-rpm", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL");
-bld_rhel9_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-aarch64-rpm", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL");
+bld_rhel8_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-aarch64-rpm", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL", False, slaves=connector_slaves_aarch64);
+bld_rhel9_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-aarch64-rpm", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL", False, slaves=connector_slaves_aarch64);
 
 bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_amd64_deb= build_connector_odbc_deb("codbc-jammy-amd64-deb", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_lunar_amd64_deb= build_connector_odbc_deb("codbc-lunar-amd64-deb", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_bookworm_amd64_deb= build_connector_odbc_deb("codbc-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_bullseye_amd64_deb= build_connector_odbc_deb("codbc-bullseye-amd64-deb", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_focal_arm64_deb= build_connector_odbc_deb("codbc-focal-aarch64-deb", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_codbc_jammy_arm64_deb= build_connector_odbc_deb("codbc-jammy-aarch64-deb", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_codbc_bookworm_arm64_deb= build_connector_odbc_deb("codbc-bookworm-aarch64-deb", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_codbc_bullseye_arm64_deb= build_connector_odbc_deb("codbc-bullseye-aarch64-deb", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 
