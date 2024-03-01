@@ -117,10 +117,12 @@ bld_amd64_msan_connector_cpp= bld_linux_connector_cpp("ccpp-linux-amd64-msan", "
 
 bld_rhel9_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_rhel9_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
+bld_alma9_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-alma9-aarch64", "vm-alma9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
 
 bld_rhel8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_alma8_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-alma84-amd64", "vm-alma84-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ");
 bld_rhel8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rhel8-aarch64", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
+bld_alma8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-alma8-aarch64", "vm-alma8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
 
 bld_rocky8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
 
