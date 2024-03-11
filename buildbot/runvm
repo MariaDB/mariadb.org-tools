@@ -64,6 +64,8 @@ my $opt_win;
 # doesn't really give any additional security.
 my @ssh_cmd_prefix= ($ssh_exec, '-t', '-t',
                      '-o', 'UserKnownHostsFile=/dev/null',
+                     '-o', 'PubkeyAcceptedKeyTypes=ssh-dss',
+                     '-o', 'HostKeyAlgorithms=ssh-dss',
                      '-o', 'StrictHostKeyChecking=no',
                      '-o', 'LogLevel=ERROR');
 
