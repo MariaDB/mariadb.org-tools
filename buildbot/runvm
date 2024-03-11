@@ -150,7 +150,7 @@ Available options:
                       of qemu-img(1). IMG is not modified in any way. This way,
                       the booted image can be discarded after use, so that each
                       use of IMG is using the same reference image with no risk
-                      of "polution" between different invocations.
+                      of "pollution" between different invocations.
                       Note that this DELETES any existing image of the same
                       name as the one specified on the command line to boot! It
                       will be replaced with the image created as a copy of IMG,
