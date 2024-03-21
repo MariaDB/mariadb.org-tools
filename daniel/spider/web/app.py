@@ -6,15 +6,16 @@ import time
 app = Flask(__name__)
 
 
-def db_connection(table):
+def db_connection(host):
     # Connect to MariaDB Platform
     conn = mariadb.connect(
         user=os.getenv("MARIADB_USER"),
         password=os.getenv("MARIADB_PASSWORD"),
-        host="db-euus-" + os.getenv("POP").lower() + "-0",
+        host=host,
         port=3306,
         database=os.getenv("MARIADB_DATABASE")
     )
+    table='sales'
     cur = conn.cursor()
     start = time.perf_counter()
     cur.execute(f"SELECT SUM(quantity * value) FROM {table} where `date`
@@ -24,29 +25,29 @@ def db_connection(table):
 
 @app.route("/")
 def hello_world():
+    pop = os.getenv("POP").lower()
+    if pop == 'dub':
+        otherpop = 'dfw'
+    else:
+        otherpop = 'dub'
     try:
-        result_local = db_connection('sales')
-        result_remote1 = db_connection('sales_remote_node1')
-        result_remote2 = db_connection('sales_remote_node2')
+        result_local = db_connection("db-euus-" + pop + "-0")
+        result_remote1 = db_connection("db-euus-" + otherpop + "-0")
     except mariadb.Error as e:
         return f"<p>Database error {e}</p>", 400
 
-    return """<p>Hello, World!</p>
+    return """<h1>Sales for branch at pop {} for the last day</h1>
 <p>Current Local Sales:</p>
 <p>{}</p>
 <p></p>
 <p>Time for request {}</p>
 
-<p>Current Node1 Sales:</p>
+<p>Current sales connecting to pop {}:</p>
 <p>{}</p>
 <p></p>
 <p>Time for request {}</p>
-
-<p>Current Node2 Sales:</p>
-<p>{}</p>
-<p></p>
-<p>Time for request {}</p>
-""".format(result_local['sales'], result_local['time'],
+""".format(pop,
+           result_local['sales'], result_local['time'],
+           otherpop,
            result_remote1['sales'], result_remote1['time'],
-           result_remote2['sales'], result_remote2['time'],
            )
