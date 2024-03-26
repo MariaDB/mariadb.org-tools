@@ -64,6 +64,8 @@ my $opt_win;
 # doesn't really give any additional security.
 my @ssh_cmd_prefix= ($ssh_exec, '-t', '-t',
                      '-o', 'UserKnownHostsFile=/dev/null',
+                     '-o', 'PubkeyAcceptedKeyTypes=ssh-dss',
+                     '-o', 'HostKeyAlgorithms=ssh-dss',
                      '-o', 'StrictHostKeyChecking=no',
                      '-o', 'LogLevel=ERROR');
 
@@ -148,7 +150,7 @@ Available options:
                       of qemu-img(1). IMG is not modified in any way. This way,
                       the booted image can be discarded after use, so that each
                       use of IMG is using the same reference image with no risk
-                      of "polution" between different invocations.
+                      of "pollution" between different invocations.
                       Note that this DELETES any existing image of the same
                       name as the one specified on the command line to boot! It
                       will be replaced with the image created as a copy of IMG,
@@ -538,7 +540,7 @@ my $retries= 0;
 for (;;) {
   if (defined($opt_baseimage)) {
     my $img= (defined($opt_work_image) ? $opt_work_image : $image);
-    my $res= system_with_print($qimg_exe, 'create', '-o', 'compat=0.10', '-b', $opt_baseimage, '-f', 'qcow2', $img);
+    my $res= system_with_print($qimg_exe, 'create', '-o', 'compat=0.10', '-b', $opt_baseimage, '-f', 'qcow2', '-F', 'qcow2', $img);
     if ($res) {
       print STDERR "Failed to clone base image, aborting\n";
       exit 1;
