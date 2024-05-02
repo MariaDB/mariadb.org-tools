@@ -2,9 +2,12 @@ from flask import Flask
 import mariadb
 import os
 import time
+import socket
 
 app = Flask(__name__)
 
+cname = socket.gethostbyname_ex('self.metadata.compute.edgeengine.io')[0]
+(instance, deployment, target, workload, stack, rootdomain) = cname.split('.', 6)
 
 def db_connection(host):
     # Connect to MariaDB Platform
@@ -24,29 +27,25 @@ def db_connection(host):
 
 @app.route("/")
 def hello_world():
-    pop = os.getenv("POP").lower()
-    if pop == 'dub':
-        otherpop = 'dfw'
-    else:
-        otherpop = 'dub'
+    otherdeployment = os.getenv("OTHERDEPLOYMENT").lower()
     try:
-        result_local = db_connection("db-euus-" + pop + "-0")
-        result_remote1 = db_connection("db-euus-" + otherpop + "-0")
+        result_local = db_connection("db-" + target + "-" + deployment "-0")
+        result_remote1 = db_connection("db-" + target + "-" + otherdeployment + "-0")
     except mariadb.Error as e:
         return f"<p>Database error {e}</p>", 400
 
-    return """<h1>Sales for branch at pop {} for the last day</h1>
+    return """<h1>Sales for branch at {} for the last day</h1>
 <p>Current Local Sales:</p>
 <p>{}</p>
 <p></p>
 <p>Time for request {}</p>
 
-<p>Current sales connecting to pop {}:</p>
+<p>Current sales connecting to {}:</p>
 <p>{}</p>
 <p></p>
 <p>Time for request {}</p>
-""".format(pop,
+""".format(deployment,
            result_local['sales'], result_local['time'],
-           otherpop,
+           otherdeployment,
            result_remote1['sales'], result_remote1['time'],
            )
