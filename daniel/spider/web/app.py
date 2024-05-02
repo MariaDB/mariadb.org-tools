@@ -18,8 +18,7 @@ def db_connection(host):
     table='sales'
     cur = conn.cursor()
     start = time.perf_counter()
-    cur.execute(f"SELECT SUM(quantity * value) FROM {table} where `date`
-> date_sub(now(), interval 1 day);")
+    cur.execute(f"SELECT SUM(quantity * value) FROM {table} where `date` > date_sub(now(), interval 1 day);")
     end = time.perf_counter()
     return {'sales': cur.fetchone()[0], 'time' : end - start}
 
