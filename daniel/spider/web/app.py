@@ -46,7 +46,7 @@ def hello_world():
 <p></p>
 <p>Time for request {}</p>
 """.format(
-                    dep, result["sales"], result_local["time"]
+                    dep, result["sales"], result["time"]
                 )
 
             except mariadb.Error as e:
