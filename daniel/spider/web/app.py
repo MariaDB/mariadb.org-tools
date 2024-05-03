@@ -10,7 +10,7 @@ cname = socket.gethostbyname_ex("self.metadata.compute.edgeengine.io")[0]
 
 print(cname)
 
-(instance, deployment, target, workload, stack, rootdomain) = cname.split(".", 6)
+(instance, deployment, target, workload, stack, rootdomain) = cname.split(".", 5)
 
 alldeployments = os.getenv("DEPLOYMENTS").lower().split(",")
 
