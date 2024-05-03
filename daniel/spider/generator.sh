@@ -2,10 +2,10 @@
 set -x -v
 read -r -a getenthosts <<< "$(getent hosts  self.metadata.compute.edgeengine.io)"
 # result form: ip cname self.meta....
-
+cname=${getenthosts[1]}
 # take cname from the form:
 # [instance-name].[deployment-scope].[target-name].[workload-slug].[stack-slug].[root-domain]
-read -r -a parts <<< "${getenthosts[1]//./ }"
+read -r -a parts <<< "${cname//./ }"
 
 # The database host is the same as our name, with "gen" replaced by "db"
 host=${parts[0]/gen-/db-}
