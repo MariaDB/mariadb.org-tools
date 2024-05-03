@@ -1,8 +1,6 @@
 #!/bin/bash
 set -x -v
-read -r -a getenthosts <<< "$(getent hosts  self.metadata.compute.edgeengine.io)"
-# result form: ip cname self.meta....
-cname=${getenthosts[1]}
+cname=$(dig +short self.metadata.compute.edgeengine.io cname)
 # take cname from the form:
 # [instance-name].[deployment-scope].[target-name].[workload-slug].[stack-slug].[root-domain]
 read -r -a parts <<< "${cname//./ }"
