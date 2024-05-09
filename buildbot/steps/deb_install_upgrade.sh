@@ -634,7 +634,7 @@ get_server_info "new"
 
 set -e
 
-ls -l /lib/systemd/system/mariadb.service
+ls -l /lib/systemd/system/mariadb.service || ls -l /usr/share/mysql/systemd/mariadb.service
 ls -l /etc/systemd/system/mariadb.service.d/migrated-from-my.cnf-settings.conf
 ls -l /etc/init.d/mysql || true
 systemctl -l --no-pager status mariadb.service
