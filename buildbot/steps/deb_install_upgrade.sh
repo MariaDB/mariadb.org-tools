@@ -193,7 +193,9 @@ get_server_info()
       continue
     fi
     echo "=== $i" >> /home/buildbot/ldd.$new_or_old
-    ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
+    # Q2 2024 workaround (MDEV-32791 removed libpmem dependency and its dependencies)
+    # ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
+    ldd $i | grep -vE 'libpmem|libdaxctl|libkmod|libndctl|libudev|libuuid|liblzma|libzstd' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
   done
   set -x
 }
