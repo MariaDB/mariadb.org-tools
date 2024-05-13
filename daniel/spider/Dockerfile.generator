@@ -1,5 +1,5 @@
 FROM almalinux
-RUN dnf install -y mariadb
+RUN dnf install -y mariadb bind-utils
 COPY generator.sh /
 ENTRYPOINT ["/generator.sh"]
 

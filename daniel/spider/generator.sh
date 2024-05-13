@@ -1,12 +1,17 @@
 #!/bin/bash
 set -x -v
-cname=$(dig +short self.metadata.compute.edgeengine.io cname)
-# take cname from the form:
-# [instance-name].[deployment-scope].[target-name].[workload-slug].[stack-slug].[root-domain]
-read -r -a parts <<< "${cname//./ }"
+host=
+until [ -n "$host" ]
+do
+	sleep 1
+	cname=$(dig +short self.metadata.compute.edgeengine.io)
+	# take cname from the form:
+	# [instance-name].[deployment-scope].[target-name].[workload-slug].[stack-slug].[root-domain]
+	read -r -a parts <<< "${cname//./ }"
 
-# The database host is the same as our name, with "gen" replaced by "db"
-host=${parts[0]/gen-/db-}
+	# The database host is the same as our name, with "gen" replaced by "db"
+	host=${parts[0]/gen-/db-}
+done
 # altenately db-${parts[2]}-${parts[1]}-0
 db=$MARIADB_DATABASE
 user=$MARIADB_USER
