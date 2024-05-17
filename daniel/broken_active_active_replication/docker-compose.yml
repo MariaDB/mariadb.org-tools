@@ -1,0 +1,40 @@
+version: "3"
+services:
+  master1:
+    image: mariadb:latest
+    command: --log-bin --log-basename=mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=password
+      - MARIADB_USER=testuser
+      - MARIADB_PASSWORD=password
+      - MARIADB_DATABASE=testdb
+      - MARIADB_REPLICATION_USER=repl
+      - MARIADB_REPLICATION_PASSWORD=replicationpass
+    ports:
+      - 3307:3306
+    volumes:
+      - ./init_db:/docker-entrypoint-initdb.d:z
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  master2:
+    image: mariadb:latest
+    command: --server-id=2 --log-basename=mariadb --log-bin
+    environment:
+      - MARIADB_ROOT_PASSWORD=password
+      - MARIADB_MASTER_HOST=master1
+      - MARIADB_REPLICATION_USER=repl
+      - MARIADB_REPLICATION_PASSWORD=replicationpass
+      - MARIADB_HEALTHCHECK_GRANTS=REPLICA MONITOR
+    ports:
+      - 3308:3306
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--replication_io", "--replication_sql", "--replication_seconds_behind_master=1", "--replication"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      master1:
+        condition: service_healthy

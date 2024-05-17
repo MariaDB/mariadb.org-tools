@@ -1,0 +1,2 @@
+
+CHANGE MASTER TO MASTER_HOST='master2', MASTER_USER='repl', MASTER_PASSWORD='replicationpass';
