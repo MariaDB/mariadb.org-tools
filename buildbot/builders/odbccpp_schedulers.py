@@ -10,14 +10,13 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-rhel8-aarch64",
                   "codbc-rocky8-aarch64",
                   "codbc-focal-amd64",
-                  "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb", "codbc-bookworm-amd64-deb", "codbc-lunar-amd64-deb", "codbc-bullseye-amd64-deb",
+                  "codbc-focal-amd64-deb", "codbc-jammy-amd64-deb", "codbc-bookworm-amd64-deb", "codbc-bullseye-amd64-deb",
                   "codbc-focal-aarch64-deb", "codbc-jammy-aarch64-deb", "codbc-bookworm-aarch64-deb", "codbc-bullseye-aarch64-deb",
                   "codbc-rhel8-amd64-rpm", "codbc-rhel9-amd64-rpm", "codbc-centos7-amd64-rpm", "codbc-rhel8-aarch64-rpm", "codbc-rhel9-aarch64-rpm",
                   "codbc-focal-aarch64",
                   "codbc-jammy-amd64", "codbc-buster-amd64", "codbc-bullseye-amd64",
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
                   "codbc-bookworm-aarch64","codbc-bookworm-amd64",
-                  "codbc-lunar-amd64",
                   "codbc-sles15-amd64", "codbc-sles12-amd64", "codbc-macos",
                   "codbc-fedora37-amd64",
                   "codbc-fedora38-amd64", "codbc-focal-amd64-memcheck",
@@ -39,7 +38,6 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-jammy-amd64", "ccpp-buster-amd64", "ccpp-bullseye-amd64",
                   "ccpp-jammy-aarch64", "ccpp-buster-aarch64", "ccpp-bullseye-aarch64",
                   "ccpp-bookworm-aarch64","ccpp-bookworm-amd64",
-                  "ccpp-lunar-amd64",
                   "ccpp-sles15-amd64", "ccpp-sles12-amd64", "ccpp-macos", 
                   "ccpp-fedora37-amd64",
                   "ccpp-fedora38-amd64",
@@ -65,7 +63,6 @@ odbccppForceBuilderNames= [
                           ,"codbc-focal-amd64-deb"
                           ,"codbc-jammy-amd64-deb"
                           ,"codbc-bookworm-amd64-deb"
-                          ,"codbc-lunar-amd64-deb"
                           ,"codbc-bullseye-amd64-deb"
                           ,"codbc-focal-aarch64-deb"
                           ,"codbc-jammy-aarch64-deb"
@@ -73,7 +70,6 @@ odbccppForceBuilderNames= [
                           ,"codbc-bullseye-aarch64-deb"
                           ,"codbc-jammy-amd64"
                           ,"codbc-jammy-aarch64"
-                          ,"codbc-lunar-amd64"
                           ,"codbc-macos"
                           ,"codbc-buster-amd64"
                           ,"codbc-buster-aarch64"
@@ -110,7 +106,6 @@ odbccppForceBuilderNames= [
                           ,"ccpp-focal-aarch64"
                           ,"ccpp-jammy-amd64"
                           ,"ccpp-jammy-aarch64"
-                          ,"ccpp-lunar-amd64"
                           ,"ccpp-buster-amd64"
                           ,"ccpp-buster-aarch64"
                           ,"ccpp-bullseye-amd64"
