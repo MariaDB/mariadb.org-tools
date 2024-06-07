@@ -232,8 +232,6 @@ bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "vm-alma
 bld_codbc_jammy_amd64= build_linux_connector_odbc("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_aarch64= build_linux_connector_odbc_no_test("codbc-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_lunar_amd64= build_linux_connector_odbc_no_test("codbc-lunar-amd64", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-
 bld_codbc_mantic_amd64= build_linux_connector_odbc_no_test("codbc-mantic-amd64", "vm-mantic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_codbc_noble_amd64= build_linux_connector_odbc_no_test("codbc-noble-amd64", "vm-noble-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
@@ -509,7 +507,6 @@ bld_rhel9_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-aarch6
 
 bld_codbc_focal_amd64_deb= build_connector_odbc_deb("codbc-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_amd64_deb= build_connector_odbc_deb("codbc-jammy-amd64-deb", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
-bld_codbc_lunar_amd64_deb= build_connector_odbc_deb("codbc-lunar-amd64-deb", "vm-lunar-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_bookworm_amd64_deb= build_connector_odbc_deb("codbc-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_bullseye_amd64_deb= build_connector_odbc_deb("codbc-bullseye-amd64-deb", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_focal_arm64_deb= build_connector_odbc_deb("codbc-focal-aarch64-deb", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
