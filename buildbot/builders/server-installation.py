@@ -31,9 +31,7 @@ case $HOSTNAME in rhel*)
   VERSION_ID=$(cat /etc/redhat-release | awk '{print $6}' | sed -e "s/\..*//g")
 
   sudo subscription-manager refresh 
-  if [ $VERSION_ID == 9 ]; then
-    sudo subscription-manager repos --enable=codeready-builder-for-rhel-9-x86_64-rpms
-  fi ;; esac
+  ;; esac
 if ! curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --skip-maxscale; then
   if [ -e /etc/fedora-release ]; then
     SPACKAGE_NAME=mariadb-server
