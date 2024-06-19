@@ -235,8 +235,6 @@ bld_codbc_alma9_aarch64= build_linux_connector_odbc("codbc-alma9-aarch64", "vm-a
 bld_codbc_jammy_amd64= build_linux_connector_odbc("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_jammy_aarch64= build_linux_connector_odbc_no_test("codbc-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_mantic_amd64= build_linux_connector_odbc_no_test("codbc-mantic-amd64", "vm-mantic-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-
 bld_codbc_noble_amd64= build_linux_connector_odbc_no_test("codbc-noble-amd64", "vm-noble-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_noble_aarch64= build_linux_connector_odbc_no_test("codbc-noble-aarch64", "vm-noble-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
