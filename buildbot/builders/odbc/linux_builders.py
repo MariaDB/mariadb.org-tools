@@ -226,7 +226,10 @@ bld_codbc_bookworm_aarch64= build_linux_connector_odbc("codbc-bookworm-aarch64",
 
 bld_codbc_centos7_x64= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "vm-alma84-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "vm-alma84-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_alma8_aarch64= build_linux_connector_odbc("codbc-alma8-aarch64", "vm-alma8-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
+bld_codbc_alma9_amd64= build_linux_connector_odbc("codbc-alma9-amd64", "vm-alma9-amd64", "", " -DWITH_SSL=OPENSSL");
+bld_codbc_alma9_aarch64= build_linux_connector_odbc("codbc-alma9-aarch64", "vm-alma9-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 # We can't install server here or this time-outs with high probability
 
 bld_codbc_jammy_amd64= build_linux_connector_odbc("codbc-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
@@ -237,7 +240,6 @@ bld_codbc_mantic_amd64= build_linux_connector_odbc_no_test("codbc-mantic-amd64",
 bld_codbc_noble_amd64= build_linux_connector_odbc_no_test("codbc-noble-amd64", "vm-noble-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_noble_aarch64= build_linux_connector_odbc_no_test("codbc-noble-aarch64", "vm-noble-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_fedora37_amd64= build_linux_connector_odbc_no_test("codbc-fedora37-amd64", "vm-fedora37-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora38_amd64= build_linux_connector_odbc_no_test("codbc-fedora38-amd64", "vm-fedora38-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_fedora39_amd64= build_linux_connector_odbc_no_test("codbc-fedora39-amd64", "vm-fedora39-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 

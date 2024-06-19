@@ -40,7 +40,7 @@ mkdir ../cc
 git submodule init
 git submodule update
 cd libmariadb
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SSL=OFF -DWITH_UNIT_TESTS=Off -DCMAKE_INSTALL_PREFIX=$CCINSTDIR .
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_SSL=OPENSSL -DWITH_UNIT_TESTS=Off -DCMAKE_INSTALL_PREFIX=$CCINSTDIR .
 make
 make install
 cd ..

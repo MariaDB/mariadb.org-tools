@@ -6,7 +6,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-centos7-amd64",
                   "codbc-rhel9-amd64", "codbc-windows",
                   "codbc-rhel9-aarch64",
-                  "codbc-rhel8-amd64","codbc-alma84-amd64",
+                  "codbc-rhel8-amd64","codbc-alma84-amd64","codbc-alma8-aarch64","codbc-alma9-amd64","codbc-alma9-aarch64",
                   "codbc-rhel8-aarch64",
                   "codbc-rocky8-aarch64",
                   "codbc-focal-amd64",
@@ -18,7 +18,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-jammy-aarch64", "codbc-buster-aarch64", "codbc-bullseye-aarch64",
                   "codbc-bookworm-aarch64","codbc-bookworm-amd64",
                   "codbc-sles15-amd64", "codbc-sles12-amd64", "codbc-macos",
-                  "codbc-fedora37-amd64",
+                  "codbc-fedora39-amd64",
                   "codbc-fedora38-amd64", "codbc-focal-amd64-memcheck",
                   "codbc-source-package",
                   "codbc-linux-amd64-asan", "codbc-linux-amd64-ubsan", "codbc-linux-amd64-msan",
@@ -53,7 +53,7 @@ odbccppForceBuilderNames= [
                           ,"codbc-rhel8-amd64"
                           ,"codbc-rhel8-aarch64"
                           ,"codbc-rocky8-aarch64"
-                          ,"codbc-alma84-amd64"
+                          ,"codbc-alma84-amd64","codbc-alma8-aarch64","codbc-alma9-amd64","codbc-alma9-aarch64"
                           ,"codbc-rhel9-amd64"
                           ,"codbc-rhel9-aarch64"
                           ,"codbc-sles15-amd64"
@@ -77,7 +77,7 @@ odbccppForceBuilderNames= [
                           ,"codbc-bullseye-aarch64"
                           ,"codbc-bookworm-amd64"
                           ,"codbc-bookworm-aarch64"
-                          ,"codbc-fedora37-amd64"
+                          ,"codbc-fedora39-amd64"
                           ,"codbc-fedora38-amd64"
                           ,"codbc-sles12-amd64"
                           ,"codbc-windows"
