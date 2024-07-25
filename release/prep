@@ -263,12 +263,13 @@ ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake kvm-deb-mantic-aarch64:aarch64-ubuntu-2310-deb-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake kvm-deb-mantic-aarch64:aarch64-ubuntu-2310-deb-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
 ci_dirs_112="${ci_dirs_111}"
 ci_dirs_113="${ci_dirs_112}"
+ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
 
 
 #-------------------------------------------------------------------------------
