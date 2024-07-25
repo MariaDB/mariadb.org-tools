@@ -238,8 +238,8 @@ declare -A builder_dir_bb_amd64=([buster]=kvm-deb-buster-amd64 [bullseye]=kvm-de
 declare -A builder_dir_ci_aarch64=([buster]=aarch64-debian-10-deb-autobake [bullseye]=aarch64-debian-11-deb-autobake [bookworm]=aarch64-debian-12-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
 declare -A builder_dir_bb_aarch64=([buster]=kvm-deb-buster-aarch64 [bullseye]=kvm-deb-bullseye-aarch64 [bookworm]=kvm-deb-bookworm-aarch64 [sid]=kvm-deb-sid-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([buster]=ppc64le-debian-10-deb-autobake [bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([buster]=kvm-deb-buster-ppc64le [bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
+declare -A builder_dir_ci_ppc64le=([bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
 declare -A builder_dir_ci_x86=([buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
 declare -A builder_dir_bb_x86=([buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
@@ -299,7 +299,7 @@ for dist in ${debian_dists}; do
   # add ppc64el files
   builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
-    'buster'|'bullseye')
+    'bullseye')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
     'sid')
@@ -365,12 +365,12 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "buster"|"bullseye"|"sid")
+            "bullseye"|"sid")
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
               ;;
-            "bookworm")
+            "bookworm"|"buster")
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
               ;;
@@ -409,7 +409,7 @@ for dist in ${debian_dists}; do
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.1*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*arm64.deb
           ;;
-        *11.2*|*11.3*)
+        *11.2*|*11.3*|*11.4*|*11.5*)
           # Copy in CMAPI package
           # should be ${dist}, but currently we use jammy package (Aug 2023)
           runCommand reprepro --basedir=. includedeb ${dist} ${dir_cmapi}/${ver_cmapi}/11.2*/jammy/mariadb-columnstore-cmapi*${ver_cmapi}*amd64.deb
