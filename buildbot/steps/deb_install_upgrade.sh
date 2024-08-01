@@ -188,14 +188,14 @@ get_server_info()
   set +x
   for i in `sudo which mysqld | sed -e 's/mysqld$/mysql\*/'` `which mysql | sed -e 's/mysql$/mysql\*/'` `dpkg-query -L \`dpkg -l | grep mariadb | awk '{print $2}' | xargs\` | grep -vE 'mysql-test|mariadb-test' | grep -v '/debug/' | grep '/plugin/' | sed -e 's/[^\/]*$/\*/' | sort | uniq | xargs`
   do
-    # Q1 2024 workaround
-    if [[ $i =~ "test_sql_service" ]] ; then
-      continue
-    fi
     echo "=== $i" >> /home/buildbot/ldd.$new_or_old
-    # Q2 2024 workaround (MDEV-32791 removed libpmem dependency and its dependencies)
+    # Q3 2024 workaround (Columnstore got pcre as a dependency)
     # ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
-    ldd $i | grep -vE 'libpmem|libdaxctl|libkmod|libndctl|libudev|libuuid|liblzma|libzstd|libcap' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
+    if [[ $i =~ "ha_columnstore" ]] ; then
+      ldd $i | grep -vE 'pcre' | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
+    else
+      ldd $i | sort | sed 's/(.*)//' >> /home/buildbot/ldd.$new_or_old
+    fi
   done
   set -x
 }
