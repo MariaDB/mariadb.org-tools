@@ -77,6 +77,8 @@ ci_mappings_4="
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
   gal-aarch64-ubuntu-2304:kvm-deb-lunar-aarch64-gal
   gal-aarch64-ubuntu-2310:kvm-deb-mantic-aarch64-gal
+  gal-ppc64le-ubuntu-2404:kvm-deb-noble-ppc64le-gal
+    gal-s390x-ubuntu-2404:kvm-deb-noble-s390x-gal
         gal-s390x-sles-12:kvm-zyp-sles12-s390x-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
@@ -193,6 +195,11 @@ deb_dists_full_4="
 
   mantic-aarch64
   mantic-amd64
+
+  noble-aarch64
+  noble-amd64
+  noble-ppc64le
+  noble-s390x
 
   sid-aarch64
   sid-amd64
