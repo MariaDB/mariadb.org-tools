@@ -61,17 +61,17 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [lunar]=ubuntu-2304-deb-autobake [mantic]=ubuntu-2310-deb-autobake)
-declare -A builder_dir_bb_amd64=([focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [lunar]=kvm-deb-lunar-amd64 [mantic]=kvm-deb-mantic-amd64)
+declare -A builder_dir_ci_amd64=([focal]=ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [mantic]=ubuntu-2310-deb-autobake [noble]=ubuntu-2404-deb-autobake) 
+declare -A builder_dir_bb_amd64=([focal]=kvm-deb-focal-amd64 [jammy]=kvm-deb-jammy-amd64 [mantic]=kvm-deb-mantic-amd64 [noble]=kvm-deb-noble-amd64)
 
-declare -A builder_dir_ci_aarch64=([focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [lunar]=aarch64-ubuntu-2304-deb-autobake [mantic]=aarch64-ubuntu-2310-deb-autobake)
-declare -A builder_dir_bb_aarch64=([focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [lunar]=kvm-deb-lunar-aarch64 [mantic]=kvm-deb-mantic-aarch64)
+declare -A builder_dir_ci_aarch64=([focal]=aarch64-ubuntu-2004-deb-autobake [jammy]=aarch64-ubuntu-2204-deb-autobake [mantic]=aarch64-ubuntu-2310-deb-autobake [noble]=aarch64-ubuntu-2404-deb-autobake)
+declare -A builder_dir_bb_aarch64=([focal]=kvm-deb-focal-aarch64 [jammy]=kvm-deb-jammy-aarch64 [mantic]=kvm-deb-mantic-aarch64 [noble]=kvm-deb-noble-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([focal]=kvm-deb-focal-ppc64le [jammy]=kvm-deb-jammy-ppc64le)
+declare -A builder_dir_ci_ppc64le=([focal]=pc9-ubuntu-2004-deb-autobake [jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([focal]=kvm-deb-focal-ppc64le [jammy]=kvm-deb-jammy-ppc64le [noble]=kvm-deb-noble-ppc64le)
 
-declare -A builder_dir_ci_s390x=([focal]=s390x-ubuntu-2004-deb-autobake [jammy]=s390x-ubuntu-2204-deb-autobake)
-declare -A builder_dir_bb_s390x=([focal]=kvm-deb-focal-s390x [jammy]=kvm-deb-jammy-s390x)
+declare -A builder_dir_ci_s390x=([focal]=s390x-ubuntu-2004-deb-autobake [jammy]=s390x-ubuntu-2204-deb-autobake [noble]=s390x-ubuntu-2404-deb-autobake)
+declare -A builder_dir_bb_s390x=([focal]=kvm-deb-focal-s390x [jammy]=kvm-deb-jammy-s390x [noble]=kvm-deb-noble-s390x)
 
 declare -A builder_dir_ci_x86=([focal]=32bit-ubuntu-2004-deb-autobake)
 declare -A builder_dir_bb_x86=([focal]=kvm-deb-focal-x86)
@@ -120,8 +120,8 @@ case ${ARCHDIR} in
   *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
     ubuntu_dists="focal jammy"
     ;;
-  *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
-    ubuntu_dists="focal jammy lunar mantic"
+  *10.11*|*10.12*|*11.0*|*11.1*|*11.2*|*11.4*|*11.5*)
+    ubuntu_dists="focal jammy mantic noble"
     ;;
   *)
     line
@@ -183,14 +183,14 @@ for dist in ${ubuntu_dists}; do
   case ${dist} in
     focal)   dist_alt='ubu2004' ;;
     jammy)   dist_alt='ubu2204' ;;
-    lunar)   dist_alt='ubu2304' ;;
     mantic)  dist_alt='ubu2310' ;;
+    noble)  dist_alt='ubu2404' ;;
   esac
 
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'focal'|'jammy'|'lunar'|'mantic')
+    'focal'|'jammy'|'mantic'|'noble')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
   esac
@@ -198,7 +198,7 @@ for dist in ${ubuntu_dists}; do
   # Include ppc64le debs
   builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
-    'focal'|'jammy')
+    'focal'|'jammy'|'noble')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -207,7 +207,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'focal'|'jammy'|'lunar'|'mantic')
+    'focal'|'jammy'|'mantic'|'noble')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -216,7 +216,7 @@ for dist in ${ubuntu_dists}; do
   # Include s390x debs
   builder_dir="builder_dir_${build_type}_s390x[${dist}]"
   case ${dist} in
-    'focal'|'jammy')
+    'focal'|'jammy'|'noble')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_s390x.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_s390x.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -242,21 +242,21 @@ for dist in ${ubuntu_dists}; do
 
         # include ppc64le
         case ${dist} in
-          'focal'|'jammy')
+          'focal'|'jammy'|'noble')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
             ;;
         esac
 
         # include arm64 (aarch64)
         case ${dist} in
-          'focal'|'jammy'|'lunar'|'mantic')
+          'focal'|'jammy'|'mantic'|'noble')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
             ;;
         esac
 
         # include s390x
         case ${dist} in
-          'focal'|'jammy')
+          'focal'|'jammy'|'noble')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist_filename}*_s390x.changes
             ;;
         esac
@@ -265,7 +265,7 @@ for dist in ${ubuntu_dists}; do
 
   # Copy in CMAPI package
   case ${dist} in
-    'focal'|'jammy'|'lunar'|'mantic')
+    'focal'|'jammy'|'mantic'|'noble')
       case ${ARCHDIR} in
         *11.1*)
           # should be ${dist}, but currently we use jammy package (Aug 2023)
