@@ -247,7 +247,6 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
       ci_build_dirs_ppc64le=""
       ;;
   esac
-}
 
 #-------------------------------------------------------------------------------
 # Dirs for buildbot.mariadb.org
@@ -257,40 +256,64 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles12-s390x:s390x-sles-12-rpm-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-deb-bullseye-ppc64le:ppc64le-debian-11-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles12-s390x:s390x-sles-12-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
 ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-lunar-aarch64:aarch64-ubuntu-2304-deb-autobake kvm-deb-mantic-aarch64:aarch64-ubuntu-2310-deb-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-mantic-amd64:amd64-ubuntu-2310-deb-autobake kvm-deb-mantic-aarch64:aarch64-ubuntu-2310-deb-autobake kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-fedora40-amd64:amd64-fedora-40-rpm-autobake kvm-rpm-fedora40-aarch64:aarch64-fedora-40-rpm-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
 ci_dirs_112="${ci_dirs_111}"
 ci_dirs_113="${ci_dirs_112}"
-ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
+case ${major} in
+  10*|11.1|11.2|11.3)
+    ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
+    ;;
+  *) # For 11.4 and higher, also pull in rhel-8 and rhel-9 amd64/aarch64 pkgs
+    ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake"
+    ;;
+esac
+ci_dirs_115="${ci_dirs_114}"
 
 
 #-------------------------------------------------------------------------------
 # Dirs for buildbot.mariadb.net 
 #-------------------------------------------------------------------------------
 
-bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
-bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-buster-ppc64le: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
+case ${major} in
+  10.3|10.4|10.5)
+    bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
+    ;;
+  *) # No opensuse150 in 10.6+
+    bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
+    ;;
+esac
+case ${major} in
+  10*|11.1|11.2|11.3)
+    bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64: kvm-rpm-rhel8-ppc64le:"
+    ;;
+  *) # No rhel8 from bb in 11.4+
+    bb_dirs_103="${bb_dirs_102} kvm-deb-buster-aarch64: kvm-deb-buster-amd64: kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-deb-focal-ppc64le:"
+    ;;
+esac
 bb_dirs_104="${bb_dirs_103}"
 bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
 #bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64: kvm-rpm-fedora39-amd64: kvm-rpm-fedora39-aarch64:"
-bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64:"
+bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora37-amd64: kvm-rpm-fedora37-aarch64: kvm-rpm-fedora38-amd64: kvm-rpm-fedora38-aarch64: kvm-rpm-fedora39-amd64: kvm-zyp-opensuse155-amd64:"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
-bb_dirs_1011="${bb_dirs_1010} kvm-deb-lunar-amd64: kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64: kvm-deb-mantic-amd64:"
+bb_dirs_1011="${bb_dirs_1010} kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64: kvm-deb-mantic-amd64: kvm-zyp-opensuse156-amd64: kvm-deb-noble-amd64: kvm-deb-noble-aarch64:"
 bb_dirs_110="${bb_dirs_1011}"
 bb_dirs_111="${bb_dirs_110}"
 bb_dirs_112="${bb_dirs_111}"
 bb_dirs_113="${bb_dirs_112}"
+bb_dirs_114="${bb_dirs_113}"
+bb_dirs_115="${bb_dirs_114}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -306,7 +329,10 @@ full_dirs_110="${bb_dirs_110} ${ci_dirs_110}"
 full_dirs_111="${bb_dirs_111} ${ci_dirs_111}"
 full_dirs_112="${bb_dirs_112} ${ci_dirs_112}"
 full_dirs_113="${bb_dirs_113} ${ci_dirs_113}"
+full_dirs_114="${bb_dirs_114} ${ci_dirs_114}"
+full_dirs_115="${bb_dirs_115} ${ci_dirs_115}"
 
+}
 
 ## Enterprise builds should not build solaris10 for now
 ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
@@ -1509,7 +1535,7 @@ create_package_tarballs() {
   pushd ${dir_corp}/${version_nog}
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
-      echo;echo;line;echo "+ ${tarfile}";line;tar -tf ${tarfile}
+      message "${dir_corp}/${version_nog}/{tarfile}";runCommand tar -tf ${tarfile}
       if ! tar -tf ${tarfile} | grep galera &>/dev/null
       then
         echo "+ ERROR: galera package missing from ${tarfile}"
@@ -1842,6 +1868,31 @@ generate_the_file_list_pickle_for_org_downloads() {
   ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_name}";
 }
 
+copy_win_packages_to_sign-todo_dir() {
+  arch=winx64
+  runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
+  runCommand tree ~/sign-todo/
+  echo;echo
+  message "Quitting so Windows Package signing can occur."
+  lowkey_message "Re-run script when signing is completed and move signed packages back."
+  echo;echo
+  exit 0
+}
+
+move_win_packages_from_sign-done_dir() {
+  runCommand tree ~/sign-done/
+  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
+  runCommand tree ~/sign-done/
+}
+
+verify_signed_win_packages() {
+  for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
+    message "Verifying ${msi}"
+    runCommand osslsigncode verify -in ${msi}
+  done
+}
+
+
 #-------------------------------------------------------------------------------
 # Main Script
 #-------------------------------------------------------------------------------
@@ -1933,6 +1984,8 @@ loadDefaults                                    # Load Default paths and vars
 # create major variable that has the base major version of mariadb (e.g. 10.3)
 major=${num%.*}
 
+set_build_dirs_variables
+
 # set various ${xx_dirs} variables to the appropriate version
 ci_dirs="ci_dirs_${major//./}"
 bb_dirs="bb_dirs_${major//./}"
@@ -2009,7 +2062,6 @@ shouldI prepare_yum_packages
 #shouldI include_Galera_packages_in_repositories
 include_Galera_packages_in_repositories
 
-set_build_dirs_variables
 
 # Set various options that change depending on whether this is an enterprise
 # release or not
@@ -2406,8 +2458,6 @@ else
   echo
 fi
 
-
-
 #-------------------------------------------------------------------------------
 #  Windows packages
 #-------------------------------------------------------------------------------
@@ -2431,6 +2481,10 @@ if [ "${galera_suffix}" != "-galera" ]; then
       else
       shouldI pull_the_win_packages_from_the_win_builder
       fi
+
+      shouldI copy_win_packages_to_sign-todo_dir
+      shouldI move_win_packages_from_sign-done_dir
+      verify_signed_win_packages
 
       for pkgtype in msi zip; do
         #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
@@ -2712,6 +2766,7 @@ else
       rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
     else
       rsync_wrapper "-av --delete-before --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/fedora ${dir_yum_prep}/${dir_name}/yum/"
     fi
     #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
     #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
@@ -2746,11 +2801,11 @@ else
     popd
 
     # remove symlinks from corp repos
-    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64"
+    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64"
     pushd ${dir_corp}/${dir_name}/yum/
       for link in ${symlinks_to_remove} ; do
         if [[ -h ${link} ]] ; then
-          RC rm -v ${link}
+          rm -v ${link}
         fi
       done
     popd
