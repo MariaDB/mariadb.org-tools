@@ -64,20 +64,24 @@ declare -A builder_dir_ci_amd64=(
   [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
   [fedora37]=amd64-fedora-37-rpm-autobake [fedora38]=amd64-fedora-38-rpm-autobake
+  [fedora39]=amd64-fedora-39-rpm-autobake
+  [fedora40]=amd64-fedora-40-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
   [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
+  [opensuse155]=amd64-opensuse-155-rpm-autobake [opensuse156]=amd64-opensuse-156-rpm-autobake
 )
-#  [fedora39]=amd64-fedora-39-rpm-autobake
 
 declare -A builder_dir_bb_amd64=(
   [centos7]=kvm-rpm-centos74-amd64
   [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora37]=kvm-rpm-fedora37-amd64 [fedora38]=kvm-rpm-fedora38-amd64
+  [fedora39]=kvm-rpm-fedora39-amd64
+  [fedora40]=kvm-rpm-fedora40-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
+  [opensuse155]=kvm-zyp-opensuse155-amd64 [opensuse156]=kvm-zyp-opensuse156-amd64
 )
-#  [fedora39]=kvm-rpm-fedora39-amd64
 
 # - - - - - - - - -
 
@@ -86,29 +90,32 @@ declare -A builder_dir_ci_aarch64=(
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [fedora37]=aarch64-fedora-37-rpm-autobake
   [fedora38]=aarch64-fedora-38-rpm-autobake
+  [fedora40]=aarch64-fedora-40-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
   [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
+  [opensuse155]=aarch64-opensuse-155-rpm-autobake [opensuse156]=aarch64-opensuse-156-rpm-autobake
 )
-#  [fedora39]=aarch64-fedora-39-rpm-autobake
 
 declare -A builder_dir_bb_aarch64=(
   [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora37]=kvm-rpm-fedora37-aarch64
   [fedora38]=kvm-rpm-fedora38-aarch64
+  [fedora39]=kvm-rpm-fedora39-aarch64
+  [fedora40]=kvm-rpm-fedora40-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
+  [opensuse155]=kvm-zyp-opensuse155-aarch64 [opensuse156]=kvm-zyp-opensuse156-aarch64
 )
-#  [fedora39]=kvm-rpm-fedora39-aarch64
 
 # - - - - - - - - -
 
 declare -A builder_dir_ci_ppc64le=(
   [rhel8]=ppc64le-rhel-8-rpm-autobake
   [rhel9]=ppc64le-rhel-9-rpm-autobake
-  [fedora37]=ppc64le-fedora-37-rpm-autobake
   [sles12]=ppc64le-sles-12-rpm-autobake [sles15]=ppc64le-sles-15-rpm-autobake
   [opensuse15]=ppc64le-opensuse-15-rpm-autobake [opensuse42]=ppc64le-opensuse-42-rpm-autobake
+  [opensuse155]=ppc64le-opensuse-155-rpm-autobake [opensuse156]=ppc64le-opensuse-156-rpm-autobake
 )
 
 declare -A builder_dir_bb_ppc64le=(
@@ -117,6 +124,7 @@ declare -A builder_dir_bb_ppc64le=(
   [fedora37]=kvm-rpm-fedora37-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles15-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
+  [opensuse155]=kvm-zyp-opensuse155-ppc64le [opensuse156]=kvm-zyp-opensuse156-ppc64le
 )
 
 declare -A builder_dir_ci_s390x=(
@@ -153,7 +161,6 @@ case ${ARCHDIR} in
     sles12-amd64
     sles12-s390x
     sles15-amd64
-    sles15-s390x
   "
   dists_ci="
     rhel8-aarch64
@@ -212,7 +219,7 @@ case ${ARCHDIR} in
   "
   dists=${dists_bb}
     ;;
-  *)
+  *10.6*)
   dists_bb="
     centos7-amd64
 
@@ -231,19 +238,49 @@ case ${ARCHDIR} in
     fedora38-amd64
     fedora38-aarch64
 
-    opensuse15-amd64
+    opensuse155-amd64
+
+    sles12-amd64
+    sles12-s390x
+    sles15-amd64
+  "
+  dists_ci="
+    rhel8-aarch64
+  "
+  dists=${dists_bb}
+    ;;
+  *)
+  dists_bb="
+    centos7-amd64
+
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
+
+    rhel9-amd64
+    rhel9-aarch64
+    rhel9-ppc64le
+    rhel9-s390x
+
+    fedora37-amd64
+    fedora37-aarch64
+    fedora38-amd64
+    fedora38-aarch64
+    fedora39-amd64
+    fedora40-amd64
+    fedora40-aarch64
+
+    opensuse155-amd64
+    opensuse156-amd64
 
     sles12-amd64
     sles12-s390x
     sles15-amd64
     sles15-s390x
   "
-#    fedora39-amd64
-#    fedora39-aarch64
-
   dists_ci="
     rhel8-aarch64
-
   "
   dists=${dists_bb}
     ;;
@@ -740,14 +777,17 @@ for REPONAME in ${dists}; do
         fedora37-amd64) fedora_ver=37 ; fedora_arch=amd64 ;;
         fedora38-amd64) fedora_ver=38 ; fedora_arch=amd64 ;;
         fedora39-amd64) fedora_ver=39 ; fedora_arch=amd64 ;;
+        fedora40-amd64) fedora_ver=40 ; fedora_arch=amd64 ;;
 
         fedora37-aarch64) fedora_ver=37 ; fedora_arch=aarch64 ;;
         fedora38-aarch64) fedora_ver=38 ; fedora_arch=aarch64 ;;
         fedora39-aarch64) fedora_ver=39 ; fedora_arch=aarch64 ;;
+        fedora40-aarch64) fedora_ver=40 ; fedora_arch=aarch64 ;;
 
         fedora37-ppc64le) fedora_ver=37 ; fedora_arch=ppc64le ;;
         fedora38-ppc64le) fedora_ver=38 ; fedora_arch=ppc64le ;;
         fedora39-ppc64le) fedora_ver=39 ; fedora_arch=ppc64le ;;
+        fedora40-ppc64le) fedora_ver=40 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
@@ -778,6 +818,32 @@ for REPONAME in ${dists}; do
       # Copy in galera files
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse150-amd64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'opensuse155-amd64')
+      set_builder_dir opensuse155 amd64
+      runCommand mkdir -vp opensuse/15.5/x86_64
+      maybe_make_symlink opensuse/15.5/x86_64 opensuse155-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse155-amd64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'opensuse156-amd64')
+      set_builder_dir opensuse156 amd64
+      runCommand mkdir -vp opensuse/15.6/x86_64
+      maybe_make_symlink opensuse/15.6/x86_64 opensuse156-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse156-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'opensuse42-amd64')
@@ -961,6 +1027,9 @@ for DIR in ${dists}; do
       ;;
     fedora39*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 39
+      ;;
+    fedora40*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 40
       ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
