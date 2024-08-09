@@ -248,8 +248,11 @@ case ${TREE} in
   *10.3*|*10.4*)
     debian_dists="buster"
     ;;
-  *10.5*|*10.6*|*10.8*|*10.9*|*10.10*|*10.11*|*11.1*|*11.2*)
+  *10.5*|*10.6*|*10.8*|*10.9*|*10.10*)
     debian_dists="buster bullseye"
+    ;;
+  *10.11*|*11.1*|*11.2*|*11.3*)
+    debian_dists="buster bullseye bookworm"
     ;;
   *)
     debian_dists="buster bullseye bookworm sid"
