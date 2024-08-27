@@ -277,6 +277,7 @@ case ${major} in
     ;;
 esac
 ci_dirs_115="${ci_dirs_114}"
+ci_dirs_116="${ci_dirs_115}"
 
 
 #-------------------------------------------------------------------------------
@@ -314,6 +315,7 @@ bb_dirs_112="${bb_dirs_111}"
 bb_dirs_113="${bb_dirs_112}"
 bb_dirs_114="${bb_dirs_113}"
 bb_dirs_115="${bb_dirs_114}"
+bb_dirs_116="${bb_dirs_115}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -331,6 +333,7 @@ full_dirs_112="${bb_dirs_112} ${ci_dirs_112}"
 full_dirs_113="${bb_dirs_113} ${ci_dirs_113}"
 full_dirs_114="${bb_dirs_114} ${ci_dirs_114}"
 full_dirs_115="${bb_dirs_115} ${ci_dirs_115}"
+full_dirs_116="${bb_dirs_116} ${ci_dirs_116}"
 
 }
 

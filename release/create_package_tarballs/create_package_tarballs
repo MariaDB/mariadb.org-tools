@@ -49,7 +49,7 @@ rpm_ver_cmapi=( 8 9 )
 deb_ver_cmapi=( bullseye focal jammy noble )
 
 case $1 in
-  *10.11*|*11.0*|*11.1*|*11.2*|*11.3*|*11.4*|*11.5*)
+  *10.11*|*11.0*|*11.1*|*11.2*|*11.3*|*11.4*|*11.5*|*11.6*)
     debian_ver=( buster bullseye bookworm )
     ubuntu_ver=( focal jammy mantic noble )
     rhel_ver=( 7 8 9 )
