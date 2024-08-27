@@ -39,6 +39,15 @@ sumgen() {
   DIV
 }
 
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
 userResponse() {
   question="${@}"
   read -p "${question} " -n 1
@@ -101,15 +110,35 @@ shouldI() {
   done
 }
 
-copy_and_stage_files() {
-  MSG "fixing permissions"
+copy_win_packages_to_sign-todo_dir() {
+  RC cp -avi ${dir_build}/codbc-windows/*.msi ~/sign-todo/
+  RC tree ~/sign-todo/
+  MSG "Quitting so Win Package signing can occur."
+  MSG_L "Re-run script when signing is completed and move signed packages back."
+  exit 0
+}
 
-  for dir in $(sudo -u buildbot find ${dir_build} -type d);do
-    sudo -u buildbot chmod -c 755 "${dir}"
+move_win_packages_from_sign-done_dir() {
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*msi ${dir_build}/codbc-windows/
+  RC tree ~/sign-done/
+}
+
+verify_signed_win_packages() {
+  for msi in ${dir_build}/codbc-windows/*msi ; do
+    MSG "Verifying ${msi}"
+    RC osslsigncode verify -in ${msi}
   done
-  for file in $(sudo -u buildbot find ${dir_build} -type f);do
-    sudo -u buildbot chmod -c 644 "${file}"
-  done
+}
+
+copy_and_stage_files() {
+  #MSG "fixing permissions"
+
+  #for dir in $(sudo -u buildbot find ${dir_build} -type d);do
+  #  sudo -u buildbot chmod -c 755 "${dir}"
+  #done
+  #for file in $(sudo -u buildbot find ${dir_build} -type f);do
+  #  sudo -u buildbot chmod -c 644 "${file}"
+  #done
 
   MSG "Copying and staging files"
   pushd ${co_home}
@@ -369,6 +398,103 @@ upload_to_prod() {
 }
 
 #===  FUNCTION  ================================================================
+#          NAME:  remove_a_dir_from_the_local_mirror_dir
+#   DESCRIPTION:  This function displays the dirs in the ${dir_local_mirror}
+#                 directory and prompts for a dir to release, repeating until
+#                 you answer 'n'.
+#===============================================================================
+remove_a_dir_from_the_local_mirror_dir() {
+  local done_removing
+  done_removing=""
+  while [ -z ${done_removing} ];do
+    MSG "Releases currently in ${dir_local_mirror}"
+    tree -L 1 ${dir_local_mirror}
+    LINE
+    userInput "What release should I remove? (e.g. mariadb-10.6.7, s to stop)"
+    release_to_remove="${INPUT}"
+    if [ -z ${release_to_remove} ] ; then
+      MSG "Please enter a release or 's' to stop."
+    else
+      case ${release_to_remove} in
+        s)
+          MSG_L "Stopping..."
+          done_removing='yes'
+          ;;
+        *)
+          if [ -d ${dir_local_mirror}/${release_to_remove} ] ; then
+            userResponse "Ok to remove ${release_to_remove}? [y/n]"
+            case ${ANSWER} in
+              y)
+                MSG_L "Removing ${release_to_remove}..."
+                RC rm -rf ${dir_local_mirror}/${release_to_remove}
+                ;;
+              n)
+                MSG_L "Not removing ${release_to_remove}"
+                ;;
+              *)
+                MSG_L "Please answer [y]es or [n]o."
+                ;;
+            esac
+          else
+            MSG_L "${release_to_remove} doesn't appear to exist, please try again."
+            PAUSE
+          fi
+          done_removing=""
+          ;;
+      esac
+    fi
+  done
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  copy_the_release_to_the_local_mirror_dir
+#   DESCRIPTION:  Copy the release to the local mirror prep directory
+#===============================================================================
+copy_the_release_to_the_local_mirror_dir() {
+  if [[ -d ${dir_local_mirror}/${dir_name} ]] ; then
+    MSG_L "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
+  else
+    RC cp -ail ${co_home_org}/${dir_name} ${dir_local_mirror}/
+  fi
+  verify_local_mirror_copy_is_good
+}
+
+verify_local_mirror_copy_is_good() {
+  local dry_run_status
+  dry_run_status=""
+  MSG "Doing an rsync dry-run to verify the local mirror copy is good"
+  MSG_L "If rsync doesn't find anything to sync then the copy is good."
+  for dir in ${dir_name} ; do
+    RC rsync --dry-run -avP ${co_home_org}/${dir} ${dir_local_mirror}/
+    LINE
+  done
+  while [ -z ${dry_run_status} ]; do
+    userResponse "Did the dry run look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Local mirror copy is good..."
+        dry_run_status="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG_L "Local mirror copy is not good. Something went wrong..."
+        MSG_L "You might want to delete the local mirror copy and re-run this step"
+        ANSWER=""
+        exit 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        dry_run_status=""
+        ;;
+    esac
+  done
+}
+
+
+
+#===  FUNCTION  ================================================================
 #          NAME:  generate_the_file_list_pickle_for_org_downloads
 #   DESCRIPTION:  This function logs in to the primary mirror and runs the
 #                 command to generate the pickle that is then imported into the
@@ -409,7 +535,13 @@ set -eu
   #     expanded and before they are executed.
 
 MSG_I "Preparing MariaDB Connector/ODBC ${version} release..."
-
+echo;echo
+shouldI copy_win_packages_to_sign-todo_dir
+echo;echo
+shouldI move_win_packages_from_sign-done_dir
+echo;echo
+verify_signed_win_packages
+echo;echo
 shouldI copy_and_stage_files
 echo;echo
 shouldI prep_org_files
@@ -429,7 +561,12 @@ MSG_I "Archives"
 for archive in ${archives} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 echo;echo
-echo "+ All done!"
+
+shouldI copy_the_release_to_the_local_mirror_dir
+shouldI remove_a_dir_from_the_local_mirror_dir
+
+echo;echo
+MSG_I "+ All done!"
 LINE;LINE;LINE
 echo;echo;echo
 
