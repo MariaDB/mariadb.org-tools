@@ -224,7 +224,6 @@ bld_codbc_bullseye_aarch64= build_linux_connector_odbc("codbc-bullseye-aarch64",
 bld_codbc_bookworm_amd64= build_linux_connector_odbc("codbc-bookworm-amd64", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_bookworm_aarch64= build_linux_connector_odbc("codbc-bookworm-aarch64", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_centos7_x64= build_linux_connector_odbc("codbc-centos7-amd64", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_rhel8_amd64= build_linux_connector_odbc("codbc-rhel8-amd64", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_alma8_amd64= build_linux_connector_odbc("codbc-alma84-amd64", "vm-alma84-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_alma8_aarch64= build_linux_connector_odbc("codbc-alma8-aarch64", "vm-alma8-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
@@ -242,14 +241,11 @@ bld_codbc_fedora38_amd64= build_linux_connector_odbc_no_test("codbc-fedora38-amd
 bld_codbc_fedora39_amd64= build_linux_connector_odbc_no_test("codbc-fedora39-amd64", "vm-fedora39-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 #bld_codbc_rhel9_amd64= build_linux_connector_odbc("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_rhel9_amd64= build_linux_connector_odbc_no_test("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_rhel9_aarch64= build_linux_connector_odbc_no_test("codbc-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
-bld_codbc_alma9_amd64= build_linux_connector_odbc_no_test("codbc-alma9-amd64", "vm-alma9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_codbc_alma9_aarch64= build_linux_connector_odbc_no_test("codbc-alma9-aarch64", "vm-alma9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+bld_codbc_rhel9_amd64= build_linux_connector_odbc("codbc-rhel9-amd64", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_rhel9_aarch64= build_linux_connector_odbc("codbc-rhel9-aarch64", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
-bld_codbc_rhel8_aarch64= build_linux_connector_odbc_no_test("codbc-rhel8-aarch64", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
-bld_codbc_rocky8_aarch64= build_linux_connector_odbc_no_test("codbc-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
-bld_codbc_alma8_aarch64= build_linux_connector_odbc_no_test("codbc-alma8-aarch64", "vm-alma8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+bld_codbc_rhel8_aarch64= build_linux_connector_odbc("codbc-rhel8-aarch64", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
+bld_codbc_rocky8_aarch64= build_linux_connector_odbc("codbc-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
@@ -499,7 +495,6 @@ ldd ./odbc_basic
             "slavenames": slaves,
             "category": "connectors"}
 
-bld_centos7_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 bld_rhel8_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-amd64-rpm", "vm-rhel8-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel9_x64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel9-amd64-rpm", "vm-rhel9-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_rhel8_arm64_connector_odbc_rpm= build_connector_odbc_rpm("codbc-rhel8-aarch64-rpm", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL", False, slaves=connector_slaves_aarch64);
