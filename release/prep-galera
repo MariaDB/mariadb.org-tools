@@ -65,20 +65,20 @@ galera_suffix=""
 ci_mappings_4="
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
-         gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
+       gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
     gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
-   gal-x86-debian-sid:kvm-deb-sid-x86-gal
+       gal-x86-debian-sid:kvm-deb-sid-x86-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
-  gal-aarch64-ubuntu-2304:kvm-deb-lunar-aarch64-gal
-  gal-aarch64-ubuntu-2310:kvm-deb-mantic-aarch64-gal
   gal-ppc64le-ubuntu-2404:kvm-deb-noble-ppc64le-gal
     gal-s390x-ubuntu-2404:kvm-deb-noble-s390x-gal
+  gal-aarch64-ubuntu-2410:kvm-deb-oracular-aarch64-gal
+    gal-amd64-ubuntu-2410:kvm-deb-oracular-amd64-gal
         gal-s390x-sles-12:kvm-zyp-sles12-s390x-gal
         gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
 "
@@ -178,7 +178,6 @@ deb_dists_full_4="
 
   buster-aarch64
   buster-amd64
-  buster-ppc64le
 
   focal-aarch64
   focal-amd64
@@ -190,16 +189,13 @@ deb_dists_full_4="
   jammy-ppc64le
   jammy-s390x
 
-  lunar-aarch64
-  lunar-amd64
-
-  mantic-aarch64
-  mantic-amd64
-
   noble-aarch64
   noble-amd64
   noble-ppc64le
   noble-s390x
+
+  oracular-aarch64
+  oracular-amd64
 
   sid-aarch64
   sid-amd64
@@ -1312,7 +1308,7 @@ build_dirs_x86_64="kvm-rpm-centos74-amd64-gal:galera-${num}-x86_64 kvm-deb-trust
 
 build_dirs="${build_dirs_x86} ${build_dirs_x86_64}"
 
-shouldI pull_this_release_from_the_buildmaster
+#shouldI pull_this_release_from_the_buildmaster
 shouldI pull_this_release_from_the_ci
 shouldI verify_the_ci_download
 shouldI copy_ci_downloads_to_buildmaster_dir
@@ -1322,10 +1318,10 @@ shouldI prepare_the_source_tarball
 shouldI prepare_the_bintar_packages
 shouldI prepare_the_deb_packages
 shouldI prepare_the_rpm_packages
-shouldI prepare_the_deb_repository
-shouldI prepare_the_yum_repository
-shouldI upload_the_test_repos
-shouldI upload_this_release_to_the_buildmaster
+#shouldI prepare_the_deb_repository
+#shouldI prepare_the_yum_repository
+#shouldI upload_the_test_repos
+#shouldI upload_this_release_to_the_buildmaster
 shouldI update_galera_version_in_conf_file
 
 if [ ${log} = "yes" ]; then
