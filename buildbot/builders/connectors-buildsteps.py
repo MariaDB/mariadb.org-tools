@@ -29,6 +29,31 @@ cd build
 
 """
 
+def step0_from_cc_checkout(reponame, parentconn_branch):
+    return """
+set -ex
+if [ -e ~/libssl-dev*.deb ] ; then sudo dpkg -i ~/libssl-dev*.deb ; fi
+git --version
+rm -Rf build
+rm -Rf src
+rm -Rf install_test
+time git clone --depth 1 -b """ + parentconn_branch + """ \"""" + reponame +"""" src
+cd src
+git submodule init
+git submodule update
+cd libmariadb
+git fetch --all --tags --prune
+git checkout %(branch)s
+git pull
+! [ -z "%(revision)s" ] && git reset --hard %(revision)s
+git log -1
+cd ..
+cd ..
+mkdir build
+cd build
+
+"""
+
 step0_set_test_env= """
 # At least uid has to be exported before cmake run
 export TEST_UID=root
