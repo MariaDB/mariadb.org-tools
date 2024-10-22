@@ -114,6 +114,26 @@ shouldI() {
   done
 }
 
+copy_win_packages_to_sign-todo_dir() {
+  RC cp -avi ${dir_build}/win-connector_c_3/*.msi ~/sign-todo/
+  RC tree ~/sign-todo/
+  MSG "Quitting so Win Package signing can occur."
+  MSG_L "Re-run script when signing is completed and move signed packages back."
+  exit 0
+}
+
+move_win_packages_from_sign-done_dir() {
+  RC mv -vi ~/sign-done/mariadb-connector-c-*msi ${dir_build}/win-connector_c_3/
+  RC tree ~/sign-done/
+}
+
+verify_signed_win_packages() {
+  for msi in ${dir_build}/win-connector_c_3/*msi ; do
+    MSG "Verifying ${msi}"
+    RC osslsigncode verify -in ${msi}
+  done
+}
+
 copy_and_stage_files() {
   MSG "Copying and staging files"
   pushd ${cc_home}
@@ -136,6 +156,9 @@ copy_and_stage_files() {
           ;;
         cc-*-amd64)
           cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
+          ;;
+        cc-*-aarch64)
+          cp -avi ${dir}/*aarch64.tar.gz ${dir_name}/
           ;;
         cc-*-x86)
           cp -avi ${dir}/*i386.tar.gz ${dir_name}/
@@ -543,7 +566,13 @@ set -eu
   #     expanded and before they are executed.
 
 MSG_I "Preparing MariaDB Connector/C ${version} release..."
-
+echo;echo
+shouldI copy_win_packages_to_sign-todo_dir
+echo;echo
+shouldI move_win_packages_from_sign-done_dir
+echo;echo
+verify_signed_win_packages
+echo;echo
 shouldI copy_and_stage_files
 echo;echo
 shouldI prep_org_files
