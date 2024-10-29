@@ -10,7 +10,9 @@ fi
 
 if [ "${linux}" == "debian" ] || [ "${linux}" == "ubuntu" ] ; then
   curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-  sudo apt-add-repository "deb [arch=i386,amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+  sudo sh -c "echo \"deb [arch=i386,amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" > /etc/apt/sources.list.d/hashicorp.list"
+  # does not work on Sid
+  #  sudo apt-add-repository "deb [arch=i386,amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
   sudo apt-get update && sudo apt-get install vault
 elif [ "${linux}" == "rhel" ] ; then
   sudo yum install -y yum-utils
