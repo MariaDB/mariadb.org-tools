@@ -72,6 +72,8 @@ ci_mappings_4="
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
        gal-x86-debian-sid:kvm-deb-sid-x86-gal
+      gal-amd64-fedora-40:kvm-rpm-fedora40-amd64-gal
+    gal-aarch64-fedora-40:kvm-rpm-fedora40-aarch64-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
@@ -135,7 +137,6 @@ done
 shift $(($OPTIND - 1))
 
 deb_dists_3="
-  buster
   focal
   trusty
 "
@@ -143,7 +144,6 @@ deb_dists_3="
 deb_dists_4="
   bookworm
   bullseye
-  buster
   focal
   jammy
   kinetic
@@ -153,10 +153,6 @@ deb_dists_4="
 "
 
 deb_dists_full_3="
-  buster-aarch64
-  buster-amd64
-  buster-ppc64le
-
   focal-aarch64
   focal-amd64
   focal-ppc64le
@@ -175,9 +171,6 @@ deb_dists_full_4="
   bullseye-aarch64
   bullseye-amd64
   bullseye-ppc64le
-
-  buster-aarch64
-  buster-amd64
 
   focal-aarch64
   focal-amd64
@@ -238,16 +231,14 @@ rpm_dists_4="
   rhel9-ppc64le
   rhel9-s390x
 
-  fedora37-amd64
-  fedora37-aarch64
-
-  fedora38-amd64
-  fedora38-aarch64
-
   fedora39-amd64
   fedora39-aarch64
+  fedora40-amd64
+  fedora40-aarch64
 
   opensuse150-amd64
+  opensuse155-amd64
+  opensuse156-amd64
 
   rocky84-amd64
 
