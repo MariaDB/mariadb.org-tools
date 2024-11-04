@@ -232,30 +232,27 @@ fi
 # Remove packages from deprecated distros (if they are present)
 #reprepro --basedir=. --delete clearvanished
 
-declare -A builder_dir_ci_amd64=([buster]=debian-10-deb-autobake [bullseye]=debian-11-deb-autobake [bookworm]=debian-12-deb-autobake [sid]=debian-sid-deb-autobake)
-declare -A builder_dir_bb_amd64=([buster]=kvm-deb-buster-amd64 [bullseye]=kvm-deb-bullseye-amd64 [bookworm]=kvm-deb-bookworm-amd64 [sid]=kvm-deb-sid-amd64)
+declare -A builder_dir_ci_amd64=([bullseye]=debian-11-deb-autobake [bookworm]=debian-12-deb-autobake [sid]=debian-sid-deb-autobake)
+declare -A builder_dir_bb_amd64=([bullseye]=kvm-deb-bullseye-amd64 [bookworm]=kvm-deb-bookworm-amd64 [sid]=kvm-deb-sid-amd64)
 
-declare -A builder_dir_ci_aarch64=([buster]=aarch64-debian-10-deb-autobake [bullseye]=aarch64-debian-11-deb-autobake [bookworm]=aarch64-debian-12-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
-declare -A builder_dir_bb_aarch64=([buster]=kvm-deb-buster-aarch64 [bullseye]=kvm-deb-bullseye-aarch64 [bookworm]=kvm-deb-bookworm-aarch64 [sid]=kvm-deb-sid-aarch64)
+declare -A builder_dir_ci_aarch64=([bullseye]=aarch64-debian-11-deb-autobake [bookworm]=aarch64-debian-12-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
+declare -A builder_dir_bb_aarch64=([bullseye]=kvm-deb-bullseye-aarch64 [bookworm]=kvm-deb-bookworm-aarch64 [sid]=kvm-deb-sid-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
 declare -A builder_dir_bb_ppc64le=([bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
-declare -A builder_dir_ci_x86=([buster]=32bit-debian-10-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
-declare -A builder_dir_bb_x86=([buster]=kvm-deb-buster-x86 [sid]=kvm-deb-sid-x86)
+declare -A builder_dir_ci_x86=([sid]=32bit-debian-sid-deb-autobake)
+declare -A builder_dir_bb_x86=([sid]=kvm-deb-sid-x86)
 
 case ${TREE} in 
-  *10.3*|*10.4*)
-    debian_dists="buster"
-    ;;
   *10.5*|*10.6*|*10.8*|*10.9*|*10.10*)
-    debian_dists="buster bullseye"
+    debian_dists="bullseye"
     ;;
   *10.11*|*11.1*|*11.2*|*11.3*)
-    debian_dists="buster bullseye bookworm"
+    debian_dists="bullseye bookworm"
     ;;
   *)
-    debian_dists="buster bullseye bookworm sid"
+    debian_dists="bullseye bookworm sid"
     ;;
 esac
 
@@ -274,7 +271,6 @@ for dist in ${debian_dists}; do
   fi
 
   case ${dist} in
-    buster)   dist_alt='deb10' ;;
     bullseye) dist_alt='deb11' ;;
     bookworm) dist_alt='deb12' ;;
     sid)      dist_alt='debsid' ;;
@@ -287,7 +283,7 @@ for dist in ${debian_dists}; do
     'jessie')
       runCommand reprepro --basedir=. include ${dist} $ARCHDIR/${!builder_dir}/debs/mariadb-*_amd64.changes
       ;;
-    'buster'|'bullseye'|'bookworm')
+    'bullseye'|'bookworm')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
     'sid')
@@ -313,7 +309,7 @@ for dist in ${debian_dists}; do
   # add aarch64 files
   builder_dir="builder_dir_${build_type}_aarch64[${builder}]"
   case ${builder} in
-    'buster'|'bullseye'|'bookworm')
+    'bullseye'|'bookworm')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
     'sid')
@@ -324,7 +320,7 @@ for dist in ${debian_dists}; do
   # add x86 files
   builder_dir="builder_dir_${build_type}_x86[${builder}]"
     case ${builder} in
-      'buster'|'bullseye'|'bookworm')
+      'bullseye'|'bookworm')
         echo "+ no x86 packages for ${builder}"
         ;;
       'sid')
@@ -373,7 +369,7 @@ for dist in ${debian_dists}; do
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
               ;;
-            "bookworm"|"buster")
+            "bookworm")
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
               ;;
@@ -387,7 +383,7 @@ for dist in ${debian_dists}; do
               #"sid")
               #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_25.3.19-${dist}*_i386.changes
               #  ;;
-              'buster'|'bullseye'|'bookworm')
+              'bullseye'|'bookworm')
                 echo "+ no x86 packages for ${dist}"
                 ;;
               'sid')
