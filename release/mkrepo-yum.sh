@@ -60,10 +60,8 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=(
-  [centos7]=amd64-centos-7-rpm-autobake
-  [rhel7]=amd64-rhel-7-rpm-autobake [rhel8]=amd64-rhel-8-rpm-autobake
+  [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
-  [fedora37]=amd64-fedora-37-rpm-autobake [fedora38]=amd64-fedora-38-rpm-autobake
   [fedora39]=amd64-fedora-39-rpm-autobake
   [fedora40]=amd64-fedora-40-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
@@ -72,10 +70,8 @@ declare -A builder_dir_ci_amd64=(
 )
 
 declare -A builder_dir_bb_amd64=(
-  [centos7]=kvm-rpm-centos74-amd64
-  [rhel7]=kvm-rpm-rhel7-amd64 [rhel8]=kvm-rpm-rhel8-amd64
+  [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
-  [fedora37]=kvm-rpm-fedora37-amd64 [fedora38]=kvm-rpm-fedora38-amd64
   [fedora39]=kvm-rpm-fedora39-amd64
   [fedora40]=kvm-rpm-fedora40-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
@@ -88,8 +84,6 @@ declare -A builder_dir_bb_amd64=(
 declare -A builder_dir_ci_aarch64=(
   [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
-  [fedora37]=aarch64-fedora-37-rpm-autobake
-  [fedora38]=aarch64-fedora-38-rpm-autobake
   [fedora40]=aarch64-fedora-40-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
   [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
@@ -99,8 +93,6 @@ declare -A builder_dir_ci_aarch64=(
 declare -A builder_dir_bb_aarch64=(
   [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
-  [fedora37]=kvm-rpm-fedora37-aarch64
-  [fedora38]=kvm-rpm-fedora38-aarch64
   [fedora39]=kvm-rpm-fedora39-aarch64
   [fedora40]=kvm-rpm-fedora40-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
@@ -121,7 +113,6 @@ declare -A builder_dir_ci_ppc64le=(
 declare -A builder_dir_bb_ppc64le=(
   [rhel8]=kvm-rpm-rhel8-ppc64le
   [rhel9]=kvm-rpm-rhel9-ppc64le
-  [fedora37]=kvm-rpm-fedora37-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles15-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
   [opensuse155]=kvm-zyp-opensuse155-ppc64le [opensuse156]=kvm-zyp-opensuse156-ppc64le
@@ -144,8 +135,6 @@ declare -A builder_dir_bb_s390x=(
 case ${ARCHDIR} in
   *10.5*)
   dists_bb="
-    centos7-amd64
-
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -172,8 +161,6 @@ case ${ARCHDIR} in
     ;;
   *10.4*)
   dists_bb="
-    centos7-amd64
-
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -190,8 +177,6 @@ case ${ARCHDIR} in
     ;;
   *10.3*)
   dists_bb="
-    centos7-amd64
-
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -208,8 +193,6 @@ case ${ARCHDIR} in
     ;;
   *10.2*)
   dists_bb="
-    centos7-amd64
-
     opensuse15-amd64
 
     sles12-amd64
@@ -221,8 +204,6 @@ case ${ARCHDIR} in
     ;;
   *10.6*)
   dists_bb="
-    centos7-amd64
-
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -232,11 +213,6 @@ case ${ARCHDIR} in
     rhel9-aarch64
     rhel9-ppc64le
     rhel9-s390x
-
-    fedora37-amd64
-    fedora37-aarch64
-    fedora38-amd64
-    fedora38-aarch64
 
     opensuse155-amd64
 
@@ -249,10 +225,8 @@ case ${ARCHDIR} in
   "
   dists=${dists_bb}
     ;;
-  *)
+  *10.11*|*11.2*)
   dists_bb="
-    centos7-amd64
-
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -263,10 +237,6 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora37-amd64
-    fedora37-aarch64
-    fedora38-amd64
-    fedora38-aarch64
     fedora39-amd64
     fedora40-amd64
     fedora40-aarch64
@@ -276,6 +246,34 @@ case ${ARCHDIR} in
 
     sles12-amd64
     sles12-s390x
+    sles15-amd64
+    sles15-s390x
+  "
+  dists_ci="
+    rhel8-aarch64
+  "
+  dists=${dists_bb}
+     ;;
+  *)
+  dists_bb="
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
+
+    rhel9-amd64
+    rhel9-aarch64
+    rhel9-ppc64le
+    rhel9-s390x
+
+    fedora39-amd64
+    fedora40-amd64
+    fedora40-aarch64
+
+    opensuse155-amd64
+    opensuse156-amd64
+
+    sles12-amd64
     sles15-amd64
     sles15-s390x
   "
@@ -412,209 +410,6 @@ esac
 # Copy over the packages
 for REPONAME in ${dists}; do
   case "${REPONAME}" in
-    'centos6-x86')
-      set_builder_dir centos6 x86
-      runCommand mkdir -vp rhel/6/i386
-      maybe_make_symlink rhel/6/i386 rhel6-x86
-      maybe_make_symlink rhel6-x86 centos6-x86
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in Galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-
-      ;;
-    'centos6-amd64')
-      set_builder_dir centos6 amd64
-      runCommand mkdir -vp rhel/6/x86_64
-      pushd rhel/
-        for i in $(seq 0 9); do
-          maybe_make_symlink 6 6.${i}
-        done
-        maybe_make_symlink 6 6Server
-        maybe_make_symlink 6 6Client
-      popd
-      maybe_make_symlink rhel/6/x86_64 rhel6-amd64
-      maybe_make_symlink rhel6-amd64 centos6-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos74-amd64'|'centos7-amd64')
-      set_builder_dir centos7 amd64
-      runCommand mkdir -vp rhel/7/x86_64
-      case ${ARCHDIR} in
-        *10.2*|*10.3*|*10.4*|*10.5*)
-      pushd rhel/
-        for i in $(seq 0 7); do
-          maybe_make_symlink 7 7.${i}
-        done
-        maybe_make_symlink 7 7Server
-        maybe_make_symlink 7 7Client
-      popd
-          ;;
-        *)
-          echo "+ no symlinks for ${ARCHDIR}"
-          ;;
-      esac
-      maybe_make_symlink rhel/7/x86_64 rhel7-amd64
-      maybe_make_symlink rhel7-amd64 rhel74-amd64
-      maybe_make_symlink rhel7-amd64 rhel73-amd64
-      maybe_make_symlink rhel7-amd64 centos7-amd64
-      maybe_make_symlink centos7-amd64 centos74-amd64
-      maybe_make_symlink centos7-amd64 centos73-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/centos74-amd64/galera*.rpm ${REPONAME}/rpms/"
-      done
-
-      # Copy in other files
-      case ${ARCHDIR} in
-        *10.3*|*10.4*)
-      copy_files "${dir_jemalloc}/jemalloc-centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
-          ;;
-        *)
-          echo "+ no jemalloc for ${ARCHDIR}"
-          ;;
-      esac
-      copy_files "${dir_libzstd}/centos74-amd64-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos73-amd64')
-      set_builder_dir centos7 amd64
-      runCommand mkdir -vp rhel/7/x86_64
-      case ${ARCHDIR} in
-        *10.6*|*10.7*)
-          echo "+ no symlinks for ${ARCHDIR}"
-          ;;
-        *)
-      pushd rhel/
-        for i in $(seq 0 5); do
-          maybe_make_symlink 7 7.${i}
-        done
-        maybe_make_symlink 7 7Server
-        maybe_make_symlink 7 7Client
-      popd
-          ;;
-      esac
-      maybe_make_symlink rhel/7/x86_64 rhel7-amd64
-      maybe_make_symlink rhel7-amd64 rhel73-amd64
-      maybe_make_symlink rhel7-amd64 rhel74-amd64
-      maybe_make_symlink rhel7-amd64 centos7-amd64
-      maybe_make_symlink centos7-amd64 centos74-amd64
-      maybe_make_symlink centos7-amd64 centos73-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      case ${ARCHDIR} in
-        *10.3*|*10.4*)
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-          ;;
-        *)
-          echo "+ no jemalloc for ${ARCHDIR}"
-          ;;
-      esac
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos73-ppc64'|'centos7-ppc64')
-      set_builder_dir centos7 ppc64
-      runCommand mkdir -vp rhel/7/ppc64
-      maybe_make_symlink rhel/7/ppc64 rhel7-ppc64
-      maybe_make_symlink rhel7-ppc64 rhel73-ppc64
-      maybe_make_symlink rhel7-ppc64 centos7-ppc64
-      maybe_make_symlink centos7-ppc64 centos73-ppc64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      case ${ARCHDIR} in
-        *10.3*|*10.4*)
-      copy_files "${dir_jemalloc}/jemalloc-${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-          ;;
-        *)
-          echo "+ no jemalloc for ${ARCHDIR}"
-          ;;
-      esac
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos73-ppc64le'|'centos7-ppc64le')
-      set_builder_dir centos7 ppc64le
-      runCommand mkdir -vp rhel/7/ppc64le
-      maybe_make_symlink rhel/7/ppc64le rhel7-ppc64le
-      maybe_make_symlink rhel7-ppc64le rhel73-ppc64le
-      maybe_make_symlink rhel7-ppc64le centos7-ppc64le
-      maybe_make_symlink centos7-ppc64le centos73-ppc64le
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      copy_files "${dir_libzstd}/${REPONAME}-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
-    'centos74-aarch64'|'centos7-aarch64'|'rhel7-aarch64')
-      set_builder_dir rhel7 aarch64
-      runCommand mkdir -vp rhel/7/aarch64
-      maybe_make_symlink rhel/7/aarch64 rhel7-aarch64
-      maybe_make_symlink rhel7-aarch64 rhel74-aarch64
-      maybe_make_symlink rhel7-aarch64 centos7-aarch64
-      maybe_make_symlink centos7-aarch64 centos74-aarch64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/centos74-aarch64/galera*.rpm ${REPONAME}/rpms/"
-      done
-      
-      # Copy in other files
-      case ${ARCHDIR} in
-        *10.3*|*10.4*)
-      copy_files "${dir_jemalloc}/jemalloc-centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
-          ;;
-        *)
-          echo "+ no jemalloc for ${ARCHDIR}"
-          ;;
-      esac
-      copy_files "${dir_libzstd}/centos74-aarch64-${suffix}/*.rpm ./${REPONAME}/rpms/"
-      ;;
     'rhel8-aarch64')
       set_builder_dir rhel8 aarch64
       runCommand mkdir -vp rhel/8/aarch64
@@ -774,18 +569,12 @@ for REPONAME in ${dists}; do
     fedora*)
       echo "fedora reponame=${REPONAME}"
       case ${REPONAME} in
-        fedora37-amd64) fedora_ver=37 ; fedora_arch=amd64 ;;
-        fedora38-amd64) fedora_ver=38 ; fedora_arch=amd64 ;;
         fedora39-amd64) fedora_ver=39 ; fedora_arch=amd64 ;;
         fedora40-amd64) fedora_ver=40 ; fedora_arch=amd64 ;;
 
-        fedora37-aarch64) fedora_ver=37 ; fedora_arch=aarch64 ;;
-        fedora38-aarch64) fedora_ver=38 ; fedora_arch=aarch64 ;;
         fedora39-aarch64) fedora_ver=39 ; fedora_arch=aarch64 ;;
         fedora40-aarch64) fedora_ver=40 ; fedora_arch=aarch64 ;;
 
-        fedora37-ppc64le) fedora_ver=37 ; fedora_arch=ppc64le ;;
-        fedora38-ppc64le) fedora_ver=38 ; fedora_arch=ppc64le ;;
         fedora39-ppc64le) fedora_ver=39 ; fedora_arch=ppc64le ;;
         fedora40-ppc64le) fedora_ver=40 ; fedora_arch=ppc64le ;;
       esac
@@ -1010,20 +799,11 @@ for DIR in ${dists}; do
   fi
 
   case ${DIR} in
-    centos7*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 7
-      ;;
     rhel8*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 8
       ;;
     rhel9*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 9
-      ;;
-    fedora37*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 37
-      ;;
-    fedora38*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 38
       ;;
     fedora39*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 39
