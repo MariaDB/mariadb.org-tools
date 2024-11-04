@@ -21,6 +21,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "codbc-fedora38-amd64", "codbc-focal-amd64-memcheck",
                   "codbc-source-package",
                   "codbc-linux-amd64-asan", "codbc-linux-amd64-ubsan", "codbc-linux-amd64-msan",
+                  "codbc-noble-amd64-deb","codbc-noble-aarch64-deb",
                   ]))
 c['schedulers'].append(AnyBranchScheduler(
     name="connector_cpp",
@@ -45,6 +46,7 @@ c['schedulers'].append(AnyBranchScheduler(
                   "ccpp-focal-aarch64-deb", "ccpp-jammy-aarch64-deb", "ccpp-bookworm-aarch64-deb", "ccpp-bullseye-aarch64-deb",
                   "ccpp-rhel8-amd64-rpm","ccpp-rhel9-amd64-rpm",
                   "ccpp-rhel8-aarch64-rpm","ccpp-rhel9-aarch64-rpm",
+                  "ccpp-noble-amd64-deb","ccpp-noble-aarch64-deb",
                   ]))
 odbccppForceBuilderNames= [
                            "codbc-source-package"
@@ -88,6 +90,8 @@ odbccppForceBuilderNames= [
                           ,"codbc-rhel9-amd64-rpm"
                           ,"codbc-rhel8-aarch64-rpm"
                           ,"codbc-rhel9-aarch64-rpm"
+                          ,"codbc-noble-amd64-deb"
+                          ,"codbc-noble-aarch64-deb"
                           ##########################################################################
                           ,"ccpp-linux-amd64-asan"
                           ,"ccpp-linux-amd64-ubsan"
@@ -123,6 +127,8 @@ odbccppForceBuilderNames= [
                           ,"ccpp-jammy-aarch64-deb"
                           ,"ccpp-bookworm-aarch64-deb"
                           ,"ccpp-bullseye-aarch64-deb"
+                          ,"ccpp-noble-amd64-deb"
+                          ,"ccpp-noble-aarch64-deb"
                           ,"ccpp-rhel8-amd64-rpm"
                           ,"ccpp-rhel9-amd64-rpm"
                           ,"ccpp-rhel8-aarch64-rpm"

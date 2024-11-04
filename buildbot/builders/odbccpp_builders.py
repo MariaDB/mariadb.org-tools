@@ -41,6 +41,8 @@ odbccppBuilders= [
                   bld_codbc_alma9_amd64,
                   bld_codbc_alma9_aarch64,
                   bld_codbc_sles12_amd64,
+                  bld_codbc_noble_amd64_deb,
+                  bld_codbc_noble_aarch64_deb,
                   bld_codbc_windows,
                   bld_codbc_windows_gnutls,
                   #######################################################
@@ -81,6 +83,8 @@ odbccppBuilders= [
                   bld_cpp_jammy_arm64_deb,
                   bld_cpp_bookworm_arm64_deb,
                   bld_cpp_bullseye_arm64_deb,
+                  bld_cpp_noble_amd64_deb,
+                  bld_cpp_noble_aarch64_deb,
                   bld_rhel8_x64_connector_cpp_rpm,
                   bld_rhel9_x64_connector_cpp_rpm,
                   bld_rhel8_arm64_connector_cpp_rpm,

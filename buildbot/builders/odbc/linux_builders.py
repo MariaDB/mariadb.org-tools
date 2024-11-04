@@ -509,3 +509,5 @@ bld_codbc_jammy_arm64_deb= build_connector_odbc_deb("codbc-jammy-aarch64-deb", "
 bld_codbc_bookworm_arm64_deb= build_connector_odbc_deb("codbc-bookworm-aarch64-deb", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_codbc_bullseye_arm64_deb= build_connector_odbc_deb("codbc-bullseye-aarch64-deb", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 
+bld_codbc_noble_amd64_deb=build_connector_odbc_deb("codbc-noble-amd64-deb", "vm-noble-amd64",  "", "");
+bld_codbc_noble_aarch64_deb=build_connector_odbc_deb("codbc-noble-aarch64-deb", "vm-noble-aarch64",  "", "", slaves=connector_slaves_aarch64);
