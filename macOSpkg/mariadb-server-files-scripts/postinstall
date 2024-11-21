@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+#  Copyright (c) 2016 MariaDB Corporation
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2 of the License.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA */
+
+set -e
+set -x
+exec >>/var/log/mariadb_installer.log 2>&1
+
+basedir=/usr/local/mariadb/server
+datadir=/usr/local/mariadb/data
+option_file=/usr/local/mariadb/etc/my.cnf
+
+# If the datadir does NOT exist, create it and bootstrap with some special sauce to remove
+# superfluous users and put some unix socket auth users in their place.
+if ! [[ -e $datadir ]]
+then
+    cd "$basedir"
+    mkdir -p "$datadir"
+    ./scripts/mysql_install_db --skip-networking --datadir="$datadir"
+#    ./bin/mysqld --skip-networking --bootstrap --datadir="$datadir" --basedir=. <<EoSQL
+#            delete from mysql.user;
+#            delete from mysql.db;
+#            flush privileges;
+#            create user '$USER'@'localhost' identified with unix_socket;
+#            -- grant all privileges on test.* to '$USER'@'localhost';
+#EoSQL
+    rm -f ./data/*.err
+fi
+
+chown -R _mysql "$datadir"
+
+
+# Is anything listening on port 3306 ?
+# If so, start MariaDB Server without networking.
+if nc localhost -G 2 3306 < /dev/null &>/dev/null
+then
+    # 
+    if  ! [[ -e $option_file ]] || 
+        ! "$basedir"/bin/my_print_defaults --defaults-file="$option_file" --mysqld 2>/dev/null | 
+        grep -q skip.networking
+    then
+        printf '%s\n' '[server]' 'skip-networking' >> "$option_file"
+    fi
+fi
+
