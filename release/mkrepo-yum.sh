@@ -754,6 +754,17 @@ for REPONAME in ${dists}; do
       exit 1
       ;;
   esac
+
+  # MDEV-35512
+  case ${ARCHDIR} in
+    *11*)
+      line
+      echo "+ Removing compat packages..."
+      line
+      rm -v ./${REPONAME}/rpms/*compat*
+      ;;
+  esac
+
 done
 
 # Add centos link to rhel dir
