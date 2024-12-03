@@ -163,6 +163,27 @@ copy_and_stage_files() {
       MSG "ERROR: Linux aarch64 files not found"
       exit 3
     fi
+    if cp -avi ${dir_build}/*deb/*.deb ${dir_name}/ ; then
+      MSG "Copied Debian/Ubuntu files"
+    else
+      MSG "ERROR: Debian/Ubuntu files not found"
+      exit 3
+    fi
+    if cp -avi ${dir_build}/*rpm/*amd64.rpm ${dir_name}/ ; then
+      MSG "Copied amd64 RPM files"
+    else
+      MSG "ERROR: amd64 RPM files not found"
+      exit 3
+    fi
+    if cp -avi ${dir_build}/*rpm/*aarch64.rpm ${dir_name}/ ; then
+      MSG "Copied aarch64 RPM files"
+    else
+      MSG "ERROR: aarch64 RPM files not found"
+      exit 3
+    fi
+
+    RC rpmsign --addsign --key-id=${ent_gpg_key} $(find ${dir_name} -name '*.rpm')
+
     # Windows files
     if cp -avi ${dir_build}/*/*msi ${dir_name}/ ; then
       MSG "Copied Windows files"
