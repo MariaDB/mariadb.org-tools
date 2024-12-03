@@ -484,6 +484,6 @@ bld_cpp_focal_arm64_deb= bld_connector_cpp_deb("ccpp-focal-aarch64-deb", "vm-foc
 bld_cpp_jammy_arm64_deb= bld_connector_cpp_deb("ccpp-jammy-aarch64-deb", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_cpp_bookworm_arm64_deb= bld_connector_cpp_deb("ccpp-bookworm-aarch64-deb", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_cpp_bullseye_arm64_deb= bld_connector_cpp_deb("ccpp-bullseye-aarch64-deb", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
-bld_cpp_noble_amd64_deb=build_connector_odbc_deb("ccpp-noble-amd64-deb", "vm-noble-amd64",  "", "");
-bld_cpp_noble_aarch64_deb=build_connector_odbc_deb("ccpp-noble-aarch64-deb", "vm-noble-aarch64",  "", "", slaves=connector_slaves_aarch64);
+bld_cpp_noble_amd64_deb=bld_connector_cpp_deb("ccpp-noble-amd64-deb", "vm-noble-amd64",  "", "");
+bld_cpp_noble_aarch64_deb=bld_connector_cpp_deb("ccpp-noble-aarch64-deb", "vm-noble-aarch64",  "", "", slaves=connector_slaves_aarch64);
 
