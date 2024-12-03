@@ -285,6 +285,7 @@ case ${major} in
 esac
 ci_dirs_115="${ci_dirs_114}"
 ci_dirs_116="${ci_dirs_115}"
+ci_dirs_117="${ci_dirs_116}"
 
 
 #-------------------------------------------------------------------------------
@@ -323,6 +324,7 @@ bb_dirs_113="${bb_dirs_112}"
 bb_dirs_114="${bb_dirs_113}"
 bb_dirs_115="${bb_dirs_114}"
 bb_dirs_116="${bb_dirs_115}"
+bb_dirs_117="${bb_dirs_116}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -341,6 +343,7 @@ full_dirs_113="${bb_dirs_113} ${ci_dirs_113}"
 full_dirs_114="${bb_dirs_114} ${ci_dirs_114}"
 full_dirs_115="${bb_dirs_115} ${ci_dirs_115}"
 full_dirs_116="${bb_dirs_116} ${ci_dirs_116}"
+full_dirs_117="${bb_dirs_117} ${ci_dirs_117}"
 
 }
 
@@ -713,28 +716,28 @@ sync_the_local_mirror_dir_to_the_mirrors() {
 #                 repo directories in the local mirror dir
 #===============================================================================
 update_the_local_mirror_dir_yum_and_repo_symlinks() {
-  pushd ${dir_local_mirror}/yum
-    runCommand tree -L 1
-    if [[ -L ${major} ]]; then
-      runCommand rm -v ${major}*
-    elif [[ -L ${num} ]]; then
-      runCommand rm -v ${major}*
-    fi
-    runCommand ln -sv ../${version_nog}/yum ${major}
-    runCommand ln -sv ../${version_nog}/yum ${num}
-    runCommand tree -L 1
-  popd
-  pushd ${dir_local_mirror}/repo
-    runCommand tree -L 1
-    if [[ -L ${major} ]]; then
-      runCommand rm -v ${major}*
-    elif [[ -L ${num} ]]; then
-      runCommand rm -v ${major}*
-    fi
-    runCommand ln -sv ../${version_nog}/repo ${major}
-    runCommand ln -sv ../${version_nog}/repo ${num}
-    runCommand tree -L 1
-  popd
+  local distro_type
+  for distro_type in repo yum ; do
+    pushd ${dir_local_mirror}/${distro_type}
+      runCommand tree -L 1
+      if [[ -L ${major} ]]; then
+        runCommand rm -v ${major}*
+      elif [[ -L ${num} ]]; then
+        runCommand rm -v ${major}*
+      fi
+      runCommand ln -sv ../${version_nog}/${distro_type} ${major}
+      runCommand ln -sv ../${version_nog}/${distro_type} ${num}
+      case ${num} in
+        *.1) runCommand rm -v 11.rc
+             runCommand ln -sv ../${version_nog}/${distro_type} 11.rc
+             ;;
+        *.2) runCommand rm -v 11.rolling
+             runCommand ln -sv ../${version_nog}/${distro_type} 11.rolling
+             ;;
+      esac
+      runCommand tree -L 1
+    popd
+  done
 }
 
 #===  FUNCTION  ================================================================
@@ -1528,10 +1531,27 @@ activate_the_corp_repos() {
 }
 
 update_the_archive_symlinks() {
+  local rc_rolling_yum
+  local rc_rolling_repo
+  case ${num} in
+    *.1)
+      rc_rolling_repo="; rm -v 11.rc ; ln -sv ../${dir_name}/repo 11.rc ;"
+      rc_rolling_yum="; rm -v 11.rc ; ln -sv ../${dir_name}/yum 11.rc ;"
+      ;;
+    *.2)
+      rc_rolling_repo="; rm -v 11.rolling ; ln -sv ../${dir_name}/repo 11.rolling ;"
+      rc_rolling_yum="; rm -v 11.rolling ; ln -sv ../${dir_name}/yum 11.rolling ;"
+      ;;
+    *)
+      rc_rolling_repo=';'
+      rc_rolling_yum=';'
+      ;;
+  esac
+
   for archive_pair in ${archives}; do
     archive=(${archive_pair//:/ })
     set -x
-    ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};cd repo ; rm -v ${major} ; ln -sv ../${dir_name}/repo ${major} ; ln -sv ../${dir_name}/repo ${num} ; cd ../yum/ ; rm -v ${major} ; ln -sv ../${dir_name}/yum ${major} ; rm -v ${num} ; ln -sv ../${dir_name}/yum ${num}"
+    ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};cd repo ; rm -v ${major} ; ln -sv ../${dir_name}/repo ${major} ; ln -sv ../${dir_name}/repo ${num} ${rc_rolling_repo} cd ../yum/ ; rm -v ${major} ; ln -sv ../${dir_name}/yum ${major} ; rm -v ${num} ; ln -sv ../${dir_name}/yum ${num} ${rc_rolling_yum}"
     set +x
   done
 }
