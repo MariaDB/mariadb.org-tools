@@ -1,0 +1,14 @@
+#!/bin/bash
+
+BRANCH=`git rev-parse --show-toplevel`
+
+if [ "${BRANCH}" = '' ]
+then
+  echo ''
+  echo 'This command mast be run from a git repository'
+  echo ''
+  exit 1
+fi
+(cd ${BRANCH} && \
+  git clean -xdff && \
+  git submodule foreach --recursive git clean -xdf )

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+BRANCH=`git branch|grep '^\*'|awk '{print $2}'`
+echo ''
+echo 'https://buildbot.mariadb.net/buildbot/grid?category=main&branch='${BRANCH}
+echo 'https://internal.mariadb.net/buildbot/grid?category=main&branch='${BRANCH}
+echo 'https://buildbot.mariadb.org/#/grid?branch='${BRANCH}
+echo ''
