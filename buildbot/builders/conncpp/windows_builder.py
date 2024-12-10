@@ -115,7 +115,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         name= "benchmark",
         command=["dojob",
 #WithProperties("pwd && cd win32/packaging/windows && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='C:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
-          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\x64\\Release && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\x64\\Release && xcopy /y /f C:\\work\\x64\\Release\\\\mariadbcpp.lib C:\\work\\x64\\Release\\mariadbcpp11.lib || xcopy /y /f win64\\RelWithDebInfo\\*.dll  C:\\work\\x64\\Release && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master")
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\x64\\Release && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release && copy /y C:\\work\\benchmark\\x64\\Release\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release\\mariadbcpp11.lib && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || xcopy /y /f win64\\RelWithDebInfo\\*.dll  C:\\work\\benchmark\\x64\\Release && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master")
         ],
         haltOnFailure = False
 	));
