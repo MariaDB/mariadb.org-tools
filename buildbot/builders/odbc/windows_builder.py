@@ -127,7 +127,7 @@ ctest --output-on-failure""")
         name= "benchmark_64",
         command=["dojob",
 #WithProperties("pwd && cd win32/packaging/windows && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='C:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
-          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && xcopy /y /f win64\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark_odbc_%(branch)s")
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && xcopy /y /f win64\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
         ],
         haltOnFailure = False
 	));
