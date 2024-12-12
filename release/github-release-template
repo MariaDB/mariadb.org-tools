@@ -1,0 +1,87 @@
+#!/bin/bash
+#===============================================================================
+#
+#          FILE: github-release-template
+# 
+#         USAGE: ./github-release-template
+# 
+#   DESCRIPTION: This script outputs instructions and suggested text for the
+#                fields used in drafting a MariaDB release on GitHub
+# 
+#        AUTHOR: Daniel Bartholomew (dbart), dbart'at'mariadb(dot)com
+#       CREATED: 12/12/2024 17:06
+#===============================================================================
+
+umask 002
+
+
+set -eu
+  # -e  Exit immediately if a simple command exits with a non-zero status,
+  #     unless the command that fails is part of an until or  while loop, part
+  #     of an if statement, part of a && or || list, or if the command's return
+  #     status is being inverted using !.  -o errexit
+  #
+  # -u  Treat unset variables as an error when performing parameter expansion.
+  #     An error message will be written to the standard error, and a
+  #     non-interactive shell will exit.
+  #
+  # -x  Print a trace of simple commands and their arguments after they are
+  #     expanded and before they are executed.
+
+#-------------------------------------------------------------------------------
+#  Variables
+#-------------------------------------------------------------------------------
+ver=${1}
+
+# set location of prep.conf and prep.log to XDG-compatible directories
+dir_conf=${XDG_CONFIG_HOME:-~/.config}
+dir_log=${XDG_DATA_HOME:-~/.local/share}
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+loadDefaults() {
+  # Load the paths (if they exist)
+  if [ -f ${dir_conf}/prep.conf ]; then
+      . ${dir_conf}/prep.conf
+  else
+    echo
+    echo "ERROR: ${dir_conf}/prep.conf preferences file not found"
+    echo "Exiting..."
+    exit 1
+  fi
+  if [ -f ${dir_conf}/common ]; then
+      . ${dir_conf}/common
+  else
+    echo "ERROR: ${dir_conf}/common functions file not found"
+    echo "Exiting..."
+    exit 2
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Main Script
+#-------------------------------------------------------------------------------
+
+loadDefaults
+
+THICKLINE
+MSG_L "Go to the following URI and click on 'Create release from tag'"
+MSG_L ""
+MSG_L "https://github.com/MariaDB/server/releases/tag/mariadb-${ver}"
+MSG_L ""
+MSG_L "Fill in the Release Title and Description fields as follows"
+MSG_L ""
+MSG "Release Title:"
+echo
+echo "MariaDB Community Server ${ver}"
+echo
+MSG "Release Description:"
+echo
+echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/mariadb-${ver//./-}-release-notes/)"
+echo
+MSG "If the release is not a Stable (GA) release, check 'Set as a pre-release'"
+MSG_L "Click 'Publish release'"
+THICKLINE
+
