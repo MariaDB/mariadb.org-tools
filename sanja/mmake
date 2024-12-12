@@ -15,10 +15,11 @@ then
   echo '  e - build embedded'
   echo '  m - build with MSAN'
   echo '  n - build with Ninja'
-  echo '  p - buldled Pcre (otherwise sytem)'
-  echo '  s - bundled Ssl (otherwise sytem)'
+  echo '  p - system Pcre (otherwise bundled)'
+  echo '  s - system Ssl (otherwise bundled)'
   echo '  u - build with UBSAN'
   echo '  v - build for valgrind'
+  echo '  z - system Zlib (otherwise bundled)'
   echo '  3 - add s3 plugin'
   echo '  C - add Columnstore plugin'
   echo '  M - add Mroonga plugin'
@@ -48,10 +49,11 @@ BUILD_TYPE=''
 WITH_EMBEDDED_SERVER='NO'
 WITH_MSAN='NO'
 GENERATE=''
-WITH_PCRE='system'
-WITH_SSL='system'
+WITH_PCRE='bundled'
+WITH_SSL='bundled'
 WITH_UBSAN='NO'
 WITH_VALGRIND='NO'
+WITH_ZLIB='bundled'
 PLUGIN_S3='NO'
 PLUGIN_COLUMNSTORE='NO'
 PLUGIN_MROONGA='NO'
@@ -85,16 +87,19 @@ do
       GENERATE='Ninja'
     ;;
     p)
-      WITH_PCRE='bundled'
+      WITH_PCRE='system'
     ;;
     s)
-      WITH_SSL='bundled'
+      WITH_SSL='system'
     ;;
     u)
       WITH_UBSAN='YES'
     ;;
     v)
       WITH_VALGRIND='YES'
+    ;;
+    z)
+      WITH_ZLIB='system'
     ;;
     3)
       PLUGIN_S3='YES'
@@ -135,8 +140,7 @@ then
 fi
 
 shift
-MYCMD="${MYCMD} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} -DPLUGIN_TOKUDB=${PLUGIN_TOKUDB} $@"
-
+MYCMD="${MYCMD} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DWITH_ZLIB=${WITH_ZLIB} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} -DPLUGIN_TOKUDB=${PLUGIN_TOKUDB} $@"
 echo "${MYCMD}"
 (cd ${BRANCH} && \
   $MYCMD && \
