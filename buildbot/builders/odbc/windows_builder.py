@@ -149,3 +149,70 @@ ctest --output-on-failure""")
 #bld_win_connector_odbc = bld_windows_connector_odbc("win_connector_odbc", "connector_c_2.3", " -DWITH_OPENSSL=OFF ", "v_2.3.7", False)
 bld_codbc_windows= bld_windows_connector_odbc("codbc-windows", " -DWITH_SSL=SCHANNEL  -DINSTALL_PLUGINDIR=plugin", False)
 bld_codbc_windows_gnutls= bld_windows_connector_odbc("codbc-windows-gnutls", " -DWITH_SSL=GNUTLS -DGNUTLS_LIBRARY=c:\\gnutls\\lib64\\libgnutls.dll.a -DGNUTLS_INCLUDE_DIR=c:\\gnutls\\include ", True)
+
+def bld_win_connector_odbc_benchmark(name, cmake_params):
+
+  f_win_connector_odbc = BuildFactory()
+
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name = "remove_old_build",
+        command=["dojob", "pwd && rm -rf" , 
+        WithProperties("d:\\buildbot\\%(buildername)s\\build || true")],
+        timeout = 4*3600,
+        haltOnFailure = True
+  ));
+
+  f_win_connector_odbc.addStep(SetPropertyFromCommand(
+        property="buildrootdir",
+        command=["pwd"],
+  ))
+# f_win_connector_odbc.addStep(maybe_git_checkout)
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "git_checkout",
+        command=["dojob", WithProperties("pwd && rm -rf src && git clone -b %(branch)s %(repository)s src && cd src && git reset --hard %(revision)s && dir")],
+        timeout=7200,
+        doStepIf=do_step_win
+  ));
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "git_conc_tag_checkout",
+        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune")],
+        timeout=7200,
+        doStepIf=do_step_win
+  ));
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "build_package_64",
+        command=["dojob",
+        #-DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=ON " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+          ],
+        haltOnFailure = True
+	));
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "benchmark_64",
+        command=["dojob",
+          #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && xcopy /y /f win64\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
+          #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1 || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
+          # It's faster at the moment to make it installed as 'master'
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\master\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1 || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\master\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
+        ],
+        haltOnFailure = False
+	));
+
+  f_win_connector_odbc.addStep(ShellCommand(
+        name= "clean_after_benchmark_64",
+        command=["dojob",
+        WithProperties("rm C:\\testing\\odbc\\driver\\master\\64\\*.dll && C:\\testing\\odbc\\driver\\%(branch)s\\64\\*.dll && rm C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin\\*.dll || true")
+        ],
+        haltOnFailure = False
+	));
+
+  return { 'name': name,
+        'slavename': "win-connectors",
+        'builddir': name,
+        'factory': f_win_connector_odbc,
+        'category': "connectors" }
+benchmark_codbc= bld_win_connector_odbc_benchmark("codbc-benchmark", "")
