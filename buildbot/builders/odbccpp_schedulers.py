@@ -1,6 +1,6 @@
 c['schedulers'].append(AnyBranchScheduler(
     name="connector_odbc_current",
-    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-odbc" : ("master", "develop")}),
+    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-odbc" : ("master", "develop", "maintenance/3.1")}),
     treeStableTimer=60,
     builderNames=[
                   "codbc-rhel9-amd64", "codbc-windows",
@@ -92,6 +92,7 @@ odbccppForceBuilderNames= [
                           ,"codbc-rhel9-aarch64-rpm"
                           ,"codbc-noble-amd64-deb"
                           ,"codbc-noble-aarch64-deb"
+                          ,"codbc-benchmark"
                           ##########################################################################
                           ,"ccpp-linux-amd64-asan"
                           ,"ccpp-linux-amd64-ubsan"
