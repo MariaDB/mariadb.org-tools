@@ -9,7 +9,7 @@ then
   echo ''
   echo 'where:'
   echo '  flags:'
-  echo '  -     - supress help in case of empty parameters'
+  echo '  -     - suppress help in case of empty parameters'
   echo '  1     - build with 128 indices'
   echo '  a     - build with ASAN'
   echo '  c     - use clang (the only installed or named without number)'
