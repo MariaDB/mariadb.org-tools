@@ -12,7 +12,7 @@ then
   echo '  -     - supress help in case of empty parameters'
   echo '  1     - build with 128 indices'
   echo '  a     - build with ASAN'
-  echo '  c     - use clang (the only installed or named witout number)'
+  echo '  c     - use clang (the only installed or named without number)'
   echo '  c/NN/ - use clang-NN'
   echo '  d     -  *NO* Debug build (defaul instead)'
   echo '  e     - build embedded'
