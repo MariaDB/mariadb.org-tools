@@ -13,10 +13,11 @@ then
   echo '  a - build with ASAN'
   echo '  c - use clang (only one installed)'
   echo '  c(NN) - use clang-NN'
-  echo '  d - build type Debug'
+  echo '  d - *NO* Debug build (defaul instead)'
   echo '  e - build embedded'
+  echo '  l - *NO* safemalloc'
   echo '  m - build with MSAN'
-  echo '  n - build with Ninja'
+  echo '  n - *NO* Ninja build (default instead)'
   echo '  p - system Pcre (otherwise bundled)'
   echo '  s - system Ssl (otherwise bundled)'
   echo '  u - build with UBSAN'
@@ -48,10 +49,11 @@ fi
 MAX_INDEXES='64'
 WITH_ASAN='NO'
 CSET=''
-BUILD_TYPE=''
+BUILD_TYPE='Debug'
 WITH_EMBEDDED_SERVER='NO'
+WSAFEMALLOC=''
 WITH_MSAN='NO'
-GENERATE=''
+GENERATE='Ninja'
 WITH_PCRE='bundled'
 WITH_SSL='bundled'
 WITH_UBSAN='NO'
@@ -128,16 +130,19 @@ do
       echo "CXX=${CXX}"
     ;;
     d)
-      BUILD_TYPE='Debug'
+      BUILD_TYPE=''
     ;;
     e)
       WITH_EMBEDDED_SERVER='YES'
+    ;;
+    l)
+      WSAFEMALLOC=' -DWITH_SAFEMALLOC=OFF '
     ;;
     m)
       WITH_MSAN='YES'
     ;;
     n)
-      GENERATE='Ninja'
+      GENERATE=''
     ;;
     p)
       WITH_PCRE='system'
@@ -193,7 +198,7 @@ then
 fi
 
 shift
-MYCMD="${MYCMD} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DWITH_ZLIB=${WITH_ZLIB} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} -DPLUGIN_TOKUDB=${PLUGIN_TOKUDB} $@"
+MYCMD="${CSET}${MYCMD} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DWITH_ZLIB=${WITH_ZLIB} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} -DPLUGIN_TOKUDB=${PLUGIN_TOKUDB} $WSAFEMALLOC $@"
 echo "${MYCMD}"
 (cd ${BRANCH} && \
   $MYCMD && \
