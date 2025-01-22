@@ -11,6 +11,8 @@ then
   echo '  flags:'
   echo '  1 - build with 128 indices'
   echo '  a - build with ASAN'
+  echo '  c - use clang (only one installed)'
+  echo '  c(NN) - use clang-NN'
   echo '  d - build type Debug'
   echo '  e - build embedded'
   echo '  m - build with MSAN'
@@ -45,6 +47,7 @@ fi
 
 MAX_INDEXES='64'
 WITH_ASAN='NO'
+CSET=''
 BUILD_TYPE=''
 WITH_EMBEDDED_SERVER='NO'
 WITH_MSAN='NO'
@@ -73,6 +76,56 @@ do
     ;;
     a)
       WITH_ASAN='YES'
+    ;;
+    c)
+      # check is there is explicit version)
+      ((N=$i+1))
+      CHAR="${FLAGS:$N:1}"
+      FOUND=0
+      if [ "$CHAR" = "(" ]
+      then
+        ((N++))
+        while [ N<$((counter+1)) ]
+        do
+          CHAR="${FLAGS:$N:1}"
+          case $CHAR in
+            1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0)
+              ((FOUND=$FOUND*10+$CHAR))
+              ;;
+            ")")
+              break
+              ;;
+            *)
+              echo "incorrect flag '${FLAG}'"
+              exit 1
+              ;;
+          esac
+          ((N++))
+        done
+        if [ "FOUND" = "0" ]
+        then
+          echo "incorrect flag '${FLAG}'"
+          exit 1
+        fi
+        i=$N
+        export CC="clang-${FOUND}"
+        export CXX="clang++-${FOUND}"
+      else
+        # Tri to figureout name of compiler
+        if which clang++ &>1 >/dev/null
+        then
+          # named without version
+          export CC="clang"
+          export CXX="clang++"
+        else
+          # single version installed
+          CLANG_N=`/bin/ls -L /usr/bin/clang++-* |xargs basename|awk -e 'BEGIN { FS="-" } { print $2 }'`
+          export CC="clang-${CLANG_N}"
+          export CXX="clang++-${CLANG_N}"
+        fi
+      fi
+      echo "CC=${CC}"
+      echo "CXX=${CXX}"
     ;;
     d)
       BUILD_TYPE='Debug'
