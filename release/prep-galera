@@ -64,9 +64,9 @@ galera_suffix=""
 # mappings of dirs from the CI that we need
 ci_mappings_4="
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
+       gal-ppc64le-rhel-8:kvm-rpm-rhel8-ppc64le-gal
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
        gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
-    gal-ppc64le-debian-11:kvm-deb-bullseye-ppc64le-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
@@ -74,6 +74,7 @@ ci_mappings_4="
        gal-x86-debian-sid:kvm-deb-sid-x86-gal
       gal-amd64-fedora-40:kvm-rpm-fedora40-amd64-gal
     gal-aarch64-fedora-40:kvm-rpm-fedora40-aarch64-gal
+  gal-ppc64le-ubuntu-2004:kvm-deb-focal-ppc64le-gal
     gal-s390x-ubuntu-2004:kvm-deb-focal-s390x-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
@@ -81,8 +82,7 @@ ci_mappings_4="
     gal-s390x-ubuntu-2404:kvm-deb-noble-s390x-gal
   gal-aarch64-ubuntu-2410:kvm-deb-oracular-aarch64-gal
     gal-amd64-ubuntu-2410:kvm-deb-oracular-amd64-gal
-        gal-s390x-sles-12:kvm-zyp-sles12-s390x-gal
-        gal-s390x-sles-15:kvm-zyp-sles15-s390x-gal
+        gal-s390x-sles-1506:kvm-zyp-sles15-s390x-gal
 "
 
 ci_mappings_3="
@@ -170,7 +170,6 @@ deb_dists_full_4="
 
   bullseye-aarch64
   bullseye-amd64
-  bullseye-ppc64le
 
   focal-aarch64
   focal-amd64
@@ -243,7 +242,6 @@ rpm_dists_4="
   rocky84-amd64
 
   sles125-amd64
-  sles12-s390x
   sles15-amd64
   sles15-s390x
 "
