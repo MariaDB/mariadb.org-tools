@@ -258,7 +258,7 @@ ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
 case ${major} in
   10*|11.2)
-ci_dirs_105="${ci_dirs_104} kvm-deb-focal-ppc64le:ppc64le-ubuntu-2004-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-zyp-sles12-s390x:s390x-sles-12-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-deb-focal-ppc64le:ppc64le-ubuntu-2004-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
     ;;
   *) # for 11.4 and higher, no sles12-s390x
 ci_dirs_105="${ci_dirs_104} kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
@@ -269,7 +269,7 @@ ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-15-rpm-autobake kvm-rpm-fedora40-amd64:amd64-fedora-40-rpm-autobake kvm-rpm-fedora40-aarch64:aarch64-fedora-40-rpm-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora40-amd64:amd64-fedora-40-rpm-autobake kvm-rpm-fedora40-aarch64:aarch64-fedora-40-rpm-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"

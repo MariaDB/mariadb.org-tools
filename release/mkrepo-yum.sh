@@ -121,14 +121,12 @@ declare -A builder_dir_bb_ppc64le=(
 declare -A builder_dir_ci_s390x=(
   [rhel8]=s390x-rhel-8-rpm-autobake
   [rhel9]=s390x-rhel-9-rpm-autobake
-  [sles12]=s390x-sles-12-rpm-autobake
-  [sles15]=s390x-sles-15-rpm-autobake
+  [sles15]=s390x-sles-1506-rpm-autobake
 )
 
 declare -A builder_dir_bb_s390x=(
   [rhel8]=kvm-rpm-rhel8-s390x
   [rhel9]=kvm-rpm-rhel9-s390x
-  [sles12]=kvm-zyp-sles12-s390x
   [sles15]=kvm-zyp-sles15-s390x
 )
 
@@ -148,14 +146,10 @@ case ${ARCHDIR} in
     opensuse15-amd64
 
     sles12-amd64
-    sles12-s390x
     sles15-amd64
   "
   dists_ci="
     rhel8-aarch64
-
-    sles12-s390x
-
   "
   dists=${dists_bb}
     ;;
@@ -217,7 +211,6 @@ case ${ARCHDIR} in
     opensuse155-amd64
 
     sles12-amd64
-    sles12-s390x
     sles15-amd64
   "
   dists_ci="
@@ -245,7 +238,6 @@ case ${ARCHDIR} in
     opensuse156-amd64
 
     sles12-amd64
-    sles12-s390x
     sles15-amd64
     sles15-s390x
   "
@@ -718,19 +710,6 @@ for REPONAME in ${dists}; do
       # Copy in galera files
       for gv in ${ver_galera_real}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'sles12-s390x')
-      set_builder_dir sles12 s390x
-      runCommand mkdir -vp sles/12/s390x
-      maybe_make_symlink sles/12/s390x sles12-s390x
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles15-s390x')
