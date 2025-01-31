@@ -238,8 +238,8 @@ declare -A builder_dir_bb_amd64=([bullseye]=kvm-deb-bullseye-amd64 [bookworm]=kv
 declare -A builder_dir_ci_aarch64=([bullseye]=aarch64-debian-11-deb-autobake [bookworm]=aarch64-debian-12-deb-autobake [sid]=aarch64-debian-sid-deb-autobake)
 declare -A builder_dir_bb_aarch64=([bullseye]=kvm-deb-bullseye-aarch64 [bookworm]=kvm-deb-bookworm-aarch64 [sid]=kvm-deb-sid-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([bullseye]=ppc64le-debian-11-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([bullseye]=kvm-deb-bullseye-ppc64le [sid]=kvm-deb-sid-ppc64le)
+declare -A builder_dir_ci_ppc64le=([bookworm]=ppc64le-debian-12-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([bookworm]=kvm-deb-bookworm-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
 declare -A builder_dir_ci_x86=([sid]=32bit-debian-sid-deb-autobake)
 declare -A builder_dir_bb_x86=([sid]=kvm-deb-sid-x86)
@@ -298,7 +298,7 @@ for dist in ${debian_dists}; do
   # add ppc64el files
   builder_dir="builder_dir_${build_type}_ppc64le[${builder}]"
   case ${builder} in
-    'bullseye')
+    'bookworm')
       for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
       ;;
     'sid')
