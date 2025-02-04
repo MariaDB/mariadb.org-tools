@@ -740,7 +740,11 @@ for REPONAME in ${dists}; do
       line
       echo "+ Removing compat packages..."
       line
-      rm -v ./${REPONAME}/rpms/*compat*
+      if [ -f ./${REPONAME}/rpms/*compat* ]; then
+        rm -v ./${REPONAME}/rpms/*compat*
+      else
+        echo "+ No compat packages, so skipping..."
+      fi
       ;;
   esac
 
