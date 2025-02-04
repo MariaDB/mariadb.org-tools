@@ -208,12 +208,22 @@ if ${rev_flag} ; then
   git reset --hard ${release_rev}
 fi
 
+# set the commit to start from
+case ${minor} in
+  0) # release is the first RC, start from prev release series (aka ${exclude})
+    start_commit="${exclude}"
+    ;;
+  *) # release is not the first RC, start from tag of prev release in same series
+    start_commit="${product}-${major}.${minor}"
+    ;;
+esac
+
 # Get a list of all the merges in this changeset
-git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${product}-${major}.${minor}.. > /tmp/merges.creole
+git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. > /tmp/merges.creole
 
 
 # Generate the changelog
-for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${product}-${major}.${minor}.. );do
+for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. );do
   shortrev=${rev:0:10}
   if grep -q ${rev} /tmp/merges.creole;then
     # If a change exists in merges.creole then we need to format it differently
