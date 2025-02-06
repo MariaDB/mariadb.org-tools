@@ -31,7 +31,8 @@ set -eu
 #-------------------------------------------------------------------------------
 #  Variables
 #-------------------------------------------------------------------------------
-ver=${1}
+product=${1}
+ver=${2}
 
 # set location of prep.conf and prep.log to XDG-compatible directories
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
@@ -66,21 +67,45 @@ loadDefaults() {
 
 loadDefaults
 
+case ${product} in
+  galera )
+    title='MariaDB Galera'
+    gh_path='MariaDB/${product}' 
+    kb_slug=''
+    ;;
+  server )
+    title='MariaDB Community Server'
+    gh_path='MariaDB/${product}'
+    kb_slug="${product}"
+    ;;
+  connector-c )
+    title='MariaDB Connector/C'
+    gh_path='mariadb-corporation/mariadb-${product}'
+    kb_slug="mariadb-${product}"
+    ;;
+esac
+
 THICKLINE
 MSG_L "Go to the following URI and click on 'Create release from tag'"
 MSG_L ""
-MSG_L "https://github.com/MariaDB/server/releases/tag/mariadb-${ver}"
+MSG_L "https://github.com/${gh_path}/releases/tag/mariadb-${ver}"
 MSG_L ""
-MSG_L "Fill in the Release Title and Description fields as follows"
+MSG_L "Fill in the field(s) as follows"
 MSG_L ""
 MSG "Release Title:"
 echo
-echo "MariaDB Community Server ${ver}"
+echo "${title} ${ver}"
 echo
-MSG "Release Description:"
-echo
-echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/mariadb-${ver//./-}-release-notes/)"
-echo
+
+case ${product} in
+  server|connector-c)
+    MSG "Release Description:"
+    echo
+    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/${kb_slug}-${ver//./-}-release-notes/)"
+    echo
+    ;;
+esac
+
 MSG "If the release is not a Stable (GA) release, check 'Set as a pre-release'"
 MSG_L "Click 'Publish release'"
 THICKLINE
