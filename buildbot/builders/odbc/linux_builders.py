@@ -277,7 +277,10 @@ def build_connector_odbc_rpm(name, kvm_image, cflags, cmake_params, install_deps
         command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
         "rm -Rf buildbot && mkdir buildbot",
         WithProperties("""
-export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+export CFLAGS="${CFLAGS}"""+ cflags + """"
+mkdir padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX
+cd padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX
+""" +
 connodbc_linux_step0_ccinstall +
 step0_checkout("https://github.com/MariaDB-Corporation/mariadb-connector-odbc.git", False) + """
 rm -rf ../src/libmariadb
@@ -298,8 +301,8 @@ ls -l artefacts
 """
 ),
         "= rm -Rf rpms srpms && mkdir rpms srpms",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/*rpms . && ls ./*rpms",
-        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/artefacts/* ./ && ls ./",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/build/*rpms . && ls ./*rpms",
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/build/artefacts/* ./ && ls ./",
         ]))
     linux_connector_odbc.addStep(SetPropertyFromCommand(
         property="bindistname",
