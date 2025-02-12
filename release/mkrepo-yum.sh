@@ -734,16 +734,16 @@ for REPONAME in ${dists}; do
       ;;
   esac
 
-  # MDEV-35512
+  # MDEV-35512, MDEV-36073
   case ${ARCHDIR} in
     *11*)
       line
       echo "+ Removing compat packages..."
       line
-      if [ -f ./${REPONAME}/rpms/*compat* ]; then
-        rm -v ./${REPONAME}/rpms/*compat*
+      if [ -f ./${REPONAME}/rpms/MariaDB-compat* ]; then
+        rm -v ./${REPONAME}/rpms/MariaDB-compat*
       else
-        echo "+ No compat packages, so skipping..."
+        echo "+ No MariaDB-compat packages, so skipping..."
       fi
       ;;
   esac
