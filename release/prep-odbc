@@ -119,7 +119,7 @@ copy_win_packages_to_sign-todo_dir() {
 }
 
 move_win_packages_from_sign-done_dir() {
-  RC mv -vi ~/sign-done/mariadb-connector-odbc*msi ${dir_build}/codbc-windows/
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*msi ${dir_build}/codbc-windows/
   RC tree ~/sign-done/
 }
 
@@ -171,8 +171,10 @@ copy_and_stage_files() {
     fi
     if cp -avi ${dir_build}/*rpm/*amd64.rpm ${dir_name}/ ; then
       MSG "Copied amd64 RPM files"
+    elif cp -avi ${dir_build}/*rpm/*x86_64.rpm ${dir_name}/ ; then
+      MSG "Copied x86_64 RPM files"
     else
-      MSG "ERROR: amd64 RPM files not found"
+      MSG "ERROR: amd64/x86_64 RPM files not found"
       exit 3
     fi
     if cp -avi ${dir_build}/*rpm/*aarch64.rpm ${dir_name}/ ; then
@@ -193,6 +195,8 @@ copy_and_stage_files() {
     # Mac files
     if cp -avi ${dir_build}/*/*pkg ${dir_name}/;then
       MSG "Copied MacOS files"
+    elif cp -avi ${co_dir_mac}/*${version}*pkg ${dir_name}/;then
+      MSG "Copied MacOS files from ${co_dir_mac}"
     else
       MSG "No MacOS files"
     fi
