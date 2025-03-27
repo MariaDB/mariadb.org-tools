@@ -218,7 +218,7 @@ case ${ARCHDIR} in
   "
   dists=${dists_bb}
     ;;
-  *10.11*|*11.2*)
+  *10.11*|*11.2*|*11.4*)
   dists_bb="
     rhel8-amd64
     rhel8-aarch64
@@ -265,7 +265,6 @@ case ${ARCHDIR} in
     opensuse155-amd64
     opensuse156-amd64
 
-    sles12-amd64
     sles15-amd64
     sles15-s390x
   "
