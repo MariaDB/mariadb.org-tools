@@ -34,6 +34,15 @@ set -eu
 product=${1}
 ver=${2}
 
+case ${ver} in
+  v*) # Connectors releases versions sometimes start with 'v', remove it
+    version="${ver:1}"
+    ;;
+  *) # Copy over in full if it doesn't start with 'v'
+    version="${ver}"
+    ;;
+esac
+
 # set location of prep.conf and prep.log to XDG-compatible directories
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
@@ -70,17 +79,32 @@ loadDefaults
 case ${product} in
   galera )
     title='MariaDB Galera'
-    gh_path='MariaDB/${product}' 
+    gh_path="MariaDB/${product}"
+    gh_tag="mariadb-${ver}"
     kb_slug=''
     ;;
   server )
     title='MariaDB Community Server'
-    gh_path='MariaDB/${product}'
+    gh_path="MariaDB/${product}"
+    gh_tag="mariadb-${ver}"
     kb_slug="${product}"
     ;;
   connector-c )
     title='MariaDB Connector/C'
-    gh_path='mariadb-corporation/mariadb-${product}'
+    gh_path="mariadb-corporation/mariadb-${product}"
+    gh_tag="${ver}"
+    kb_slug="mariadb-${product}"
+    ;;
+  connector-cpp )
+    title='MariaDB Connector/C++'
+    gh_path="mariadb-corporation/mariadb-${product}"
+    gh_tag="${ver}"
+    kb_slug="mariadb-${product}"
+    ;;
+  connector-odbc )
+    title='MariaDB Connector/ODBC'
+    gh_path="mariadb-corporation/mariadb-${product}"
+    gh_tag="${ver}"
     kb_slug="mariadb-${product}"
     ;;
 esac
@@ -88,20 +112,20 @@ esac
 THICKLINE
 MSG_L "Go to the following URI and click on 'Create release from tag'"
 MSG_L ""
-MSG_L "https://github.com/${gh_path}/releases/tag/mariadb-${ver}"
+MSG_L "https://github.com/${gh_path}/releases/tag/${gh_tag}"
 MSG_L ""
 MSG_L "Fill in the field(s) as follows"
 MSG_L ""
 MSG "Release Title:"
 echo
-echo "${title} ${ver}"
+echo "${title} ${version}"
 echo
 
 case ${product} in
-  server|connector-c)
+  server|connector-c|connector-odbc|connector-cpp)
     MSG "Release Description:"
     echo
-    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/${kb_slug}-${ver//./-}-release-notes/)"
+    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/${kb_slug}-${version//./-}-release-notes/)"
     echo
     ;;
 esac
