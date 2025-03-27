@@ -20,6 +20,7 @@ version=${1}
 commit=${2}
 orgmariadbjdbc=${3}
 maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
+#maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
 
 url_staging="https://github.com/mariadb-corporation/mariadb-connector-j/archive"
 url="https://github.com/MariaDB/mariadb-connector-j/archive"
@@ -396,7 +397,7 @@ remove_a_dir_from_the_local_mirror_dir() {
   while [ -z ${done_removing} ];do
     MSG "Releases currently in ${dir_local_mirror}"
     tree -L 1 ${dir_local_mirror}
-    line
+    LINE
     userInput "What release should I remove? (e.g. mariadb-10.6.7, s to stop)"
     release_to_remove="${INPUT}"
     if [ -z ${release_to_remove} ] ; then
