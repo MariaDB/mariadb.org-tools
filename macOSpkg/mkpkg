@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# This script takes an existing .tar.gz package of MariaDB Server and morphs it into
+# a macOS .pkg installer. The server should be built using some specific CMake options
+# outlined in the README file in this source tree for the package to work correctly!
+
+# This script builds two packages: mariadb-server-files and mariadb-server-launchd,
+# and then it combines them together into a single, installable .pkg file.
+# The script was originally developed by Kolbe Kegel (https://github.com/kolbe).
+
+set -ex
+
+if ! (($# == 1))
+then
+    echo "Must provide path to MariaDB Server .tar.gz package. Aborting." >&2
+    exit 1
+fi
+
+file=$1
+dir="${file%*.tar.gz}"
+dir="${dir##*/}"
+
+re='mariadb-([0-9]+\.[0-9]+\.[0-9]+)-'
+[[ $dir =~ $re ]]
+ver=${BASH_REMATCH[1]}
+
+mkdir -p mariadb-server-files tmp
+rm -rf mariadb-server-files/* tmp/*
+
+tar -xf "$file" -C mariadb-server-files/
+
+pushd "mariadb-server-files"
+pushd "$dir"
+
+pushd bin
+
+# Create these symlinks, so that MariaDB Server is started using "mariadbd" instead
+# of "mysqld" and the client program is "mariadb" instead of "mysql".
+#ln -s mysql mariadb
+#ln -s mysqld mariadbd
+
+popd
+popd
+
+ln -s "$dir" server
+
+# Create the etc dir so that it's "installed" by the installer.
+mkdir etc
+
+popd
+
+pkgbuild --root ./mariadb-server-files --identifier com.mariadb.mariadb-server-files --scripts ./mariadb-server-files-scripts --version "${ver//./}0" --install-location /usr/local/mariadb mariadb-server-files.pkg
+
+pkgbuild --root ./mariadb-server-launchd --identifier com.mariadb.mariadb-server-launchd --scripts ./mariadb-server-launchd-scripts --install-location /Library/LaunchDaemons mariadb-server-launchd.pkg
+
+productbuild --distribution distribution.xml --resources ./resources --scripts ./resources/scripts "$dir.pkg"
+
+mv mariadb-server-files.pkg mariadb-server-launchd.pkg tmp/
