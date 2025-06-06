@@ -64,6 +64,7 @@ declare -A builder_dir_ci_amd64=(
   [rhel9]=amd64-rhel-9-rpm-autobake
   [fedora39]=amd64-fedora-39-rpm-autobake
   [fedora40]=amd64-fedora-40-rpm-autobake
+  [fedora41]=amd64-fedora-41-rpm-autobake
   [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
   [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
   [opensuse155]=amd64-opensuse-155-rpm-autobake [opensuse156]=amd64-opensuse-156-rpm-autobake
@@ -74,6 +75,7 @@ declare -A builder_dir_bb_amd64=(
   [rhel9]=kvm-rpm-rhel9-amd64
   [fedora39]=kvm-rpm-fedora39-amd64
   [fedora40]=kvm-rpm-fedora40-amd64
+  [fedora41]=kvm-rpm-fedora41-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
   [opensuse155]=kvm-zyp-opensuse155-amd64 [opensuse156]=kvm-zyp-opensuse156-amd64
@@ -85,6 +87,7 @@ declare -A builder_dir_ci_aarch64=(
   [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [fedora40]=aarch64-fedora-40-rpm-autobake
+  [fedora41]=aarch64-fedora-41-rpm-autobake
   [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
   [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
   [opensuse155]=aarch64-opensuse-155-rpm-autobake [opensuse156]=aarch64-opensuse-156-rpm-autobake
@@ -95,6 +98,7 @@ declare -A builder_dir_bb_aarch64=(
   [rhel9]=kvm-rpm-rhel9-aarch64
   [fedora39]=kvm-rpm-fedora39-aarch64
   [fedora40]=kvm-rpm-fedora40-aarch64
+  [fedora41]=kvm-rpm-fedora41-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
   [opensuse155]=kvm-zyp-opensuse155-aarch64 [opensuse156]=kvm-zyp-opensuse156-aarch64
@@ -218,7 +222,7 @@ case ${ARCHDIR} in
   "
   dists=${dists_bb}
     ;;
-  *10.11*|*11.2*|*11.4*)
+  *10.11*|*11.2*)
   dists_bb="
     rhel8-amd64
     rhel8-aarch64
@@ -258,9 +262,10 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora39-amd64
     fedora40-amd64
     fedora40-aarch64
+    fedora41-amd64
+    fedora41-aarch64
 
     opensuse155-amd64
     opensuse156-amd64
@@ -562,12 +567,15 @@ for REPONAME in ${dists}; do
       case ${REPONAME} in
         fedora39-amd64) fedora_ver=39 ; fedora_arch=amd64 ;;
         fedora40-amd64) fedora_ver=40 ; fedora_arch=amd64 ;;
+        fedora41-amd64) fedora_ver=41 ; fedora_arch=amd64 ;;
 
         fedora39-aarch64) fedora_ver=39 ; fedora_arch=aarch64 ;;
         fedora40-aarch64) fedora_ver=40 ; fedora_arch=aarch64 ;;
+        fedora41-aarch64) fedora_ver=41 ; fedora_arch=aarch64 ;;
 
         fedora39-ppc64le) fedora_ver=39 ; fedora_arch=ppc64le ;;
         fedora40-ppc64le) fedora_ver=40 ; fedora_arch=ppc64le ;;
+        fedora41-ppc64le) fedora_ver=41 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
@@ -803,6 +811,9 @@ for DIR in ${dists}; do
       ;;
     fedora40*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 40
+      ;;
+    fedora41*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 41
       ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
