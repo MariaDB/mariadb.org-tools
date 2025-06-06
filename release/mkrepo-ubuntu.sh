@@ -123,7 +123,7 @@ case ${ARCHDIR} in
   *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
     ubuntu_dists="focal jammy noble"
     ;;
-  *11.4*|*11.5*|*11.6*|*11.7*|*11.8*|*main*)
+  *11.4*|*11.5*|*11.6*|*11.7*|*11.8*|*12.0*|*main*)
     ubuntu_dists="focal jammy noble oracular"
     ;;
   *)
