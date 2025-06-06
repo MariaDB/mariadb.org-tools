@@ -87,7 +87,7 @@ case ${product} in
     title='MariaDB Community Server'
     gh_path="MariaDB/${product}"
     gh_tag="mariadb-${ver}"
-    kb_slug="${product}"
+    kb_slug="mariadb"
     ;;
   connector-c )
     title='MariaDB Connector/C'
