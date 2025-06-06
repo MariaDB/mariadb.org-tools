@@ -48,13 +48,13 @@ rpm_ver_cmapi=( 8 9 )
 deb_ver_cmapi=( bullseye bookworm focal jammy noble )
 
 case $1 in
-  *11.7*|*11.8*)
+  *11.4*|*11.7*|*11.8*|*12.0*)
     debian_ver=( bullseye bookworm )
     ubuntu_ver=( focal jammy noble )
     rhel_ver=( 8 9 )
     sles_ver=( 15 )
     ;;
-  *11.4*|*11.5*|*11.6*)
+  *11.5*|*11.6*)
     debian_ver=( bullseye bookworm )
     ubuntu_ver=( focal jammy noble oracular )
     rhel_ver=( 8 9 )
