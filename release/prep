@@ -239,6 +239,7 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
       build_dirs_x86=""
       build_dirs_x86_64="
         kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
+        kvm-bintar-almalinux8-amd64:bintar-linux-systemd-x86_64
         kvm-tarbake-jaunty-x86:source
       "
       ci_build_dirs_x86=""
@@ -264,7 +265,17 @@ ci_dirs_105="${ci_dirs_104} kvm-deb-focal-ppc64le:ppc64le-ubuntu-2004-deb-autoba
 ci_dirs_105="${ci_dirs_104} kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
     ;;
 esac
+
+# 2025-05-01 add centos7 bintar for 10.6, 10.11, and 11.4
+case ${major} in
+  10.6|10.11|11.4)
+ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-bintar-centos74-amd64:amd64-centos-7-bintar"
+    ;;
+  *)
 ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
+    ;;
+esac
+
 ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
@@ -277,16 +288,17 @@ ci_dirs_112="${ci_dirs_111}"
 ci_dirs_113="${ci_dirs_112}"
 case ${major} in
   10*|11.1|11.2|11.3)
-    ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake"
+    ci_dirs_114="${ci_dirs_113}"
     ;;
   *) # For 11.4 and higher, also pull in rhel-8 and rhel-9 amd64/aarch64 pkgs
-    ci_dirs_114="${ci_dirs_113} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake"
+    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake"
     ;;
 esac
 ci_dirs_115="${ci_dirs_114}"
 ci_dirs_116="${ci_dirs_115}"
 ci_dirs_117="${ci_dirs_116}"
-ci_dirs_118="${ci_dirs_117}"
+ci_dirs_118="${ci_dirs_117} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar"
+ci_dirs_120="${ci_dirs_118}"
 
 
 #-------------------------------------------------------------------------------
@@ -297,10 +309,10 @@ case ${major} in
   10.3|10.4|10.5)
     bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
     ;;
-  10.6|10.11|11.4) # No opensuse150 in 10.6+
+  10.6|10.11) # No opensuse150 in 10.6+
     bb_dirs_102="kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
     ;;
-  *) # No sles125 in 11.7+
+  *) # No sles125 in 11.4+
     bb_dirs_102="kvm-zyp-sles15-amd64:"
     ;;
 esac
@@ -330,6 +342,7 @@ bb_dirs_115="${bb_dirs_114}"
 bb_dirs_116="${bb_dirs_115}"
 bb_dirs_117="${bb_dirs_116}"
 bb_dirs_118="${bb_dirs_117}"
+bb_dirs_120="${bb_dirs_118}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -350,6 +363,7 @@ full_dirs_115="${bb_dirs_115} ${ci_dirs_115}"
 full_dirs_116="${bb_dirs_116} ${ci_dirs_116}"
 full_dirs_117="${bb_dirs_117} ${ci_dirs_117}"
 full_dirs_118="${bb_dirs_118} ${ci_dirs_118}"
+full_dirs_120="${bb_dirs_120} ${ci_dirs_120}"
 
 }
 
@@ -1092,7 +1106,7 @@ upload_this_release_to_the_buildmaster() {
   message "Uploading release to ${buildmaster}..."
   rsync_wrapper "-av --delete-before ${dir_release}/${dir_name} ${buildmaster}:${dir_release_buildmaster}/"
 
-  shouldI update_the_STATUS_file
+  shouldI update_the_archive_STATUS_file
 
   message "Uploading corp release to ${buildmaster}..."
   rsync_wrapper "-av --delete-before ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp_buildmaster}/"
@@ -1100,11 +1114,16 @@ upload_this_release_to_the_buildmaster() {
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  update_the_STATUS_file
+#          NAME:  update_the_archive_STATUS_file
 #   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
 #===============================================================================
-update_the_STATUS_file() {
-  ssh ${buildmaster} "set -x ; bin/STATUS_update"
+update_the_archive_STATUS_file() {
+  for archive_pair in ${archives}; do
+    archive=(${archive_pair//:/ })
+    set -x
+    ssh -t -t ${archive[0]} "set -x; ./sync_archive_force"
+    set +x
+  done
   lowkey_message "STATUS file updated"
 }
 
@@ -1114,6 +1133,7 @@ update_the_STATUS_file() {
 #===============================================================================
 update_the_debian_distributions_file() {
   editor ${dir_release}/mariadb-${prev_release}/repo/debian/conf/distributions
+  reprepro -V --basedir ${dir_release}/mariadb-${prev_release}/repo/debian/ --delete clearvanished
 }
 
 #===  FUNCTION  ================================================================
@@ -1122,6 +1142,7 @@ update_the_debian_distributions_file() {
 #===============================================================================
 update_the_ubuntu_distributions_file() {
   editor ${dir_release}/mariadb-${prev_release}/repo/ubuntu/conf/distributions
+  reprepro -V --basedir ${dir_release}/mariadb-${prev_release}/repo/ubuntu/ --delete clearvanished
 }
 
 #===  FUNCTION  ================================================================
@@ -1194,10 +1215,10 @@ pull_this_release_from_ci() {
     set +e
     for ci_pair in ${!ci_dirs} ; do
       ci_dir=(${ci_pair//:/ })
-    if runCommand wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
+    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
       message "Downloaded ${ci_dir[1]} from ci"
     else
-      runCommand wget --cut-dirs=1 --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
+      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
     fi
     done
     set -e
@@ -2840,7 +2861,7 @@ else
     popd
 
     # remove symlinks from corp repos
-    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64"
+    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server"
     pushd ${dir_corp}/${dir_name}/yum/
       for link in ${symlinks_to_remove} ; do
         if [[ -h ${link} ]] ; then
@@ -2967,6 +2988,8 @@ echo;echo;echo;echo
 
 shouldI update_the_archive_symlinks
 
+shouldI update_the_archive_STATUS_file
+
 echo;echo;echo;echo
 
 case $tree in
@@ -2993,7 +3016,6 @@ case ${HOSTNAME} in
   ;;
 esac
 #fi
-#  shouldI update_the_STATUS_file
 
 echo "+ all done!"
 echo;echo;echo;echo
