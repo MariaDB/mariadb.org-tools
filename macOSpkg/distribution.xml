@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>MariaDB Server</title>
+    <background file="MariaDB_background.png" mime-type="image/png" />
+    <allowed-os-versions>
+	<os-version min="10.11.0"/>
+    </allowed-os-versions>
+    <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/>
+    <installation-check script="InstallationCheck()"/>
+    <script>
+function InstallationCheck(prefix) {
+    if (system.compareVersions(system.version.ProductVersion, '10.11.0') &lt; 0) {
+	my.result.message = 'Sorry, macOS Sierra (10.11) or higher is required to install this MariaDB Server package. Consider installing from Homebrew instead on earlier versions of OS X.';
+	my.result.type = 'Fatal';
+	return false;
+    }
+    var existing = system.run('check_for_existing_installation');
+    if (existing > 0) {
+        // _err_existing_process=2
+        // _err_existing_tcp=4
+        // _err_existing_socket=8
+        // _err_existing_install=16
+        my.result.message = "Installation of MariaDB Server may interfere with, or be affected by, your existing installation. Proceed with caution.";
+        my.result.type = 'Warning';
+        if (existing &amp; 16) { my.result.message += "\n\n• There is an existing install of MariaDB Server running from /usr/local/mariadb/server. This instance will be stopped before installation proceeds." }
+        if (existing &amp; 2) { my.result.message += "\n\n• There is a mariadbd or mysqld process already running on this computer." }
+        if (existing &amp; 4) { my.result.message += "\n\n• There is a server already listening on TCP port 3306. This MariaDB Server installation will be started with networking disabled unless an existing MariaDB Server installation, stopped during the install process, is bound to that port." }
+        if (existing &amp; 8) { my.result.message += "\n\n• There is an existing socket file at /tmp/mysql.sock." }
+        return false
+    }
+    return true;
+}
+    </script>
+    <welcome file="welcome.html" mime-type="text/html" />
+    <license file="license.html" mime-type="text/html" />
+    <conclusion file="conclusion.html" mime-type="text/html"/>
+    <options customize="allow" require-scripts="false" allow-external-scripts="yes"/>
+    <choices-outline>
+        <line choice="com.mariadb.mariadb-server-files"/>
+        <line choice="com.mariadb.mariadb-server-launchd"/>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="com.mariadb.mariadb-server-files" visible="true" enabled="true" title="MariaDB Server" description="MariaDB Server and standard tools.">
+        <pkg-ref id="com.mariadb.mariadb-server-files"/>
+    </choice>
+    <choice id="com.mariadb.mariadb-server-launchd" visible="true" enabled="true" title="launchd support" description="Automatically start MariaDB Server using launchd.">
+        <pkg-ref id="com.mariadb.mariadb-server-launchd"/>
+    </choice>
+    <pkg-ref id="com.mariadb.mariadb-server-files" onConclusion="none">#mariadb-server-files.pkg</pkg-ref>
+    <pkg-ref id="com.mariadb.mariadb-server-launchd" onConclusion="none">#mariadb-server-launchd.pkg</pkg-ref>
+</installer-gui-script>
