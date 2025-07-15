@@ -257,22 +257,15 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
-case ${major} in
-  10*|11.2)
-ci_dirs_105="${ci_dirs_104} kvm-deb-focal-ppc64le:ppc64le-ubuntu-2004-deb-autobake kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
-    ;;
-  *) # for 11.4 and higher, no sles12-s390x
-ci_dirs_105="${ci_dirs_104} kvm-deb-focal-s390x:s390x-ubuntu-2004-deb-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
-    ;;
-esac
+ci_dirs_105="${ci_dirs_104} kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel10-amd64:amd64-rhel-10-rpm-autobake  kvm-rpm-rhel10-aarch64:aarch64-rhel-10-rpm-autobake kvm-rpm-rhel10-ppc64le:ppc64le-rhel-10-rpm-autobake kvm-rpm-rhel10-s390x:s390x-rhel-10-rpm-autobake"
 
+ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
 # 2025-05-01 add centos7 bintar for 10.6, 10.11, and 11.4
 case ${major} in
   10.6|10.11|11.4)
-ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake kvm-bintar-centos74-amd64:amd64-centos-7-bintar"
+ci_dirs_106="${ci_dirs_106} kvm-bintar-centos74-amd64:amd64-centos-7-bintar"
     ;;
   *)
-ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
     ;;
 esac
 
@@ -280,7 +273,7 @@ ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora40-amd64:amd64-fedora-40-rpm-autobake kvm-rpm-fedora40-aarch64:aarch64-fedora-40-rpm-autobake kvm-rpm-fedora41-amd64:amd64-fedora-41-rpm-autobake kvm-rpm-fedora41-aarch64:aarch64-fedora-41-rpm-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-zyp-sles1506-amd64:amd64-sles-1506-rpm-autobake  kvm-zyp-sles1506-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora41-amd64:amd64-fedora-41-rpm-autobake kvm-rpm-fedora41-aarch64:aarch64-fedora-41-rpm-autobake kvm-rpm-fedora42-amd64:amd64-fedora-42-rpm-autobake kvm-rpm-fedora42-aarch64:aarch64-fedora-42-rpm-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
@@ -291,13 +284,13 @@ case ${major} in
     ci_dirs_114="${ci_dirs_113}"
     ;;
   *) # For 11.4 and higher, also pull in rhel-8 and rhel-9 amd64/aarch64 pkgs
-    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake"
+    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-zyp-sles1507-amd64:amd64-sles-1507-rpm-autobake kvm-zyp-sles1507-s390x:s390x-sles-1507-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake kvm-deb-plucky-amd64:amd64-ubuntu-2504-deb-autobake kvm-deb-plucky-aarch64:aarch64-ubuntu-2504-deb-autobake"
     ;;
 esac
 ci_dirs_115="${ci_dirs_114}"
 ci_dirs_116="${ci_dirs_115}"
 ci_dirs_117="${ci_dirs_116}"
-ci_dirs_118="${ci_dirs_117} kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar"
+ci_dirs_118="${ci_dirs_117} kvm-deb-trixie-amd64:amd64-debian-13-deb-autobake kvm-deb-trixie-aarch64:aarch64-debian-13-deb-autobake kvm-deb-trixie-ppc64le:ppc64le-debian-13-deb-autobake kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar"
 ci_dirs_120="${ci_dirs_118}"
 
 
@@ -318,10 +311,10 @@ case ${major} in
 esac
 case ${major} in
   10*|11.1|11.2|11.3)
-    bb_dirs_103="${bb_dirs_102} kvm-deb-focal-aarch64: kvm-deb-focal-amd64: kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64:"
+    bb_dirs_103="${bb_dirs_102} kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64:"
     ;;
   *) # No rhel8 from bb in 11.4+
-    bb_dirs_103="${bb_dirs_102} kvm-deb-focal-aarch64: kvm-deb-focal-amd64:"
+    bb_dirs_103="${bb_dirs_102}"
     ;;
 esac
 bb_dirs_104="${bb_dirs_103}"
