@@ -82,6 +82,8 @@ ci_mappings_4="
        gal-x86-debian-sid:kvm-deb-sid-x86-gal
       gal-amd64-fedora-41:kvm-rpm-fedora41-amd64-gal
     gal-aarch64-fedora-41:kvm-rpm-fedora41-aarch64-gal
+      gal-amd64-fedora-42:kvm-rpm-fedora42-amd64-gal
+    gal-aarch64-fedora-42:kvm-rpm-fedora42-aarch64-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
   gal-ppc64le-ubuntu-2404:kvm-deb-noble-ppc64le-gal
@@ -249,6 +251,8 @@ rpm_dists_4="
 
   fedora41-amd64
   fedora41-aarch64
+  fedora42-amd64
+  fedora42-aarch64
 
   opensuse150-amd64
   opensuse155-amd64
