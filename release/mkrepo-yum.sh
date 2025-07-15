@@ -629,10 +629,17 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
-    'sles15-s390x')
-      set_builder_dir sles15 s390x
-      runCommand mkdir -vp sles/15/s390x
-      maybe_make_symlink sles/15/s390x sles15-s390x
+    sles15[0-9]*)
+      arch=${REPONAME##*-}
+      if [ "$arch" == amd64 ]; then
+        arch=x86_64
+      fi
+      dist=${REPONAME%%-*}
+      dist_ver=${dist#sles}
+      dist_ver=${dist_ver:0:2}.${dist_ver:2}
+      set_builder_dir "$dist" "$arch"
+      runCommand mkdir -vp sles/"$dist_ver/$arch"
+      maybe_make_symlink sles/"$dist_ver/$arch" "$REPONAME"
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
