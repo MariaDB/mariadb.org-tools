@@ -62,12 +62,12 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 declare -A builder_dir_ci_amd64=(
   [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
-  [fedora39]=amd64-fedora-39-rpm-autobake
-  [fedora40]=amd64-fedora-40-rpm-autobake
+  [rhel10]=amd64-rhel-10-rpm-autobake
   [fedora41]=amd64-fedora-41-rpm-autobake
-  [sles12]=amd64-sles-12-rpm-autobake [sles15]=amd64-sles-15-rpm-autobake
-  [opensuse15]=amd64-opensuse-15-rpm-autobake [opensuse42]=amd64-opensuse-42-rpm-autobake
-  [opensuse155]=amd64-opensuse-155-rpm-autobake [opensuse156]=amd64-opensuse-156-rpm-autobake
+  [fedora42]=amd64-fedora-42-rpm-autobake
+  [sles156]=amd64-sles-1506-rpm-autobake
+  [sles157]=amd64-sles-1507-rpm-autobake
+  [opensuse156]=amd64-opensuse-156-rpm-autobake
 )
 
 declare -A builder_dir_bb_amd64=(
@@ -86,11 +86,9 @@ declare -A builder_dir_bb_amd64=(
 declare -A builder_dir_ci_aarch64=(
   [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
-  [fedora40]=aarch64-fedora-40-rpm-autobake
+  [rhel10]=aarch64-rhel-10-rpm-autobake
   [fedora41]=aarch64-fedora-41-rpm-autobake
-  [sles12]=aarch64-sles-12-rpm-autobake [sles15]=aarch64-sles-15-rpm-autobake
-  [opensuse15]=aarch64-opensuse-15-rpm-autobake [opensuse42]=aarch64-opensuse-42-rpm-autobake
-  [opensuse155]=aarch64-opensuse-155-rpm-autobake [opensuse156]=aarch64-opensuse-156-rpm-autobake
+  [fedora42]=aarch64-fedora-42-rpm-autobake
 )
 
 declare -A builder_dir_bb_aarch64=(
@@ -109,9 +107,8 @@ declare -A builder_dir_bb_aarch64=(
 declare -A builder_dir_ci_ppc64le=(
   [rhel8]=ppc64le-rhel-8-rpm-autobake
   [rhel9]=ppc64le-rhel-9-rpm-autobake
-  [sles12]=ppc64le-sles-12-rpm-autobake [sles15]=ppc64le-sles-15-rpm-autobake
-  [opensuse15]=ppc64le-opensuse-15-rpm-autobake [opensuse42]=ppc64le-opensuse-42-rpm-autobake
-  [opensuse155]=ppc64le-opensuse-155-rpm-autobake [opensuse156]=ppc64le-opensuse-156-rpm-autobake
+  [rhel10]=ppc64le-rhel-10-rpm-autobake
+  [sles15]=ppc64le-sles-15-rpm-autobake
 )
 
 declare -A builder_dir_bb_ppc64le=(
@@ -125,7 +122,10 @@ declare -A builder_dir_bb_ppc64le=(
 declare -A builder_dir_ci_s390x=(
   [rhel8]=s390x-rhel-8-rpm-autobake
   [rhel9]=s390x-rhel-9-rpm-autobake
+  [rhel10]=s390x-rhel-10-rpm-autobake
   [sles15]=s390x-sles-1506-rpm-autobake
+  [sles156]=s390x-sles-1506-rpm-autobake
+  [sles157]=s390x-sles-1507-rpm-autobake
 )
 
 declare -A builder_dir_bb_s390x=(
@@ -202,6 +202,9 @@ case ${ARCHDIR} in
     ;;
   *10.6*)
   dists_bb="
+    sles15-amd64
+  "
+  dists_ci="
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -212,18 +215,17 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    opensuse155-amd64
-
-    sles12-amd64
-    sles15-amd64
-  "
-  dists_ci="
-    rhel8-aarch64
+    rhel10-amd64
+    rhel10-aarch64
+    rhel10-ppc64le
+    rhel10-s390x
   "
   dists=${dists_bb}
     ;;
   *10.11*|*11.2*)
   dists_bb="
+  "
+  dists_ci="
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -234,24 +236,31 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora39-amd64
-    fedora40-amd64
-    fedora40-aarch64
+    rhel10-amd64
+    rhel10-aarch64
+    rhel10-ppc64le
+    rhel10-s390x
 
-    opensuse155-amd64
+    fedora41-amd64
+    fedora41-aarch64
+
+    fedora42-amd64
+    fedora42-aarch64
+
     opensuse156-amd64
 
-    sles12-amd64
-    sles15-amd64
     sles15-s390x
-  "
-  dists_ci="
-    rhel8-aarch64
+
+    sles156-amd64
+    sles156-s390x
   "
   dists=${dists_bb}
      ;;
   *)
   dists_bb="
+    sles15-amd64
+  "
+  dists_ci="
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -262,19 +271,23 @@ case ${ARCHDIR} in
     rhel9-ppc64le
     rhel9-s390x
 
-    fedora40-amd64
-    fedora40-aarch64
+    rhel10-amd64
+    rhel10-aarch64
+    rhel10-ppc64le
+    rhel10-s390x
+
     fedora41-amd64
     fedora41-aarch64
 
-    opensuse155-amd64
-    opensuse156-amd64
+    fedora42-amd64
+    fedora42-aarch64
 
-    sles15-amd64
+    opensuse156-amd64
+ 
     sles15-s390x
-  "
-  dists_ci="
-    rhel8-aarch64
+
+    sles156-amd64
+    sles156-s390x
   "
   dists=${dists_bb}
     ;;
