@@ -71,6 +71,10 @@ ci_mappings_4="
         gal-amd64-rhel-10:kvm-rpm-rhel10-amd64-gal
         gal-s390x-rhel-10:kvm-rpm-rhel10-s390x-gal
       gal-ppc64le-rhel-10:kvm-rpm-rhel10-ppc64le-gal
+      gal-amd64-sles-1506:kvm-zyp-sles1506-amd64-gal
+      gal-s390x-sles-1506:kvm-zyp-sles1506-s390x-gal
+      gal-amd64-sles-1507:kvm-zyp-sles1507-amd64-gal
+      gal-s390x-sles-1507:kvm-zyp-sles1507-s390x-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
      gal-amd64-debian-13:kvm-deb-trixie-amd64-gal
    gal-aarch64-debian-13:kvm-deb-trixie-aarch64-gal
@@ -263,6 +267,11 @@ rpm_dists_4="
   sles125-amd64
   sles15-amd64
   sles15-s390x
+
+  sles1506-amd64
+  sles1506-s390x
+  sles1507-amd64
+  sles1507-s390x
 "
   #fedora36-aarch64
   #fedora-rawhide-amd64
