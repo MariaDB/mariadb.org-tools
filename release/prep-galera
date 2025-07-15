@@ -224,8 +224,6 @@ rpm_dists_4="
   rhel9-ppc64le
   rhel9-s390x
 
-  fedora39-amd64
-  fedora39-aarch64
   fedora40-amd64
   fedora40-aarch64
   fedora41-amd64
