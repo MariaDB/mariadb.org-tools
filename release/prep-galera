@@ -84,6 +84,8 @@ ci_mappings_4="
     gal-s390x-ubuntu-2404:kvm-deb-noble-s390x-gal
   gal-aarch64-ubuntu-2410:kvm-deb-oracular-aarch64-gal
     gal-amd64-ubuntu-2410:kvm-deb-oracular-amd64-gal
+  gal-aarch64-ubuntu-2504:kvm-deb-plucky-aarch64-gal
+    gal-amd64-ubuntu-2504:kvm-deb-plucky-amd64-gal
         gal-s390x-sles-1506:kvm-zyp-sles15-s390x-gal
 "
 
@@ -149,6 +151,7 @@ deb_dists_4="
   jammy
   kinetic
   lunar
+  plucky
   sid
   trixie
   trusty
@@ -182,6 +185,9 @@ deb_dists_full_4="
   noble-amd64
   noble-ppc64le
   noble-s390x
+
+  plucky-aarch64
+  plucky-amd64
 
   oracular-aarch64
   oracular-amd64
