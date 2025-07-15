@@ -406,13 +406,19 @@ esac
 # Copy over the packages
 for REPONAME in ${dists}; do
   case "${REPONAME}" in
-    'rhel8-aarch64')
-      set_builder_dir rhel8 aarch64
-      runCommand mkdir -vp rhel/8/aarch64
-      maybe_make_symlink rhel/8/aarch64 rhel8-aarch64
+    rhel*-a*)
+      arch=${REPONAME##*-}
+      if [ $arch == amd64 ]; then
+        arch=x86_64
+      fi
+      dist=${REPONAME%%-*}
+      dist_ver=${dist#rhel}
+      set_builder_dir "$dist" "$arch"
+      runCommand mkdir -vp rhel/"$dist_ver/$arch"
+      maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+      copy_files "${ARCHDIR}/${!builder_dir}/  ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -423,135 +429,23 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/8/MariaDB-columnstore-cmapi*${ver_cmapi}*.aarch64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
           ;;
         *11.2*|*11.3*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/8/MariaDB-columnstore-cmapi*${ver_cmapi}*.aarch64.rpm ./${REPONAME}/rpms/"
+          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
       ;;
-    'rhel8-amd64')
-      set_builder_dir rhel8 amd64
-      runCommand mkdir -vp rhel/8/x86_64
-      maybe_make_symlink rhel/8/x86_64 rhel8-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-
-      case ${ARCHDIR} in
-        *11.1*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/8/MariaDB-columnstore-cmapi*${ver_cmapi}*.x86_64.rpm ./${REPONAME}/rpms/"
-          ;;
-        *11.2*|*11.3*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/8/MariaDB-columnstore-cmapi*${ver_cmapi}*.x86_64.rpm ./${REPONAME}/rpms/"
-          ;;
-      esac
-
-      ;;
-    'rhel8-ppc64le')
-      set_builder_dir rhel8 ppc64le
-      runCommand mkdir -vp rhel/8/ppc64le/rpms
-      runCommand mkdir -vp rhel/8/ppc64le/srpms
-      maybe_make_symlink rhel/8/ppc64le rhel8-ppc64le
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'rhel8-s390x')
-      set_builder_dir rhel8 s390x
-      runCommand mkdir -vp rhel/8/s390x
-      maybe_make_symlink rhel/8/s390x rhel8-s390x
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'rhel9-aarch64')
-      set_builder_dir rhel9 aarch64
-      runCommand mkdir -vp rhel/9/aarch64
-      maybe_make_symlink rhel/9/aarch64 rhel9-aarch64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-
-      case ${ARCHDIR} in
-        *11.1*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/9/MariaDB-columnstore-cmapi*${ver_cmapi}*.aarch64.rpm ./${REPONAME}/rpms/"
-          ;;
-        *11.2*|*11.3*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/9/MariaDB-columnstore-cmapi*${ver_cmapi}*.aarch64.rpm ./${REPONAME}/rpms/"
-          ;;
-      esac
-
-      ;;
-    'rhel9-amd64')
-      set_builder_dir rhel9 amd64
-      runCommand mkdir -vp rhel/9/x86_64
-      maybe_make_symlink rhel/9/x86_64 rhel9-amd64
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-
-      case ${ARCHDIR} in
-        *11.1*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/9/MariaDB-columnstore-cmapi*${ver_cmapi}*.x86_64.rpm ./${REPONAME}/rpms/"
-          ;;
-        *11.2*|*11.3*)
-          # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/9/MariaDB-columnstore-cmapi*${ver_cmapi}*.x86_64.rpm ./${REPONAME}/rpms/"
-          ;;
-      esac
-
-      ;;
-    'rhel9-ppc64le')
-      set_builder_dir rhel9 ppc64le
-      runCommand mkdir -vp rhel/9/ppc64le/rpms
-      runCommand mkdir -vp rhel/9/ppc64le/srpms
-      maybe_make_symlink rhel/9/ppc64le rhel9-ppc64le
-
-      # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
-
-      # Copy in galera files
-      for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
-      done
-      ;;
-    'rhel9-s390x')
-      set_builder_dir rhel9 s390x
-      runCommand mkdir -vp rhel/9/s390x
-      maybe_make_symlink rhel/9/s390x rhel9-s390x
+    rhel*)
+      arch=${REPONAME##*-}
+      dist=${REPONAME%%-*}
+      dist_ver=${dist#rhel}
+      set_builder_dir "$dist" "$arch"
+      runCommand mkdir -vp rhel/"$dist_ver/$arch/rpms"
+      runCommand mkdir -vp rhel/"$dist_ver/$arch/srpms"
+      maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
 
       # Copy in MariaDB files
       copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
