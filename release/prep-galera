@@ -68,6 +68,10 @@ ci_mappings_4="
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
        gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
+     gal-amd64-debian-13:kvm-deb-trixie-amd64-gal
+   gal-aarch64-debian-13:kvm-deb-trixie-aarch64-gal
+   gal-ppc64le-debian-13:kvm-deb-trixie-ppc64le-gal
+       gal-x86-debian-13:kvm-deb-trixie-x86-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
@@ -146,6 +150,7 @@ deb_dists_4="
   kinetic
   lunar
   sid
+  trixie
   trusty
 "
 
@@ -186,6 +191,11 @@ deb_dists_full_4="
   sid-ppc64le
   sid-x86
   
+  trixie-aarch64
+  trixie-amd64
+  trixie-ppc64le
+  trixie-x86
+
   trusty-amd64
   trusty-x86
 "
