@@ -72,8 +72,6 @@ ci_mappings_4="
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
        gal-x86-debian-sid:kvm-deb-sid-x86-gal
-      gal-amd64-fedora-40:kvm-rpm-fedora40-amd64-gal
-    gal-aarch64-fedora-40:kvm-rpm-fedora40-aarch64-gal
       gal-amd64-fedora-41:kvm-rpm-fedora41-amd64-gal
     gal-aarch64-fedora-41:kvm-rpm-fedora41-aarch64-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
@@ -224,8 +222,6 @@ rpm_dists_4="
   rhel9-ppc64le
   rhel9-s390x
 
-  fedora40-amd64
-  fedora40-aarch64
   fedora41-amd64
   fedora41-aarch64
 
