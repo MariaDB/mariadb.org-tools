@@ -475,14 +475,17 @@ for REPONAME in ${dists}; do
         fedora39-amd64) fedora_ver=39 ; fedora_arch=amd64 ;;
         fedora40-amd64) fedora_ver=40 ; fedora_arch=amd64 ;;
         fedora41-amd64) fedora_ver=41 ; fedora_arch=amd64 ;;
+        fedora42-amd64) fedora_ver=42 ; fedora_arch=amd64 ;;
 
         fedora39-aarch64) fedora_ver=39 ; fedora_arch=aarch64 ;;
         fedora40-aarch64) fedora_ver=40 ; fedora_arch=aarch64 ;;
         fedora41-aarch64) fedora_ver=41 ; fedora_arch=aarch64 ;;
+        fedora42-aarch64) fedora_ver=42 ; fedora_arch=aarch64 ;;
 
         fedora39-ppc64le) fedora_ver=39 ; fedora_arch=ppc64le ;;
         fedora40-ppc64le) fedora_ver=40 ; fedora_arch=ppc64le ;;
         fedora41-ppc64le) fedora_ver=41 ; fedora_arch=ppc64le ;;
+        fedora42-ppc64le) fedora_ver=42 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
