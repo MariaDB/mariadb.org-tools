@@ -1,4 +1,4 @@
-serverVersionToInstall= "10.6"
+serverVersionToInstall= "10.11"
 
 debubuntu_versionid= """
 if LSB_VID=$(lsb_release -sr 2> /dev/null); then
@@ -82,6 +82,9 @@ fi
 
 linux_shallow_serverinstall= """
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
+  sudo touch /etc/my.cnf.d/disable-feedback.cnf
+  echo "[mariadb]" | sudo tee /etc/my.cnf.d/disable-feedback.cnf
+  echo "feedback=OFF" | sudo tee -a /etc/my.cnf.d/disable-feedback.cnf
   if ! sudo dnf install -y $SPACKAGE_NAME; then
     sudo yum install -y $SPACKAGE_NAME
   fi
@@ -93,10 +96,13 @@ if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
     echo "Warning - apt update failed"
   fi
 #  sudo apt install -y apt-transport-https
-  sudo apt install -y mariadb-server
+  sudo DEBIAN_FRONTEND=noninteractive apt install -y mariadb-server
 fi
 
 if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
+  sudo touch /etc/my.cnf.d/disable-feedback.cnf
+  echo "[mariadb]" | sudo tee /etc/my.cnf.d/disable-feedback.cnf
+  echo "feedback=OFF" | sudo tee -a /etc/my.cnf.d/disable-feedback.cnf
   sudo zypper install -y MariaDB-server
   sudo systemctl start mariadb
 fi
