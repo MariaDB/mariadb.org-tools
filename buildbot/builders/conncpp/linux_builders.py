@@ -129,9 +129,6 @@ bld_rocky8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rocky8-aarch64",
 
 bld_sles15_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
-bld_focal_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-amd64", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-bld_focal_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-focal-aarch64", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
-
 bld_jammy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_jammy_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
@@ -472,12 +469,10 @@ bld_rhel8_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel8-aarch64-rpm
 bld_rhel9_arm64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-rhel9-aarch64-rpm", "vm-rhel9-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_centos7_x64_connector_cpp_rpm= bld_connector_cpp_rpm("ccpp-centos7-amd64-rpm", "vm-centos74-amd64", "", " -DWITH_SSL=OPENSSL", True);
 
-bld_cpp_focal_amd64_deb= bld_connector_cpp_deb("ccpp-focal-amd64-deb", "vm-focal-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_cpp_jammy_amd64_deb= bld_connector_cpp_deb("ccpp-jammy-amd64-deb", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_cpp_bookworm_amd64_deb= bld_connector_cpp_deb("ccpp-bookworm-amd64-deb", "vm-bookworm-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_cpp_bullseye_amd64_deb= bld_connector_cpp_deb("ccpp-bullseye-amd64-deb", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL");
 
-bld_cpp_focal_arm64_deb= bld_connector_cpp_deb("ccpp-focal-aarch64-deb", "vm-focal-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_cpp_jammy_arm64_deb= bld_connector_cpp_deb("ccpp-jammy-aarch64-deb", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_cpp_bookworm_arm64_deb= bld_connector_cpp_deb("ccpp-bookworm-aarch64-deb", "vm-bookworm-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
 bld_cpp_bullseye_arm64_deb= bld_connector_cpp_deb("ccpp-bullseye-aarch64-deb", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL", slaves=connector_slaves_aarch64);
