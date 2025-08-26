@@ -81,10 +81,12 @@ fi
 """ + debubuntu_versionid
 
 linux_shallow_serverinstall= """
+DISABLEFB="/etc/my.cnf.d/disable-feedback.cnf"
 if [ -e "/etc/yum.repos.d/mariadb.repo" ]; then
-  sudo touch /etc/my.cnf.d/disable-feedback.cnf
-  echo "[mariadb]" | sudo tee /etc/my.cnf.d/disable-feedback.cnf
-  echo "feedback=OFF" | sudo tee -a /etc/my.cnf.d/disable-feedback.cnf
+  if sudo touch "$DISABLEFB"; then
+    echo "[mariadb]" | sudo tee "$DISABLEFB"
+    echo "feedback=OFF" | sudo tee -a "$DISABLEFB"
+  fi
   if ! sudo dnf install -y $SPACKAGE_NAME; then
     sudo yum install -y $SPACKAGE_NAME
   fi
@@ -100,9 +102,10 @@ if [ ! -z "$USEAPT" ] || [ -e "/etc/apt/sources.list.d/mariadb.list" ]; then
 fi
 
 if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
-  sudo touch /etc/my.cnf.d/disable-feedback.cnf
-  echo "[mariadb]" | sudo tee /etc/my.cnf.d/disable-feedback.cnf
-  echo "feedback=OFF" | sudo tee -a /etc/my.cnf.d/disable-feedback.cnf
+  if sudo touch "$DISABLEFB"; then
+    echo "[mariadb]" | sudo tee "$DISABLEFB"
+    echo "feedback=OFF" | sudo tee -a "$DISABLEFB"
+  fi
   sudo zypper install -y MariaDB-server
   sudo systemctl start mariadb
 fi
