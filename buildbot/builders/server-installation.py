@@ -106,6 +106,7 @@ if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
     echo "[mariadb]" | sudo tee "$DISABLEFB"
     echo "feedback=OFF" | sudo tee -a "$DISABLEFB"
   fi
+  sudo zypper refresh
   sudo zypper install -y MariaDB-server
   sudo systemctl start mariadb
 fi
