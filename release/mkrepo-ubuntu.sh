@@ -62,7 +62,7 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 declare -A builder_dir_ci_amd64=([jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake [oracular]=ubuntu-2410-deb-autobake [plucky]=ubuntu-2510-deb-autobake)
-declare -A builder_dir_bb_amd64=([jammy]=kvm-deb-jammy-amd64 [noble]=kvm-deb-noble-amd64 [oracular]=kvm-deb-oracular-amd64 [plucky]=kvm-deb-plucky-aarch64)
+declare -A builder_dir_bb_amd64=([jammy]=kvm-deb-jammy-amd64 [noble]=kvm-deb-noble-amd64 [oracular]=kvm-deb-oracular-amd64 [plucky]=kvm-deb-plucky-amd64)
 
 declare -A builder_dir_ci_aarch64=([jammy]=aarch64-ubuntu-2204-deb-autobake [noble]=aarch64-ubuntu-2404-deb-autobake [oracular]=aarch64-ubuntu-2410-deb-autobake [plucky]=aarch64-ubuntu-2504-deb-autobake)
 declare -A builder_dir_bb_aarch64=([jammy]=kvm-deb-jammy-aarch64 [noble]=kvm-deb-noble-aarch64 [oracular]=kvm-deb-oracular-aarch64 [plucky]=kvm-deb-plucky-aarch64)
