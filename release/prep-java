@@ -19,7 +19,8 @@
 version=${1}
 commit=${2}
 orgmariadbjdbc=${3}
-maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
+maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
+#maven="https://oss.sonatype.org/content/repositories/orgmariadbjdbc-${orgmariadbjdbc}/org/mariadb/jdbc/mariadb-java-client"
 #maven="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client"
 
 url_staging="https://github.com/mariadb-corporation/mariadb-connector-j/archive"
@@ -338,11 +339,11 @@ uploader() {
 
 # Wrapper functions for uploader
 upload_to_the_mirrors() {
-  uploader "${mirrors}"
+  uploader "${mirrors_foundation}"
 }
 
 upload_to_the_archives() {
-  uploader "${archives}"
+  uploader "${archives_foundation}"
 }
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -520,11 +521,11 @@ shouldI upload_to_staging
 shouldI upload_to_prod
 
 MSG_I "Mirrors"
-for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_mirrors
 echo;echo
 MSG_I "Archives"
-for archive in ${archives} ; do echo "- ${archive}";done;echo
+for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 
 #shouldI generate_the_file_list_pickle_for_org_downloads
