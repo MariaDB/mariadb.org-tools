@@ -32,7 +32,8 @@ set -eu
 #  Variables
 #-------------------------------------------------------------------------------
 product=${1}
-ver=${2}
+branch=${2}
+ver=${3}
 
 case ${ver} in
   v*) # Connectors releases versions sometimes start with 'v', remove it
@@ -93,7 +94,7 @@ case ${product} in
     title='MariaDB Connector/C'
     gh_path="mariadb-corporation/mariadb-${product}"
     gh_tag="${ver}"
-    kb_slug="mariadb-${product}"
+    kb_slug="connectors/c/${branch}"
     ;;
   connector-cpp )
     title='MariaDB Connector/C++'
@@ -106,6 +107,12 @@ case ${product} in
     gh_path="mariadb-corporation/mariadb-${product}"
     gh_tag="${ver}"
     kb_slug="mariadb-${product}"
+    ;;
+  connector-python )
+    title='MariaDB Connector/Python'
+    gh_path="mariadb-corporation/mariadb-${product}"
+    gh_tag="${ver}"
+    kb_slug="connectors/python/mariadb-connector-python-1-1-release-notes/mariadb-connector-python"
     ;;
 esac
 
@@ -122,10 +129,11 @@ echo "${title} ${version}"
 echo
 
 case ${product} in
-  server|connector-c|connector-odbc|connector-cpp)
+  server|connector-c|connector-odbc|connector-cpp|connector-python)
     MSG "Release Description:"
     echo
-    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/kb/en/${kb_slug}-${version//./-}-release-notes/)"
+    #echo "Details on this release can be found in the [Release Notes](https://mariadb.com/docs/release-notes/${kb_slug}/${version//./-})"
+    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/docs/release-notes/${kb_slug}/${version})"
     echo
     ;;
 esac
