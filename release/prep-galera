@@ -71,10 +71,10 @@ ci_mappings_4="
         gal-amd64-rhel-10:kvm-rpm-rhel10-amd64-gal
         gal-s390x-rhel-10:kvm-rpm-rhel10-s390x-gal
       gal-ppc64le-rhel-10:kvm-rpm-rhel10-ppc64le-gal
-      gal-amd64-sles-1506:kvm-zyp-sles1506-amd64-gal
-      gal-s390x-sles-1506:kvm-zyp-sles1506-s390x-gal
-      gal-amd64-sles-1507:kvm-zyp-sles1507-amd64-gal
-      gal-s390x-sles-1507:kvm-zyp-sles1507-s390x-gal
+      gal-amd64-sles-1506:kvm-zyp-sles156-amd64-gal
+      gal-s390x-sles-1506:kvm-zyp-sles156-s390x-gal
+      gal-amd64-sles-1507:kvm-zyp-sles157-amd64-gal
+      gal-s390x-sles-1507:kvm-zyp-sles157-s390x-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
      gal-amd64-debian-13:kvm-deb-trixie-amd64-gal
    gal-aarch64-debian-13:kvm-deb-trixie-aarch64-gal
@@ -258,7 +258,6 @@ rpm_dists_4="
   fedora42-amd64
   fedora42-aarch64
 
-  opensuse150-amd64
   opensuse155-amd64
   opensuse156-amd64
 
@@ -268,10 +267,10 @@ rpm_dists_4="
   sles15-amd64
   sles15-s390x
 
-  sles1506-amd64
-  sles1506-s390x
-  sles1507-amd64
-  sles1507-s390x
+  sles156-amd64
+  sles156-s390x
+  sles157-amd64
+  sles157-s390x
 "
   #fedora36-aarch64
   #fedora-rawhide-amd64
@@ -688,7 +687,7 @@ prepare_the_rpm_packages() {
   for dir in ${dir_release}/${dir_name}-signed/rpm/ ${dir_release}/${dir_name}-signed-ent/rpm/ ; do
     pushd ${dir}
       ln -sv centos74-amd64 centos7-amd64
-      ln -sv opensuse150-amd64 opensuse15-amd64
+      ln -sv opensuse155-amd64 opensuse15-amd64
       ln -sv sles125-amd64 sles12-amd64
       ln -sv sles15-amd64 sles150-amd64
     popd
@@ -831,7 +830,7 @@ prepare_the_yum_repository() {
   # one final thing: create symlinks so buildbot tests work
   RC ln -sv sles15-amd64 sles150-amd64
   RC ln -sv sles125-amd64 sles12-amd64
-  RC ln -sv opensuse150-amd64 opensuse15-amd64
+  RC ln -sv opensuse155-amd64 opensuse15-amd64
   RC ln -sv centos74-amd64 centos7-amd64
   RC ln -sv centos74-amd64 rhel7-amd64
   RC ln -sv rhel8-aarch64 rocky84-aarch64
@@ -1124,7 +1123,8 @@ pull_this_release_from_the_ci() {
   RC pushd ${dir_archive}/ci/
     message "Transferring builds from ${ci}..."
     set +e
-    RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
+    RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/galera/${tree}/${rev}/
+    #RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
     #RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/${tree}/${rev}/
     set -e
     RC find ${dir_archive}/ci/galera/${tree}/${rev}/ -name "index.html" -exec rm -v {} \;
@@ -1311,7 +1311,7 @@ case ${tree} in
     deb_dists_full=${deb_dists_full_3}
     rpm_dists=${rpm_dists_3}
     ;;
-  "mariadb-4.x")
+  mariadb-4.x*)
     build_dirs_x86="kvm-deb-trusty-x86-gal:galera-${num}-i686 kvm-deb-trusty-x86-gal:galera-${num}-glibc_214-i686 kvm-deb-trusty-x86-gal:galera-${num}-systemd-i686"
     repo="repo4"
     ci_mappings=${ci_mappings_4}
