@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------------
 run_script="no"
 out_dir=${PWD}
-output="${out_dir}/changelog.creole"              # Default output location
+output="${out_dir}/changelog.md"              # Default output location
 src_dir="${HOME}/src/mariadb/server/"
 rev_flag=false
 
@@ -219,22 +219,24 @@ case ${minor} in
 esac
 
 # Get a list of all the merges in this changeset
-git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. > /tmp/merges.creole
+git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. > /tmp/merges.tmp
 
 
 # Generate the changelog
 for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. );do
   shortrev=${rev:0:10}
-  if grep -q ${rev} /tmp/merges.creole;then
-    # If a change exists in merges.creole then we need to format it differently
-    git log --pretty=format:"* <<style class=\"merge\">>Merge gitrev:${shortrev} %ai - %s<</style>>%n" -1 ${rev} >> ${output}
+  if grep -q ${rev} /tmp/merges.tmp;then
+    # If a change exists in merges.tmp then we need to format it differently
+    #git log --pretty=format:"* <<style class=\"merge\">>Merge gitrev:${shortrev} %ai - %s<</style>>%n" -1 ${rev} >> ${output}
+    git log --pretty=format:"* <sup>_Merge_</sup> [<sup>_Revision #${shortrev}_</sup>](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_%ai - %s_</sup>%n" -1 ${rev} >> ${output}
   else
-    git log --pretty=format:"* gitrev:${shortrev}%n<<style class=\"datetime\">>%ai<</style>>%n** %s%n" -1 ${rev} >> ${output}
+    #git log --pretty=format:"* gitrev:${shortrev}%n<<style class=\"datetime\">>%ai<</style>>%n** %s%n" -1 ${rev} >> ${output}
+    git log --pretty=format:"* [Revision #${shortrev}](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_%ai_</sup>%n  * %s%n" -1 ${rev} >> ${output}
   fi
 done
 
 # Cleanup
-rm -v /tmp/merges.creole
+rm -v /tmp/merges.tmp
 
 set +x
 
