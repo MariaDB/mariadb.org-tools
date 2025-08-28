@@ -45,31 +45,31 @@ set -e
 # for a particular supported 
 
 rpm_ver_cmapi=( 8 9 )
-deb_ver_cmapi=( bullseye bookworm focal jammy noble )
+deb_ver_cmapi=( bullseye bookworm jammy noble )
 
 case $1 in
   *11.4*|*11.7*|*11.8*|*12.0*)
-    debian_ver=( bullseye bookworm )
-    ubuntu_ver=( focal jammy noble )
-    rhel_ver=( 8 9 )
-    sles_ver=( 15 )
+    debian_ver=( bullseye bookworm trixie )
+    ubuntu_ver=( jammy noble )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( 15 15.6 15.7 )
     ;;
   *11.5*|*11.6*)
     debian_ver=( bullseye bookworm )
-    ubuntu_ver=( focal jammy noble oracular )
-    rhel_ver=( 8 9 )
-    sles_ver=( 12 15 )
+    ubuntu_ver=( jammy noble oracular )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( 15 )
     ;;
   *10.11*|*11.0*|*11.1*|*11.2*|*11.3*)
     debian_ver=( bullseye bookworm )
-    ubuntu_ver=( focal jammy noble )
-    rhel_ver=( 8 9 )
-    sles_ver=( 12 15 )
+    ubuntu_ver=( jammy noble )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( 15 15.6 )
     ;;
   *10.10*)
     # need separate 10.10/11 because e.g. 10.10.3 is caught by the next glob
     debian_ver=( bullseye )
-    ubuntu_ver=( focal jammy )
+    ubuntu_ver=( jammy )
     rhel_ver=( 8 9 )
     sles_ver=( 12 )
     ;;
@@ -81,9 +81,9 @@ case $1 in
     ;;
   *)
     debian_ver=( bullseye )
-    ubuntu_ver=( focal jammy )
+    ubuntu_ver=( jammy )
     rhel_ver=( 8 9 )
-    sles_ver=( 12 )
+    sles_ver=( 15 )
     ;;
 esac
 
@@ -129,9 +129,9 @@ do_pkgs() {
 
 
 case $rel in
-  'noble'|'mantic'|'jammy'|'focal'|'bullseye'|'bookworm'|'8'|'9')
+  'noble'|'mantic'|'jammy'|'focal'|'bullseye'|'bookworm'|'trixie'|'8'|'9'|'10')
     case $rel in
-      '8'|'9')
+      '8'|'9'|'10')
       altarchs="x86_64 aarch64"
       ;;
       *)
@@ -182,6 +182,7 @@ do_debs() {
   case ${rel} in
     bullseye) rel_alt=deb11   ;;
     bookworm) rel_alt=deb12   ;;
+    trixie)   rel_alt=deb13   ;;
     focal)    rel_alt=ubu2004 ;;
     jammy)    rel_alt=ubu2204 ;;
     mantic)   rel_alt=ubu2310 ;;
