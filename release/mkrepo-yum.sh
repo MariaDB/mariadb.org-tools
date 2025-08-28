@@ -73,10 +73,13 @@ declare -A builder_dir_ci_amd64=(
 declare -A builder_dir_bb_amd64=(
   [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
+  [rhel10]=kvm-rpm-rhel10-amd64
   [fedora39]=kvm-rpm-fedora39-amd64
   [fedora40]=kvm-rpm-fedora40-amd64
   [fedora41]=kvm-rpm-fedora41-amd64
+  [fedora42]=kvm-rpm-fedora42-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
+  [sles156]=kvm-zyp-sles1506-amd64 [sles157]=kvm-zyp-sles1507-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
   [opensuse155]=kvm-zyp-opensuse155-amd64 [opensuse156]=kvm-zyp-opensuse156-amd64
 )
@@ -94,11 +97,14 @@ declare -A builder_dir_ci_aarch64=(
 declare -A builder_dir_bb_aarch64=(
   [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
+  [rhel10]=kvm-rpm-rhel10-aarch64
   [fedora39]=kvm-rpm-fedora39-aarch64
   [fedora40]=kvm-rpm-fedora40-aarch64
   [fedora41]=kvm-rpm-fedora41-aarch64
+  [fedora42]=kvm-rpm-fedora42-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
+  [sles156]=kvm-zyp-sles1506-aarch64 [sles157]=kvm-zyp-sles1507-aarch64
   [opensuse155]=kvm-zyp-opensuse155-aarch64 [opensuse156]=kvm-zyp-opensuse156-aarch64
 )
 
@@ -114,6 +120,7 @@ declare -A builder_dir_ci_ppc64le=(
 declare -A builder_dir_bb_ppc64le=(
   [rhel8]=kvm-rpm-rhel8-ppc64le
   [rhel9]=kvm-rpm-rhel9-ppc64le
+  [rhel10]=kvm-rpm-rhel10-ppc64le
   [sles12]=kvm-zyp-sles123-ppc64le [sles15]=kvm-zyp-sles15-ppc64le
   [opensuse15]=kvm-zyp-opensuse150-ppc64le [opensuse42]=kvm-zyp-opensuse42-ppc64le
   [opensuse155]=kvm-zyp-opensuse155-ppc64le [opensuse156]=kvm-zyp-opensuse156-ppc64le
@@ -131,7 +138,10 @@ declare -A builder_dir_ci_s390x=(
 declare -A builder_dir_bb_s390x=(
   [rhel8]=kvm-rpm-rhel8-s390x
   [rhel9]=kvm-rpm-rhel9-s390x
+  [rhel10]=kvm-rpm-rhel10-s390x
   [sles15]=kvm-zyp-sles15-s390x
+  [sles156]=kvm-zyp-sles1506-s390x
+  [sles157]=kvm-zyp-sles1507-s390x
 )
 
 case ${ARCHDIR} in
@@ -203,8 +213,31 @@ case ${ARCHDIR} in
   *10.6*)
   dists_bb="
     sles15-amd64
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
+
+    rhel9-amd64
+    rhel9-aarch64
+    rhel9-ppc64le
+    rhel9-s390x
   "
   dists_ci="
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
+
+    rhel9-amd64
+    rhel9-aarch64
+    rhel9-ppc64le
+    rhel9-s390x
+  "
+  dists=${dists_bb}
+    ;;
+  *10.11*|*11.2*)
+  dists_bb="
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -219,11 +252,20 @@ case ${ARCHDIR} in
     rhel10-aarch64
     rhel10-ppc64le
     rhel10-s390x
-  "
-  dists=${dists_bb}
-    ;;
-  *10.11*|*11.2*)
-  dists_bb="
+
+    fedora41-amd64
+    fedora41-aarch64
+
+    fedora42-amd64
+    fedora42-aarch64
+
+    opensuse156-amd64
+
+    sles15-amd64
+    sles15-s390x
+
+    sles156-amd64
+    sles156-s390x
   "
   dists_ci="
     rhel8-amd64
@@ -253,12 +295,45 @@ case ${ARCHDIR} in
 
     sles156-amd64
     sles156-s390x
+
+    sles157-amd64
+    sles157-s390x
   "
   dists=${dists_bb}
      ;;
   *)
   dists_bb="
     sles15-amd64
+    rhel8-amd64
+    rhel8-aarch64
+    rhel8-ppc64le
+    rhel8-s390x
+
+    rhel9-amd64
+    rhel9-aarch64
+    rhel9-ppc64le
+    rhel9-s390x
+
+    rhel10-amd64
+    rhel10-aarch64
+    rhel10-ppc64le
+    rhel10-s390x
+
+    fedora41-amd64
+    fedora41-aarch64
+
+    fedora42-amd64
+    fedora42-aarch64
+
+    opensuse156-amd64
+ 
+    sles15-s390x
+
+    sles156-amd64
+    sles156-s390x
+
+    sles157-amd64
+    sles157-s390x
   "
   dists_ci="
     rhel8-amd64
@@ -421,17 +496,17 @@ for REPONAME in ${dists}; do
   case "${REPONAME}" in
     rhel*-a*)
       arch=${REPONAME##*-}
+      dist=${REPONAME%%-*}
+      dist_ver=${dist#rhel}
+      runCommand set_builder_dir "$dist" "$arch"
       if [ $arch == amd64 ]; then
         arch=x86_64
       fi
-      dist=${REPONAME%%-*}
-      dist_ver=${dist#rhel}
-      set_builder_dir "$dist" "$arch"
       runCommand mkdir -vp rhel/"$dist_ver/$arch"
-      maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
+      runCommand maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/  ./${REPONAME}/"
+      runCommand copy_files "${ARCHDIR}/${!builder_dir}/  ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
@@ -442,11 +517,11 @@ for REPONAME in ${dists}; do
       case ${ARCHDIR} in
         *11.1*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
+          runCommand copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
           ;;
         *11.2*|*11.3*)
           # Copy in CMAPI package
-          copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
+          runCommand copy_files "${dir_cmapi}/${ver_cmapi}/11.2*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
           ;;
       esac
 
@@ -455,17 +530,17 @@ for REPONAME in ${dists}; do
       arch=${REPONAME##*-}
       dist=${REPONAME%%-*}
       dist_ver=${dist#rhel}
-      set_builder_dir "$dist" "$arch"
+      runCommand set_builder_dir "$dist" "$arch"
       runCommand mkdir -vp rhel/"$dist_ver/$arch/rpms"
       runCommand mkdir -vp rhel/"$dist_ver/$arch/srpms"
-      maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
+      runCommand maybe_make_symlink rhel/"$dist_ver/$arch" "$REPONAME"
 
       # Copy in MariaDB files
-      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+      runCommand copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        runCommand copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
 
@@ -629,15 +704,29 @@ for REPONAME in ${dists}; do
         copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
-    sles15[0-9]*)
+    sles15-s390x)
+      set_builder_dir sles15 s390x
+      runCommand mkdir -vp sles/15/s390x
+      maybe_make_symlink sles/15/s390x sles150-s390x
+      maybe_make_symlink sles/15/s390x sles15-s390x
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    sles15[0-9]-*)
       arch=${REPONAME##*-}
-      if [ "$arch" == amd64 ]; then
-        arch=x86_64
-      fi
       dist=${REPONAME%%-*}
       dist_ver=${dist#sles}
       dist_ver=${dist_ver:0:2}.${dist_ver:2}
       set_builder_dir "$dist" "$arch"
+      if [ "$arch" == amd64 ]; then
+        arch=x86_64
+      fi
       runCommand mkdir -vp sles/"$dist_ver/$arch"
       maybe_make_symlink sles/"$dist_ver/$arch" "$REPONAME"
 
@@ -665,7 +754,9 @@ for REPONAME in ${dists}; do
       line
       for f in ./"${REPONAME}"/rpms/MariaDB-compat*
       do
+        if [[ -e ./"${REPONAME}"/rpms/MariaDB-compat* ]] ; then
         rm -v "$f"
+        fi
       done
   fi
 
@@ -673,6 +764,10 @@ done
 
 # Add centos link to rhel dir
 maybe_make_symlink rhel centos
+
+# Add rocky and almalinux symlinks
+maybe_make_symlink rhel rocky
+maybe_make_symlink rhel almalinux
 
 # Sign all the rpms with the appropriate key
 rpmsign --addsign --key-id=${gpg_key} $(find . -name '*.rpm')
@@ -720,6 +815,9 @@ for DIR in ${dists}; do
     rhel9*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 9
       ;;
+    rhel10*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 10
+      ;;
     fedora39*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 39
       ;;
@@ -728,6 +826,9 @@ for DIR in ${dists}; do
       ;;
     fedora41*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 41
+      ;;
+    fedora42*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 42
       ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
