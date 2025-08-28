@@ -257,7 +257,7 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 ci_dirs_102=""
 ci_dirs_103="${ci_dirs_102}"
 ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel10-amd64:amd64-rhel-10-rpm-autobake  kvm-rpm-rhel10-aarch64:aarch64-rhel-10-rpm-autobake kvm-rpm-rhel10-ppc64le:ppc64le-rhel-10-rpm-autobake kvm-rpm-rhel10-s390x:s390x-rhel-10-rpm-autobake"
+ci_dirs_105="${ci_dirs_104} kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
 
 ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
 # 2025-05-01 add centos7 bintar for 10.6, 10.11, and 11.4
@@ -273,7 +273,7 @@ ci_dirs_107="${ci_dirs_106}"
 ci_dirs_108="${ci_dirs_107}"
 ci_dirs_109="${ci_dirs_108}"
 ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-zyp-sles1506-amd64:amd64-sles-1506-rpm-autobake  kvm-zyp-sles1506-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora41-amd64:amd64-fedora-41-rpm-autobake kvm-rpm-fedora41-aarch64:aarch64-fedora-41-rpm-autobake kvm-rpm-fedora42-amd64:amd64-fedora-42-rpm-autobake kvm-rpm-fedora42-aarch64:aarch64-fedora-42-rpm-autobake"
+ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-zyp-sles1506-amd64:amd64-sles-1506-rpm-autobake  kvm-zyp-sles1506-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora41-amd64:amd64-fedora-41-rpm-autobake kvm-rpm-fedora41-aarch64:aarch64-fedora-41-rpm-autobake kvm-rpm-fedora42-amd64:amd64-fedora-42-rpm-autobake kvm-rpm-fedora42-aarch64:aarch64-fedora-42-rpm-autobake kvm-rpm-rhel10-amd64:amd64-rhel-10-rpm-autobake kvm-rpm-rhel10-aarch64:aarch64-rhel-10-rpm-autobake kvm-rpm-rhel10-ppc64le:ppc64le-rhel-10-rpm-autobake kvm-rpm-rhel10-s390x:s390x-rhel-10-rpm-autobake"
 ci_dirs_1012="${ci_dirs_1011}"
 ci_dirs_110="${ci_dirs_1012}"
 ci_dirs_111="${ci_dirs_110}"
@@ -284,7 +284,7 @@ case ${major} in
     ci_dirs_114="${ci_dirs_113}"
     ;;
   *) # For 11.4 and higher, also pull in rhel-8 and rhel-9 amd64/aarch64 pkgs
-    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-zyp-sles1507-amd64:amd64-sles-1507-rpm-autobake kvm-zyp-sles1507-s390x:s390x-sles-1507-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake kvm-deb-plucky-amd64:amd64-ubuntu-2504-deb-autobake kvm-deb-plucky-aarch64:aarch64-ubuntu-2504-deb-autobake"
+    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-zyp-sles1507-amd64:amd64-sles-1507-rpm-autobake kvm-zyp-sles1507-s390x:s390x-sles-1507-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake kvm-deb-plucky-amd64:amd64-ubuntu-2504-deb-autobake kvm-deb-plucky-aarch64:aarch64-ubuntu-2504-deb-autobake kvm-deb-bookworm-aarch64:aarch64-debian-12-deb-autobake"
     ;;
 esac
 ci_dirs_115="${ci_dirs_114}"
@@ -292,6 +292,7 @@ ci_dirs_116="${ci_dirs_115}"
 ci_dirs_117="${ci_dirs_116}"
 ci_dirs_118="${ci_dirs_117} kvm-deb-trixie-amd64:amd64-debian-13-deb-autobake kvm-deb-trixie-aarch64:aarch64-debian-13-deb-autobake kvm-deb-trixie-ppc64le:ppc64le-debian-13-deb-autobake kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar"
 ci_dirs_120="${ci_dirs_118}"
+ci_dirs_121="${ci_dirs_120}"
 
 
 #-------------------------------------------------------------------------------
@@ -336,6 +337,7 @@ bb_dirs_116="${bb_dirs_115}"
 bb_dirs_117="${bb_dirs_116}"
 bb_dirs_118="${bb_dirs_117}"
 bb_dirs_120="${bb_dirs_118}"
+bb_dirs_121="${bb_dirs_120}"
 
 full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
 full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
@@ -357,6 +359,7 @@ full_dirs_116="${bb_dirs_116} ${ci_dirs_116}"
 full_dirs_117="${bb_dirs_117} ${ci_dirs_117}"
 full_dirs_118="${bb_dirs_118} ${ci_dirs_118}"
 full_dirs_120="${bb_dirs_120} ${ci_dirs_120}"
+full_dirs_121="${bb_dirs_121} ${ci_dirs_121}"
 
 }
 
@@ -683,7 +686,7 @@ sync_the_local_mirror_dir_to_the_mirrors() {
   local dest
   local dests
   local rsync_local_mirror_opts
-  dests="${mirrors}"
+  dests="${mirrors_foundation}"
   rsync_local_mirror_opts="-av --delete-after --delay-updates --exclude=exclude --exclude=index.html --exclude=*orig --exclude=zoneinfo --exclude=sync_from_netcologne.txt"
 
   # update the TIME file just before we start uploading
@@ -741,11 +744,11 @@ update_the_local_mirror_dir_yum_and_repo_symlinks() {
       runCommand ln -sv ../${version_nog}/${distro_type} ${major}
       runCommand ln -sv ../${version_nog}/${distro_type} ${num}
       case ${num} in
-        *.1) runCommand rm -v 11.rc
-             runCommand ln -sv ../${version_nog}/${distro_type} 11.rc
+        *.1) runCommand rm -v 12.rc
+             runCommand ln -sv ../${version_nog}/${distro_type} 12.rc
              ;;
-        *.2) runCommand rm -v 11.rolling
-             runCommand ln -sv ../${version_nog}/${distro_type} 11.rolling
+        *.2) runCommand rm -v 12.rolling
+             runCommand ln -sv ../${version_nog}/${distro_type} 12.rolling
              ;;
       esac
       runCommand tree -L 1
@@ -858,17 +861,44 @@ uploader() {
   for dest in ${dests} ; do
     local cont
     cont=""
+    local cont_2
+    cont_2=""
+    local src
+    src="${dir_release}/${dir_name}"
     while [ -z ${cont} ]; do
       userResponse "Should I upload to ${dest}? [y/n]"
       case ${ANSWER} in
         y)
+          cont_2=""
+          while [ -z ${cont_2} ]; do
+            userResponse "Should I copy the previous release to the current release on ${dest}?"
+            case ${ANSWER} in
+              y)
+                copy_the_previous_release_to_the_current_release ${dest}
+                cont_2="yes"
+                ;;
+              n)
+                message "Skipping copying previous release to the current release on ${dest}"
+                cont_2="yes"
+                ANSWER=""
+                ;;
+              *)
+                lowkey_message "Please answer [y]es or [n]o."
+                cont_2="yes"
+                ANSWER=""
+                ;;
+            esac
+          done
           message "Uploading to ${dest}..."
           case ${dest} in
             *hz-archive*)
               rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
               ;;
+            dl*)
+              src="${dir_corp}/${dir_name}"
+              ;;
           esac
-          rsync_wrapper "${rsync_uploader_opts} ${dir_release}/${dir_name} ${dest}/"
+          rsync_wrapper "${rsync_uploader_opts} ${src} ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
@@ -888,12 +918,20 @@ uploader() {
 }
 
 # Wrapper functions for uploader
-upload_to_the_mirrors() {
-  uploader "${mirrors}"
+upload_to_the_foundation_mirrors() {
+  set +e
+  uploader "${mirrors_foundation}"
+  set -e
 }
 
-upload_to_the_archives() {
-  uploader "${archives}"
+upload_to_the_foundation_archives() {
+  set +e
+  uploader "${archives_foundation}"
+  set -e
+}
+
+upload_to_the_corp_mirrors() {
+  uploader "${mirrors_corp}"
 }
 
 
@@ -1111,7 +1149,7 @@ upload_this_release_to_the_buildmaster() {
 #   DESCRIPTION:  Simple function to update a STATUS file with a UNIX timestamp
 #===============================================================================
 update_the_archive_STATUS_file() {
-  for archive_pair in ${archives}; do
+  for archive_pair in ${archives_foundation}; do
     archive=(${archive_pair//:/ })
     set -x
     ssh -t -t ${archive[0]} "set -x; ./sync_archive_force"
@@ -1366,6 +1404,18 @@ upload_to_the_staging_mirror() {
 #                 release, rsync takes care of deleting the files that actually
 #                 aren't part of the new release.
 #===============================================================================
+copy_the_previous_release_to_the_current_release() {
+  local dest
+  local dest_pair
+  dest_pair="$@"
+  if [ ! ${prev_release} ] ; then
+    set_prev_release
+  fi
+  dest=(${dest_pair//:/ })
+  set -x
+  ssh -t -t ${dest[0]} "set -x; cp -ail ${dest[1]}/mariadb-${prev_release} ${dest[1]}/${dir_name}"
+}
+
 copy_the_previous_release_to_the_current_release_on_the_mirrors() {
   local cont
   if [ ! ${prev_release} ] ; then
@@ -1555,12 +1605,12 @@ update_the_archive_symlinks() {
   local rc_rolling_repo
   case ${num} in
     *.1)
-      rc_rolling_repo="; rm -v 11.rc ; ln -sv ../${dir_name}/repo 11.rc ;"
-      rc_rolling_yum="; rm -v 11.rc ; ln -sv ../${dir_name}/yum 11.rc ;"
+      rc_rolling_repo="; rm -v 12.rc ; ln -sv ../${dir_name}/repo 12.rc ;"
+      rc_rolling_yum="; rm -v 12.rc ; ln -sv ../${dir_name}/yum 12.rc ;"
       ;;
     *.2)
-      rc_rolling_repo="; rm -v 11.rolling ; ln -sv ../${dir_name}/repo 11.rolling ;"
-      rc_rolling_yum="; rm -v 11.rolling ; ln -sv ../${dir_name}/yum 11.rolling ;"
+      rc_rolling_repo="; rm -v 12.rolling ; ln -sv ../${dir_name}/repo 12.rolling ;"
+      rc_rolling_yum="; rm -v 12.rolling ; ln -sv ../${dir_name}/yum 12.rolling ;"
       ;;
     *)
       rc_rolling_repo=';'
@@ -1568,7 +1618,7 @@ update_the_archive_symlinks() {
       ;;
   esac
 
-  for archive_pair in ${archives}; do
+  for archive_pair in ${archives_foundation}; do
     archive=(${archive_pair//:/ })
     set -x
     ssh -t -t ${archive[0]} "set -x; cd ${archive[1]}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};cd repo ; rm -v ${major} ; ln -sv ../${dir_name}/repo ${major} ; ln -sv ../${dir_name}/repo ${num} ${rc_rolling_repo} cd ../yum/ ; rm -v ${major} ; ln -sv ../${dir_name}/yum ${major} ; rm -v ${num} ; ln -sv ../${dir_name}/yum ${num} ${rc_rolling_yum}"
@@ -1793,17 +1843,15 @@ pull_the_win_packages_from_the_win_builder() {
 }
 
 #===  FUNCTION  ================================================================
-#          NAME:  display_the_previous_yum_directory
+#          NAME:  display_the_previous_releases
 #   DESCRIPTION:  A simple function to list (using tree) the contents of the
-#                 previous release's yum directory. Useful for seeing what
+#                 previous release's srpms directory. Useful for seeing what
 #                 releases are in it.
 #===============================================================================
-display_the_previous_yum_directory() {
-  echo; line;
-  echo "Here is the previous yum directory:"
-  line; echo
-  tree ${dir_release}/mariadb-${prev_release}/yum
-  echo;echo;echo;
+display_the_previous_releases() {
+  message "Here are the previous releases in the repository:"
+  for rpm in $(ls ${dir_release}/mariadb-${prev_release}/yum/rhel/9/x86_64/srpms) ; do lowkey_message ${rpm:8:-14} ; done
+  echo;
   pressAnyKeyToContinue
 }
 
@@ -2807,7 +2855,7 @@ else
 
     echo "Before rsyncing the yum release..."
 
-    shouldI display_the_previous_yum_directory
+    shouldI display_the_previous_releases
 
     shouldI exclude_an_old_release_from_the_yum_dir
 
@@ -2818,6 +2866,9 @@ else
       rsync_wrapper "-av --delete-before --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
       if [ -d ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ] ; then
         rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ${dir_yum_prep}/${dir_name}/yum/rhel/"
+      fi
+      if [ -d ${dir_release}/mariadb-${prev_release}/yum/sles/12 ] ; then
+        rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/sles/12 ${dir_yum_prep}/${dir_name}/yum/sles/"
       fi
       rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/fedora ${dir_yum_prep}/${dir_name}/yum/"
     fi
@@ -2854,7 +2905,7 @@ else
     popd
 
     # remove symlinks from corp repos
-    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server"
+    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server fedora41-aarch64 fedora41-amd64 fedora42-aarch64 fedora42-amd64 rhel10-aarch64 rhel10-amd64 sles156-amd64 sles157-amd64 almalinux rocky"
     pushd ${dir_corp}/${dir_name}/yum/
       for link in ${symlinks_to_remove} ; do
         if [[ -h ${link} ]] ; then
@@ -2908,6 +2959,10 @@ fi
 
 echo;echo;echo;echo
 
+important_message "Corp Mirrors"
+for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_corp_mirrors
+
 shouldI copy_the_previous_release_to_the_current_release_on_the_mirrors
 
 echo;echo;echo;echo
@@ -2930,15 +2985,15 @@ echo;echo;echo;echo
 
 #shouldI upload_to_the_primary_mirror
 
-important_message "Mirrors"
-for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
-shouldI upload_to_the_mirrors
+important_message "Foundation Mirrors"
+for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
+shouldI upload_to_the_foundation_mirrors
 
 echo;echo;echo;echo
 
-important_message "Archives"
-for archive in ${archives} ; do echo "- ${archive}";done;echo
-shouldI upload_to_the_archives
+important_message "Foundation Archives"
+for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
+shouldI upload_to_the_foundation_archives
 
 echo;echo;echo;echo
 
