@@ -107,7 +107,12 @@ if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
     echo "feedback=OFF" | sudo tee -a "$DISABLEFB"
   fi
   sudo zypper refresh
-  sudo zypper install -y MariaDB-server
+  VERSIONS_LIST=$(zypper --non-interactive search --details "MariaDB-server")
+  echo $VERSIONS_LIST
+  LATEST_PACKAGE_VER=$(echo $VERSIONS_LIST | awk '/^v / {print $2" "$3}' | sort -V |sort -V | tail -n 1)
+  read -r ACTUAL_PACKAGE_NAME LATEST_VERSION <<< "$LATEST_PACKAGE_VER"
+
+  sudo zypper install -y "MariaDB-servera=${LATEST_VERSION}"
   sudo systemctl start mariadb
 fi
 
