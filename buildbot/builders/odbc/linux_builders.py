@@ -23,6 +23,8 @@ connodbc_linux_step4_testsrun= connodbc_linux_step4_1_testenvertup + step4_tests
 connodbc_linux_step4_valgrindtest= """
 cd ./build/test
 ls -l
+# Allowing to skip tests/checks that create not valueable noise
+export MEMCHECK_SKIP_TEST=1
 for odbctest in ./odbc_*; do
   if [ -x "$odbctest" ]; then
     memcheck="$odbctest.memcheck"
@@ -205,13 +207,55 @@ connodbc_linux_step1_build
             "slavenames": slaves,
             "category": "connectors"}
 
+def build_sles_connector_odbc(name, kvm_image, cflags, cmake_params, slesversion, slaves=connector_slaves):
+    linux_connector_odbc= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_odbc.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_odbc.addStep(Compile(
+        description=["building", "linux-connctor_odbc"],
+        descriptionDone=["build", "linux-connector_odbc"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+connodbc_linux_step0_checkout + """
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+connodbc_linux_step1_build +
+sles_serverinstall(slesversion) +
+connodbc_linux_step3_packagetest +
+connodbc_linux_step4_testsrun
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
+        ]))
+    linux_connector_odbc.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*odbc*tar.gz`")],
+        ))
+    addPackageUploadStep(linux_connector_odbc, '"%(bindistname)s"')
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_odbc,
+            "slavenames": slaves,
+            "category": "connectors"}
 bld_codbc_amd64_valgrind= connector_odbc_valgrind_memcheck("codbc-noble-amd64-memcheck", "vm-noble-amd64", "", " -DWITH_SSL=OPENSSL");
 bld_codbc_amd64_asan= build_linux_connector_odbc_no_upload("codbc-linux-amd64-asan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_ASAN=ON");
 bld_codbc_amd64_ubsan= build_linux_connector_odbc_no_upload("codbc-linux-amd64-ubsan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_UBSAN=ON");
 bld_codbc_amd64_msan= build_linux_connector_odbc_no_upload("codbc-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
 
-bld_codbc_sles15_amd64= build_linux_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
-
+bld_codbc_sles15_amd64= build_sles_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL", 15);
+bld_codbc_sles12_amd64= build_sles_connector_odbc("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL", 12);
 
 bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_bullseye_aarch64= build_linux_connector_odbc("codbc-bullseye-aarch64", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
@@ -241,8 +285,6 @@ bld_codbc_rhel9_aarch64= build_linux_connector_odbc("codbc-rhel9-aarch64", "vm-r
 
 bld_codbc_rhel8_aarch64= build_linux_connector_odbc("codbc-rhel8-aarch64", "vm-rhel8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 bld_codbc_rocky8_aarch64= build_linux_connector_odbc("codbc-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
-
-bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
 bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-amd64-notest", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 
