@@ -7,6 +7,40 @@ if LSB_VID=$(lsb_release -sr 2> /dev/null); then
   ID=${ID:0:3}
 fi
 """
+
+sles15server="https://dlm.mariadb.com/4405729/MariaDB/mariadb-10.6.23/yum/sles/15/x86_64/rpms/MariaDB-server-10.6.23-1.x86_64.rpm"
+sles15client="https://dlm.mariadb.com/4405710/MariaDB/mariadb-10.6.23/yum/sles/15/x86_64/rpms/MariaDB-client-10.6.23-1.x86_64.rpm"
+sles15common="https://dlm.mariadb.com/4405731/MariaDB/mariadb-10.6.23/yum/sles/15/x86_64/rpms/MariaDB-common-10.6.23-1.x86_64.rpm"
+sles12server="https://dlm.mariadb.com/4405823/MariaDB/mariadb-10.6.23/yum/sles/12/x86_64/rpms/MariaDB-server-10.6.22-1.x86_64.rpm"
+sles12client="https://dlm.mariadb.com/4405871/MariaDB/mariadb-10.6.23/yum/sles/12/x86_64/rpms/MariaDB-client-10.6.22-1.x86_64.rpm"
+sles12common="https://dlm.mariadb.com/4405838/MariaDB/mariadb-10.6.23/yum/sles/12/x86_64/rpms/MariaDB-common-10.6.22-1.x86_64.rpm"
+
+def serverinstall_from_url(url, url_client, url_common):
+    return """
+COMMON_RPM=""" + url_common + """
+COMMON_FILE=$(basename "$COMMON_RPM")
+wget -O "$COMMON_FILE" "$COMMON_RPM"
+sudo zypper --no-gpg-checks install -y "$COMMON_FILE"
+RPM_URL=""" + url + """
+RPM_FILENAME=$(basename "$RPM_URL")
+wget -O "$RPM_FILENAME" "$RPM_URL"
+CLIENT_URL=""" + url_client + """
+CLIENT_FILE=$(basename "$CLIENT_URL")
+wget -O "$CLIENT_FILE" "$CLIENT_URL"
+sudo zypper --no-gpg-checks install -y "$CLIENT_FILE"
+#sudo zypper --no-gpg-checks install -y "$RPM_FILENAME"
+sudo rpm -i --nodeps "$RPM_FILENAME"
+sudo systemctl start mariadb
+cd ..
+pwd
+"""
+
+def sles_serverinstall(version):
+    if version == 12:
+        return serverinstall_from_url(sles12server, sles12client, sles12common)
+    else: #version == 15
+        return serverinstall_from_url(sles15server, sles15client, sles15common)
+
 def repo_install(version):
     return """
 # Installing server to run tests
@@ -106,13 +140,13 @@ if [ -e "/etc/zypp/repos.d/mariadb.repo" ]; then
     echo "[mariadb]" | sudo tee "$DISABLEFB"
     echo "feedback=OFF" | sudo tee -a "$DISABLEFB"
   fi
-  sudo zypper refresh
+  #sudo zypper refresh
   VERSIONS_LIST=$(zypper --non-interactive search --details "MariaDB-server")
   echo $VERSIONS_LIST
   LATEST_PACKAGE_VER=$(echo $VERSIONS_LIST | awk '/^v / {print $2" "$3}' | sort -V |sort -V | tail -n 1)
   read -r ACTUAL_PACKAGE_NAME LATEST_VERSION <<< "$LATEST_PACKAGE_VER"
 
-  sudo zypper install -y "MariaDB-servera=${LATEST_VERSION}"
+  sudo zypper --auto-agree-with-licenses install -y "MariaDB-servera=${LATEST_VERSION}"
   sudo systemctl start mariadb
 fi
 
