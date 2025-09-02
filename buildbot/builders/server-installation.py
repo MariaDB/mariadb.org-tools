@@ -33,6 +33,8 @@ sudo rpm -i --nodeps "$RPM_FILENAME"
 sudo systemctl start mariadb
 cd ..
 pwd
+sudo mysqladmin -u root password ''
+sudo mariadb -e "SELECT * FROM mysql.user"
 """
 
 def sles_serverinstall(version):
