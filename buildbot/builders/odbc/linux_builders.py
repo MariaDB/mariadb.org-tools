@@ -255,7 +255,6 @@ bld_codbc_amd64_ubsan= build_linux_connector_odbc_no_upload("codbc-linux-amd64-u
 bld_codbc_amd64_msan= build_linux_connector_odbc_no_upload("codbc-linux-amd64-msan", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_MSAN=ON");
 
 bld_codbc_sles15_amd64= build_sles_connector_odbc("codbc-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL", 15);
-bld_codbc_sles12_amd64= build_sles_connector_odbc("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL", 12);
 
 bld_codbc_bullseye_amd64= build_linux_connector_odbc("codbc-bullseye-amd64", "vm-bullseye-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_codbc_bullseye_aarch64= build_linux_connector_odbc("codbc-bullseye-aarch64", "vm-bullseye-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
@@ -287,6 +286,7 @@ bld_codbc_rhel8_aarch64= build_linux_connector_odbc("codbc-rhel8-aarch64", "vm-r
 bld_codbc_rocky8_aarch64= build_linux_connector_odbc("codbc-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
 
 bld_codbc_sles15_amd64_notest= build_linux_connector_odbc_no_test("codbc-sles15-amd64-notest", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_codbc_sles12_amd64= build_linux_connector_odbc_no_test("codbc-sles12-amd64", "vm-sles123-amd64", "", " -DWITH_SSL=OPENSSL");
 
 ##################### RPM/DEB builders ###################
 
