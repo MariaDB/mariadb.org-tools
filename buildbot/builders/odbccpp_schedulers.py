@@ -48,7 +48,7 @@ c['schedulers'].append(AnyBranchScheduler(
     builderNames=odbcMainBuilders))
 c['schedulers'].append(AnyBranchScheduler(
     name="connector_cpp",
-    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-cpp" : ("master", "develop")}),
+    change_filter=BranchFilter(on_github={"https://github.com/mariadb-corporation/mariadb-connector-cpp" : ("cpp-1.0", "cpp-1.1", "master", "develop")}),
     treeStableTimer=60,
     builderNames=cppMainBuilders))
 odbccppForceBuilderNames= odbcMainBuilders + [
