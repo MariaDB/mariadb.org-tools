@@ -61,7 +61,7 @@ conncpp_linux_step4_testsrun
         property="bindistname",
         command=["sh", "-c", WithProperties("basename `ls mariadb*tar.gz`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"', do_step_always)
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": slaves,
@@ -104,7 +104,7 @@ conncpp_linux_step4_testsrun
         property="bindistname",
         command=["sh", "-c", WithProperties("basename `ls mariadb*tar.gz`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"',do_step_always)
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": slaves,
@@ -184,7 +184,7 @@ conncpp_linux_step4_testsrun
         property="bindistname",
         command=["sh", "-c", WithProperties("basename `ls mariadb*tar.gz`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"',do_step_always)
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": connector_slaves,
@@ -234,7 +234,7 @@ conncpp_linux_step1_build
         property="bindistname",
         command=["sh", "-c", WithProperties("basename `ls mariadb*tar.gz`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"',do_step_always)
     return {'name': name, 'builddir': name,
             'factory': linux_connector_cpp,
             "slavenames": connector_slaves,
@@ -299,7 +299,7 @@ ls -l artefacts
         property="bindistname",
         command=["sh", "-c", WithProperties("cp rpms/*rpm ./ > /dev/null && basename `ls mariadb*cpp*rpm`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"', do_step_always)
     linux_connector_cpp.addStep(Test(
         description=["testing bin rpm", "install"],
         descriptionDone=["test bin rpm", "install"],
@@ -331,7 +331,7 @@ ldd ./cjportedtests
         property="bindistname",
         command=["sh", "-c", WithProperties("cp srpms/*rpm ./ > /dev/null && basename `ls mariadb*src*rpm`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"', do_step_always)
     linux_connector_cpp.addStep(Test(
         description=["testing src rpm", "install"],
         descriptionDone=["test src rpm", "install"],
@@ -424,7 +424,7 @@ ls -l artefacts
         property="bindistname",
         command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*.deb`")],
         ))
-    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"')
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"', do_step_always)
     linux_connector_cpp.addStep(Test(
         description=["testing", "install"],
         descriptionDone=["test", "install"],
