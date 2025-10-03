@@ -24,6 +24,7 @@ cd ..
 """
 conncpp_linux_step4_testsrun= step4_testsrun
 
+
 def bld_linux_connector_cpp(name, kvm_image, cflags, cmake_params, slaves=connector_slaves):
     linux_connector_cpp= BuildFactory()
     args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
@@ -52,6 +53,50 @@ conncpp_linux_step0_checkout + """
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
 conncpp_linux_step1_build +
 conncpp_linux_step2_serverinstall +
+conncpp_linux_step3_packagetest +
+conncpp_linux_step4_testsrun
+),
+        "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
+        ]))
+    linux_connector_cpp.addStep(SetPropertyFromCommand(
+        property="bindistname",
+        command=["sh", "-c", WithProperties("basename `ls mariadb*tar.gz`")],
+        ))
+    addPackageUploadStep(linux_connector_cpp, '"%(bindistname)s"', do_step_always)
+    return {'name': name, 'builddir': name,
+            'factory': linux_connector_cpp,
+            "slavenames": slaves,
+            "category": "connectors"}
+
+
+def bld_sles_connector_cpp(name, kvm_image, cflags, cmake_params, slesversion, slaves=connector_slaves):
+    linux_connector_cpp= BuildFactory()
+    args= ["--port="+getport(), "--user=buildbot", "--smp=4", "--cpu=host"]
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["cleaning", "build", "dir"],
+        descriptionDone=["clean", "build", "dir"],
+        command=["sh", "-c", "rm -Rf ../build/*"]))
+    linux_connector_cpp.addStep(ShellCommand(
+        description=["rsyncing", "VMs"],
+        descriptionDone=["rsync", "VMs"],
+        doStepIf=(lambda(step): step.getProperty("slavename") != "bb01"),
+        haltOnFailure=True,
+        command=["rsync", "-a", "-v", "-L",
+                 "bb01.mariadb.net::kvm/vms/"+kvm_image+"-build.qcow2",
+                 "/kvm/vms/"]))
+    linux_connector_cpp.addStep(Compile(
+        description=["building", "linux-connctor_cpp"],
+        descriptionDone=["build", "linux-connector_cpp"],
+        timeout=3600,
+        env={"TERM": "vt102"},
+        command=["runvm", "--base-image=/kvm/vms/"+kvm_image+"-build.qcow2"] + args +["vm-tmp-"+getport()+".qcow2",
+        "rm -Rf buildbot && mkdir buildbot",
+        WithProperties("""
+export CFLAGS="${CFLAGS}"""+ cflags + """" """ +
+conncpp_linux_step0_checkout + """
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
+conncpp_linux_step1_build +
+sles_serverinstall(slesversion) +
 conncpp_linux_step3_packagetest +
 conncpp_linux_step4_testsrun
 ),
@@ -127,7 +172,7 @@ bld_alma8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-alma8-aarch64", "
 
 bld_rocky8_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-rocky8-aarch64", "vm-rocky8-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON ", slaves=connector_slaves_aarch64);
 
-bld_sles15_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
+bld_sles15_amd64_connector_cpp= bld_sles_connector_cpp("ccpp-sles15-amd64", "vm-sles153-amd64", "", " -DWITH_SSL=OPENSSL", 15);
 
 bld_jammy_amd64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-amd64", "vm-jammy-amd64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON");
 bld_jammy_aarch64_connector_cpp= bld_linux_connector_cpp("ccpp-jammy-aarch64", "vm-jammy-aarch64", "", " -DWITH_SSL=OPENSSL -DWITH_OPENSSL=ON", slaves=connector_slaves_aarch64);
@@ -222,11 +267,10 @@ conncpp_linux_step0_checkout + """
 export CC=/usr/bin/gcc-5
 export CXX=/usr/bin/g++-5
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DPACKAGE_PLATFORM_SUFFIX=$HOSTNAME""" + cmake_params + """ ../src""" +
-conncpp_linux_step1_build
-#+
-#conncpp_linux_step2_serverinstall +
-#conncpp_linux_step3_packagetest +
-#conncpp_linux_step4_testsrun
+conncpp_linux_step1_build+
+sles_serverinstall(12)+
+conncpp_linux_step3_packagetest +
+conncpp_linux_step4_testsrun
 ),
         "= scp -r -P "+getport()+" "+kvm_scpopt+" buildbot@localhost:/home/buildbot/build/mariadb*tar.gz .",
         ]))
