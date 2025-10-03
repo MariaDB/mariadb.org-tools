@@ -42,12 +42,7 @@ tar ztf ./mariadb*src*tar.gz
         property="src_pack_name",
         command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*src*tar.gz`")],
         ))
-    addPackageUploadStep(f_src_connector_cpp, '"%(src_pack_name)s"')
-    f_src_connector_cpp.addStep(SetPropertyFromCommand(
-        property="src_pack_name",
-        command=["sh", "-c", WithProperties("basename `ls mariadb*cpp*src*.zip`")],
-        ))
-    addPackageUploadStep(f_src_connector_cpp, '"%(src_pack_name)s"')
+    addPackageUploadStep(f_src_connector_cpp, '"%(src_pack_name)s"', do_step_always)
     return {'name': name, 'builddir': name,
             'factory': f_src_connector_cpp,
             "slavenames": connector_slaves,
