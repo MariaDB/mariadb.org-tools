@@ -86,7 +86,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         WithProperties("if not exist \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" mkdir \"C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s\" && xcopy /y /f c:\\build_archive\\%(buildername)s\\%(branch)s\\%(revision)s\\* C:\\buildbot\\build\\%(buildername)s\\build\\%(revision)s")]
   ))
 
-  addPackageUploadStepWin(f_win_connector_cpp, 'win')
+  addPackageUploadStepWin(f_win_connector_cpp, 'win', do_step_always)
 
   f_win_connector_cpp.addStep(ShellCommand(
         name= "build_package_64_debug",
