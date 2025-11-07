@@ -86,6 +86,7 @@ Rasmus Johansson (MariaDB Corporation) <rasmus@mariadb.com> Rasmus Johansson <ra
 Rasmus Johansson (MariaDB Corporation) <razze@iki.fi> Rasmus Johansson <razze@iki.fi>
 Rasmus Johansson (MariaDB Corporation) <ratzpo@gmail.com> Rasmus Johansson <ratzpo@gmail.com>
 Rex Johnston (MariaDB Corporation) <rex.johnston@mariadb.com> Rex <rex.johnston@mariadb.com>
+Rex Johnston (MariaDB Corporation) <rex.johnston@mariadb.com> Rex Johnston <rex.johnston@mariadb.com>
 Roman Nozdrin (MariaDB Corporation) <roman.nozdrin@mariadb.com> Roman Nozdrin <roman.nozdrin@mariadb.com>
 Roman Nozdrin (MariaDB Corporation) <rnozdrin@mariadb.com> Roman Nozdrin <rnozdrin@mariadb.com>
 Rucha Deodhar (MariaDB Corporation) <rucha.deodhar@mariadb.com> rucha174 <rucha.deodhar@mariadb.com>
@@ -99,6 +100,8 @@ Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> Sachin Setiya <s
 Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> SachinSetiya <sachinsetia1001@gmail.com>
 Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> sachinsetia1001@gmail.com <sachinsetia1001@gmail.com>
 Sachin Setiya (MariaDB Corporation) <sachinsetia1001@gmail.com> Sachin <sachinsetia1001@gmail.com>
+Satish Kumar (MariaDB Corporation) <satish.kumar@mariadb.com> Satish kumar <satish.kumar@mariadb.com>
+Satish Kumar (MariaDB Corporation) <satish.kumar@mariadb.com> mariadb-satishkumar <satish.kumar@mariadb.com>
 Sergei Golubchik (MariaDB Corporation) <serg@mariadb.com> Sergei Golubchik <serg@mariadb.org>
 Sergei Golubchik (MariaDB Corporation) <sergii@pisem.net> Sergei Golubchik <sergii@pisem.net>
 Sergei Golubchik (MariaDB Corporation) <vuvova@gmail.com> Sergei Golubchik <vuvova@gmail.com>
@@ -107,6 +110,7 @@ Sergei Petrunia (MariaDB Corporation) <psergey@mariadb.com> Sergei Petrunia <pse
 Sergey Petrunya (MariaDB Corporation) <psergey@askmonty.org> Sergey Petrunya <psergey@askmonty.org>
 Sergei Petrunia (MariaDB Corporation) <sergey@mariadb.com> Sergei Petrunia <sergey@mariadb.com>
 Sidney Cammeresi (MariaDB Corporation) <sac@mariadb.com> Sidney Cammeresi <sac@mariadb.com>
+Srikanth Bondalapati (MariaDB Corporation) <srikanth.bondalapati@mariadb.com> bsrikanth-mariadb <srikanth.bondalapati@mariadb.com>
 Stepan Patryshev (MariaDB Corporation) <stepan.patryshev@mariadb.com> Stepan Patryshev <stepan.patryshev@mariadb.com>
 Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha Sivakumar <sujatha.sivakumar@mariadb.com>
 Sujatha Sivakumar (MariaDB Corporation) <sujatha.sivakumar@mariadb.com> Sujatha <sujatha.sivakumar@mariadb.com>
@@ -170,6 +174,7 @@ Anson Chung (Amazon) <ansodchu@amazon.com> Anson Chung <ansodchu@amazon.com>
 Christian Gonzalez (Amazon) <gondchri@amazon.com> Christian Gonzalez <gondchri@amazon.com>
 Daniel Lenski (Amazon) <dlenski@amazon.com> Daniel Lenski <dlenski@amazon.com>
 Dishon Merkhai (Amazon) <dishonme@amazon.com> Dishon Merkhai <dishonme@amazon.com>
+Fariha Shaikh (Amazon) <farihais@amazon.com> Fariha Shaikh <farihais@amazon.com>
 Haidong Ji (Amazon) <haidongj@amazon.com> Haidong Ji <haidongj@amazon.com>
 Meng-Hsiu Chiang (Amazon) <cmenghsi@amazon.com> Meng-Hsiu Chiang <cmenghsi@amazon.com>
 Hugo Wen (Amazon) <wenhug@amazon.com> Hugo Wen <wenhug@amazon.com>
@@ -196,6 +201,8 @@ Zhibo Zhang (Amazon) <zhibo@amazon.com> Zhibo Zhang <zhibo@amazon.com>
 Simon Mudd (Booking.com) <sjmudd@pobox.com> Simon J Mudd <sjmudd@pobox.com>
 
 Eric Herman (Freesa) <eric@freesa.org> Eric Herman <eric@freesa.org>
+
+Iqbal Hassan (HASPrime) <iqbal@hasprime.com> Iqbal Hassan <iqbal@hasprime.com>
 
 Anton Blanchard (IBM) <anton@au.ibm.com> Anton Blanchard <anton@au.ibm.com>
 Daniel Black (IBM) <daniel.black@au.ibm.com> Daniel Black <daniel.black@au1.ibm.com>
@@ -436,6 +443,7 @@ Heiko Becker (Exherbo) <heirecka@exherbo.org> Heiko Becker <heirecka@exherbo.org
 Bernard Spil (FreeBSD) <brnrd@FreeBSD.org> Bernard Spil <brnrd@FreeBSD.org>
 Bernard Spil (FreeBSD) <Sp1l@users.noreply.github.com> Bernard Spil <Sp1l@users.noreply.github.com>
 Don Lewis (FreeBSD) <truckman@FreeBSD.org> Don Lewis <truckman@FreeBSD.org>
+Florian Smeets (FreeBSD) <flo@FreeBSD.org> Florian Smeets <flo@FreeBSD.org>
 
 Arnaud Rebillout (Kali Linux) <arnaudr@kali.org> Arnaud Rebillout <arnaudr@kali.org>
 
@@ -519,6 +527,7 @@ Karim Geiger (TYVR) <karim@tyvr.net> Karim Geiger <karim@tyvr.net>
 lilinjie (Uniontech) <lilinjie@uniontech.com> lilinjie <lilinjie@uniontech.com>
 
 Mingli Yu (Wind River) <mingli.yu@windriver.com> Mingli Yu <mingli.yu@windriver.com>
+Ruiqiang Hao (Wind River) <Ruiqiang.Hao@windriver.com> Ruiqiang Hao <Ruiqiang.Hao@windriver.com>
 
 Federico Razzoli (Vettabase) <federico.razzoli@vettabase.com> Federico Razzoli <federico.razzoli@vettabase.com>
 
@@ -541,6 +550,7 @@ andrew () <andrew@madev.eaglenest> andrew <andrew@madev.eaglenest>
 anson1014 () <56494179+anson1014@users.noreply.github.com> anson1014 <56494179+anson1014@users.noreply.github.com>
 Anthony Ryan () <anthonyryan1@gmail.com> Anthony Ryan <anthonyryan1@gmail.com>
 Antony T Curtis () <antony@xiphis.org> Antony T Curtis <antony@xiphis.org>
+Arcadiy Ivanov () <arcadiy@ivanov.biz> Arcadiy Ivanov <arcadiy@ivanov.biz>
 Aurélien LEQUOY () <pmacontrol@68koncept.com> Aurélien LEQUOY <pmacontrol@68koncept.com>
 Aurelien Jarno () <aurelien@aurel32.net> Aurelien Jarno <aurelien@aurel32.net>
 Ben Rubson () <ben.rubson@gmail.com> benrubson <ben.rubson@gmail.com>
@@ -598,16 +608,19 @@ hotairballoon-3573 () <15198894161@139.com> hotairballoon-3573 <15198894161@139.
 hsser () <hsspig@gmail.com> hsser <hsspig@gmail.com>
 Hyeonseok Oh () <hyeonso5@gmail.com> Hyeonseok Oh <hyeonso5@gmail.com>
 hygonsoc () <hygonsoc@gmail.com> hygonsoc <hygonsoc@gmail.com>
+i18n.site () <i18n.site@gmail.com> i18n.site <i18n.site@gmail.com>
 Iaroslav Babanin () <yvef@yahoo.com> Iaroslav Babanin <yvef@yahoo.com>
 Igor Mazur (Grammarly) <igor.mazur@grammarly.com> Igor Mazur <igor.mazur@grammarly.com>
 Igor Pashev () <pashev.igor@gmail.com> Igor Pashev <pashev.igor@gmail.com>
 ilyasa1211 () <muhammadilyasafadhlih@gmail.com> ilyasa1211 <muhammadilyasafadhlih@gmail.com>
 Ivan Prisyazhnyy () <john.koepi@gmail.com> Ivan Prisyazhnyy <john.koepi@gmail.com>
+J. Neuschäfer () <j.ne@posteo.net> J. Neuschäfer <j.ne@posteo.net>
 James Le Cuirot () <chewi@aura-online.co.uk> James Le Cuirot <chewi@aura-online.co.uk>
 James Taylor () <james@jtaylor.id.au> James Taylor <james@jtaylor.id.au>
 Jan Tojnar () <jtojnar@gmail.com> Jan Tojnar <jtojnar@gmail.com>
 Jani Tolonen () <jani.k.tolonen@gmail.com> Jani Tolonen <jani.k.tolonen@gmail.com>
 Jean Weisbuch () <jean@phpnet.org> Jean Weisbuch <jean@phpnet.org>
+Jean Weisbuch () <jean@phpnet.org> jweisbuch <jean@phpnet.org>
 Jérôme Brauge () <j.brauge@qualiac.com> halfspawn <j.brauge@qualiac.com>
 Jérôme Brauge () <j.brauge@qualiac.com> Jerome Brauge <j.brauge@qualiac.com>
 Jia Zhouyang () <jiazhouyang@nudt.edu.cn> Jia Zhouyang <jiazhouyang@nudt.edu.cn>
@@ -683,8 +696,10 @@ pkubaj () <pkubaj@users.noreply.github.com> pkubaj <pkubaj@users.noreply.github.
 pruet () <pruetboonma@gmail.com> pruet <pruetboonma@gmail.com>
 qingda2019 () <344369869@qq.com> qingda2019 <344369869@qq.com>
 qggcs () <ajb459684460@gmail.com> qggcs <ajb459684460@gmail.com>
+QWenQ () <qwq16608@gmail.com> QWenQ <qwq16608@gmail.com>
 Raghavendra D Prabhu () <rprabhu@wnohang.net> Raghavendra D Prabhu <rprabhu@wnohang.net>
 Rahul Anand () <rahulanand16nov@gmail.com> Rahul Anand <rahulanand16nov@gmail.com>
+Raghunandan Bhat () <raghunandan.bhat96@gmail.com> Raghunandan Bhat <raghunandan.bhat96@gmail.com>
 Rainer Orth () <ro@CeBiTec.Uni-Bielefeld.DE> Rainer Orth <ro@CeBiTec.Uni-Bielefeld.DE>
 Rakshit Kumar () <32777813+rakshitkumarcse@users.noreply.github.com> Rakshit Kumar <32777813+rakshitkumarcse@users.noreply.github.com>
 rantal () <rantal5030@gmail.com> rantal <rantal5030@gmail.com>
@@ -696,6 +711,7 @@ Ruoyu Zhong () <zhongruoyu@outlook.com> Ruoyu Zhong <zhongruoyu@outlook.com>
 Ryan Coe () <bluemrp9@gmail.com> Ryan Coe <bluemrp9@gmail.com>
 Ryu Yamada () <a2sin2a2ko@kyoto-y.work> Ryu Yamada <a2sin2a2ko@kyoto-y.work>
 Salman Mohammadi () <salman@smoha.org> Salman Mohammadi <salman@smoha.org>
+Sam Bull () <git@sambull.org> Sam Bull <git@sambull.org>
 Samuel Thibault () <samuel.thibault@ens-lyon.org> Samuel Thibault <samuel.thibault@ens-lyon.org>
 sara () <sara.jaakola@gmail.com> sara <sara.jaakola@gmail.com>
 Sauron () <git@sauron.cf> Sauron <git@sauron.cf>
@@ -739,6 +755,7 @@ Weijun Huang () <huangweijun1001@gmail.com> Weijun Huang <huangweijun1001@gmail.
 Weijun Huang () <huangweijun1001@gmail.com> Weijun-H <huangweijun1001@gmail.com>
 Will () <war59312@gmail.com> Will <war59312@gmail.com>
 willhan () <526786050@qq.com> willhan <526786050@qq.com>
+dingweiqing () <dingweiqings@163.com> dingweiqing <dingweiqings@163.com>
 xdavidwu () <xdavidwuph@gmail.com> xdavidwu <xdavidwuph@gmail.com>
 xzhangxian1008 () <xzhangxian@foxmail.com> xzhangxian1008 <xzhangxian@foxmail.com>
 Yasuhiro-gh () <Pavlich_eng00@mail.ru> Yasuhiro-gh <Pavlich_eng00@mail.ru>
