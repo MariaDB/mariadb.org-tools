@@ -246,3 +246,30 @@ document undo_seg_1st_page_info
 Shows 1st undo page info. Args: undo segment first page address
 end
 
+define named_spaces_list
+  set $target_space = (fil_space_t *)$arg0
+  set $i = fil_system.named_spaces.sentinel_.next
+  set $end = &fil_system.named_spaces.sentinel_
+  set $prev = $end
+  set $n = 1000
+  while ($i != $end && $n > 0)
+    set $space = ((fil_space_t *)((uint64_t *)($i)-2*3))
+    set $space_name = $space->chain.start[0].name
+    if ($space == $target_space)
+      printf ">>>>>> "
+    end
+    if ($prev != $i->prev)
+      set $prev_space = (fil_space_t *)((uint64_t *)($prev)-2*3)
+      set $prev_space_prev = (fil_space_t *)((uint64_t *)($i->prev)-2*3)
+      printf "!!! prev space %p !=  space->prev space %p, ", $prev_space, $prev_space_prev
+    end
+    printf "%p, %s\n", $space, (const char *)$space_name
+    set $prev = $i
+    set $i = $i->next
+    set $n = $n - 1
+  end
+end
+document named_spaces_list
+Lists fil_system.named_spaces members and highlights the certain space in the list. Args: space poiter to highlight.
+end
+
