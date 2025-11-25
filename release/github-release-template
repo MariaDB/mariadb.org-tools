@@ -88,13 +88,13 @@ case ${product} in
     title='MariaDB Community Server'
     gh_path="MariaDB/${product}"
     gh_tag="mariadb-${ver}"
-    kb_slug="mariadb"
+    kb_slug="community-server"
     ;;
   connector-c )
     title='MariaDB Connector/C'
     gh_path="mariadb-corporation/mariadb-${product}"
     gh_tag="${ver}"
-    kb_slug="connectors/c/${branch}"
+    kb_slug="connectors/c"
     ;;
   connector-cpp )
     title='MariaDB Connector/C++'
@@ -133,7 +133,8 @@ case ${product} in
     MSG "Release Description:"
     echo
     #echo "Details on this release can be found in the [Release Notes](https://mariadb.com/docs/release-notes/${kb_slug}/${version//./-})"
-    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/docs/release-notes/${kb_slug}/${version})"
+    parts=(${version//./ })
+    echo "Details on this release can be found in the [Release Notes](https://mariadb.com/docs/release-notes/${kb_slug}/${parts[0]}.${parts[1]}/${version})"
     echo
     ;;
 esac
