@@ -29,6 +29,10 @@ if [[ -e $file ]] ; then
   err 'File "%s" already exists. Rename it and re-run this script, or manually create a new .repo file.' "$file"
 fi
 
+if [[ -e $dir/MariaDB-Server-GPG-KEY ]]; then
+  gpgkey="file://$dir/MariaDB-Server-GPG-KEY"
+fi
+
 if ! cat > "$file" <<EoF
 [MariaDB]
 name = MariaDB
