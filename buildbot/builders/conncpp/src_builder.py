@@ -30,6 +30,8 @@ time git clone --depth 1 -b %(branch)s "https://github.com/mariadb-corporation/m
 cd build
 git reset --hard %(revision)s
 rm -rf ./test
+git submodule init
+git submodule update
 rm -rf ./libmariadb
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=OFF -DGIT_BUILD_SRCPKG=1 .
 ls -l ./mariadb*cpp*src*tar.gz ./mariadb*cpp*src*.zip
