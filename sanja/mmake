@@ -23,6 +23,7 @@ then
   echo '  s     - system Ssl (otherwise bundled)'
   echo '  u     - build with UBSAN'
   echo '  v     - build for valgrind'
+  echo '  w     - ignore Warnings (maintainers mode on)'
   echo '  z     - system Zlib (otherwise bundled)'
   echo '  3     - add s3 plugin'
   echo '  C     - add Columnstore plugin'
@@ -30,7 +31,7 @@ then
   echo '  O     - add cOnnect plugin'
   echo '  R     - add Rocksdb plugin'
   echo '  S     - add Spider plugin'
-  echo '  T     - add Tokudb plugin'
+#  echo '  T     - add Tokudb plugin'
   echo ''
   exit 1
 fi
@@ -60,6 +61,7 @@ WITH_PCRE='bundled'
 WITH_SSL='bundled'
 WITH_UBSAN='NO'
 WITH_VALGRIND='NO'
+MYSQL_MAINTAINER_MODE='ON'
 WITH_ZLIB='bundled'
 PLUGIN_S3='NO'
 PLUGIN_COLUMNSTORE='NO'
@@ -67,7 +69,7 @@ PLUGIN_MROONGA='NO'
 PLUGIN_CONNECT='NO'
 PLUGIN_ROCKSDB='NO'
 PLUGIN_SPIDER='NO'
-PLUGIN_TOKUDB='NO'
+#PLUGIN_TOKUDB='NO'
 
 FLAGS="$1"
 
@@ -150,8 +152,9 @@ do
       GENERATE=''
     ;;
     o)
-      OLD_BUILD='-DCMAKE_CXX_FLAGS="-std=gnu++98" -DMYSQL_MAINTAINER_MODE=OFF -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE'
+      OLD_BUILD='-DCMAKE_CXX_FLAGS="-std=gnu++98" -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=TRUE'
       WITH_SSL='bundled'
+      MYSQL_MAINTAINER_MODE='OFF'
     ;;
     p)
       WITH_PCRE='system'
@@ -164,6 +167,9 @@ do
     ;;
     v)
       WITH_VALGRIND='YES'
+    ;;
+    w)
+      MYSQL_MAINTAINER_MODE='OFF'
     ;;
     z)
       WITH_ZLIB='system'
@@ -186,9 +192,9 @@ do
     S)
       PLUGIN_SPIDER='YES'
     ;;
-    T)
-      PLUGIN_TOKUDB='YES'
-    ;;
+#    T)
+#      PLUGIN_TOKUDB='YES'
+#    ;;
     *)
       echo "incorrect flag '${FLAG}'"
       exit 1
@@ -207,7 +213,7 @@ then
 fi
 
 shift
-MYCMD="${CSET}${MYCMD} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DWITH_ZLIB=${WITH_ZLIB} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} -DPLUGIN_TOKUDB=${PLUGIN_TOKUDB} $WSAFEMALLOC $OLD_BUILD $@"
+MYCMD="${CSET}${MYCMD} -DMYSQL_MAINTAINER_MODE=${MYSQL_MAINTAINER_MODE} -DMAX_INDEXES=${MAX_INDEXES} -DWITH_ASAN=${WITH_ASAN} -DWITH_EMBEDDED_SERVER=${WITH_EMBEDDED_SERVER} -DWITH_MSAN=${WITH_MSAN} -DWITH_PCRE=${WITH_PCRE} -DWITH_SSL=${WITH_SSL} -DWITH_UBSAN=${WITH_UBSAN} -DWITH_VALGRIND=${WITH_VALGRIND} -DWITH_ZLIB=${WITH_ZLIB} -DPLUGIN_S4=${PLUGIN_S3} -DPLUGIN_COLUMNSTORE=${PLUGIN_COLUMNSTORE} -DPLUGIN_MROONGA=${PLUGIN_MROONGA} -DPLUGIN_CONNECT=${PLUGIN_CONNECT} -DPLUGIN_ROCKSDB=${PLUGIN_ROCKSDB} -DPLUGIN_SPIDER=${PLUGIN_SPIDER} $WSAFEMALLOC $OLD_BUILD -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $@"
 echo "${MYCMD}"
 (cd ${BRANCH} && \
   $MYCMD && \
