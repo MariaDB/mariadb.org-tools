@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+#  Copyright (c) 2016 MariaDB Corporation
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2 of the License.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA 
+
+set -x
+exec >>/var/log/mariadb_installer.log 2>&1
+
+# This script is meant to be used by the macOS installer to handle some
+# basic situations where there is an existing installation of MariaDB
+# or MySQL. If something is listening on our TCP port or already using
+# the location where we want to create our socket, our server will either
+# fail to start or will clobber the other installation. That's not very
+# cool. I check for a few things and use a bitmask for the exit code.
+
+# The installer has to handle the exit codes, give some messages to the
+# user, and change the behavior of the installed server so it plays nice.
+
+echo "Checking for existing installations of MariaDB or MySQL..."
+
+# Define the values used for the bitmask. Skip 1 since that's a generic
+# error exit code that might come up in some other case.
+
+_err_existing_process=2   # already a mysqld or mariadb process of some kind
+_err_existing_tcp=4       # already something listening on port 3306
+_err_existing_socket=8    # already something using /tmp/mysql.sock
+_err_existing_install=16  # already a mariadbd running in our basedir
+
+exit=0
+
+# Is anything listening on port 3306 ?
+nc localhost -G 2 3306 < /dev/null &>/dev/null && (( exit |= _err_existing_tcp ))
+
+# Is there any running process named mysqld or mariadbd ?
+while read -r pid
+do
+    [[ $pid ]] || continue
+    if [[ $(./find_procname "$pid") = /usr/local/mariadb/* ]]
+    then
+        (( exit |= _err_existing_install ))
+        if lsof -P -p "$pid" -Fn | grep -q '^n.*:3306$'
+        then
+            (( exit &= ~_err_existing_tcp ))
+        fi
+    else
+        (( exit |= _err_existing_process ))
+    fi
+done < <( pgrep mysqld mariadbd )
+
+
+# NOTE: this is not used, since we keep our socket file elsewhere.
+# Is there a socket file at /tmp/mysql.sock ?
+#[[ -e /tmp/mysql.sock ]] && (( exit |= _err_existing_socket ))
+
+exit "$exit"
