@@ -316,11 +316,11 @@ uploader() {
 
 # Wrapper functions for uploader
 upload_to_the_mirrors() {
-  uploader "${mirrors}"
+  uploader "${mirrors_foundation}"
 }
 
 upload_to_the_archives() {
-  uploader "${archives}"
+  uploader "${archives_foundation}"
 }
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -495,11 +495,11 @@ shouldI prep_and_sign_org_files
 shouldI update_org_current_to_this_release
 
 MSG_I "Mirrors"
-for mirror in ${mirrors} ; do echo "- ${mirror}";done;echo
+for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_mirrors
 echo;echo
 MSG_I "Archives"
-for archive in ${archives} ; do echo "- ${archive}";done;echo
+for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_archives
 
 
