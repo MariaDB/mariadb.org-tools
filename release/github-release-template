@@ -106,7 +106,7 @@ case ${product} in
     title='MariaDB Connector/ODBC'
     gh_path="mariadb-corporation/mariadb-${product}"
     gh_tag="${ver}"
-    kb_slug="mariadb-${product}"
+    kb_slug="connectors/odbc"
     ;;
   connector-python )
     title='MariaDB Connector/Python'
