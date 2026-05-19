@@ -239,10 +239,10 @@ declare -A builder_dir_ci_aarch64=([bullseye]=aarch64-debian-11-deb-autobake [bo
 declare -A builder_dir_bb_aarch64=([bullseye]=kvm-deb-bullseye-aarch64 [bookworm]=kvm-deb-bookworm-aarch64 [trixie]=kvm-deb-trixie-aarch64 [sid]=kvm-deb-sid-aarch64)
 
 declare -A builder_dir_ci_ppc64le=([bookworm]=ppc64le-debian-12-deb-autobake [trixie]=ppc64le-debian-13-deb-autobake [sid]=ppc64le-debian-sid-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([bookworm]=kvm-deb-bookworm-ppc64le [trixie]=kvm-deb-bookworm-ppc64le [sid]=kvm-deb-sid-ppc64le)
+declare -A builder_dir_bb_ppc64le=([bookworm]=kvm-deb-bookworm-ppc64le [trixie]=kvm-deb-trixie-ppc64le [sid]=kvm-deb-sid-ppc64le)
 
-declare -A builder_dir_ci_x86=([trixie]=x86-debian-13-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
-declare -A builder_dir_bb_x86=([trixie]=kvm-deb-trixie-x86 [sid]=kvm-deb-sid-x86)
+declare -A builder_dir_ci_x86=([bookworm]=x86-debian-12-deb-autobake [trixie]=x86-debian-13-deb-autobake [sid]=32bit-debian-sid-deb-autobake)
+declare -A builder_dir_bb_x86=([bookworm]=kvm-deb-bookworm-x86 [trixie]=kvm-deb-trixie-x86 [sid]=kvm-deb-sid-x86)
 
 case ${TREE} in 
   *10.5*|*10.6*|*10.8*|*10.9*|*10.10*)
@@ -321,26 +321,16 @@ for dist in ${debian_dists}; do
   # add x86 files
   builder_dir="builder_dir_${build_type}_x86[${builder}]"
     case ${builder} in
-      'bullseye'|'bookworm')
+      'bullseye')
         echo "+ no x86 packages for ${builder}"
         ;;
-      'trixie'|'sid')
+      'bookworm'|'trixie')
+        for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} $i ; done
+        ;;
+      'sid')
         for i in $(find "$ARCHDIR/${!builder_dir}/" -name '*_i386.deb'); do runCommand reprepro --basedir=. --ignore=wrongdistribution includedeb ${dist} $i ; done
         ;;
     esac
-
-  # Add in custom jemalloc packages for distros that need them
-  case  ${builder} in
-    "debian6")
-      for i in $(find "${dir_jemalloc}/${builder}-amd64/" -name '*_amd64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${i} ; done
-      if [ "${ENTERPRISE}" != "yes" ]; then
-        for i in $(find "${dir_jemalloc}/${builder}-i386/" -name '*_i386.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${i} ; done
-      fi
-      ;;
-    * )
-      echo "+ no custom jemalloc packages for ${dist}"
-      ;;
-  esac
 
   # Copy in galera packages if requested
   if [ ${GALERA} = "yes" ]; then
@@ -365,7 +355,12 @@ for dist in ${debian_dists}; do
       #  * )
 
           case ${dist} in
-            "bookworm"|"sid"|"trixie")
+            "bookworm"|"trixie")
+              runCommand reprepro --basedir=. --ignore=wrongdistribution include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
+              runCommand reprepro --basedir=. --ignore=wrongdistribution include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
+              runCommand reprepro --basedir=. --ignore=wrongdistribution include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
+              ;;
+            "sid")
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
               runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
@@ -381,10 +376,7 @@ for dist in ${debian_dists}; do
 
           if [ "${ENTERPRISE}" != "yes" ]; then
             case ${dist} in
-              #"sid")
-              #  runCommand reprepro --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_25.3.19-${dist}*_i386.changes
-              #  ;;
-              'bullseye'|'bookworm')
+              'bullseye')
                 echo "+ no x86 packages for ${dist}"
                 ;;
               'sid')
