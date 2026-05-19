@@ -61,17 +61,17 @@ esac
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
-declare -A builder_dir_ci_amd64=([jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake [oracular]=ubuntu-2410-deb-autobake [plucky]=ubuntu-2510-deb-autobake)
-declare -A builder_dir_bb_amd64=([jammy]=kvm-deb-jammy-amd64 [noble]=kvm-deb-noble-amd64 [oracular]=kvm-deb-oracular-amd64 [plucky]=kvm-deb-plucky-amd64)
+declare -A builder_dir_ci_amd64=([jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake [plucky]=ubuntu-2504-deb-autobake [questing]=ubuntu-2510-deb-autobake [resolute]=ubuntu-2604-deb-autobake)
+declare -A builder_dir_bb_amd64=([jammy]=kvm-deb-jammy-amd64 [noble]=kvm-deb-noble-amd64 [plucky]=kvm-deb-plucky-amd64 [questing]=kvm-deb-questing-amd64 [resolute]=kvm-deb-resolute-amd64)
 
-declare -A builder_dir_ci_aarch64=([jammy]=aarch64-ubuntu-2204-deb-autobake [noble]=aarch64-ubuntu-2404-deb-autobake [oracular]=aarch64-ubuntu-2410-deb-autobake [plucky]=aarch64-ubuntu-2504-deb-autobake)
-declare -A builder_dir_bb_aarch64=([jammy]=kvm-deb-jammy-aarch64 [noble]=kvm-deb-noble-aarch64 [oracular]=kvm-deb-oracular-aarch64 [plucky]=kvm-deb-plucky-aarch64)
+declare -A builder_dir_ci_aarch64=([jammy]=aarch64-ubuntu-2204-deb-autobake [noble]=aarch64-ubuntu-2404-deb-autobake [plucky]=aarch64-ubuntu-2504-deb-autobake [questing]=aarch64-ubuntu-2510-deb-autobake [resolute]=aarch64-ubuntu-2604-deb-autobake)
+declare -A builder_dir_bb_aarch64=([jammy]=kvm-deb-jammy-aarch64 [noble]=kvm-deb-noble-aarch64 [plucky]=kvm-deb-plucky-aarch64 [questing]=kvm-deb-questing-aarch64 [resolute]=kvm-deb-resolute-aarch64)
 
-declare -A builder_dir_ci_ppc64le=([jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake)
-declare -A builder_dir_bb_ppc64le=([jammy]=kvm-deb-jammy-ppc64le [noble]=kvm-deb-noble-ppc64le)
+declare -A builder_dir_ci_ppc64le=([jammy]=ubuntu-2204-deb-autobake [noble]=ubuntu-2404-deb-autobake [resolute]=ubuntu-2604-deb-autobake)
+declare -A builder_dir_bb_ppc64le=([jammy]=kvm-deb-jammy-ppc64le [noble]=kvm-deb-noble-ppc64le [resolute]=kvm-deb-resolute-ppc64le)
 
-declare -A builder_dir_ci_s390x=([jammy]=s390x-ubuntu-2204-deb-autobake [noble]=s390x-ubuntu-2404-deb-autobake)
-declare -A builder_dir_bb_s390x=([jammy]=kvm-deb-jammy-s390x [noble]=kvm-deb-noble-s390x)
+declare -A builder_dir_ci_s390x=([jammy]=s390x-ubuntu-2204-deb-autobake [noble]=s390x-ubuntu-2404-deb-autobake [resolute]=s390x-ubuntu-2604-deb-autobake)
+declare -A builder_dir_bb_s390x=([jammy]=kvm-deb-jammy-s390x [noble]=kvm-deb-noble-s390x [resolute]=kvm-deb-resolute-s390x)
 
 declare -A builder_dir_ci_x86=()
 declare -A builder_dir_bb_x86=()
@@ -123,8 +123,12 @@ case ${ARCHDIR} in
   *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
     ubuntu_dists="jammy noble"
     ;;
-  *11.4*|*11.5*|*11.6*|*11.7*|*11.8*|*12.0*|*main*)
-    ubuntu_dists="jammy noble oracular plucky"
+  *11.4*|*11.5*|*11.6*|*11.7*)
+    ubuntu_dists="jammy noble plucky"
+    ;;
+  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*main*)
+    ubuntu_dists="jammy noble plucky questing resolute"
+    #ubuntu_dists="jammy noble plucky"
     ;;
   *)
     line
@@ -188,14 +192,15 @@ for dist in ${ubuntu_dists}; do
     jammy)    dist_alt='ubu2204' ;;
     mantic)   dist_alt='ubu2310' ;;
     noble)    dist_alt='ubu2404' ;;
-    oracular) dist_alt='ubu2410' ;;
     plucky)   dist_alt='ubu2504' ;;
+    questing) dist_alt='ubu2510' ;;
+    resolute) dist_alt='ubu2604' ;;
   esac
 
   # First we import the amd64 files
   builder_dir="builder_dir_${build_type}_amd64[${dist}]"
   case ${dist} in 
-    'jammy'|'noble'|'oracular'|'plucky')
+    'jammy'|'noble'|'plucky'|'questing'|'resolute')
       runCommand reprepro --basedir=. --ignore=wrongsourceversion include ${dist} $(find $ARCHDIR/${!builder_dir}/ -name mariadb*_amd64.changes)
       ;;
   esac
@@ -212,7 +217,7 @@ for dist in ${ubuntu_dists}; do
   # Include aarch64 debs
   builder_dir="builder_dir_${build_type}_aarch64[${dist}]"
   case ${dist} in
-    'jammy'|'noble'|'oracular'|'plucky')
+    'jammy'|'noble'|'plucky'|'questing'|'resolute')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_arm64.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -221,7 +226,7 @@ for dist in ${ubuntu_dists}; do
   # Include s390x debs
   builder_dir="builder_dir_${build_type}_s390x[${dist}]"
   case ${dist} in
-    'jammy'|'noble')
+    'jammy'|'noble'|'resolute')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_s390x.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_s390x.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
@@ -243,10 +248,25 @@ for dist in ${ubuntu_dists}; do
     esac
     for gv in ${ver_galera_real}; do
         # include amd64
+        case ${dist} in
+          'resolute')
+            for deb in ${dir_galera}/galera-${gv}-${suffix}/deb/galera*${dist_filename}*amd64.deb ; do
+              runCommand reprepro --basedir=. includedeb ${dist} ${deb}
+            done
+            ;;
+          *)
         runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_amd64.changes
+            ;;
+        esac
 
         # include ppc64le
         case ${dist} in
+          #'jammy'|'noble'|'resolute')
+          'resolute')
+            for deb in ${dir_galera}/galera-${gv}-${suffix}/deb/galera*${dist_filename}*ppc64el.deb ; do
+              runCommand reprepro --basedir=. includedeb ${dist} ${deb}
+            done
+            ;;
           'jammy'|'noble')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_ppc64el.changes
             ;;
@@ -254,13 +274,25 @@ for dist in ${ubuntu_dists}; do
 
         # include arm64 (aarch64)
         case ${dist} in
-          'jammy'|'noble'|'oracular'|'plucky')
+          #'jammy'|'noble'|'plucky'|'questing'|'resolute')
+          'resolute')
+            for deb in ${dir_galera}/galera-${gv}-${suffix}/deb/galera*${dist_filename}*arm64.deb ; do
+              runCommand reprepro --basedir=. includedeb ${dist} ${deb}
+            done
+            ;;
+          'jammy'|'noble'|'plucky'|'questing')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_${gv}-${dist_filename}*_arm64.changes
             ;;
         esac
 
         # include s390x
         case ${dist} in
+          #'jammy'|'noble'|'resolute')
+          'resolute')
+            for deb in ${dir_galera}/galera-${gv}-${suffix}/deb/galera*${dist_filename}*s390x.deb ; do
+              runCommand reprepro --basedir=. includedeb ${dist} ${deb}
+            done
+            ;;
           'jammy'|'noble')
             runCommand reprepro --ignore=wrongdistribution --basedir=. include ${dist} ${dir_galera}/galera-${gv}-${suffix}/deb/${galera_name}_*${dist_filename}*_s390x.changes
             ;;
