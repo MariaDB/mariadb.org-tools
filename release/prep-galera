@@ -63,40 +63,59 @@ galera_suffix=""
 
 # mappings of dirs from the CI that we need
 ci_mappings_4="
+         gal-amd64-rhel-7:kvm-rpm-centos74-amd64-gal
+       gal-aarch64-rhel-8:kvm-rpm-rhel8-aarch64-gal
+         gal-amd64-rhel-8:kvm-rpm-rhel8-amd64-gal
          gal-s390x-rhel-8:kvm-rpm-rhel8-s390x-gal
        gal-ppc64le-rhel-8:kvm-rpm-rhel8-ppc64le-gal
+       gal-aarch64-rhel-9:kvm-rpm-rhel9-aarch64-gal
+         gal-amd64-rhel-9:kvm-rpm-rhel9-amd64-gal
          gal-s390x-rhel-9:kvm-rpm-rhel9-s390x-gal
        gal-ppc64le-rhel-9:kvm-rpm-rhel9-ppc64le-gal
       gal-aarch64-rhel-10:kvm-rpm-rhel10-aarch64-gal
         gal-amd64-rhel-10:kvm-rpm-rhel10-amd64-gal
         gal-s390x-rhel-10:kvm-rpm-rhel10-s390x-gal
       gal-ppc64le-rhel-10:kvm-rpm-rhel10-ppc64le-gal
-      gal-amd64-sles-1506:kvm-zyp-sles156-amd64-gal
-      gal-s390x-sles-1506:kvm-zyp-sles156-s390x-gal
       gal-amd64-sles-1507:kvm-zyp-sles157-amd64-gal
       gal-s390x-sles-1507:kvm-zyp-sles157-s390x-gal
+      gal-amd64-sles-1600:kvm-zyp-sles160-amd64-gal
+      gal-s390x-sles-1600:kvm-zyp-sles160-s390x-gal
+      gal-amd64-opensuse-1506:kvm-zyp-opensuse156-amd64-gal
+      gal-amd64-opensuse-1600:kvm-zyp-opensuse160-amd64-gal
+    gal-aarch64-debian-11:kvm-deb-bullseye-aarch64-gal
+      gal-amd64-debian-11:kvm-deb-bullseye-amd64-gal
+    gal-aarch64-debian-12:kvm-deb-bookworm-aarch64-gal
+      gal-amd64-debian-12:kvm-deb-bookworm-amd64-gal
     gal-ppc64le-debian-12:kvm-deb-bookworm-ppc64le-gal
-     gal-amd64-debian-13:kvm-deb-trixie-amd64-gal
-   gal-aarch64-debian-13:kvm-deb-trixie-aarch64-gal
-   gal-ppc64le-debian-13:kvm-deb-trixie-ppc64le-gal
-       gal-x86-debian-13:kvm-deb-trixie-x86-gal
+        gal-x86-debian-12:kvm-deb-bookworm-x86-gal
+    gal-aarch64-debian-13:kvm-deb-trixie-aarch64-gal
+      gal-amd64-debian-13:kvm-deb-trixie-amd64-gal
+    gal-ppc64le-debian-13:kvm-deb-trixie-ppc64le-gal
+        gal-x86-debian-13:kvm-deb-trixie-x86-gal
      gal-amd64-debian-sid:kvm-deb-sid-amd64-gal
    gal-aarch64-debian-sid:kvm-deb-sid-aarch64-gal
    gal-ppc64le-debian-sid:kvm-deb-sid-ppc64le-gal
        gal-x86-debian-sid:kvm-deb-sid-x86-gal
-      gal-amd64-fedora-41:kvm-rpm-fedora41-amd64-gal
-    gal-aarch64-fedora-41:kvm-rpm-fedora41-aarch64-gal
       gal-amd64-fedora-42:kvm-rpm-fedora42-amd64-gal
     gal-aarch64-fedora-42:kvm-rpm-fedora42-aarch64-gal
+      gal-amd64-fedora-43:kvm-rpm-fedora43-amd64-gal
+    gal-aarch64-fedora-43:kvm-rpm-fedora43-aarch64-gal
+  gal-aarch64-ubuntu-2204:kvm-deb-jammy-aarch64-gal
+    gal-amd64-ubuntu-2204:kvm-deb-jammy-amd64-gal
   gal-ppc64le-ubuntu-2204:kvm-deb-jammy-ppc64le-gal
     gal-s390x-ubuntu-2204:kvm-deb-jammy-s390x-gal
+  gal-aarch64-ubuntu-2404:kvm-deb-noble-aarch64-gal
+    gal-amd64-ubuntu-2404:kvm-deb-noble-amd64-gal
   gal-ppc64le-ubuntu-2404:kvm-deb-noble-ppc64le-gal
     gal-s390x-ubuntu-2404:kvm-deb-noble-s390x-gal
-  gal-aarch64-ubuntu-2410:kvm-deb-oracular-aarch64-gal
-    gal-amd64-ubuntu-2410:kvm-deb-oracular-amd64-gal
   gal-aarch64-ubuntu-2504:kvm-deb-plucky-aarch64-gal
     gal-amd64-ubuntu-2504:kvm-deb-plucky-amd64-gal
-        gal-s390x-sles-1506:kvm-zyp-sles15-s390x-gal
+  gal-aarch64-ubuntu-2510:kvm-deb-questing-aarch64-gal
+    gal-amd64-ubuntu-2510:kvm-deb-questing-amd64-gal
+  gal-aarch64-ubuntu-2604:kvm-deb-resolute-aarch64-gal
+    gal-amd64-ubuntu-2604:kvm-deb-resolute-amd64-gal
+  gal-ppc64le-ubuntu-2604:kvm-deb-resolute-ppc64le-gal
+    gal-s390x-ubuntu-2604:kvm-deb-resolute-s390x-gal
 "
 
 ci_mappings_3="
@@ -158,12 +177,11 @@ deb_dists_3="
 deb_dists_4="
   bookworm
   bullseye
-  jammy
-  kinetic
-  lunar
-  plucky
-  sid
   trixie
+  sid
+  jammy
+  plucky
+  questing
   trusty
 "
 
@@ -182,6 +200,7 @@ deb_dists_full_4="
   bookworm-aarch64
   bookworm-amd64
   bookworm-ppc64le
+  bookworm-x86
 
   bullseye-aarch64
   bullseye-amd64
@@ -199,8 +218,13 @@ deb_dists_full_4="
   plucky-aarch64
   plucky-amd64
 
-  oracular-aarch64
-  oracular-amd64
+  questing-aarch64
+  questing-amd64
+
+  resolute-aarch64
+  resolute-amd64
+  resolute-ppc64le
+  resolute-s390x
 
   sid-aarch64
   sid-amd64
@@ -234,8 +258,6 @@ rpm_dists_3="
 "
 
 rpm_dists_4="
-  alma84-amd64
-
   centos74-amd64
 
   rhel8-amd64
@@ -253,24 +275,18 @@ rpm_dists_4="
   rhel10-s390x
   rhel10-ppc64le
 
-  fedora41-amd64
-  fedora41-aarch64
   fedora42-amd64
   fedora42-aarch64
+  fedora43-amd64
+  fedora43-aarch64
 
-  opensuse155-amd64
   opensuse156-amd64
+  opensuse160-amd64
 
-  rocky84-amd64
-
-  sles125-amd64
-  sles15-amd64
-  sles15-s390x
-
-  sles156-amd64
-  sles156-s390x
   sles157-amd64
   sles157-s390x
+  sles160-amd64
+  sles160-s390x
 "
   #fedora36-aarch64
   #fedora-rawhide-amd64
