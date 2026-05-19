@@ -252,47 +252,54 @@ build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
 #-------------------------------------------------------------------------------
 # Dirs for buildbot.mariadb.org
 #-------------------------------------------------------------------------------
-#ci_dirs_102="aarch64-debian-9-deb-autobake"
-#ci_dirs_103="${ci_dirs_102} aarch64-rhel-8-rpm-autobake"
-ci_dirs_102=""
-ci_dirs_103="${ci_dirs_102}"
-ci_dirs_104="${ci_dirs_103}"
-ci_dirs_105="${ci_dirs_104} kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake"
 
-ci_dirs_106="${ci_dirs_105} kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
+ci_dirs_106_amd64="kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-deb-bullseye-amd64:amd64-debian-11-deb-autobake kvm-deb-jammy-amd64:amd64-ubuntu-2204-deb-autobake"
+ci_dirs_106_aarch64="kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-deb-bullseye-aarch64:aarch64-debian-11-deb-autobake kvm-deb-jammy-aarch64:aarch64-ubuntu-2204-deb-autobake"
+ci_dirs_106_ppc64le="kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-rpm-rhel9-ppc64le:ppc64le-rhel-9-rpm-autobake kvm-deb-jammy-ppc64le:ppc64le-ubuntu-2204-deb-autobake"
+ci_dirs_106_s390x="kvm-rpm-rhel8-s390x:s390x-rhel-8-rpm-autobake kvm-rpm-rhel9-s390x:s390x-rhel-9-rpm-autobake kvm-deb-jammy-s390x:s390x-ubuntu-2204-deb-autobake"
+ci_dirs_106="${ci_dirs_106_amd64} ${ci_dirs_106_aarch64} ${ci_dirs_106_ppc64le} ${ci_dirs_106_s390x}"
+
 # 2025-05-01 add centos7 bintar for 10.6, 10.11, and 11.4
 case ${major} in
   10.6|10.11|11.4)
-ci_dirs_106="${ci_dirs_106} kvm-bintar-centos74-amd64:amd64-centos-7-bintar"
+ci_dirs_106="${ci_dirs_106} kvm-bintar-centos74-amd64:amd64-centos-7-bintar winx64-packages:amd64-windows-packages"
     ;;
   *)
+ci_dirs_106="${ci_dirs_106} winx64-packages:amd64-windows-packages"
     ;;
 esac
 
-ci_dirs_107="${ci_dirs_106}"
-ci_dirs_108="${ci_dirs_107}"
-ci_dirs_109="${ci_dirs_108}"
-ci_dirs_1010="${ci_dirs_109}"
-ci_dirs_1011="${ci_dirs_1010} kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-zyp-sles15-s390x:s390x-sles-1506-rpm-autobake kvm-zyp-sles1506-amd64:amd64-sles-1506-rpm-autobake  kvm-zyp-sles1506-s390x:s390x-sles-1506-rpm-autobake kvm-rpm-fedora41-amd64:amd64-fedora-41-rpm-autobake kvm-rpm-fedora41-aarch64:aarch64-fedora-41-rpm-autobake kvm-rpm-fedora42-amd64:amd64-fedora-42-rpm-autobake kvm-rpm-fedora42-aarch64:aarch64-fedora-42-rpm-autobake kvm-rpm-rhel10-amd64:amd64-rhel-10-rpm-autobake kvm-rpm-rhel10-aarch64:aarch64-rhel-10-rpm-autobake kvm-rpm-rhel10-ppc64le:ppc64le-rhel-10-rpm-autobake kvm-rpm-rhel10-s390x:s390x-rhel-10-rpm-autobake"
-ci_dirs_1012="${ci_dirs_1011}"
-ci_dirs_110="${ci_dirs_1012}"
-ci_dirs_111="${ci_dirs_110}"
-ci_dirs_112="${ci_dirs_111}"
-ci_dirs_113="${ci_dirs_112}"
+ci_dirs_1011_amd64="kvm-rpm-fedora42-amd64:amd64-fedora-42-rpm-autobake kvm-rpm-rhel10-amd64:amd64-rhel-10-rpm-autobake kvm-deb-bookworm-amd64:amd64-debian-12-deb-autobake kvm-zyp-opensuse156-amd64:amd64-opensuse-1506-rpm-autobake kvm-deb-noble-amd64:amd64-ubuntu-2404-deb-autobake"
+ci_dirs_1011_aarch64="kvm-rpm-fedora42-aarch64:aarch64-fedora-42-rpm-autobake kvm-rpm-rhel10-aarch64:aarch64-rhel-10-rpm-autobake kvm-deb-bookworm-aarch64:aarch64-debian-12-deb-autobake kvm-deb-noble-aarch64:aarch64-ubuntu-2404-deb-autobake"
+ci_dirs_1011_ppc64le="kvm-deb-bookworm-ppc64le:ppc64le-debian-12-deb-autobake kvm-deb-noble-ppc64le:ppc64le-ubuntu-2404-deb-autobake kvm-rpm-rhel10-ppc64le:ppc64le-rhel-10-rpm-autobake"
+ci_dirs_1011_s390x="kvm-deb-noble-s390x:s390x-ubuntu-2404-deb-autobake kvm-rpm-rhel10-s390x:s390x-rhel-10-rpm-autobake"
+ci_dirs_1011_x86="kvm-deb-bookworm-x86:x86-debian-12-deb-autobake"
+ci_dirs_1011="${ci_dirs_106} ${ci_dirs_1011_amd64} ${ci_dirs_1011_aarch64} ${ci_dirs_1011_ppc64le} ${ci_dirs_1011_s390x} ${ci_dirs_1011_x86}"
 case ${major} in
   10*|11.1|11.2|11.3)
-    ci_dirs_114="${ci_dirs_113}"
+    ci_dirs_114="${ci_dirs_1011}"
     ;;
   *) # For 11.4 and higher, also pull in rhel-8 and rhel-9 amd64/aarch64 pkgs
-    ci_dirs_114="${ci_dirs_113} kvm-rpm-rhel8-amd64:amd64-rhel-8-rpm-autobake kvm-rpm-rhel8-aarch64:aarch64-rhel-8-rpm-autobake kvm-rpm-rhel9-amd64:amd64-rhel-9-rpm-autobake kvm-rpm-rhel9-aarch64:aarch64-rhel-9-rpm-autobake kvm-rpm-rhel8-ppc64le:ppc64le-rhel-8-rpm-autobake kvm-zyp-sles1507-amd64:amd64-sles-1507-rpm-autobake kvm-zyp-sles1507-s390x:s390x-sles-1507-rpm-autobake kvm-deb-oracular-amd64:amd64-ubuntu-2410-deb-autobake kvm-deb-oracular-aarch64:aarch64-ubuntu-2410-deb-autobake kvm-deb-plucky-amd64:amd64-ubuntu-2504-deb-autobake kvm-deb-plucky-aarch64:aarch64-ubuntu-2504-deb-autobake kvm-deb-bookworm-aarch64:aarch64-debian-12-deb-autobake"
+    ci_dirs_114_amd64="kvm-deb-plucky-amd64:amd64-ubuntu-2504-deb-autobake"
+    ci_dirs_114_aarch64="kvm-deb-plucky-aarch64:aarch64-ubuntu-2504-deb-autobake kvm-deb-bookworm-aarch64:aarch64-debian-12-deb-autobake"
+    ci_dirs_114="${ci_dirs_1011} ${ci_dirs_114_amd64} ${ci_dirs_114_aarch64}"
     ;;
 esac
-ci_dirs_115="${ci_dirs_114}"
+ci_dirs_115_amd64="kvm-zyp-sles1507-amd64:amd64-sles-1507-rpm-autobake"
+ci_dirs_115_s390x="kvm-zyp-sles1507-s390x:s390x-sles-1507-rpm-autobake"
+ci_dirs_115="${ci_dirs_114} ${ci_dirs_115_amd64} ${ci_dirs_115_s390x}"
 ci_dirs_116="${ci_dirs_115}"
 ci_dirs_117="${ci_dirs_116}"
-ci_dirs_118="${ci_dirs_117} kvm-deb-trixie-amd64:amd64-debian-13-deb-autobake kvm-deb-trixie-aarch64:aarch64-debian-13-deb-autobake kvm-deb-trixie-ppc64le:ppc64le-debian-13-deb-autobake kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar"
+ci_dirs_118_amd64="kvm-deb-trixie-amd64:amd64-debian-13-deb-autobake kvm-deb-sid-amd64:amd64-debian-sid-deb-autobake kvm-bintar-almalinux8-amd64:amd64-almalinux-8-bintar kvm-deb-questing-amd64:amd64-ubuntu-2510-deb-autobake kvm-rpm-fedora43-amd64:amd64-fedora-43-rpm-autobake kvm-zyp-sles1600-amd64:amd64-sles-1600-rpm-autobake kvm-zyp-opensuse160-amd64:amd64-opensuse-1600-rpm-autobake kvm-deb-resolute-amd64:amd64-ubuntu-2604-deb-autobake"
+ci_dirs_118_aarch64="kvm-deb-trixie-aarch64:aarch64-debian-13-deb-autobake kvm-deb-sid-aarch64:aarch64-debian-sid-deb-autobake kvm-deb-questing-aarch64:aarch64-ubuntu-2510-deb-autobake kvm-rpm-fedora43-aarch64:aarch64-fedora-43-rpm-autobake kvm-deb-resolute-aarch64:aarch64-ubuntu-2604-deb-autobake"
+ci_dirs_118_ppc64le="kvm-deb-trixie-ppc64le:ppc64le-debian-13-deb-autobake kvm-deb-sid-ppc64le:ppc64le-debian-sid-deb-autobake kvm-deb-resolute-ppc64le:ppc64le-ubuntu-2604-deb-autobake"
+ci_dirs_118_s390x="kvm-zyp-sles1600-s390x:s390x-sles-1600-rpm-autobake kvm-deb-resolute-s390x:s390x-ubuntu-2604-deb-autobake"
+ci_dirs_118_x86="kvm-deb-sid-x86:x86-debian-sid-deb-autobake kvm-deb-trixie-x86:x86-debian-13-deb-autobake"
+ci_dirs_118="${ci_dirs_117} ${ci_dirs_118_amd64} ${ci_dirs_118_aarch64} ${ci_dirs_118_ppc64le}  ${ci_dirs_118_s390x} ${ci_dirs_118_x86}"
 ci_dirs_120="${ci_dirs_118}"
 ci_dirs_121="${ci_dirs_120}"
+ci_dirs_122="${ci_dirs_121}"
+ci_dirs_123="${ci_dirs_122}"
 
 
 #-------------------------------------------------------------------------------
@@ -304,29 +311,30 @@ case ${major} in
     bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
     ;;
   10.6|10.11) # No opensuse150 in 10.6+
-    bb_dirs_102="kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
+    #bb_dirs_102="kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
+    bb_dirs_102=""
     ;;
   *) # No sles125 in 11.4+
-    bb_dirs_102="kvm-zyp-sles15-amd64:"
+    bb_dirs_102=""
     ;;
 esac
 case ${major} in
   10*|11.1|11.2|11.3)
-    bb_dirs_103="${bb_dirs_102} kvm-rpm-rhel8-aarch64: kvm-rpm-rhel8-amd64:"
+    bb_dirs_103="${bb_dirs_102}"
     ;;
   *) # No rhel8 from bb in 11.4+
     bb_dirs_103="${bb_dirs_102}"
     ;;
 esac
 bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104} kvm-deb-bullseye-aarch64: kvm-deb-bullseye-amd64: kvm-rpm-rhel9-aarch64: kvm-rpm-rhel9-amd64:"
+bb_dirs_105="${bb_dirs_104}"
 #bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora39-amd64: kvm-rpm-fedora39-aarch64: kvm-zyp-opensuse155-amd64:"
-bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora39-amd64: kvm-zyp-opensuse155-amd64:"
+bb_dirs_106="${bb_dirs_105}"
 bb_dirs_107="${bb_dirs_106}"
 bb_dirs_108="${bb_dirs_107}"
 bb_dirs_109="${bb_dirs_108}"
 bb_dirs_1010="${bb_dirs_109}"
-bb_dirs_1011="${bb_dirs_1010} kvm-deb-bookworm-amd64: kvm-deb-bookworm-aarch64: kvm-zyp-opensuse156-amd64: kvm-deb-noble-amd64: kvm-deb-noble-aarch64:"
+bb_dirs_1011="${bb_dirs_1010}"
 bb_dirs_110="${bb_dirs_1011}"
 bb_dirs_111="${bb_dirs_110}"
 bb_dirs_112="${bb_dirs_111}"
@@ -338,28 +346,17 @@ bb_dirs_117="${bb_dirs_116}"
 bb_dirs_118="${bb_dirs_117}"
 bb_dirs_120="${bb_dirs_118}"
 bb_dirs_121="${bb_dirs_120}"
+bb_dirs_122="${bb_dirs_121}"
+bb_dirs_123="${bb_dirs_122}"
 
-full_dirs_102="${bb_dirs_102} ${ci_dirs_102}"
-full_dirs_103="${bb_dirs_103} ${ci_dirs_103}"
-full_dirs_104="${bb_dirs_104} ${ci_dirs_104}"
-full_dirs_105="${bb_dirs_105} ${ci_dirs_105}"
 full_dirs_106="${bb_dirs_106} ${ci_dirs_106}"
-full_dirs_107="${bb_dirs_107} ${ci_dirs_107}"
-full_dirs_108="${bb_dirs_108} ${ci_dirs_108}"
-full_dirs_109="${bb_dirs_109} ${ci_dirs_109}"
-full_dirs_1010="${bb_dirs_1010} ${ci_dirs_1010}"
 full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
-full_dirs_110="${bb_dirs_110} ${ci_dirs_110}"
-full_dirs_111="${bb_dirs_111} ${ci_dirs_111}"
-full_dirs_112="${bb_dirs_112} ${ci_dirs_112}"
-full_dirs_113="${bb_dirs_113} ${ci_dirs_113}"
 full_dirs_114="${bb_dirs_114} ${ci_dirs_114}"
-full_dirs_115="${bb_dirs_115} ${ci_dirs_115}"
-full_dirs_116="${bb_dirs_116} ${ci_dirs_116}"
-full_dirs_117="${bb_dirs_117} ${ci_dirs_117}"
 full_dirs_118="${bb_dirs_118} ${ci_dirs_118}"
 full_dirs_120="${bb_dirs_120} ${ci_dirs_120}"
 full_dirs_121="${bb_dirs_121} ${ci_dirs_121}"
+full_dirs_122="${bb_dirs_122} ${ci_dirs_122}"
+full_dirs_123="${bb_dirs_123} ${ci_dirs_123}"
 
 }
 
@@ -500,7 +497,10 @@ prepare_yum_packages() {
 }
 
 include_Galera_packages_in_repositories() {
-  incl_galera="yes"
+  case ${major} in
+    10.6|10.11|11.4|11.8) incl_galera="yes" ;;
+    *) incl_galera="no" ;;
+  esac
 }
 
 create_a_template_file() {
@@ -1248,10 +1248,23 @@ pull_this_release_from_ci() {
       ci_dir=(${ci_pair//:/ })
     if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
       message "Downloaded ${ci_dir[1]} from ci"
+
     else
       runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
     fi
     done
+    if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86 ]; then
+      echo
+      line
+      echo "+ creating tarbake dir..."
+      line
+      mkdir -v ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86
+      echo
+    fi
+    pushd ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86
+      runCommand wget -N ${ci}/${ci_tarbuildnum}/mariadb-${num}.tar.gz
+      runCommand wget -N ${ci}/${ci_tarbuildnum}/sha256sums.txt
+    popd
     set -e
     runCommand find ${ci_tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
@@ -1306,16 +1319,17 @@ copy_ci_downloads_to_buildmaster_dir() {
   message "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
   pressAnyKeyToContinue
 
-  for ci_pair in ${!ci_dirs}; do
+  for ci_pair in ${!ci_dirs} kvm-tarbake-jaunty-x86:kvm-tarbake-jaunty-x86; do
     ci_dir=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
     dir_dest=${dir_archive}/${tree}/build-${tarbuildnum}/${ci_dir[0]}
-    if [ -d ${dir_dest} ]; then
-      message "${dir_dest} already exists, moving..."
-      runCommand mv -vi ${dir_dest} ${dir_dest}_orig
-    fi
+    #if [ -d ${dir_dest} ]; then
+    #  message "${dir_dest} already exists, moving..."
+    #  runCommand mv -vi ${dir_dest} ${dir_dest}_orig
+    #fi
     if [ -d ${dir_source} ]; then
-      runCommand cp -ai ${dir_source} ${dir_dest}
+      #runCommand cp -ai ${dir_source} ${dir_dest}
+      runCommand rsync -av ${dir_source}/ ${dir_dest}/
     else
       important_message "${dir_source} does not exist"
       exit 1
@@ -1636,7 +1650,10 @@ create_package_tarballs() {
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
       message "${dir_corp}/${version_nog}/{tarfile}";runCommand tar -tf ${tarfile}
-      if ! tar -tf ${tarfile} | grep galera &>/dev/null
+      if [[ $(echo "${major} >= 12.3" | bc -l) -eq 1 ]]
+      then
+        message "No galera in 12.3+"
+      elif ! tar -tf ${tarfile} | grep galera &>/dev/null
       then
         echo "+ ERROR: galera package missing from ${tarfile}"
         exit 1
@@ -1968,7 +1985,8 @@ generate_the_file_list_pickle_for_org_downloads() {
 
 copy_win_packages_to_sign-todo_dir() {
   arch=winx64
-  runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
+  #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
+  runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
   runCommand tree ~/sign-todo/
   echo;echo
   message "Quitting so Windows Package signing can occur."
@@ -1979,12 +1997,14 @@ copy_win_packages_to_sign-todo_dir() {
 
 move_win_packages_from_sign-done_dir() {
   runCommand tree ~/sign-done/
-  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
+  #runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
+  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/
   runCommand tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
-  for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
+  #for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
+  for msi in ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/*msi ; do
     message "Verifying ${msi}"
     runCommand osslsigncode verify -in ${msi}
   done
@@ -2322,9 +2342,11 @@ if [ "${create_bintar}" != "no" ]; then
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
+          if [ ${incl_galera} = "yes" ]; then
             message "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+          fi
             runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
 
@@ -2375,9 +2397,11 @@ if [ "${create_bintar}" != "no" ]; then
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
+          if [ ${incl_galera} = "yes" ]; then
             message "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+          fi
             runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
             runCommand rm -rf ${version}-linux-systemd-${galera_arch}
 
@@ -2426,9 +2450,11 @@ if [ "${create_bintar}" != "no" ]; then
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
+          if [ ${incl_galera} = "yes" ]; then
             message "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
             runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+          fi
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
@@ -2525,6 +2551,7 @@ if [ "${create_bintar}" != "no" ]; then
   # All releases include Galera now
   # if we are creating a Galera release we need to copy in the galera source and
   # packages (for those not using the repositories)
+  if [ ${incl_galera} = "yes" ]; then
     message "transferring Galera source and package files..."
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
@@ -2545,6 +2572,7 @@ if [ "${create_bintar}" != "no" ]; then
     done
     lowkey_message "done transferring Galera source and package files"
     echo
+  fi
 
   message "done transfering bintar & source packages"
   echo
@@ -2598,7 +2626,8 @@ if [ "${galera_suffix}" != "-galera" ]; then
           fi
         else
           message "Packages are on the local filesystem"
-          runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
+          #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
+          runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
         fi
 
         if ! ${ci_release};then
@@ -2615,7 +2644,8 @@ if [ "${galera_suffix}" != "-galera" ]; then
               runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
               else
                 # Win packages are on the local filesystem
-                runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+                #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+                runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
               fi
               ;;
           esac
@@ -2790,6 +2820,9 @@ else
     shouldI update_the_ubuntu_distributions_file
 
     # trying updating the previous repo instead of creating a new one every time
+    # This partially relates to:
+    #   MDEV-10718 Preserve last released version of Ubuntu & Debian releases
+    #   in our repositories
     echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
             rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
     echo
@@ -2905,7 +2938,7 @@ else
     popd
 
     # remove symlinks from corp repos
-    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server fedora41-aarch64 fedora41-amd64 fedora42-aarch64 fedora42-amd64 rhel10-aarch64 rhel10-amd64 sles156-amd64 sles157-amd64 almalinux rocky"
+    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server fedora41-aarch64 fedora41-amd64 fedora42-aarch64 fedora42-amd64 rhel10-aarch64 rhel10-amd64 sles156-amd64 sles157-amd64 almalinux rocky fedora43-aarch64 fedora43-amd64 opensuse160-amd64 sles160-amd64"
     pushd ${dir_corp}/${dir_name}/yum/
       for link in ${symlinks_to_remove} ; do
         if [[ -h ${link} ]] ; then
@@ -2946,43 +2979,43 @@ echo;echo;echo;echo
 #
 #echo;echo;echo;echo
 
-shouldI use_the_staging_mirror
-
-if [ "${skip_staging}" = "no" ]; then
-  shouldI upload_to_the_staging_mirror
-  echo;echo;echo;echo
-  shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
-  echo;echo;echo;echo
-  shouldI upload_corp_dir_to_the_staging_mirror
-  echo;echo;echo;echo
-fi
-
-echo;echo;echo;echo
+#shouldI use_the_staging_mirror
+#
+#if [ "${skip_staging}" = "no" ]; then
+#  shouldI upload_to_the_staging_mirror
+#  echo;echo;echo;echo
+#  shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
+#  echo;echo;echo;echo
+#  shouldI upload_corp_dir_to_the_staging_mirror
+#  echo;echo;echo;echo
+#fi
+#
+#echo;echo;echo;echo
 
 important_message "Corp Mirrors"
 for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_corp_mirrors
 
-shouldI copy_the_previous_release_to_the_current_release_on_the_mirrors
+#shouldI copy_the_previous_release_to_the_current_release_on_the_mirrors
 
-echo;echo;echo;echo
+#echo;echo;echo;echo
+#
+#shouldI upload_to_the_corp_mirror_staging_dir
 
-shouldI upload_to_the_corp_mirror_staging_dir
+#echo;echo;echo;echo
+#
+#shouldI activate_the_corp_staging_repos
 
-echo;echo;echo;echo
+#echo;echo;echo;echo
+#
+#shouldI copy_the_corp_mirror_staging_dir_to_prod
 
-shouldI activate_the_corp_staging_repos
+#echo;echo;echo;echo
+#
+#shouldI upload_to_the_corp_mirror
 
-echo;echo;echo;echo
-
-shouldI copy_the_corp_mirror_staging_dir_to_prod
-
-echo;echo;echo;echo
-
-shouldI upload_to_the_corp_mirror
-
-echo;echo;echo;echo
-
+#echo;echo;echo;echo
+#
 #shouldI upload_to_the_primary_mirror
 
 important_message "Foundation Mirrors"
@@ -3030,9 +3063,9 @@ shouldI trigger_the_primary_mirror
 
 echo;echo;echo;echo
 
-shouldI activate_the_corp_repos
-
-echo;echo;echo;echo
+#shouldI activate_the_corp_repos
+#
+#echo;echo;echo;echo
 
 shouldI update_the_archive_symlinks
 
