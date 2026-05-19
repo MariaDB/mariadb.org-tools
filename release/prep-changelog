@@ -228,10 +228,10 @@ for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/rele
   if grep -q ${rev} /tmp/merges.tmp;then
     # If a change exists in merges.tmp then we need to format it differently
     #git log --pretty=format:"* <<style class=\"merge\">>Merge gitrev:${shortrev} %ai - %s<</style>>%n" -1 ${rev} >> ${output}
-    git log --pretty=format:"* <sup>_Merge_</sup> [<sup>_Revision #${shortrev}_</sup>](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_%ai - %s_</sup>%n" -1 ${rev} >> ${output}
+    git log --pretty=format:"* <sup>_<mark style=\"color:\$primary;\">Merge</mark>_</sup> [<sup>_<mark style=\"color:\$primary;\">Revision #${shortrev}</mark>_</sup>](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_<mark style=\"color:\$info;\">%ai - %s</mark>_</sup>%n" -1 ${rev} >> ${output}
   else
     #git log --pretty=format:"* gitrev:${shortrev}%n<<style class=\"datetime\">>%ai<</style>>%n** %s%n" -1 ${rev} >> ${output}
-    git log --pretty=format:"* [Revision #${shortrev}](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_%ai_</sup>%n  * %s%n" -1 ${rev} >> ${output}
+    git log --pretty=format:"* [Revision #${shortrev}](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_<mark style=\"color:\$info;\">%ai</mark>_</sup>%n  * %s%n" -1 ${rev} >> ${output}
   fi
 done
 
