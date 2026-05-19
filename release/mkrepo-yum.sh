@@ -38,6 +38,10 @@ set -e
 #  Set command-line options
 #-------------------------------------------------------------------------------
 GALERA="$1"                       # copy in galera packages? 'yes' or 'no'
+case ${GALERA} in
+  yes) incl_galera=0 ;;
+  no)  incl_galera=1 ;;
+esac
 ENTERPRISE="$2"                   # is this an enterprise release? 'yes' or 'no'
 
 ARCHDIR="$3"                      # path to x86 & x86_64 packages
@@ -63,25 +67,27 @@ declare -A builder_dir_ci_amd64=(
   [rhel8]=amd64-rhel-8-rpm-autobake
   [rhel9]=amd64-rhel-9-rpm-autobake
   [rhel10]=amd64-rhel-10-rpm-autobake
-  [fedora41]=amd64-fedora-41-rpm-autobake
   [fedora42]=amd64-fedora-42-rpm-autobake
+  [fedora43]=amd64-fedora-43-rpm-autobake
   [sles156]=amd64-sles-1506-rpm-autobake
   [sles157]=amd64-sles-1507-rpm-autobake
-  [opensuse156]=amd64-opensuse-156-rpm-autobake
+  [sles160]=amd64-sles-1600-rpm-autobake
+  [opensuse156]=amd64-opensuse-1506-rpm-autobake
+  [opensuse160]=amd64-opensuse-1600-rpm-autobake
 )
 
 declare -A builder_dir_bb_amd64=(
   [rhel8]=kvm-rpm-rhel8-amd64
   [rhel9]=kvm-rpm-rhel9-amd64
   [rhel10]=kvm-rpm-rhel10-amd64
-  [fedora39]=kvm-rpm-fedora39-amd64
-  [fedora40]=kvm-rpm-fedora40-amd64
-  [fedora41]=kvm-rpm-fedora41-amd64
   [fedora42]=kvm-rpm-fedora42-amd64
+  [fedora43]=kvm-rpm-fedora43-amd64
   [sles12]=kvm-zyp-sles125-amd64 [sles15]=kvm-zyp-sles15-amd64
   [sles156]=kvm-zyp-sles1506-amd64 [sles157]=kvm-zyp-sles1507-amd64
+  [sles160]=kvm-zyp-sles1600-amd64
   [opensuse15]=kvm-zyp-opensuse150-amd64 [opensuse42]=kvm-zyp-opensuse42-amd64
   [opensuse155]=kvm-zyp-opensuse155-amd64 [opensuse156]=kvm-zyp-opensuse156-amd64
+  [opensuse160]=kvm-zyp-opensuse160-amd64
 )
 
 # - - - - - - - - -
@@ -90,18 +96,16 @@ declare -A builder_dir_ci_aarch64=(
   [rhel8]=aarch64-rhel-8-rpm-autobake
   [rhel9]=aarch64-rhel-9-rpm-autobake
   [rhel10]=aarch64-rhel-10-rpm-autobake
-  [fedora41]=aarch64-fedora-41-rpm-autobake
   [fedora42]=aarch64-fedora-42-rpm-autobake
+  [fedora43]=aarch64-fedora-43-rpm-autobake
 )
 
 declare -A builder_dir_bb_aarch64=(
   [rhel8]=kvm-rpm-rhel8-aarch64
   [rhel9]=kvm-rpm-rhel9-aarch64
   [rhel10]=kvm-rpm-rhel10-aarch64
-  [fedora39]=kvm-rpm-fedora39-aarch64
-  [fedora40]=kvm-rpm-fedora40-aarch64
-  [fedora41]=kvm-rpm-fedora41-aarch64
   [fedora42]=kvm-rpm-fedora42-aarch64
+  [fedora43]=kvm-rpm-fedora43-aarch64
   [sles12]=kvm-zyp-sles123-aarch64 [sles15]=kvm-zyp-sles15-aarch64
   [opensuse15]=kvm-zyp-opensuse150-aarch64 [opensuse42]=kvm-zyp-opensuse42-aarch64
   [sles156]=kvm-zyp-sles1506-aarch64 [sles157]=kvm-zyp-sles1507-aarch64
@@ -133,6 +137,7 @@ declare -A builder_dir_ci_s390x=(
   [sles15]=s390x-sles-1506-rpm-autobake
   [sles156]=s390x-sles-1506-rpm-autobake
   [sles157]=s390x-sles-1507-rpm-autobake
+  [sles160]=s390x-sles-1600-rpm-autobake
 )
 
 declare -A builder_dir_bb_s390x=(
@@ -142,6 +147,7 @@ declare -A builder_dir_bb_s390x=(
   [sles15]=kvm-zyp-sles15-s390x
   [sles156]=kvm-zyp-sles1506-s390x
   [sles157]=kvm-zyp-sles1507-s390x
+  [sles160]=kvm-zyp-sles1600-s390x
 )
 
 case ${ARCHDIR} in
@@ -212,7 +218,6 @@ case ${ARCHDIR} in
     ;;
   *10.6*)
   dists_bb="
-    sles15-amd64
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
@@ -236,7 +241,7 @@ case ${ARCHDIR} in
   "
   dists=${dists_bb}
     ;;
-  *10.11*|*11.2*)
+  *10.11*|*11.2*|*11.4*)
   dists_bb="
     rhel8-amd64
     rhel8-aarch64
@@ -253,19 +258,10 @@ case ${ARCHDIR} in
     rhel10-ppc64le
     rhel10-s390x
 
-    fedora41-amd64
-    fedora41-aarch64
-
     fedora42-amd64
     fedora42-aarch64
 
     opensuse156-amd64
-
-    sles15-amd64
-    sles15-s390x
-
-    sles156-amd64
-    sles156-s390x
   "
   dists_ci="
     rhel8-amd64
@@ -283,58 +279,51 @@ case ${ARCHDIR} in
     rhel10-ppc64le
     rhel10-s390x
 
-    fedora41-amd64
-    fedora41-aarch64
-
     fedora42-amd64
     fedora42-aarch64
 
     opensuse156-amd64
 
-    sles15-s390x
-
     sles156-amd64
     sles156-s390x
-
-    sles157-amd64
-    sles157-s390x
   "
   dists=${dists_bb}
      ;;
   *)
   dists_bb="
-    sles15-amd64
     rhel8-amd64
     rhel8-aarch64
     rhel8-ppc64le
-    rhel8-s390x
 
     rhel9-amd64
     rhel9-aarch64
     rhel9-ppc64le
-    rhel9-s390x
 
     rhel10-amd64
     rhel10-aarch64
     rhel10-ppc64le
-    rhel10-s390x
-
-    fedora41-amd64
-    fedora41-aarch64
 
     fedora42-amd64
     fedora42-aarch64
 
+    fedora43-amd64
+    fedora43-aarch64
+
     opensuse156-amd64
+
+    opensuse160-amd64
  
-    sles15-s390x
-
-    sles156-amd64
-    sles156-s390x
-
     sles157-amd64
+
+    sles160-amd64
+
+    rhel8-s390x
+    rhel9-s390x
+    rhel10-s390x
     sles157-s390x
+    sles160-s390x
   "
+
   dists_ci="
     rhel8-amd64
     rhel8-aarch64
@@ -351,18 +340,17 @@ case ${ARCHDIR} in
     rhel10-ppc64le
     rhel10-s390x
 
-    fedora41-amd64
-    fedora41-aarch64
-
     fedora42-amd64
     fedora42-aarch64
 
     opensuse156-amd64
+    opensuse160-amd64
  
-    sles15-s390x
+    sles157-amd64
+    sles157-s390x
 
-    sles156-amd64
-    sles156-s390x
+    sles160-amd64
+    sles160-s390x
   "
   dists=${dists_bb}
     ;;
@@ -510,12 +498,12 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || runCommand copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
 
 
       case ${ARCHDIR} in
-        *11.1*)
+        *11.1*|*12.2*)
           # Copy in CMAPI package
           runCommand copy_files "${dir_cmapi}/${ver_cmapi}/11.1*/${dist_ver}/MariaDB-columnstore-cmapi*${ver_cmapi}*.${arch}.rpm ./${REPONAME}/rpms/"
           ;;
@@ -540,7 +528,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        runCommand copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || runCommand copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
 
@@ -551,16 +539,19 @@ for REPONAME in ${dists}; do
         fedora40-amd64) fedora_ver=40 ; fedora_arch=amd64 ;;
         fedora41-amd64) fedora_ver=41 ; fedora_arch=amd64 ;;
         fedora42-amd64) fedora_ver=42 ; fedora_arch=amd64 ;;
+        fedora43-amd64) fedora_ver=43 ; fedora_arch=amd64 ;;
 
         fedora39-aarch64) fedora_ver=39 ; fedora_arch=aarch64 ;;
         fedora40-aarch64) fedora_ver=40 ; fedora_arch=aarch64 ;;
         fedora41-aarch64) fedora_ver=41 ; fedora_arch=aarch64 ;;
         fedora42-aarch64) fedora_ver=42 ; fedora_arch=aarch64 ;;
+        fedora43-aarch64) fedora_ver=43 ; fedora_arch=aarch64 ;;
 
         fedora39-ppc64le) fedora_ver=39 ; fedora_arch=ppc64le ;;
         fedora40-ppc64le) fedora_ver=40 ; fedora_arch=ppc64le ;;
         fedora41-ppc64le) fedora_ver=41 ; fedora_arch=ppc64le ;;
         fedora42-ppc64le) fedora_ver=42 ; fedora_arch=ppc64le ;;
+        fedora43-ppc64le) fedora_ver=43 ; fedora_arch=ppc64le ;;
       esac
       case ${fedora_arch} in
         amd64) fedora_arch_real=x86_64 ;;
@@ -575,7 +566,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
 
       ;;
@@ -590,7 +581,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse150-amd64/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse150-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'opensuse155-amd64')
@@ -603,7 +594,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse155-amd64/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse155-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'opensuse156-amd64')
@@ -616,7 +607,20 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse156-amd64/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse156-amd64/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    'opensuse160-amd64')
+      set_builder_dir opensuse160 amd64
+      runCommand mkdir -vp opensuse/16.0/x86_64
+      maybe_make_symlink opensuse/16.0/x86_64 opensuse160-amd64
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/opensuse160-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'opensuse42-amd64')
@@ -629,7 +633,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles114-x86')
@@ -644,7 +648,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-x86/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-x86/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles114-amd64')
@@ -658,7 +662,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-amd64/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles11-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles12-amd64')
@@ -671,7 +675,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       
       # Copy in other files
@@ -687,7 +691,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     'sles150-amd64'|'sles15-amd64')
@@ -701,7 +705,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/sles15-amd64/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     sles15-s390x)
@@ -715,7 +719,7 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     sles15[0-9]-*)
@@ -735,7 +739,27 @@ for REPONAME in ${dists}; do
 
       # Copy in galera files
       for gv in ${ver_galera_real}; do
-        copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
+      done
+      ;;
+    sles16[0-9]-*)
+      arch=${REPONAME##*-}
+      dist=${REPONAME%%-*}
+      dist_ver=${dist#sles}
+      dist_ver=${dist_ver:0:2}.${dist_ver:2}
+      set_builder_dir "$dist" "$arch"
+      if [ "$arch" == amd64 ]; then
+        arch=x86_64
+      fi
+      runCommand mkdir -vp sles/"$dist_ver/$arch"
+      maybe_make_symlink sles/"$dist_ver/$arch" "$REPONAME"
+
+      # Copy in MariaDB files
+      copy_files "${ARCHDIR}/${!builder_dir}/ ./${REPONAME}/"
+
+      # Copy in galera files
+      for gv in ${ver_galera_real}; do
+        (($incl_galera)) || copy_files "${dir_galera}/galera-${gv}-${suffix}/rpm/${REPONAME}/galera*.rpm ${REPONAME}/rpms/"
       done
       ;;
     *)
@@ -830,6 +854,9 @@ for DIR in ${dists}; do
     fedora42*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 42
       ;;
+    fedora43*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 43
+      ;;
     sles12*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
       ;;
@@ -838,6 +865,12 @@ for DIR in ${dists}; do
       ;;
     opensuse15*)
       runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name openSUSE --platform-version 15
+      ;;
+    sles16*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 16
+      ;;
+    opensuse16*)
+      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name openSUSE --platform-version 16
       ;;
     *)
       thickline
@@ -848,7 +881,7 @@ for DIR in ${dists}; do
   esac
 
   check_updateinfo ./updateinfo.xml
-  runCommand modifyrepo ./updateinfo.xml ${DIR}/repodata
+  runCommand modifyrepo_c ./updateinfo.xml ${DIR}/repodata
   runCommand rm -v ./updateinfo.xml
   
   echo 
