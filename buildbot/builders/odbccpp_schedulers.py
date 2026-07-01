@@ -1,6 +1,6 @@
 odbcMainBuilders=[
 #                  "codbc-rhel9-amd64",
-                  "codbc-windows",
+#                  "codbc-windows",
 #                  "codbc-rhel9-aarch64",
 #                  "codbc-rhel8-amd64","codbc-alma84-amd64","codbc-alma8-aarch64","codbc-alma9-amd64","codbc-alma9-aarch64",
 #                  "codbc-rhel8-aarch64",
@@ -36,7 +36,8 @@ cppMainBuilders=[
 #                  "ccpp-fedora37-amd64",
 #                  "ccpp-fedora38-amd64",
 #                  "ccpp-source-package",
-                  "ccpp-windows",
+                  "ccpp-benchmark",
+#                  "ccpp-windows",
 #                  "ccpp-linux-amd64-asan", "ccpp-linux-amd64-ubsan", "ccpp-linux-amd64-msan",
 #                  "ccpp-jammy-amd64-deb", "ccpp-bookworm-amd64-deb", "ccpp-bullseye-amd64-deb",
 #                  "ccpp-jammy-aarch64-deb", "ccpp-bookworm-aarch64-deb", "ccpp-bullseye-aarch64-deb",
@@ -61,6 +62,8 @@ c['schedulers'].append(AnyBranchScheduler(
     builderNames=cppMainBuilders))
 odbccppForceBuilderNames= odbcMainBuilders + [
 #                          "codbc-sles15-amd64-notest",
-                          "codbc-windows-gnutls"
+                          "codbc-windows",
+                          "codbc-windows-gnutls",
+                          "ccpp-windows",
                           ##########################################################################
                           ] + cppMainBuilders
