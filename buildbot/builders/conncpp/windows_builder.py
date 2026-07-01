@@ -116,7 +116,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         command=["dojob",
 #WithProperties("pwd && cd win32/packaging/windows && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='C:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
 #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\x64\\Release && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release && copy /y C:\\work\\benchmark\\x64\\Release\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release\\mariadbcpp11.lib && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || xcopy /y /f win64\\RelWithDebInfo\\*.dll  C:\\work\\benchmark\\x64\\Release && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master")
-          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\x64\\Release && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release && copy /y C:\\work\\benchmark\\x64\\Release\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release\\mariadbcpp11.lib && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || true")
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || true")
         ],
         haltOnFailure = False
 	));
@@ -129,3 +129,62 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         'category': "connectors" }
 
 bld_win_connector_cpp = bld_windows_connector_cpp("ccpp-windows", "", "", "", True)
+
+def bld_win_connector_cpp_benchmark(name, cmake_params):
+
+  f_win_connector_cpp = BuildFactory()
+
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name = "remove_old_build",
+        command=["dojob", "pwd && rm -rf" , 
+        WithProperties("d:\\buildbot\\%(buildername)s\\build || true")],
+        timeout = 4*3600,
+        haltOnFailure = True
+  ));
+
+  f_win_connector_cpp.addStep(SetPropertyFromCommand(
+        property="buildrootdir",
+        command=["pwd"],
+  ))
+# f_win_connector_cpp.addStep(maybe_git_checkout)
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "git_checkout",
+        command=["dojob", WithProperties("pwd && rm -rf src && git clone -b %(branch)s %(repository)s src && cd src && git reset --hard %(revision)s && dir")],
+        timeout=7200,
+        doStepIf=do_step_win
+  ));
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "git_conc_tag_checkout",
+        command=["dojob", WithProperties("pwd && cd src && git submodule init && git submodule update && cd libmariadb && git fetch --all --tags --prune")],
+        timeout=7200,
+        doStepIf=do_step_win
+  ));
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "build_package_64",
+        command=["dojob",
+        #-DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=ON " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+          ],
+        haltOnFailure = True
+	));
+
+  f_win_connector_cpp.addStep(ShellCommand(
+        name= "benchmark_64",
+        command=["dojob",
+          #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && xcopy /y /f win64\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
+          #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1 || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
+          # It's faster at the moment to make it installed as 'master'
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || true")
+        ],
+        haltOnFailure = False
+	));
+
+  return { 'name': name,
+        'slavename': "win-connectors",
+        'builddir': name,
+        'factory': f_win_connector_cpp,
+        'category': "connectors" }
+benchmark_ccpp= bld_win_connector_cpp_benchmark("ccpp-benchmark", "")
