@@ -41,6 +41,7 @@ odbccppBuilders= [
                   bld_codbc_windows_gnutls,
                   benchmark_codbc,
                   #######################################################
+                  benchmark_ccpp,
 #                  bld_macos_connector_cpp,
 #                  bld_amd64_asan_connector_cpp,
 #                  bld_amd64_ubsan_connector_cpp,
