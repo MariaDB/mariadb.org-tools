@@ -44,7 +44,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_64",
         command=["dojob",
         # -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DCONC_WITH_UNIT_TESTS=OFF -DWITH_SSL=SCHANNEL" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DWITH_SSL=SCHANNEL" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -92,7 +92,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         name= "build_package_64_debug",
         command=["dojob",
         # -DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
-        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config Debug")
+        WithProperties("rm -rf win64d && mkdir win64d && cd win64d && cmake ../src -G \"Visual Studio 17 2022\" -A x64 -DCONC_WITH_MSI=OFF -DCMAKE_BUILD_TYPE=Debug -DINSTALL_PLUGINDIR=plugin" + cmake_params + " && cmake --build . --config Debug || cmake --build . --config Debug")
           ],
         haltOnFailure = True
 	));
@@ -116,7 +116,7 @@ def bld_windows_connector_cpp(name, conc_branch, cmake_params, tag, skip32bit):
         command=["dojob",
 #WithProperties("pwd && cd win32/packaging/windows && for %%a in (mariadb-connector-odbc-*32*.msi) do (msiexec /i %%a INSTALLFOLDER='C:\\testing\\odbc\\driver\\%(branch)s\\32' /qn /norestart")
 #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\x64\\Release && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release && copy /y C:\\work\\benchmark\\x64\\Release\\mariadbcpp.lib C:\\work\\benchmark\\x64\\Release\\mariadbcpp11.lib && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || xcopy /y /f win64\\RelWithDebInfo\\*.dll  C:\\work\\benchmark\\x64\\Release && C:\\work\\benchmark\\x64\\Release\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master")
-          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\benchmark -l Odbc3.2MasterPoC -l Odbc3.2Master || true")
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\bin\\benchmark -c C:\\work\\benchmark\\benchmark.yaml -o ConnCpp-%(branch)s-ps -o ConnCpp-%(branch)s || true")
         ],
         haltOnFailure = False
 	));
@@ -166,7 +166,7 @@ def bld_win_connector_cpp_benchmark(name, cmake_params):
         name= "build_package_64",
         command=["dojob",
         #-DWITH_SIGNCODE=1 -DSIGN_OPTIONS=\"/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a\"
-        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCONC_WITH_MSI=OFF -DCONC_WITH_UNIT_TESTS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin -DALL_PLUGINS_STATIC=ON " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
+        WithProperties("rm -rf win64 && mkdir win64 && cd win64 && cmake ../src -G \"Visual Studio 17 2022\" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_PLUGINDIR=plugin " + cmake_params + " && cmake --build . --config RelWithDebInfo || cmake --build . --config RelWithDebInfo")
           ],
         haltOnFailure = True
 	));
@@ -177,7 +177,7 @@ def bld_win_connector_cpp_benchmark(name, cmake_params):
           #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && md C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && xcopy /y /f win64\\libmariadb\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64\\plugin || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
           #WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1 || xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\testing\\odbc\\driver\\%(branch)s\\64 && C:\\work\\benchmark\\x64\\Release\\benchmark -l ConnCpp1.1")
           # It's faster at the moment to make it installed as 'master'
-          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\bin\\benchmark -c C:\\work\\benchmark\\benchmark.yaml -o ConnCpp-%%-ps -o ConnCpp-%% || true")
+          WithProperties("pwd && ls win64\\RelWithDebInfo\\*.dll && ls win64\\RelWithDebInfo\\mariadbcpp.* && xcopy /y /f win64\\RelWithDebInfo\\*.dll C:\\work\\benchmark\\bin && xcopy /y /f win64\\RelWithDebInfo\\mariadbcpp.lib C:\\work\\benchmark\\bin && C:\\work\\benchmark\\bin\\benchmark -c C:\\work\\benchmark\\benchmark.yaml -o ConnCpp-%(branch)s-ps -o ConnCpp-%(branch)s || true")
         ],
         haltOnFailure = False
 	));
