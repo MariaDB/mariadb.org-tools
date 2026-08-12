@@ -126,7 +126,7 @@ case ${ARCHDIR} in
   *11.4*|*11.5*|*11.6*|*11.7*)
     ubuntu_dists="jammy noble plucky"
     ;;
-  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*main*)
+  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*13.0*|*main*)
     ubuntu_dists="jammy noble plucky questing resolute"
     #ubuntu_dists="jammy noble plucky"
     ;;
@@ -208,7 +208,7 @@ for dist in ${ubuntu_dists}; do
   # Include ppc64le debs
   builder_dir="builder_dir_${build_type}_ppc64le[${dist}]"
   case ${dist} in
-    'jammy'|'noble')
+    'jammy'|'noble'|'resolute')
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.deb'); do runCommand reprepro --basedir=. includedeb ${dist} ${file} ; done
       for file in $(find "$ARCHDIR/${!builder_dir}/" -name '*_ppc64el.ddeb'); do runCommand reprepro --basedir=. includeddeb ${dist} ${file} ; done
       ;;
