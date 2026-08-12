@@ -17,7 +17,7 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-dir_build=${2}
+tarbuildnum=${2}
 
 dir_name="connector-odbc-${version}"
 
@@ -111,7 +111,8 @@ shouldI() {
 }
 
 copy_win_packages_to_sign-todo_dir() {
-  RC cp -avi ${dir_build}/codbc-windows/*.msi ~/sign-todo/
+  RC cp -avi ${dir_build}/codbc-x86-windows/*.msi ~/sign-todo/
+  RC cp -avi ${dir_build}/codbc-amd64-windows/*.msi ~/sign-todo/
   RC tree ~/sign-todo/
   MSG "Quitting so Win Package signing can occur."
   MSG_L "Re-run script when signing is completed and move signed packages back."
@@ -119,15 +120,23 @@ copy_win_packages_to_sign-todo_dir() {
 }
 
 move_win_packages_from_sign-done_dir() {
-  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*msi ${dir_build}/codbc-windows/
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win32.msi ${dir_build}/codbc-x86-windows/
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win64.msi ${dir_build}/codbc-amd64-windows/
   RC tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
-  for msi in ${dir_build}/codbc-windows/*msi ; do
+  for msi in ${dir_build}/codbc-*-windows/*msi ; do
     MSG "Verifying ${msi}"
     RC osslsigncode verify -in ${msi}
   done
+}
+
+download_files_from_ci() {
+  MSG "Downloading files from CI"
+  pushd ${co_builds}
+    RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${co_url}/${tarbuildnum}/
+  popd
 }
 
 copy_and_stage_files() {
@@ -145,53 +154,58 @@ copy_and_stage_files() {
     if [[ ! -d "${dir_name}" ]];then
       mkdir -v ${dir_name}
     fi
+    for dir in ${dir_build}/codbc* ; do
+      RC rsync -av --exclude=index.html ${dir} ${dir_name}/
+      DIV
+    done
+
     # Linux files
-    if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_name}/ ; then
-      MSG "Copied Linux x86 files"
-    else
-      MSG "No Linux x86 files"
-    fi
-    if cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_name}/ ; then
-      MSG "Copied Linux amd64 files"
-    else
-      MSG "ERROR: Linux amd64 files not found"
-      exit 3
-    fi
-    if cp -avi ${dir_build}/*/*aarch64.tar.gz ${dir_name}/ ; then
-      MSG "Copied Linux aarch64 files"
-    else
-      MSG "ERROR: Linux aarch64 files not found"
-      exit 3
-    fi
-    if cp -avi ${dir_build}/*deb/*.deb ${dir_name}/ ; then
-      MSG "Copied Debian/Ubuntu files"
-    else
-      MSG "ERROR: Debian/Ubuntu files not found"
-      exit 3
-    fi
-    if cp -avi ${dir_build}/*rpm/*amd64.rpm ${dir_name}/ ; then
-      MSG "Copied amd64 RPM files"
-    elif cp -avi ${dir_build}/*rpm/*x86_64.rpm ${dir_name}/ ; then
-      MSG "Copied x86_64 RPM files"
-    else
-      MSG "ERROR: amd64/x86_64 RPM files not found"
-      exit 3
-    fi
-    if cp -avi ${dir_build}/*rpm/*aarch64.rpm ${dir_name}/ ; then
-      MSG "Copied aarch64 RPM files"
-    else
-      MSG "ERROR: aarch64 RPM files not found"
-      exit 3
-    fi
+    #if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_name}/ ; then
+    #  MSG "Copied Linux x86 files"
+    #else
+    #  MSG "No Linux x86 files"
+    #fi
+    #if cp -avi ${dir_build}/*/*amd64.tar.gz ${dir_name}/ ; then
+    #  MSG "Copied Linux amd64 files"
+    #else
+    #  MSG "ERROR: Linux amd64 files not found"
+    #  exit 3
+    #fi
+    #if cp -avi ${dir_build}/*/*aarch64.tar.gz ${dir_name}/ ; then
+    #  MSG "Copied Linux aarch64 files"
+    #else
+    #  MSG "ERROR: Linux aarch64 files not found"
+    #  exit 3
+    #fi
+    #if cp -avi ${dir_build}/*deb/*.deb ${dir_name}/ ; then
+    #  MSG "Copied Debian/Ubuntu files"
+    #else
+    #  MSG "ERROR: Debian/Ubuntu files not found"
+    #  exit 3
+    #fi
+    #if cp -avi ${dir_build}/*rpm/*amd64.rpm ${dir_name}/ ; then
+    #  MSG "Copied amd64 RPM files"
+    #elif cp -avi ${dir_build}/*rpm/*x86_64.rpm ${dir_name}/ ; then
+    #  MSG "Copied x86_64 RPM files"
+    #else
+    #  MSG "ERROR: amd64/x86_64 RPM files not found"
+    #  exit 3
+    #fi
+    #if cp -avi ${dir_build}/*rpm/*aarch64.rpm ${dir_name}/ ; then
+    #  MSG "Copied aarch64 RPM files"
+    #else
+    #  MSG "ERROR: aarch64 RPM files not found"
+    #  exit 3
+    #fi
 
     RC rpmsign --addsign --key-id=${ent_gpg_key} $(find ${dir_name} -name '*.rpm')
 
     # Windows files
-    if cp -avi ${dir_build}/*/*msi ${dir_name}/ ; then
-      MSG "Copied Windows files"
-    else
-      MSG "ERROR: Windows files not Found"
-    fi
+    #if cp -avi ${dir_build}/*/*msi ${dir_name}/ ; then
+    #  MSG "Copied Windows files"
+    #else
+    #  MSG "ERROR: Windows files not Found"
+    #fi
     # Mac files
     if cp -avi ${dir_build}/*/*pkg ${dir_name}/;then
       MSG "Copied MacOS files"
@@ -201,8 +215,8 @@ copy_and_stage_files() {
       MSG "No MacOS files"
     fi
     # Src files
-    cp -avi ${dir_build}/*/*src.zip ${dir_name}/
-    cp -avi ${dir_build}/*/*src.tar.gz ${dir_name}/
+    #cp -avi ${dir_build}/*src.zip ${dir_name}/
+    cp -avi ${dir_build}/*src.tar.gz ${dir_name}/
   popd
   echo;echo;echo
 }
@@ -229,7 +243,7 @@ prep_com_files() {
   MSG "Prepping com files"
   pushd ${co_home}/${dir_name}
     sumgen
-    for file in *;do
+    for file in *tar.gz */*;do
       RC gpg ${ent_gpg_opts} ${file}
     done
   popd
@@ -541,6 +555,8 @@ update_the_STATUS_file() {
 
 loadDefaults
 
+dir_build="${co_builds}/${tarbuildnum}"
+
 case ${version} in
   ""|"-h") usage
     ;;
@@ -560,6 +576,8 @@ set -eu
   #     expanded and before they are executed.
 
 MSG_I "Preparing MariaDB Connector/ODBC ${version} release..."
+echo;echo
+shouldI download_files_from_ci
 echo;echo
 shouldI copy_win_packages_to_sign-todo_dir
 echo;echo
