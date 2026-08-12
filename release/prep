@@ -300,6 +300,7 @@ ci_dirs_120="${ci_dirs_118}"
 ci_dirs_121="${ci_dirs_120}"
 ci_dirs_122="${ci_dirs_121}"
 ci_dirs_123="${ci_dirs_122}"
+ci_dirs_130="${ci_dirs_123}"
 
 
 #-------------------------------------------------------------------------------
@@ -348,6 +349,7 @@ bb_dirs_120="${bb_dirs_118}"
 bb_dirs_121="${bb_dirs_120}"
 bb_dirs_122="${bb_dirs_121}"
 bb_dirs_123="${bb_dirs_122}"
+bb_dirs_130="${bb_dirs_123}"
 
 full_dirs_106="${bb_dirs_106} ${ci_dirs_106}"
 full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
@@ -357,6 +359,7 @@ full_dirs_120="${bb_dirs_120} ${ci_dirs_120}"
 full_dirs_121="${bb_dirs_121} ${ci_dirs_121}"
 full_dirs_122="${bb_dirs_122} ${ci_dirs_122}"
 full_dirs_123="${bb_dirs_123} ${ci_dirs_123}"
+full_dirs_130="${bb_dirs_130} ${ci_dirs_130}"
 
 }
 
@@ -496,11 +499,74 @@ prepare_yum_packages() {
   create_yum="yes"
 }
 
-include_Galera_packages_in_repositories() {
-  case ${major} in
-    10.6|10.11|11.4|11.8) incl_galera="yes" ;;
-    *) incl_galera="no" ;;
+#===  FUNCTION  ================================================================
+#          NAME:  set_updateinfo_metadata
+#   DESCRIPTION:  Prompt the release engineer for the SEVERITY / UPDATETYPE /
+#                 CVE list that updateinfo.xml should advertise for this
+#                 release. The values are exported so that mkrepo-yum.sh can
+#                 forward them to gen-updateinfo.sh on each invocation.
+#                 See TODO-6103.
+#===============================================================================
+set_updateinfo_metadata() {
+  local cves_in
+  echo
+  line
+  echo "+ updateinfo.xml metadata for this release"
+  line
+  echo "  1) new release series                  (type=enhancement, severity=)"
+  echo "  2) maintenance release, no CVE         (type=bugfix,      severity=)"
+  echo "  3) maintenance release with CVE        (type=bugfix,      severity=moderate)"
+  echo "  4) corrective release, critical CVE    (type=security,    severity=critical)"
+  echo
+  userResponse "Which kind of release is this? [1-4]"
+  case ${ANSWER} in
+    1) UPDATEINFO_TYPE="enhancement"; UPDATEINFO_SEVERITY=""         ;;
+    2) UPDATEINFO_TYPE="bugfix";      UPDATEINFO_SEVERITY=""         ;;
+    3) UPDATEINFO_TYPE="bugfix";      UPDATEINFO_SEVERITY="moderate" ;;
+    4) UPDATEINFO_TYPE="security";    UPDATEINFO_SEVERITY="critical" ;;
+    *)
+      echo "Unrecognized answer '${ANSWER}', defaulting to maintenance/no-CVE."
+      UPDATEINFO_TYPE="bugfix"; UPDATEINFO_SEVERITY=""
+      ;;
   esac
+
+  UPDATEINFO_CVES=""
+  case ${ANSWER} in
+    3|4)
+      userInput "CVE IDs (comma- or space-separated, e.g. CVE-2026-1234 CVE-2026-5678):"
+      cves_in="${INPUT}"
+      # Normalize separators to commas; gen-updateinfo.sh accepts either.
+      UPDATEINFO_CVES="${cves_in//[[:space:]]/,}"
+      ;;
+  esac
+
+  UPDATEINFO_EDITION=""
+  while [ -z "${UPDATEINFO_EDITION}" ]; do
+    userResponse "Which edition should updateinfo.xml advertise? [c]ommunity / [e]nterprise"
+    case ${ANSWER} in
+      c|C) UPDATEINFO_EDITION="cs" ;;
+      e|E) UPDATEINFO_EDITION="es" ;;
+      *)   echo "Please answer [c]ommunity or [e]nterprise." ;;
+    esac
+  done
+
+  export UPDATEINFO_TYPE UPDATEINFO_SEVERITY UPDATEINFO_CVES UPDATEINFO_EDITION
+
+  echo
+  echo "  updateinfo type     : ${UPDATEINFO_TYPE}"
+  echo "  updateinfo severity : ${UPDATEINFO_SEVERITY:-<none>}"
+  echo "  updateinfo CVEs     : ${UPDATEINFO_CVES:-<none>}"
+  echo "  updateinfo edition  : ${UPDATEINFO_EDITION}"
+  echo
+}
+
+include_Galera_packages_in_repositories() {
+  # TODO-5867
+  incl_galera="yes"
+  #case ${major} in
+  #  10.6|10.11|11.4|11.8) incl_galera="yes" ;;
+  #  *) incl_galera="no" ;;
+  #esac
 }
 
 create_a_template_file() {
@@ -744,11 +810,11 @@ update_the_local_mirror_dir_yum_and_repo_symlinks() {
       runCommand ln -sv ../${version_nog}/${distro_type} ${major}
       runCommand ln -sv ../${version_nog}/${distro_type} ${num}
       case ${num} in
-        *.1) runCommand rm -v 12.rc
-             runCommand ln -sv ../${version_nog}/${distro_type} 12.rc
+        *.1) runCommand rm -v 13.rc
+             runCommand ln -sv ../${version_nog}/${distro_type} 13.rc
              ;;
-        *.2) runCommand rm -v 12.rolling
-             runCommand ln -sv ../${version_nog}/${distro_type} 12.rolling
+        *.2) runCommand rm -v 13.rolling
+             runCommand ln -sv ../${version_nog}/${distro_type} 13.rolling
              ;;
       esac
       runCommand tree -L 1
@@ -1619,12 +1685,12 @@ update_the_archive_symlinks() {
   local rc_rolling_repo
   case ${num} in
     *.1)
-      rc_rolling_repo="; rm -v 12.rc ; ln -sv ../${dir_name}/repo 12.rc ;"
-      rc_rolling_yum="; rm -v 12.rc ; ln -sv ../${dir_name}/yum 12.rc ;"
+      rc_rolling_repo="; rm -v 13.rc ; ln -sv ../${dir_name}/repo 13.rc ;"
+      rc_rolling_yum="; rm -v 13.rc ; ln -sv ../${dir_name}/yum 13.rc ;"
       ;;
     *.2)
-      rc_rolling_repo="; rm -v 12.rolling ; ln -sv ../${dir_name}/repo 12.rolling ;"
-      rc_rolling_yum="; rm -v 12.rolling ; ln -sv ../${dir_name}/yum 12.rolling ;"
+      rc_rolling_repo="; rm -v 13.rolling ; ln -sv ../${dir_name}/repo 13.rolling ;"
+      rc_rolling_yum="; rm -v 13.rolling ; ln -sv ../${dir_name}/yum 13.rolling ;"
       ;;
     *)
       rc_rolling_repo=';'
@@ -2177,6 +2243,9 @@ case $tree in
 esac
 
 shouldI prepare_yum_packages
+if [ "${create_yum:-no}" = "yes" ]; then
+  set_updateinfo_metadata
+fi
 #shouldI include_Galera_packages_in_repositories
 include_Galera_packages_in_repositories
 
@@ -2912,9 +2981,9 @@ else
     pushd ${dir_yum_prep}/${dir_name}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
       if ${ci_release}; then
-        runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
+        runCommand ${YUM} ${num} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
       else
-      runCommand ${YUM} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      runCommand ${YUM} ${num} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
       fi
     popd
 
