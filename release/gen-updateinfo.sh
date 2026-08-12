@@ -13,6 +13,17 @@
 #
 # 4 - run `modifyrepo /tmp/updateinfo.xml <PATH_TO_REPO>/repodata
 #
+# Options:
+#   --repository <path>        directory of signed, indexed rpms
+#   --platform-name <name>     e.g. RedHat, Fedora, SUSE, openSUSE
+#   --platform-version <ver>   e.g. 8, 9, 42
+#   --refpackage <rpm>         override the MariaDB-server package used for metadata
+#   --severity <sev>           Critical | Important | Moderate | Bugfix | Enhancement | ""  (default: "")
+#   --update-type <type>       recommended | security | bugfix | enhancement | ...  (default: bugfix)
+#   --cve <ID[,ID,...]>        one or more CVE IDs (repeatable); emitted as <reference type="cve">
+#   --edition <cs|es>          force community vs enterprise output; default: auto-detect from vendor
+#   --mariadb-version <ver>    The version of MariaDB
+#
 # NB - this script is looking for reference package (MariaDB-server)
 # to set some general variables before rpm files will be processed.
 # to use another package as reference you will need `--refpackage <PATH_TO_RPM>`
@@ -26,13 +37,18 @@ PLATFORM_VER=""
 
 UPDATEINFO='./updateinfo.xml'
 REPOPATH=$(dirname $0)
-# SEVERITY may be critical, important, moderate, bugfix, enhancement
-# script doesn't check for correct value, please be careful!
-# should be capitalized for RHEL
-SEVERITY=Moderate
+# SEVERITY may be Critical, Important, Moderate, Bugfix, Enhancement
+# Capitalized for RHEL. Script does not validate the value.
+SEVERITY=""
 #
-# may be recommended, security, optional, feature, enhancement, newpackage, bugfix, etc
-UPDATETYPE=security
+# UPDATETYPE may be: recommended, security, bugfix, enhancement, newpackage, optional, feature
+UPDATETYPE=bugfix
+#
+# CVE list (repeatable --cve) — emitted as <reference type="cve"> entries
+CVES=()
+# Edition override: cs (community) or es (enterprise). When unset, the vendor
+# string in the reference rpm decides.
+EDITION=""
 #
 if [[ ${LANG} != 'en_US.UTF-8' ]]; then
   echo "Locale should be UTF for XML generation, please set en_US.UTF-8"
@@ -65,6 +81,20 @@ while [[ $# -gt 0 ]]; do
       UPDATETYPE=$2
       shift 2
       ;;
+    --cve)
+      # Accept "CVE-...,CVE-..." or repeated --cve flags
+      IFS=', ' read -r -a _cve_split <<< "$2"
+      CVES+=("${_cve_split[@]}")
+      shift 2
+      ;;
+    --edition)
+      EDITION=$2
+      shift 2
+      ;;
+    --mariadb-version)
+      VERSION=$2
+      shift 2
+      ;;
     *)
       ;;
   esac
@@ -89,37 +119,62 @@ RPMS=$(find ${REPOPATH} -type f -name '*.rpm')
 [[ -z "${RPMS}" ]] && echo "No RPM files found!" && exit 1
 
 # getting metadata from ref package
-VERSION=$(rpm -qp --qf "%{version}" ${REFPACKAGE})
+#VERSION=$(rpm -qp --qf "%{version}" ${REFPACKAGE})
 SHORTVER=${VERSION%_*}
-RNVER=${SHORTVER//[\._]/}
-RNURL=https://mariadb.com/kb/en/mariadb-${RNVER}-release-notes/
-REFVENDOR=$(rpm -qp --qf "%{vendor}" ${REFPACKAGE})
-EMAIL="MariaDB Developers &lt;maria-developers@mariadb.org&gt;"
-PRODUCT="MariaDB"
+#RNVER=${SHORTVER//[\._]/}
 
-if [[ "${REFVENDOR}" =~ "MariaDB Corporation" ]]; then
-  PRODUCT="MariaDB-Enterprise"
+# --edition forces the product flavor; otherwise auto-detect from rpm vendor
+case "${EDITION}" in
+  es) is_enterprise=1 ;;
+  cs) is_enterprise=0 ;;
+  "") [[ "${REFVENDOR}" =~ "MariaDB Corporation" ]] && is_enterprise=1 || is_enterprise=0 ;;
+  *)  echo "Unknown --edition '${EDITION}' (expected 'cs' or 'es')"; exit 1 ;;
+esac
+
   EMAIL="MariaDB Corporation &lt;pkg-maintainer@mariadb.com&gt;"
-  RNVER=${VERSION//[\._]/-}
-  RNURL="https://mariadb.com/docs/release-notes/mariadb-enterprise-server-${RNVER}/"
+  REFVENDOR=$(rpm -qp --qf "%{vendor}" ${REFPACKAGE})
+
+if [[ ${is_enterprise} -eq 1 ]]; then
+  RNVER=${VERSION//_/-}
+  RGX='([0-9]+)\.([0-9]+)\.([0-9]+)\-([0-9]+)'
+  if [[ "${RNVER}" =~ ${RGX} ]]; then
+    RNMAJOR="${BASH_REMATCH[1]}"
+    RNMINOR="${BASH_REMATCH[2]}"
+    RNPATCH="${BASH_REMATCH[3]}"
+    RNBUILD="${BASH_REMATCH[4]}"
+  fi
+  RNURL="https://mariadb.com/docs/release-notes/enterprise-server/${RNMAJOR}.${RNMINOR}/${RNVER}"
+  PRODUCT="MariaDB-Enterprise"
+else
+  RNVER=${VERSION}
+  RGX='([0-9]+)\.([0-9]+)\.([0-9]+)'
+  if [[ "${RNVER}" =~ ${RGX} ]]; then
+    RNMAJOR="${BASH_REMATCH[1]}"
+    RNMINOR="${BASH_REMATCH[2]}"
+    RNPATCH="${BASH_REMATCH[3]}"
+  fi
+  RNURL="https://mariadb.com/docs/release-notes/community-server/${RNMAJOR}.${RNMINOR}/${RNVER}"
+  PRODUCT="MariaDB"
 fi
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' > ${UPDATEINFO}
 echo '<updates>' >> ${UPDATEINFO}
 echo "  <update from=\"${EMAIL}\" status=\"stable\" type=\"${UPDATETYPE}\" version=\"2.0\">" >> ${UPDATEINFO}
-echo "    <id>${PRODUCT}-${VERSION}</id>" >> ${UPDATEINFO}
-echo "    <title>${PRODUCT} $(date +%B/%Y) update to ${VERSION}</title>" >> ${UPDATEINFO}
+echo "    <id>${PRODUCT}-${RNVER}</id>" >> ${UPDATEINFO}
+echo "    <title>${PRODUCT} $(date +%B/%Y) update to ${RNVER}</title>" >> ${UPDATEINFO}
 echo "    <severity>${SEVERITY}</severity>" >> ${UPDATEINFO}
 echo "    <issued date=\"$(date -u '+%F %T %Z')\"></issued>" >> ${UPDATEINFO}
 echo "    <rights>Copyright (C) $(date +%Y) ${REFVENDOR}.</rights>" >> ${UPDATEINFO}
-echo "    <release>${PRODUCT} ${VERSION} release</release>" >> ${UPDATEINFO}
+echo "    <release>${PRODUCT} ${RNVER} release</release>" >> ${UPDATEINFO}
 echo "    <references>" >> ${UPDATEINFO}
-echo "      <reference href=\"https://mariadb.com/kb/en/library/security/\" id=\"\" title=\"List of CVEs fixed in ${PRODUCT}\" type=\"other\"/>" >> ${UPDATEINFO}
+for _cve in "${CVES[@]}"; do
+  echo "      <reference href=\"https://nvd.nist.gov/vuln/detail/${_cve}\" id=\"${_cve}\" title=\"${_cve}\" type=\"cve\"/>" >> ${UPDATEINFO}
+done
 echo "      <reference href=\"${RNURL}\" id=\"${RNVER//-/}-rn\" title=\"Issues fixed in ${PRODUCT} ${SHORTVER}\" type=\"self\"/>" >> ${UPDATEINFO}
 echo "    </references>" >> ${UPDATEINFO}
 echo "    <pkglist>" >> ${UPDATEINFO}
-echo "      <collection short=\"${PRODUCT}-${VERSION}\">" >> ${UPDATEINFO}
-echo "        <name>${PRODUCT} release ${VERSION} for ${PLATFORM_NAME} ${PLATFORM_VER}</name>" >> ${UPDATEINFO}
+echo "      <collection short=\"${PRODUCT}-${RNVER}\">" >> ${UPDATEINFO}
+echo "        <name>${PRODUCT} release ${RNVER} for ${PLATFORM_NAME} ${PLATFORM_VER}</name>" >> ${UPDATEINFO}
 
 for _package in ${RPMS}; do
   FILENAME=$(basename ${_package})
