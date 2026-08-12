@@ -37,15 +37,16 @@ set -e
 #-------------------------------------------------------------------------------
 #  Set command-line options
 #-------------------------------------------------------------------------------
-GALERA="$1"                       # copy in galera packages? 'yes' or 'no'
+VERSION="$1"                      # Version number of the release
+GALERA="$2"                       # copy in galera packages? 'yes' or 'no'
 case ${GALERA} in
   yes) incl_galera=0 ;;
   no)  incl_galera=1 ;;
 esac
-ENTERPRISE="$2"                   # is this an enterprise release? 'yes' or 'no'
+ENTERPRISE="$3"                   # is this an enterprise release? 'yes' or 'no'
 
-ARCHDIR="$3"                      # path to x86 & x86_64 packages
-P8_ARCHDIR="$4"                   # path to ppc64 packages (optional)
+ARCHDIR="$4"                      # path to x86 & x86_64 packages
+P8_ARCHDIR="$5"                   # path to ppc64 packages (optional)
 
 # if the ${ARCHDIR} var has a 'ci' directory in it then we are using a ci
 # build, otherwise we are using bb
@@ -832,45 +833,53 @@ for DIR in ${dists}; do
     runCommand rm -v ${DIR}/repodata/*updateinfo.xml.gz
   fi
 
+  # TODO-6103: forward the release-engineer's SEVERITY / UPDATETYPE / CVE /
+  # edition choices (set in prep's set_updateinfo_metadata) to gen-updateinfo.sh
+  gen_updateinfo_opts=""
+  [ -n "${UPDATEINFO_SEVERITY:-}" ] && gen_updateinfo_opts="${gen_updateinfo_opts} --severity ${UPDATEINFO_SEVERITY}"
+  [ -n "${UPDATEINFO_TYPE:-}"     ] && gen_updateinfo_opts="${gen_updateinfo_opts} --update-type ${UPDATEINFO_TYPE}"
+  [ -n "${UPDATEINFO_CVES:-}"     ] && gen_updateinfo_opts="${gen_updateinfo_opts} --cve ${UPDATEINFO_CVES}"
+  [ -n "${UPDATEINFO_EDITION:-}"  ] && gen_updateinfo_opts="${gen_updateinfo_opts} --edition ${UPDATEINFO_EDITION}"
+
   case ${DIR} in
     rhel8*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 8
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name RedHat --platform-version 8 ${gen_updateinfo_opts}
       ;;
     rhel9*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 9
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name RedHat --platform-version 9 ${gen_updateinfo_opts}
       ;;
     rhel10*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name RedHat --platform-version 10
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name RedHat --platform-version 10 ${gen_updateinfo_opts}
       ;;
     fedora39*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 39
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name Fedora --platform-version 39 ${gen_updateinfo_opts}
       ;;
     fedora40*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 40
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name Fedora --platform-version 40 ${gen_updateinfo_opts}
       ;;
     fedora41*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 41
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name Fedora --platform-version 41 ${gen_updateinfo_opts}
       ;;
     fedora42*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 42
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name Fedora --platform-version 42 ${gen_updateinfo_opts}
       ;;
     fedora43*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name Fedora --platform-version 43
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name Fedora --platform-version 43 ${gen_updateinfo_opts}
       ;;
     sles12*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 12
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name SUSE --platform-version 12 ${gen_updateinfo_opts}
       ;;
     sles15*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 15
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name SUSE --platform-version 15 ${gen_updateinfo_opts}
       ;;
     opensuse15*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name openSUSE --platform-version 15
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name openSUSE --platform-version 15 ${gen_updateinfo_opts}
       ;;
     sles16*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name SUSE --platform-version 16
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name SUSE --platform-version 16 ${gen_updateinfo_opts}
       ;;
     opensuse16*)
-      runCommand ${GEN_UPDATEINFO} --repository ${DIR}/ --platform-name openSUSE --platform-version 16
+      runCommand ${GEN_UPDATEINFO} --mariadb-version ${VERSION} --repository ${DIR}/ --platform-name openSUSE --platform-version 16 ${gen_updateinfo_opts}
       ;;
     *)
       thickline
