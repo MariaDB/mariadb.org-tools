@@ -85,6 +85,27 @@ delete_the_output_file() {
   rm -v ${output}
 }
 
+get_by_external_contributors()
+{
+  # external := not committing from '@mariadb' address.
+  local employee_offenders=" \
+    drrtuy@gmail.com \
+    paradox.ver5@gmail.com \
+    midenok@gmail.com \
+    alice.sherepa@gmail.com \
+    vvaintroub@gmail.com \
+    iminelink@gmail.com \
+    raghunandan.bhat96@gmail.com \
+  "
+
+  local email=$(git log --pretty=format:%ae -1 $1)
+  local is_external=$(echo $email | grep -v '@mariadb' | grep -v '@askmonty')
+  local is_offender=$(echo $employee_offenders | grep $email)
+  if [[ -n "$is_external" && -z "$is_offender" ]]; then
+    git log --pretty=format:" by [%aN](%ae)" -1 $1
+  fi
+}
+
 #-------------------------------------------------------------------------------
 # Parse command-line options
 #-------------------------------------------------------------------------------
@@ -219,19 +240,20 @@ case ${minor} in
 esac
 
 # Get a list of all the merges in this changeset
-git log --merges --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. > /tmp/merges.tmp
+git log --merges --topo-order ${exclude_real} --pretty=format:"%H" ${start_commit}.. > /tmp/merges.tmp
 
 
 # Generate the changelog
-for rev in $(git log --topo-order ${exclude_real} ^mysql/5.5 ^tokudb-engine/releases/tokudb-7.5 ^tokudb-ft-index/releases/tokudb-7.5 --pretty=format:"%H" ${start_commit}.. );do
+for rev in $(git log --topo-order ${exclude_real} --pretty=format:"%H" ${start_commit}.. );do
   shortrev=${rev:0:10}
   if grep -q ${rev} /tmp/merges.tmp;then
     # If a change exists in merges.tmp then we need to format it differently
     #git log --pretty=format:"* <<style class=\"merge\">>Merge gitrev:${shortrev} %ai - %s<</style>>%n" -1 ${rev} >> ${output}
     git log --pretty=format:"* <sup>_<mark style=\"color:\$primary;\">Merge</mark>_</sup> [<sup>_<mark style=\"color:\$primary;\">Revision #${shortrev}</mark>_</sup>](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_<mark style=\"color:\$info;\">%ai - %s</mark>_</sup>%n" -1 ${rev} >> ${output}
   else
+    by_external=$(get_by_external_contributors $rev)
     #git log --pretty=format:"* gitrev:${shortrev}%n<<style class=\"datetime\">>%ai<</style>>%n** %s%n" -1 ${rev} >> ${output}
-    git log --pretty=format:"* [Revision #${shortrev}](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_<mark style=\"color:\$info;\">%ai</mark>_</sup>%n  * %s%n" -1 ${rev} >> ${output}
+    git log --pretty=format:"* [Revision #${shortrev}](https://github.com/MariaDB/server/commit/${shortrev}) <sup>_<mark style=\"color:\$info;\">%ai</mark>_</sup>%n  * %s${by_external}%n" -1 ${rev} >> ${output}
   fi
 done
 
