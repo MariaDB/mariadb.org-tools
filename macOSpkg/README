@@ -1,0 +1,11 @@
+These files support the creation of a native macOS .pkg installer for MariaDB Server.
+
+This installer is intended to install a specially-built MariaDB distribution that runs independent of other things installed on the OS. See https://mariadb.com/kb/en/mariadb/installing-mariadb-server-pkg-packages-on-macos/ for more information about the behavior of the .pkg installer and the MariaDB distribution it installs.
+
+Build Instructions:
+
+The recommended build configuration is achieved by invoking cmake with these options:
+
+cmake . -DBUILD_CONFIG=mysql_release -DWITH_SSL=system -DOPENSSL_SSL_LIBRARY="/usr/local/opt/openssl/lib/libssl.a" -DOPENSSL_CRYPTO_LIBRARY="/usr/local/opt/openssl/lib/libcrypto.a" -DOPENSSL_INCLUDE_DIR="/usr/local/opt/openssl/include" -DTOKUDB_OK=0 -DWITH_JEMALLOC=no -DMYSQL_UNIX_ADDR=/usr/local/mariadb/data/mariadb.sock -DCMAKE_INSTALL_PREFIX=/usr/local/mariadb/server -DINSTALL_MYSQLDATADIR=/usr/local/mariadb/data -DDEFAULT_SYSCONFDIR=/usr/local/mariadb/etc -DWITH_EMBEDDED_SERVER=OFF -DPLUGIN_AWS_KEY_MANAGEMENT=NO -DWITH_UNIT_TESTS=OFF -DWITH_WSREP=OFF
+
+Build the TGZ package using cmake && make package, and then point mkpkg to that archive.
