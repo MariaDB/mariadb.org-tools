@@ -914,6 +914,40 @@ verify_local_mirror_copy_is_good() {
   done
 }
 
+downloader() {
+  local src
+  local sources
+  local rsync_downloader_opts
+  sources="$@"
+  rsync_downloader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt"
+  for src in ${sources} ; do
+    local cont
+    cont=""
+    while [ -z ${cont} ]; do
+      userResponse "Should I download from ${src}? [y/n]"
+      case ${ANSWER} in
+        y)
+          message "Downloading from ${src}..."
+          rsync_wrapper "${rsync_downloader_opts} ${src}/${version} ${dir_release}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          message "Skipping downloading from ${src}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          lowkey_message "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+
 #===  FUNCTION  ================================================================
 #          NAME:  uploader
 #   DESCRIPTION:  Upload a release
@@ -996,6 +1030,12 @@ upload_to_the_foundation_archives() {
   set -e
 }
 
+download_this_release_from_the_foundation_archives() {
+  set +e
+  downloader "${archives_foundation}"
+  set -e
+}
+
 upload_to_the_corp_mirrors() {
   uploader "${mirrors_corp}"
 }
@@ -1030,6 +1070,9 @@ loadDefaults() {
       echo
       exit 0
     fi
+  fi
+  if [ -f ${dir_conf}/common ]; then
+    . ${dir_conf}/common
   fi
 }
 
@@ -1218,7 +1261,7 @@ update_the_archive_STATUS_file() {
   for archive_pair in ${archives_foundation}; do
     archive=(${archive_pair//:/ })
     set -x
-    ssh -t -t ${archive[0]} "set -x; ./sync_archive_force"
+    ssh -t -t ${archive[0]} "set -x; if [ -e ./sync_archive_force ] ; then ./sync_archive_force ; fi"
     set +x
   done
   lowkey_message "STATUS file updated"
@@ -1307,6 +1350,16 @@ pull_this_release_from_ci() {
   fi
 
   runCommand pushd ${dir_archive}/ci/${tree}
+    message "Transferring Windows builds first..."
+    set +e
+    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/amd64-windows-packages/ ; then
+      message "Downloaded amd64-windows-packages from ci"
+    else
+      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/amd64-windows-packages/
+    fi
+    cp -avi ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/amd64-windows-packages ${dir_archive}/${tree}/build-${tarbuildnum}/winx64-packages
+    
+    pressAnyKeyToContinue
 
     message "Transferring builds from ${ci}..."
     set +e
@@ -1624,9 +1677,11 @@ upload_to_the_yum_mirrors() {
 #                 trigger a sync to the primary mirror's CDN
 #===============================================================================
 trigger_the_primary_mirror() {
+  set +e
   set -x
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
+  set -e
 }
 
 #===  FUNCTION  ================================================================
@@ -2076,6 +2131,95 @@ verify_signed_win_packages() {
   done
 }
 
+copy_the_bintars_to_corp() {
+  echo "+ copying bintars to ${dir_corp}/${dir_name}/"
+  runCommand rsync -avP --delete ${dir_release}/${dir_name}/bintar* ${dir_corp}/${dir_name}/
+  RC tree ${dir_corp}/${dir_name}/bintar*
+}
+
+copy_the_source_dir_to_corp() {
+  echo "+ copying the source dir to ${dir_corp}/${dir_name}/"
+  runCommand rsync -avP --delete ${dir_release}/${dir_name}/source ${dir_corp}/${dir_name}/
+  RC tree ${dir_corp}/${dir_name}/source
+}
+
+copy_the_winx64_dir_to_corp() {
+  # copy the dir to the corp dir
+  echo "+ copying winx64-packages to ${dir_corp}/${dir_name}/"
+  rsync -avP --delete ${dir_release}/${dir_name}/winx64-packages ${dir_corp}/${dir_name}/
+  popd
+  RC tree ${dir_corp}/${dir_name}/winx64-packages
+}
+
+copy_the_debian_repos_to_corp() {
+  if [[ ! -d ${dir_corp}/${dir_name}/repo ]] ; then
+    mkdir -v ${dir_corp}/${dir_name}/repo
+  fi
+  # copy the repo to the corp release dir
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/
+  echo
+  ## remove ppc64el from repo config and update repo
+  #sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/debian/conf/distributions
+  #pushd ${dir_corp}/${dir_name}/repo/debian/
+  #  editor conf/distributions   # delete sid, if necessary
+  #  reprepro -V --basedir . --delete clearvanished
+  #  # remove the now missing entries from the sum files
+  #  for sum in md5 sha1 sha256 sha512;do
+  #    sed -i '/ppc64el/d' ${sum}sums.txt
+  #  done
+  popd
+  RC tree -L 2 ${dir_corp}/${dir_name}/repo/debian
+}
+
+copy_the_ubuntu_repos_to_corp() {
+  if [[ ! -d ${dir_corp}/${dir_name}/repo ]] ; then
+    mkdir -v ${dir_corp}/${dir_name}/repo
+  fi
+  # copy the repo to the corp release dir
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_corp}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_corp}/${dir_name}/repo/
+  echo 
+  ## remove ppc64el from repo config and update repo
+  #sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
+  #sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
+  #pushd ${dir_corp}/${dir_name}/repo/ubuntu/
+  #  runCommand editor conf/distributions # remove deprecated distros
+  #  runCommand reprepro -V --basedir . --delete clearvanished
+  #  # remove the now missing entries from the sum files
+  #  for sum in md5 sha1 sha256 sha512;do
+  #    sed -i '/ppc64el/d' ${sum}sums.txt
+  #    sed -i '/s390x/d' ${sum}sums.txt
+  #  done
+  popd
+  RC tree -L 2 ${dir_corp}/${dir_name}/repo/ubuntu
+}
+
+copy_the_yum_repos_to_corp() {
+  # copy the yum dir to the corp release dir
+  echo "+ copying the yum dir to the corp release dir"
+  echo "+ rsync -a --info=progress2 --exclude=7 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --exclude=centos --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
+          rsync -a --info=progress2 --exclude=7 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --exclude=centos --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
+  echo
+  echo "+ remove ppc64 and ppc64le versions from corp release (if they were accidentally copied over)"
+  pushd ${dir_corp}/${dir_name}/yum/
+    rm -vf *ppc64*
+    rm -vrf */*/ppc64*
+    rm -vf *s390x*
+    rm -vrf */*/s390x
+  popd
+
+  # remove symlinks from corp repos
+  symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server fedora41-aarch64 fedora41-amd64 fedora42-aarch64 fedora42-amd64 rhel10-aarch64 rhel10-amd64 sles156-amd64 sles157-amd64 almalinux rocky fedora43-aarch64 fedora43-amd64 opensuse160-amd64 sles160-amd64 almalinux10-aarch64 almalinux10-x86_64 almalinux9-x86_64 centos10-aarch64 centos9-amd64 rockylinux rockylinux10-amd64 rockylinux8-x86_64 almalinux10-amd64 almalinux8-x86_64 centos10-amd64 rockylinux10-aarch64 rockylinux10-x86_64 rockylinux9-x86_64 fedora44-aarch64 fedora44-amd64"
+  pushd ${dir_corp}/${dir_name}/yum/
+    for link in ${symlinks_to_remove} ; do
+      if [[ -h ${link} ]] ; then
+        rm -v ${link}
+      fi
+    done
+  popd
+  RC tree -L 3 ${dir_corp}/${dir_name}/yum/
+}
 
 #-------------------------------------------------------------------------------
 # Main Script
@@ -2208,6 +2352,7 @@ esac
 
 shouldI pull_this_release_from_ci
 
+shouldI download_this_release_from_the_foundation_archives
 
 shouldI copy_ci_downloads_to_buildmaster_dir
 
@@ -2763,10 +2908,6 @@ if [ "${galera_suffix}" != "-galera" ]; then
       echo
       echo
 
-      # copy the dir to the corp dir
-      echo "+ copying ${arch}-packages to ${dir_corp}/${dir_name}/"
-      rsync -avP --delete ${dir_release}/${dir_name}/${arch}-packages ${dir_corp}/${dir_name}/
-      popd
     done
     popd
     echo "+ done transfering Windows packages"
@@ -2848,20 +2989,6 @@ else
      ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
     fi
 
-    # copy the repo to the corp release dir
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/debian ${dir_corp}/${dir_name}/repo/
-    echo
-    # remove ppc64el from repo config and update repo
-    sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/debian/conf/distributions
-    pushd ${dir_corp}/${dir_name}/repo/debian/
-      editor conf/distributions   # delete sid, if necessary
-      reprepro -V --basedir . --delete clearvanished
-      # remove the now missing entries from the sum files
-      for sum in md5 sha1 sha256 sha512;do
-        sed -i '/ppc64el/d' ${sum}sums.txt
-      done
-    popd
 
     echo
   elif [ "${rsync_debian_repo}" != "no" ]; then
@@ -2876,6 +3003,7 @@ else
   else
     message "Skipping Debian repo creation, as requested..."
   fi
+
 
   #-------------------------------------------------------------------------------
   #  Create Ubuntu Repos
@@ -2907,22 +3035,6 @@ else
       fi
     fi
 
-    # copy the repo to the corp release dir
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_corp}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/${dir_name}/repo/ubuntu ${dir_corp}/${dir_name}/repo/
-    echo 
-    # remove ppc64el from repo config and update repo
-    sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
-    sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
-    pushd ${dir_corp}/${dir_name}/repo/ubuntu/
-      runCommand editor conf/distributions # remove deprecated distros
-      runCommand reprepro -V --basedir . --delete clearvanished
-      # remove the now missing entries from the sum files
-      for sum in md5 sha1 sha256 sha512;do
-        sed -i '/ppc64el/d' ${sum}sums.txt
-        sed -i '/s390x/d' ${sum}sums.txt
-      done
-    popd
 
     echo
   elif [ "${rsync_ubuntu_repo}" != "no" ]; then
@@ -2993,38 +3105,16 @@ else
             rmdir -v ${dir_yum_prep}/${dir_name}
     pushd ${dir_release}/${dir_name}/
 
-    # copy the yum dir to the corp release dir
-    echo "+ copying the yum dir to the corp release dir"
-    echo "+ rsync -a --info=progress2 --exclude=7 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/"
-            rsync -a --info=progress2 --exclude=7 --exclude=ppc64 --exclude=ppc64le --exclude=s390x --delete ${dir_release}/${dir_name}/yum ${dir_corp}/${dir_name}/
-    echo
-    echo "+ remove ppc64 and ppc64le versions from corp release (if they were accidentally copied over)"
-    pushd ${dir_corp}/${dir_name}/yum/
-      rm -vf *ppc64*
-      rm -vrf */*/ppc64*
-      rm -vf *s390x*
-      rm -vrf */*/s390x
-    popd
-
-    # remove symlinks from corp repos
-    symlinks_to_remove="centos73-amd64 centos74-amd64 centos7-amd64 fedora35-amd64 fedora35-aarch64 fedora36-aarch64 fedora36-amd64 fedora37-aarch64 fedora37-amd64 fedora38-aarch64 fedora38-amd64 opensuse150-amd64 opensuse15-amd64 rhel73-amd64 rhel74-amd64 rhel7-amd64 rhel8-aarch64 rhel8-amd64 rhel9-aarch64 rhel9-amd64 sles12-amd64 sles150-amd64 sles15-amd64 rhel/8.0 rhel/8.1 rhel/8.2 rhel/8.3 rhel/8.4 rhel/8.5 rhel/8.6 rhel/8.7 rhel/9.0 rhel/9.1 rhel/9.2 sles/15.0 sles/15.1 sles/15.2 sles/15.3 sles/15.4 sles/15.5 opensuse/15.0 opensuse/15.1 opensuse/15.2 opensuse/15.3 opensuse/15.4 rhel74-aarch64 rhel7-aarch64 centos8-aarch64 centos8-amd64 centos74-aarch64 centos7-aarch64 fedora28-amd64 fedora29-aarch64 fedora29-amd64 fedora30-amd64 fedora31-amd64 fedora32-amd64 fedora33-amd64 rhel/6.0 rhel/6.1 rhel/6.2 rhel/6.3 rhel/6.4 rhel/6.5 rhel/6.6 rhel/6.7 rhel/6.8 rhel/6.9 rhel/7.0 rhel/7.1 rhel/7.2 rhel/7.3 rhel/7.4 rhel/7.5 rhel/7.6 rhel/7.7 centos6-amd64 centos7-aarch64 centos74-aarch64 centos8-aarch64 centos8-amd64 fedora33-aarch64 fedora34-aarch64 fedora34-amd64 centos9-aarch64 fedora32-aarch64 almalinux8-aarch64 almalinux8-amd64 almalinux9-aarch64 almalinux9-amd64 fedora39-amd64 rocky8-aarch64 rocky8-amd64 rocky9-aarch64 rocky9-amd64 opensuse156-amd64 opensuse155-amd64 fedora40-aarch64 fedora40-amd64 rockylinux8-aarch64 rockylinux8-amd64 rockylinux9-aarch64 rockylinux9-amd64 rhel/7Client rhel/7Server fedora41-aarch64 fedora41-amd64 fedora42-aarch64 fedora42-amd64 rhel10-aarch64 rhel10-amd64 sles156-amd64 sles157-amd64 almalinux rocky fedora43-aarch64 fedora43-amd64 opensuse160-amd64 sles160-amd64"
-    pushd ${dir_corp}/${dir_name}/yum/
-      for link in ${symlinks_to_remove} ; do
-        if [[ -h ${link} ]] ; then
-          rm -v ${link}
-        fi
-      done
-    popd
 
     # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
     # an old version beforehand, if one exists)
-    if [ ! -d ${dir_release}/yum-no-mgc ]; then
-      mkdir -vp ${dir_release}/yum-no-mgc
-    fi
-    if [ -d ${dir_release}/yum-no-mgc/${num} ]; then
-      echo "+ rm -rf ${dir_release}/yum-no-mgc/${num}"
-      rm -rf ${dir_release}/yum-no-mgc/${num}
-    fi
+    #if [ ! -d ${dir_release}/yum-no-mgc ]; then
+    #  mkdir -vp ${dir_release}/yum-no-mgc
+    #fi
+    #if [ -d ${dir_release}/yum-no-mgc/${num} ]; then
+    #  echo "+ rm -rf ${dir_release}/yum-no-mgc/${num}"
+    #  rm -rf ${dir_release}/yum-no-mgc/${num}
+    #fi
     echo
   else
     line
@@ -3040,6 +3130,21 @@ echo "+ done with repo creation for the ${version} release"
 line
 echo
 
+shouldI copy_the_bintars_to_corp
+DIV
+shouldI copy_the_source_dir_to_corp
+DIV
+shouldI copy_the_winx64_dir_to_corp
+DIV
+shouldI copy_the_debian_repos_to_corp
+DIV
+shouldI copy_the_ubuntu_repos_to_corp
+DIV
+shouldI copy_the_yum_repos_to_corp
+DIV
+MSG "Corp Dir: ${dir_corp}/${dir_name}/"
+tree -L 1 ${dir_corp}/${dir_name}/
+DIV
 shouldI create_package_tarballs
 
 echo;echo;echo;echo
