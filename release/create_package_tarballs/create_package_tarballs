@@ -116,6 +116,7 @@ do_pkgs() {
     rpms) arch=x86_64 ;;
   esac
 
+  if [[ -d $os ]] ; then
   pushd "$os"
   shift 2
   for rel in "$@"; do
@@ -174,6 +175,7 @@ esac
 
   done
   popd
+  fi
 }
 
 do_debs() {
