@@ -385,15 +385,11 @@ rsync_ubuntu_repo="no"
       create_yum="no"
      perms_fixed="no"
      incl_galera="no"
-      is_cluster="no"
-  log_is_cluster=""
              log="no"
           skipit="no"
          log_log=""
-   galera_suffix=""
  exclude_release=""
      remote_prep="no"
-    skip_staging="yes"
         treeflag=false
          revflag=false
          numflag=false
@@ -599,11 +595,7 @@ DEBIAN="/path/to/mariadb.org-tools/release/mkrepo-debian.sh"
 UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
    YUM="/path/to/mariadb.org-tools/release/mkrepo-yum.sh"
    CPT="/path/to/mariadb.org-tools/release/create_package_tarballs"
- BNDLS="/path/to/mariadb.org-tools/release/prep-bundles"
 GEN_UPDATEINFO="/path/to/mariadb.org-tools/release/gen-updateinfo.sh"
-
-# Full path to the galera-* scripts
-GALERA_NEW="/path/to/mariadb.org-tools/release/galera-new"
 
 # URL where Windows Builds are located
 winbuilder="http://example.net/builds"
@@ -628,17 +620,11 @@ dir_release_ent="/path/to/mariadb-enterprise/releases"
 # Full path to P8 builds (if needed)
 dir_archive_p8="/path/to/p8/archive/builds"
 
-# ssh key to use for uploading
-ssh_upload_key='.ssh/KEY_NAME'
-
 # remote server information
 buildmaster="buildmaster_ssh"
-staging_mirror="mirror_ssh"
 primary_mirror="mirror_ssh"
 primary_mirror_rsync="rsync_addr_of_primary_mirror"
 corp_mirror="mirror_ssh"
-corp_mirror_path="/dest/dir/on/corp/mirror"
-corp_bundles_path="/home/mariadb-repos/bundles/TX"
 corp_tools_path="/home/mariadb-repos/mariadb-enterprise-tools"
 yum_primary_mirror="bb01"
 yum_mirrors="mirror names"
@@ -663,14 +649,13 @@ cat >> ${dir_log}/prep.log <<END
 
 # Prepped $(date)
 # Command:
-#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log}${log_is_cluster} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum}
+#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum}
 # tree="${tree}"
 # rev="${rev}"
 # num="${num}"
 # tarbuildnum="${tarbuildnum}"
 # version="${version}"
 # dir_release/dir_name="${dir_release}/${dir_name}"
-# is_cluster="${is_cluster}"
 # create_bintar="${create_bintar}"
 # create_win="${create_win}"
 # create_debian="${create_debian}"
@@ -796,14 +781,14 @@ update_the_local_mirror_dir_yum_and_repo_symlinks() {
       elif [[ -L ${num} ]]; then
         runCommand rm -v ${major}*
       fi
-      runCommand ln -sv ../${version_nog}/${distro_type} ${major}
-      runCommand ln -sv ../${version_nog}/${distro_type} ${num}
+      runCommand ln -sv ../${version}/${distro_type} ${major}
+      runCommand ln -sv ../${version}/${distro_type} ${num}
       case ${num} in
         *.1) runCommand rm -v 13.rc
-             runCommand ln -sv ../${version_nog}/${distro_type} 13.rc
+             runCommand ln -sv ../${version}/${distro_type} 13.rc
              ;;
         *.2) runCommand rm -v 13.rolling
-             runCommand ln -sv ../${version_nog}/${distro_type} 13.rolling
+             runCommand ln -sv ../${version}/${distro_type} 13.rolling
              ;;
       esac
       runCommand tree -L 1
@@ -1069,10 +1054,9 @@ usage() {
   set +x
   echo
   echo
-  echo "usage: $0 -y[dghl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
+  echo "usage: $0 -y[dhl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
   echo "  -y : actually run the script"
   echo "  -d : run the script in demo mode"
-  echo "  -g : this is a MariaDB Galera Cluster release"
   echo "  -h : display this usage message"
   echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ${dir_log}/prep.log"
   echo "  -t <tree> : the MariaDB source code tree"
@@ -1146,43 +1130,6 @@ rsync_wrapper() {
         echo "Please answer [y]es or [n]o."
         echo
         upload=""
-        ;;
-    esac
-  done
-}
-
-rsync_wrapper_staging() {
-  local upload_staging
-  upload_staging=""
-  rsync_body_staging="${@}"
-  lowkey_message "Doing a dry run..."
-  lowkey_message "ssh -t -t ${staging_mirror} \"set -x;rsync --dry-run ${rsync_body_staging}\""
-  set -x
-  ssh -t -t ${staging_mirror} "set -x;rsync --dry-run ${rsync_body_staging} | less"
-  set +x
-  echo
-  while [ -z ${upload_staging} ]; do
-    userResponse "Did the dry run look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        lowkey_message "Transferring for real..."
-        set -x
-        ssh -t -t ${staging_mirror} "set -x;rsync ${rsync_body_staging}"
-        set +x
-        echo
-        upload_staging="yes"
-        ANSWER=""
-        return 0
-        ;;
-      "n")
-        lowkey_message "Something went wrong..."
-        ANSWER=""
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload_staging=""
         ;;
     esac
   done
@@ -1473,49 +1420,9 @@ verify_the_ci_download() {
   done
 }
 
-use_the_staging_mirror() {
-  skip_staging="no"
-}
-
-start_the_ssh-agent() {
-  # start the ssh-agent and add the upload key
-  lowkey_message "Starting the ssh-agent.."
-  eval $(ssh-agent)
-  ssh-add ${ssh_upload_key}
-}
-
 
 #===  FUNCTION  ================================================================
-#          NAME:  upload_the_bundles_to_the_staging_mirror
-#   DESCRIPTION:  Transfer bundles to the staging mirror
-#===============================================================================
-upload_the_bundles_to_the_staging_mirror() {
-  rsync_wrapper "-av --delete-before ${dir_bundles}/mariadb*${num}* ${staging_mirror}:${dir_bundles}/"
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_bundles_from_the_staging_mirror_to_the_corp_mirror
-#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
-#                 mirror
-#===============================================================================
-upload_bundles_from_the_staging_mirror_to_the_corp_mirror() {
-  rsync_wrapper_staging "-av --delete-before ${dir_bundles}/mariadb*${num}* ${corp_mirror}:${corp_bundles_path}/"
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_staging_mirror
-#   DESCRIPTION:  Transfer the release to the staging mirror
-#===============================================================================
-upload_to_the_staging_mirror() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
-  else
-    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${staging_mirror}:${dir_release}/"
-  fi
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  copy_the_previous_release_to_the_current_release_on_the_mirrors
+#          NAME:  copy_the_previous_release_to_the_current_release
 #   DESCRIPTION:  There are a lot of duplicated files from previous releases in
 #                 every new release. These include previous package versions
 #                 that are included in the repositories, the galera folder, and
@@ -1537,127 +1444,6 @@ copy_the_previous_release_to_the_current_release() {
   ssh -t -t ${dest[0]} "set -x; cp -ail ${dest[1]}/mariadb-${prev_release} ${dest[1]}/${dir_name}"
 }
 
-copy_the_previous_release_to_the_current_release_on_the_mirrors() {
-  local cont
-  if [ ! ${prev_release} ] ; then
-    set_prev_release
-  fi
-
-  echo;echo
-  for dest in Primary Corp ; do
-    cont=""
-    while [ -z ${cont} ]; do
-      userResponse "Should I copy the previous release on the ${dest} mirror? [y/n]"
-      case ${ANSWER} in
-        y)
-          case ${dest} in
-            Primary)
-              message "Copying previous release to current on the Primary Mirror"
-  ssh -t -t ${primary_mirror} "set -x ; cp -ail data/mariadb-${prev_release} data/${dir_name}"
-              ;;
-            Corp)
-              message "Copying previous release to current on the Corp Mirror (staging)"
-  ssh -t -t ${corp_mirror} "set -x; cp -ail ${corp_mirror_path}/mariadb-${prev_release} ${corp_mirror_path_staging}/${dir_name}"
-              ;;
-          esac
-          cont="yes"
-          ;;
-        n)
-          message "Skipping ${dest}..."
-          cont="yes"
-          ;;
-        *)
-          echo "Please answer [y]es or [n]o."
-          echo
-          cont=""
-          ;;
-      esac
-    done
-  done
-
-  echo;echo
-
-  message "Done copying previous release to the current release on the mirrors"
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
-#   DESCRIPTION:  corp and org release dirs are similar, so copying from one to
-#                 the other before doing the corp upload saves bandwidth
-#===============================================================================
-copy_release_dir_to_corp_dir_so_corp_upload_is_smaller() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${dir_corp}/"
-  else
-    rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${dir_corp}/"
-  fi
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_corp_dir_to_the_staging_mirror
-#   DESCRIPTION:  Transfer the corp release to the staging mirror
-#===============================================================================
-upload_corp_dir_to_the_staging_mirror() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
-  else
-    rsync_wrapper "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${staging_mirror}:${dir_corp}/"
-  fi
-}
-
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_primary_mirror
-#   DESCRIPTION:  Transfer the release from the staging mirror to the primary
-#                 mirror
-#===============================================================================
-upload_to_the_primary_mirror() {
-  if [ "${skip_staging}" = "yes" ]; then
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
-    else
-      rsync_wrapper "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
-    fi
-  else
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog} ${dir_release}/${dir_name} ${primary_mirror}:data/"
-    else
-      rsync_wrapper_staging "-avP --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name} ${primary_mirror}:data/"
-    fi
-  fi
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_yum_mirrors
-#   DESCRIPTION:  Transfer files from the primary mirror to the yum repository
-#                 mirrors
-#===============================================================================
-upload_to_the_yum_mirrors() {
-  # After the staging mirror has the files, rsync to the bb boxes:
-  set -x
-  ssh -t -t ${yum_primary_mirror} "if [ ! -d '${yum_mirror_path}/${num}' ];then mkdir -v ${yum_mirror_path}/${num};fi" 
-  set +x
-
-  if [ "${skip_staging}" = "yes" ]; then
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
-    else
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
-    fi
-  else
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${version_nog}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
-    else
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_release}/${dir_name}/yum/ ${yum_primary_mirror}:${yum_mirror_path}/${num}/"
-    fi
-  fi
-
-  set -x
-  for yum_mirror in ${yum_mirrors} ;do 
-    ssh -t -t ${yum_primary_mirror} "set -x;rsync -a --info=progress2 --delete-before ${yum_mirror_path}/${num} ${yum_mirror}:${yum_mirror_path}/"; 
-  done
-  set +x
-}
 
 #===  FUNCTION  ================================================================
 #          NAME:  trigger_the_primary_mirror
@@ -1670,57 +1456,6 @@ trigger_the_primary_mirror() {
   ssh -t -t ${primary_mirror} "./trigger-mariadb";
   set +x
   set -e
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  activate_the_yum_repos
-#   DESCRIPTION:  Run the commands necessary to make the repository files public
-#===============================================================================
-activate_the_yum_repos() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    # Do nothing if this is a galera release
-    echo "This is a galera release, skipping this step..."
-  else
-    echo;echo;
-    set -x
-    for yum_mirror in ${yum_primary_mirror} ${yum_mirrors} ;do 
-      ssh -t -t ${yum_mirror} "cd ${yum_mirror_path}/;rm -v ${major};ln -sv ${num} ${major};echo;echo"; 
-    done
-    set +x
-  fi
-  ssh -t -t ${primary_mirror} "set -x ; cd data/yum ; ls -l ; rm -v ${major} ; ln -sv ../${version_nog}/yum ${major} ; ls -l";
-  set -x
-  ssh -t -t ${primary_mirror} "./trigger-mariadb";
-  set +x
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  activate_the_deb_repos
-#   DESCRIPTION:  Run the commands necessary to make the repository files public
-#===============================================================================
-activate_the_deb_repos() {
-  set -x
-  set +x
-  ssh -t -t ${primary_mirror} "set -x ; cd data/repo ; ls -l ; rm -v ${major} ; ln -sv ../${version_nog}/repo ${major} ; ls -l";
-  set -x
-  ssh -t -t ${primary_mirror} "./trigger-mariadb";
-  set +x
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  activate_the_corp_repos
-#   DESCRIPTION:  Run the commands necessary to make the repository files public
-#===============================================================================
-activate_the_corp_repos() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    # Do nothing if this is a galera release
-    echo "This is a galera release, skipping this step..."
-  else
-    echo;echo;
-    set -x
-    ssh -t -t ${corp_mirror} "set -x;cd ${corp_mirror_path}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
-    set +x
-  fi
 }
 
 update_the_archive_symlinks() {
@@ -1752,13 +1487,13 @@ update_the_archive_symlinks() {
 create_package_tarballs() {
   set -x
   pushd ${CPT}
-  ./create_package_tarballs ${dir_corp}/${version_nog}/
+  ./create_package_tarballs ${dir_corp}/${version}/
   popd
   set +x
-  pushd ${dir_corp}/${version_nog}
+  pushd ${dir_corp}/${version}
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
-      message "${dir_corp}/${version_nog}/{tarfile}";runCommand tar -tf ${tarfile}
+      message "${dir_corp}/${version}/{tarfile}";runCommand tar -tf ${tarfile}
       if [[ $(echo "${major} >= 12.3" | bc -l) -eq 1 ]]
       then
         message "No galera in 12.3+"
@@ -1773,119 +1508,7 @@ create_package_tarballs() {
   popd
 }
 
-create_bundles() {
-  message "Creating the ${num} bundles"
-  ${BNDLS} ${num}
-  message "Done creating the ${num} bundles!"
-}
 
-bundles() {
-  local bundle
-  bundle=""
-   while [ -z ${bundle} ]; do
-     userResponse "Does this release have bundles? [y/n]"
-     case ${ANSWER} in
-      "y")
-        ${@}
-        bundle="yes"
-        ANSWER=""
-
-        shouldI create_bundles
-
-        echo;echo;echo;echo
-
-        shouldI upload_the_bundles_to_the_staging_mirror
-
-        echo;echo;echo;echo
-
-        shouldI upload_bundles_from_the_staging_mirror_to_the_corp_mirror
-
-        return 0
-        ;;
-      "n")
-        echo "Skipping . . . "
-        bundle="yes"
-        ANSWER=""
-        return 0
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        bundle=""
-        ;;
-    esac
-  done
-}
-
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_corp_mirror_staging_dir
-#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
-#                 mirror staging directory
-#===============================================================================
-upload_to_the_corp_mirror_staging_dir() {
-  if [ "${skip_staging}" = "yes" ]; then
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
-    else
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
-    fi
-  else
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
-    else
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path_staging}/"
-    fi
-  fi
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  activate_the_corp_staging_repos
-#   DESCRIPTION:  Run the commands necessary to make the repository files public
-#===============================================================================
-activate_the_corp_staging_repos() {
-  if [ "${galera_suffix}" = "-galera" ]; then
-    # Do nothing if this is a galera release
-    echo "This is a galera release, skipping this step..."
-  else
-    echo;echo;
-    set -x
-    ssh -t -t ${corp_mirror} "set -x;cd ${corp_mirror_path_staging}/;rm -v mariadb-${major};ln -sv ${dir_name} mariadb-${major};echo;echo";
-    set +x
-  fi
-}
-
-#===  FUNCTION  ================================================================
-#          NAME:  copy_corp_staging_to_prod
-#   DESCRIPTION:  No need to reupload everything if the corp staging dir already
-#                 has a lot of what we need
-#===============================================================================
-
-copy_the_corp_mirror_staging_dir_to_prod() {
-  ssh ${corp_mirror} "if [[ -d ${corp_mirror_path_staging}/${dir_name} ]]; then if [[ ! -d ${corp_mirror_path}/${dir_name} ]]; then set -x;cp -ail ${corp_mirror_path_staging}/${dir_name} ${corp_mirror_path}/;else echo '+ Found existing ${dir_name} under ${corp_mirror_path}/, not copying...';fi;else echo '+ ${dir_name} not found under ${corp_mirror_path_staging}/, not copying...';fi"
-}
-
-
-#===  FUNCTION  ================================================================
-#          NAME:  upload_to_the_corp_mirror
-#   DESCRIPTION:  Sync the release from the primary public mirror to the corp
-#                 mirror
-#===============================================================================
-upload_to_the_corp_mirror() {
-  if [ "${skip_staging}" = "yes" ]; then
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
-    else
-      rsync_wrapper "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
-    fi
-  else
-    if [ "${galera_suffix}" = "-galera" ]; then
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${version_nog} ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
-    else
-      rsync_wrapper_staging "-av --delete-before --exclude=exclude --exclude=*orig ${dir_corp}/${dir_name} ${corp_mirror}:${corp_mirror_path}/"
-    fi
-  fi
-}
 
 #===  FUNCTION  ================================================================
 #          NAME:  maybe_create_release_dir
@@ -2082,16 +1705,6 @@ set_prev_release() {
   prev_release="${INPUT}"
 }
 
-#===  FUNCTION  ================================================================
-#          NAME:  generate_the_file_list_pickle_for_org_downloads
-#   DESCRIPTION:  This function logs in to the primary mirror and runs the
-#                 command to generate the pickle that is then imported into the
-#                 mariadb.org downloads system.
-#===============================================================================
-generate_the_file_list_pickle_for_org_downloads() {
-  ssh -t -t ${primary_mirror} "python generate_file_list.py data/ --release=${dir_name}";
-}
-
 copy_win_packages_to_sign-todo_dir() {
   arch=winx64
   #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
@@ -2214,17 +1827,12 @@ copy_the_yum_repos_to_corp() {
 #-------------------------------------------------------------------------------
 
 # The first thing we need to do is parse the options
-while getopts 'b:c:dghlr:t:v:y' OPTION
+while getopts 'b:c:dhlr:t:v:y' OPTION
 do
   case $OPTION in
     d)  # Not implemented yet
       demo="yes"
       log_demo="d"
-      ;;
-    g)  # This is a MariaDB Galera Cluster release
-      galera_suffix="-galera"
-      is_cluster="yes"
-      log_is_cluster="g"
       ;;
     h)  # Display a helpful usage message
       displayusage="yes"
@@ -2314,9 +1922,8 @@ case ${major} in
     ;;
 esac
 
-# Put ${galera_suffix} and ${num} together to form the base version string
-version="mariadb${galera_suffix}-${num}"
-version_nog="mariadb-${num}"
+# Build the base version string
+version="mariadb-${num}"
 
 case ${HOSTNAME} in
   ${buildmaster} ) ;;
@@ -2338,9 +1945,7 @@ shouldI verify_all_needed_dirs_are_present
 important_message "Creating the ${version} Release"
 
 shouldI prepare_bintar_and_source_packages
-if [ "${galera_suffix}" != "-galera" ]; then
-  shouldI prepare_Windows_packages
-fi
+shouldI prepare_Windows_packages
 
 case $tree in
   *5.5* )
@@ -2438,7 +2043,7 @@ if [ "${create_bintar}" != "no" ]; then
           ;;
       esac
       if [ "${dir_array[1]}" = "source" ]; then
-        if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
+        if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb-${num}.tar.gz"; then
           pushd /run/shm/${dir_name}/${dir_array[1]}
           echo "+ updating source tarball md5sum..."
           if [ -e md5sums.txt ]; then
@@ -2470,7 +2075,7 @@ if [ "${create_bintar}" != "no" ]; then
             runCommand rm -v "${sig_file}"
           done
           # sign the MariaDB source tarball
-          runCommand gpg ${gpg_opts} mariadb*${galera_suffix}-${num}.tar.gz
+          runCommand gpg ${gpg_opts} mariadb*-${num}.tar.gz
           # sign the sum files as well
           runCommand gpg ${gpg_opts} md5sums.txt
           runCommand gpg ${gpg_opts} sha1sums.txt
@@ -2595,7 +2200,7 @@ if [ "${create_bintar}" != "no" ]; then
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
         elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
-          if [ "${galera_suffix}" = "-galera" ] || [[ "${tree}" = *10.[1-9]* ]]; then
+          if [[ "${tree}" = *10.[1-9]* ]]; then
             # If this is a galera release we need to copy in the galera libraries
             # and repack the bintar, but first we need to set ${galera_arch} to the
             # correct value
@@ -2749,322 +2354,305 @@ fi
 #-------------------------------------------------------------------------------
 #  Windows packages
 #-------------------------------------------------------------------------------
-# We don't need Windows packages for Galera, so don't even try
-if [ "${galera_suffix}" != "-galera" ]; then
-  if [ "${create_win}" != "no" ]; then
-    maybe_create_release_dir
-    pushd ${dir_release}/${dir_name}
-    line
-    echo "+ transfering Windows packages..."
-    line
-    for arch in winx64; do
-      if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
-        mkdir ${dir_release}/${dir_name}/${arch}-packages
-      fi
-      pushd ${dir_release}/${dir_name}/${arch}-packages
+if [ "${create_win}" != "no" ]; then
+  maybe_create_release_dir
+  pushd ${dir_release}/${dir_name}
+  line
+  echo "+ transfering Windows packages..."
+  line
+  for arch in winx64; do
+    if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
+      mkdir ${dir_release}/${dir_name}/${arch}-packages
+    fi
+    pushd ${dir_release}/${dir_name}/${arch}-packages
 
 
-      if ${ci_release}; then
+    if ${ci_release}; then
+      message "Packages are on the local filesystem"
+    else
+    shouldI pull_the_win_packages_from_the_win_builder
+    fi
+
+    shouldI copy_win_packages_to_sign-todo_dir
+    shouldI move_win_packages_from_sign-done_dir
+    verify_signed_win_packages
+
+    for pkgtype in msi zip; do
+      #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
+      if ${win_remote};then
+        message "Packages are on the Windows Builder"
+      runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
+      elif ${ci_release}; then
+        if [ "${pkgtype}" = "msi" ];then
+        case ${arch} in
+          winx64) windir=windows ;;
+        esac
+        runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
+        fi
+      else
         message "Packages are on the local filesystem"
-      else
-      shouldI pull_the_win_packages_from_the_win_builder
+        #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
+        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
       fi
 
-      shouldI copy_win_packages_to_sign-todo_dir
-      shouldI move_win_packages_from_sign-done_dir
-      verify_signed_win_packages
-
-      for pkgtype in msi zip; do
-        #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
-        if ${win_remote};then
-          message "Packages are on the Windows Builder"
-        runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
-        elif ${ci_release}; then
-          if [ "${pkgtype}" = "msi" ];then
-          case ${arch} in
-            winx64) windir=windows ;;
-          esac
-          runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
-          fi
-        else
-          message "Packages are on the local filesystem"
-          #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
-          runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
-        fi
-
-        if ! ${ci_release};then
-        # Download debugsymbols package for 10.2+ releases
-        if [ "${pkgtype}" = "zip" ]; then
-          case ${tree} in
-            '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release'|'bb-10.0-release')
-              echo "+ tree=${tree}, so not downloading debugsymbols package..."
-              ;;
-            *)
-              echo "+ tree=${tree}, so downloading debugsymbols package..."
-              if ${win_remote};then
-                # Win packages are on the remote builder
-              runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
-              else
-                # Win packages are on the local filesystem
-                #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
-                runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
-              fi
-              ;;
-          esac
-        fi
-        fi
-
-      done
-      #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
       if ! ${ci_release};then
-      if ${win_remote} ; then
-        # Win packages are on the remote builder
-        if [ -e md5sums.txt ]; then # if md5sums.txt exists, delete it before downloading
-          runCommand rm -v md5sums.txt*
-        fi
-      runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
+      # Download debugsymbols package for 10.2+ releases
+      if [ "${pkgtype}" = "zip" ]; then
+        case ${tree} in
+          '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release'|'bb-10.0-release')
+            echo "+ tree=${tree}, so not downloading debugsymbols package..."
+            ;;
+          *)
+            echo "+ tree=${tree}, so downloading debugsymbols package..."
+            if ${win_remote};then
+              # Win packages are on the remote builder
+            runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
+            else
+              # Win packages are on the local filesystem
+              #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+              runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
+            fi
+            ;;
+        esac
       fi
       fi
-    done
-    message "Generating Windows Checksums and Signatures..."
-    for arch in winx64; do
-      pushd ${dir_release}/${dir_name}/${arch}-packages
-      pwd
-      if ${ci_release};then
-        md5sum ./mariadb* > md5sums.txt
-      else
-      md5sum mariadb* >> md5sums.txt
-      md5sum -c md5sums.txt
-      fi
-      sha1sum ./mariadb* > sha1sums.txt
-      sha1sum -c sha1sums.txt
-      sha256sum ./mariadb* > sha256sums.txt
-      sha256sum -c sha256sums.txt
-      sha512sum ./mariadb* > sha512sums.txt
-      sha512sum -c sha512sums.txt
-      echo
-      echo "+ signing ${arch} files"
-      # remove any signature files before signing, if they exist
-      for sig_file in $(ls ./*.asc); do
-        rm "${sig_file}"
-      done
-      # now that old signatures are gone, sign all files that remain
-      for dir_file in $(find . -type f); do
-        gpg ${gpg_opts} ${dir_file}
-      done
-      echo "+ finished signing ${arch} files"
-      echo
-      echo
 
     done
-    popd
-    echo "+ done transfering Windows packages"
-  else
-    line
-    echo "+ skipping transfering Windows packages, as requested..."
-    line
-  fi
+    #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
+    if ! ${ci_release};then
+    if ${win_remote} ; then
+      # Win packages are on the remote builder
+      if [ -e md5sums.txt ]; then # if md5sums.txt exists, delete it before downloading
+        runCommand rm -v md5sums.txt*
+      fi
+    runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
+    fi
+    fi
+  done
+  message "Generating Windows Checksums and Signatures..."
+  for arch in winx64; do
+    pushd ${dir_release}/${dir_name}/${arch}-packages
+    pwd
+    if ${ci_release};then
+      md5sum ./mariadb* > md5sums.txt
+    else
+    md5sum mariadb* >> md5sums.txt
+    md5sum -c md5sums.txt
+    fi
+    sha1sum ./mariadb* > sha1sums.txt
+    sha1sum -c sha1sums.txt
+    sha256sum ./mariadb* > sha256sums.txt
+    sha256sum -c sha256sums.txt
+    sha512sum ./mariadb* > sha512sums.txt
+    sha512sum -c sha512sums.txt
+    echo
+    echo "+ signing ${arch} files"
+    # remove any signature files before signing, if they exist
+    for sig_file in $(ls ./*.asc); do
+      rm "${sig_file}"
+    done
+    # now that old signatures are gone, sign all files that remain
+    for dir_file in $(find . -type f); do
+      gpg ${gpg_opts} ${dir_file}
+    done
+    echo "+ finished signing ${arch} files"
+    echo
+    echo
+
+  done
+  popd
+  echo "+ done transfering Windows packages"
+else
+  line
+  echo "+ skipping transfering Windows packages, as requested..."
+  line
 fi
 
 
 #-------------------------------------------------------------------------------
 #  Repositories
 #-------------------------------------------------------------------------------
-if [ "${galera_suffix}" = "-galera" ]; then
-  # We don't have separate .deb or .rpm package repos for Galera so if we're
-  # doing a Galera release, don't try to create them in the normal way,
-  # instead, run the galera-new script to add packages to existing repositories
+maybe_create_release_dir
+pushd ${dir_release}/${dir_name}
+echo
+echo
+echo
+# if the dir doesn't exist, create it
+if [ ! -d ${dir_release}/${dir_name}/repo ]; then
+  mkdir ${dir_release}/${dir_name}/repo
+fi
 
-  line
-  echo "+ adding Galera Cluster files to existing repos..."
-  line
-  echo + ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} no ${tree} ${rev} ${num} ${tarbuildnum}
-         ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} no ${tree} ${rev} ${num} ${tarbuildnum}
+if [ ! -d ${dir_corp}/${dir_name}/repo ]; then
+  mkdir ${dir_corp}/${dir_name}/repo
+fi
 
+pushd ${dir_release}/${dir_name}/repo
+
+# create directory for the non-mgc version, if ubuntu or debian packages are
+# going to be created and if it doesn't already exist
+if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
+  if [ ! -d ${dir_release}/repo-no-mgc/${num} ]; then
+    mkdir -vp ${dir_release}/repo-no-mgc/${num}
+  fi
+fi
+
+if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || [ "${rsync_debian_repo}" != "no" ] || [ "${rsync_ubuntu_repo}" != "no" ]; then
+  if [ ! ${prev_release} ] ; then
+    set_prev_release
+  fi
+fi
+
+#-------------------------------------------------------------------------------
+#  Create Debian Repos
+#-------------------------------------------------------------------------------
+if [ "${create_debian}" != "no" ]; then
+  message "Prepping Debian repo, as requested..."
+  ## if the debian repo dir exists, delete it
+  #if [ -d ${dir_release}/${dir_name}/repo/debian ]; then
+  #  rm -rf "${dir_release}/${dir_name}/repo/debian"
+  #fi
+
+  shouldI update_the_debian_distributions_file
+
+  # trying updating the previous repo instead of creating a new one every time
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
+  echo
+
+  if ${ci_release}; then
+    runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
+  else
+  echo "${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
+   ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
+  fi
+
+
+  echo
+elif [ "${rsync_debian_repo}" != "no" ]; then
+  # This is a version of MariaDB that no longer gets updates for Debian
+  # distros, but we want to maintain the last versions we released
+  line
+  echo "+ rsyncing old Debian repos..."
+  line
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
+  echo
 else
-  maybe_create_release_dir
-  pushd ${dir_release}/${dir_name}
-  # Since this is not a galera release, create repos normally
+  message "Skipping Debian repo creation, as requested..."
+fi
+
+
+#-------------------------------------------------------------------------------
+#  Create Ubuntu Repos
+#-------------------------------------------------------------------------------
+if [ "${create_ubuntu}" != "no" ]; then
+  message "Prepping Ubuntu repo, as requested..."
+  ## if the ubuntu repo dir exists, delete it
+  #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
+  #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
+  #fi
+  shouldI update_the_ubuntu_distributions_file
+
+  # trying updating the previous repo instead of creating a new one every time
+  # This partially relates to:
+  #   MDEV-10718 Preserve last released version of Ubuntu & Debian releases
+  #   in our repositories
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
   echo
-  echo
-  echo
-  # if the dir doesn't exist, create it
-  if [ ! -d ${dir_release}/${dir_name}/repo ]; then
-    mkdir ${dir_release}/${dir_name}/repo
+
+  # This is where the repository is actually updated
+  if ${ci_release}; then
+    runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
+  else
+    runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
   fi
 
-  if [ ! -d ${dir_corp}/${dir_name}/repo ]; then
-    mkdir ${dir_corp}/${dir_name}/repo
+
+  echo
+elif [ "${rsync_ubuntu_repo}" != "no" ]; then
+  # This is a version of MariaDB that no longer gets updates for Ubuntu
+  # distros, but we want to maintain the last versions we released
+  line
+  echo "+ rsyncing old Ubuntu repos..."
+  line
+  echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
+          rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
+  echo
+else
+  message "Skipping Ubuntu repo creation, as requested..."
+fi
+pushd ${dir_release}/${dir_name}
+echo
+
+#-------------------------------------------------------------------------------
+#  Create Yum Repos
+#-------------------------------------------------------------------------------
+if [ "${create_yum}" != "no" ]; then
+  line
+  echo "creating Yum repos..."
+  line
+  if [ -d ${dir_release}/${dir_name}/yum ]; then
+    rm -rf "${dir_release}/${dir_name}/yum"
   fi
 
-  pushd ${dir_release}/${dir_name}/repo
+  # We can't create the yum dir on an nfs server, so we create it in our home
+  # dir first
+  mkdir -vp ${dir_yum_prep}/${dir_name}
 
-  # create directory for the non-mgc version, if ubuntu or debian packages are
-  # going to be created and if it doesn't already exist
-  if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
-    if [ ! -d ${dir_release}/repo-no-mgc/${num} ]; then
-      mkdir -vp ${dir_release}/repo-no-mgc/${num}
+  echo "Before rsyncing the yum release..."
+
+  shouldI display_the_previous_releases
+
+  shouldI exclude_an_old_release_from_the_yum_dir
+
+  # Rsync a copy of the previous release to ${HOME}
+  if [ "${exclude_release}" = "" ]; then
+    rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+  else
+    rsync_wrapper "-av --delete-before --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
+    if [ -d ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ] ; then
+      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ${dir_yum_prep}/${dir_name}/yum/rhel/"
     fi
-  fi
-
-  if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || [ "${rsync_debian_repo}" != "no" ] || [ "${rsync_ubuntu_repo}" != "no" ]; then
-    if [ ! ${prev_release} ] ; then
-      set_prev_release
+    if [ -d ${dir_release}/mariadb-${prev_release}/yum/sles/12 ] ; then
+      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/sles/12 ${dir_yum_prep}/${dir_name}/yum/sles/"
     fi
+    rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/fedora ${dir_yum_prep}/${dir_name}/yum/"
   fi
+  #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
+  #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
+  echo
 
-  #-------------------------------------------------------------------------------
-  #  Create Debian Repos
-  #-------------------------------------------------------------------------------
-  if [ "${create_debian}" != "no" ]; then
-    message "Prepping Debian repo, as requested..."
-    ## if the debian repo dir exists, delete it
-    #if [ -d ${dir_release}/${dir_name}/repo/debian ]; then
-    #  rm -rf "${dir_release}/${dir_name}/repo/debian"
-    #fi
-
-    shouldI update_the_debian_distributions_file
-
-    # trying updating the previous repo instead of creating a new one every time
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
-    echo
-
+  pushd ${dir_yum_prep}/${dir_name}/yum
+    # Run the yum script to create/update yum/dnf/zypp repos
     if ${ci_release}; then
-      runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
+      runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
     else
-    echo "${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
-     ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
+    runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     fi
+  popd
+
+  # move the yum dir to where it needs to go
+  echo "+ mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/"
+          mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/
+          rmdir -v ${dir_yum_prep}/${dir_name}
+  pushd ${dir_release}/${dir_name}/
 
 
-    echo
-  elif [ "${rsync_debian_repo}" != "no" ]; then
-    # This is a version of MariaDB that no longer gets updates for Debian
-    # distros, but we want to maintain the last versions we released
-    line
-    echo "+ rsyncing old Debian repos..."
-    line
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
-    echo
-  else
-    message "Skipping Debian repo creation, as requested..."
-  fi
-
-
-  #-------------------------------------------------------------------------------
-  #  Create Ubuntu Repos
-  #-------------------------------------------------------------------------------
-  if [ "${create_ubuntu}" != "no" ]; then
-    message "Prepping Ubuntu repo, as requested..."
-    ## if the ubuntu repo dir exists, delete it
-    #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
-    #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
-    #fi
-    shouldI update_the_ubuntu_distributions_file
-
-    # trying updating the previous repo instead of creating a new one every time
-    # This partially relates to:
-    #   MDEV-10718 Preserve last released version of Ubuntu & Debian releases
-    #   in our repositories
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
-    echo
-
-    # This is where the repository is actually updated
-    if ${ci_release}; then
-      runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
-    else
-      runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-    fi
-
-
-    echo
-  elif [ "${rsync_ubuntu_repo}" != "no" ]; then
-    # This is a version of MariaDB that no longer gets updates for Ubuntu
-    # distros, but we want to maintain the last versions we released
-    line
-    echo "+ rsyncing old Ubuntu repos..."
-    line
-    echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
-            rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
-    echo
-  else
-    message "Skipping Ubuntu repo creation, as requested..."
-  fi
-  pushd ${dir_release}/${dir_name}
+  # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
+  # an old version beforehand, if one exists)
+  #if [ ! -d ${dir_release}/yum-no-mgc ]; then
+  #  mkdir -vp ${dir_release}/yum-no-mgc
+  #fi
+  #if [ -d ${dir_release}/yum-no-mgc/${num} ]; then
+  #  echo "+ rm -rf ${dir_release}/yum-no-mgc/${num}"
+  #  rm -rf ${dir_release}/yum-no-mgc/${num}
+  #fi
   echo
-
-  #-------------------------------------------------------------------------------
-  #  Create Yum Repos
-  #-------------------------------------------------------------------------------
-  if [ "${create_yum}" != "no" ]; then
-    line
-    echo "creating Yum repos..."
-    line
-    if [ -d ${dir_release}/${dir_name}/yum ]; then
-      rm -rf "${dir_release}/${dir_name}/yum"
-    fi
-
-    # We can't create the yum dir on an nfs server, so we create it in our home
-    # dir first
-    mkdir -vp ${dir_yum_prep}/${dir_name}
-
-    echo "Before rsyncing the yum release..."
-
-    shouldI display_the_previous_releases
-
-    shouldI exclude_an_old_release_from_the_yum_dir
-
-    # Rsync a copy of the previous release to ${HOME}
-    if [ "${exclude_release}" = "" ]; then
-      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
-    else
-      rsync_wrapper "-av --delete-before --exclude=*${exclude_release}* ${dir_release}/mariadb-${prev_release}/yum ${dir_yum_prep}/${dir_name}/"
-      if [ -d ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ] ; then
-        rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/rhel/7 ${dir_yum_prep}/${dir_name}/yum/rhel/"
-      fi
-      if [ -d ${dir_release}/mariadb-${prev_release}/yum/sles/12 ] ; then
-        rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/sles/12 ${dir_yum_prep}/${dir_name}/yum/sles/"
-      fi
-      rsync_wrapper "-av --delete-before ${dir_release}/mariadb-${prev_release}/yum/fedora ${dir_yum_prep}/${dir_name}/yum/"
-    fi
-    #echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/"
-    #        rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/yum ${HOME}/
-    echo
-
-    pushd ${dir_yum_prep}/${dir_name}/yum
-      # Run the yum script to create/update yum/dnf/zypp repos
-      if ${ci_release}; then
-        runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
-      else
-      runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-      fi
-    popd
-
-    # move the yum dir to where it needs to go
-    echo "+ mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/"
-            mv -i ${dir_yum_prep}/${dir_name}/yum ${dir_release}/${dir_name}/
-            rmdir -v ${dir_yum_prep}/${dir_name}
-    pushd ${dir_release}/${dir_name}/
-
-
-    # after creating the yum repo, copy it to ${dir_release}/yum-no-mgc (deleting
-    # an old version beforehand, if one exists)
-    #if [ ! -d ${dir_release}/yum-no-mgc ]; then
-    #  mkdir -vp ${dir_release}/yum-no-mgc
-    #fi
-    #if [ -d ${dir_release}/yum-no-mgc/${num} ]; then
-    #  echo "+ rm -rf ${dir_release}/yum-no-mgc/${num}"
-    #  rm -rf ${dir_release}/yum-no-mgc/${num}
-    #fi
-    echo
-  else
-    line
-    echo "+ Skipping Yum repo creation, as requested..."
-    line
-  fi
+else
+  line
+  echo "+ Skipping Yum repo creation, as requested..."
+  line
 fi
 
 echo
@@ -3093,48 +2681,9 @@ shouldI create_package_tarballs
 
 echo;echo;echo;echo
 
-#bundles
-#
-#echo;echo;echo;echo
-
-#shouldI use_the_staging_mirror
-#
-#if [ "${skip_staging}" = "no" ]; then
-#  shouldI upload_to_the_staging_mirror
-#  echo;echo;echo;echo
-#  shouldI copy_release_dir_to_corp_dir_so_corp_upload_is_smaller
-#  echo;echo;echo;echo
-#  shouldI upload_corp_dir_to_the_staging_mirror
-#  echo;echo;echo;echo
-#fi
-#
-#echo;echo;echo;echo
-
 important_message "Corp Mirrors"
 for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_corp_mirrors
-
-#shouldI copy_the_previous_release_to_the_current_release_on_the_mirrors
-
-#echo;echo;echo;echo
-#
-#shouldI upload_to_the_corp_mirror_staging_dir
-
-#echo;echo;echo;echo
-#
-#shouldI activate_the_corp_staging_repos
-
-#echo;echo;echo;echo
-#
-#shouldI copy_the_corp_mirror_staging_dir_to_prod
-
-#echo;echo;echo;echo
-#
-#shouldI upload_to_the_corp_mirror
-
-#echo;echo;echo;echo
-#
-#shouldI upload_to_the_primary_mirror
 
 important_message "Foundation Mirrors"
 for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
@@ -3167,23 +2716,9 @@ shouldI sync_the_local_mirror_dir_to_the_mirrors
 
 echo;echo;echo;echo
 
-#shouldI upload_to_the_yum_mirrors
-#
-#echo;echo;echo;echo
-#
-#shouldI activate_the_yum_repos
-#
-#echo;echo;echo;echo
-#
-#shouldI activate_the_deb_repos
-
 shouldI trigger_the_primary_mirror
 
 echo;echo;echo;echo
-
-#shouldI activate_the_corp_repos
-#
-#echo;echo;echo;echo
 
 shouldI update_the_archive_symlinks
 
@@ -3200,13 +2735,8 @@ case $tree in
     ;;
 esac
 
-#echo;echo;echo;echo
-#
-#shouldI generate_the_file_list_pickle_for_org_downloads
-
 echo;echo;echo;echo
 
-#if [ "${skip_staging}" = "no" ]; then
 case ${HOSTNAME} in
   ${buildmaster} ) ;;
   *)
@@ -3214,7 +2744,6 @@ case ${HOSTNAME} in
   echo;echo;echo;echo
   ;;
 esac
-#fi
 
 echo "+ all done!"
 echo;echo;echo;echo

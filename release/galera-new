@@ -6,6 +6,24 @@
 #
 # The purpose of this script is to add files from buildbot from a new MariaDB
 # Galera Cluster release to the current MariaDB release.
+#
+#==============================================================================
+# WARNING: THIS SCRIPT IS OUT OF DATE AND MUST BE UPDATED BEFORE IT IS USED.
+#
+# It was previously invoked by 'prep -g'. That option has been removed: no
+# MariaDB Galera Cluster release has been prepped since at least Sep 2022 (the
+# start of the prep.log history), and Galera has been built into the server
+# since 10.1 rather than released as a separately-versioned product.
+#
+# Nothing calls this script any more, so it has not been exercised or kept in
+# step with the rest of the release tooling. Expect stale distro lists, stale
+# build-directory names, and stale assumptions about the layout of the release
+# and archive trees. Review it against the current 'prep' and 'mkrepo-*'
+# scripts before running it.
+#
+# NOTE: this is NOT the script for Galera *library* releases -- those are
+# still current and are handled by 'prep-galera'.
+#==============================================================================
 
 #------------------------------------------------------------------------------
 # Options (set these before running the script)
