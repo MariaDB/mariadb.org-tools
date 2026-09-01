@@ -61,8 +61,7 @@ fi
 #build_dirs="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-hardy-amd64:bintar-linux-hardy-x86_64 kvm-bintar-hardy-x86:bintar-linux-hardy-x86 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
 
 # Sunanda Menon : 02/27/2015
-# Splitting build dirs (refer ME-91). 
-# Enterprise builds need to grab only Linux 64bit, no 32bit builds
+# Splitting build dirs (refer ME-91).
 
 set_build_dirs_variables() {
   case ${major} in
@@ -363,13 +362,6 @@ full_dirs_130="${bb_dirs_130} ${ci_dirs_130}"
 
 }
 
-## Enterprise builds should not build solaris10 for now
-ent_build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
-                       kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
-                       kvm-tarbake-jaunty-x86:source
-                       bsd9-64:bintar-bsd9-64
-                       opensolaris-511-bintar:bintar-opensolaris-511"
-
 p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
                p8-rhel7-bintar:bintar-linux-rhel7-ppc64
                p8-rhel71-bintar:bintar-linux-rhel71-ppc64le
@@ -383,8 +375,6 @@ log_displayusage=""
         log_demo=""
       run_script="no"
   log_run_script=""
-          is_ent="no"
-      log_is_ent=""
    create_bintar="no"
 create_p8_bintar="no"
       create_win="no"
@@ -673,14 +663,13 @@ cat >> ${dir_log}/prep.log <<END
 
 # Prepped $(date)
 # Command:
-#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log}${log_is_ent}${log_is_cluster} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum} 
+#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log}${log_is_cluster} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum}
 # tree="${tree}"
 # rev="${rev}"
 # num="${num}"
 # tarbuildnum="${tarbuildnum}"
 # version="${version}"
 # dir_release/dir_name="${dir_release}/${dir_name}"
-# is_ent="${is_ent}"
 # is_cluster="${is_cluster}"
 # create_bintar="${create_bintar}"
 # create_win="${create_win}"
@@ -1080,11 +1069,10 @@ usage() {
   set +x
   echo
   echo
-  echo "usage: $0 -y[deghl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
+  echo "usage: $0 -y[dghl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
   echo "  -y : actually run the script"
   echo "  -d : run the script in demo mode"
-  echo "  -e : this is a MariaDB Enterprise release"
-  echo "  -g : this is a MariaDB Galera Cluster or Enterprise Cluster release"
+  echo "  -g : this is a MariaDB Galera Cluster release"
   echo "  -h : display this usage message"
   echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ${dir_log}/prep.log"
   echo "  -t <tree> : the MariaDB source code tree"
@@ -2226,19 +2214,14 @@ copy_the_yum_repos_to_corp() {
 #-------------------------------------------------------------------------------
 
 # The first thing we need to do is parse the options
-while getopts 'b:c:deghlr:t:v:y' OPTION
+while getopts 'b:c:dghlr:t:v:y' OPTION
 do
   case $OPTION in
     d)  # Not implemented yet
       demo="yes"
       log_demo="d"
       ;;
-    e)  # This is a MariaDB Enterprise or MariaDB Enterprise Cluster release
-      is_ent="yes"
-      log_is_ent="e"
-      ;;
-    g)  # This is a MariaDB Galera Cluster or Enterprise Cluster release
-        # -e & -g both need to be set for a MariaDB Enterprise Cluster release
+    g)  # This is a MariaDB Galera Cluster release
       galera_suffix="-galera"
       is_cluster="yes"
       log_is_cluster="g"
@@ -2332,16 +2315,8 @@ case ${major} in
 esac
 
 # Put ${galera_suffix} and ${num} together to form the base version string
-if [ "${is_ent}" = "yes" ];then
-  if [ "${galera_suffix}" = "-galera" ]; then
-    version="mariadb-enterprise-cluster-${num}"
-  else
-    version="mariadb-enterprise-${num}"
-  fi
-else
-  version="mariadb${galera_suffix}-${num}"
-  version_nog="mariadb-${num}"
-fi
+version="mariadb${galera_suffix}-${num}"
+version_nog="mariadb-${num}"
 
 case ${HOSTNAME} in
   ${buildmaster} ) ;;
@@ -2395,35 +2370,18 @@ fi
 include_Galera_packages_in_repositories
 
 
-# Set various options that change depending on whether this is an enterprise
-# release or not
-if [ "${is_ent}" = "yes" ];then
-  suffix="signed-ent"
-
-  # new enterprise key (2014-12-18)
-  gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
-
-  dir_release="${dir_release_ent}"  # Default location for MariaDB Enterprise
-  build_dirs="${ent_build_dirs_x86_64}" # Default dirs for MariaDB Enterprise
-
-  if [ "${galera_suffix}" = "-galera" ]; then
-    dir_name="${num}-cluster" # release directory name for Enterprise Cluster
-  else
-    dir_name="${num}"         # release directory name for MariaDB Enterprise
-  fi
+# Set various options for the release
+# NOTE: ${gpg_opts} comes from prep.conf and is deliberately not overridden here.
+suffix="signed"
+if ${ci_release}; then
+  build_dirs="source:source ${ci_build_dirs_x86} ${ci_build_dirs_x86_64} ${ci_build_dirs_aarch64} ${ci_build_dirs_ppc64le}"
 else
-  suffix="signed"
-  if ${ci_release}; then
-    build_dirs="source:source ${ci_build_dirs_x86} ${ci_build_dirs_x86_64} ${ci_build_dirs_aarch64} ${ci_build_dirs_ppc64le}"
-  else
   build_dirs="${build_dirs_x86} ${build_dirs_x86_64}" # Default dirs for MariaDB
-  fi
-  if [ "${tree}" = "10.0-FusionIO" ]; then
-    dir_name="${version}-FusionIO" # FusionIO releases get a custom directory
-  else
-    dir_name="${version}" # normal releases use ${version} as ${dir_name}
-  fi
-  gpg_opts="--quiet -u 0xF1656F24C74CD1D8 --detach-sign --armor"
+fi
+if [ "${tree}" = "10.0-FusionIO" ]; then
+  dir_name="${version}-FusionIO" # FusionIO releases get a custom directory
+else
+  dir_name="${version}" # normal releases use ${version} as ${dir_name}
 fi
 
 if [ ${log} = "yes" ]; then
@@ -2482,10 +2440,6 @@ if [ "${create_bintar}" != "no" ]; then
       if [ "${dir_array[1]}" = "source" ]; then
         if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb${galera_suffix}-${num}.tar.gz"; then
           pushd /run/shm/${dir_name}/${dir_array[1]}
-          # rename the source tarball for enterprise
-          if [ "${is_ent}" = "yes" ];then
-            runCommand mv -vi mariadb${galera_suffix}-${num}.tar.gz mariadb-enterprise${galera_suffix}-${num}.tar.gz
-          fi
           echo "+ updating source tarball md5sum..."
           if [ -e md5sums.txt ]; then
             runCommand rm -v md5sums.txt
@@ -2646,14 +2600,8 @@ if [ "${create_bintar}" != "no" ]; then
             # and repack the bintar, but first we need to set ${galera_arch} to the
             # correct value
             if [ "${dir_array[1]}" = "bintar-linux-x86_64" ]; then
-              if [ "${is_ent}" = "yes" ];then
-                runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-x86_64.tar.gz
-              fi
               galera_arch="x86_64"
             else
-              if [ "${is_ent}" = "yes" ];then
-                runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-i686.tar.gz
-              fi
               galera_arch="i686"
             fi
             runCommand tar -zxf ${version}-linux-${galera_arch}.tar.gz
@@ -2930,8 +2878,8 @@ if [ "${galera_suffix}" = "-galera" ]; then
   line
   echo "+ adding Galera Cluster files to existing repos..."
   line
-  echo + ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
-         ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} ${is_ent} ${tree} ${rev} ${num} ${tarbuildnum}
+  echo + ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} no ${tree} ${rev} ${num} ${tarbuildnum}
+         ${GALERA_NEW} ${create_debian} ${create_ubuntu} ${create_yum} no ${tree} ${rev} ${num} ${tarbuildnum}
 
 else
   maybe_create_release_dir
@@ -2983,10 +2931,10 @@ else
     echo
 
     if ${ci_release}; then
-      runCommand ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
+      runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
     else
-    echo "${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
-     ${DEBIAN} ${incl_galera} ${is_ent} ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
+    echo "${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
+     ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
     fi
 
 
@@ -3025,14 +2973,10 @@ else
     echo
 
     # This is where the repository is actually updated
-    if [ "${is_ent}" = "yes" ];then
-      runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+    if ${ci_release}; then
+      runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
     else
-      if ${ci_release}; then
-        runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
-      else
-        runCommand ${UBUNTU} ${incl_galera} ${is_ent} ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-      fi
+      runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
     fi
 
 
@@ -3093,9 +3037,9 @@ else
     pushd ${dir_yum_prep}/${dir_name}/yum
       # Run the yum script to create/update yum/dnf/zypp repos
       if ${ci_release}; then
-        runCommand ${YUM} ${num} ${incl_galera} ${is_ent} ${dir_archive}/ci/${tree}/${tarbuildnum}
+        runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
       else
-      runCommand ${YUM} ${num} ${incl_galera} ${is_ent} ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
+      runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
       fi
     popd
 
