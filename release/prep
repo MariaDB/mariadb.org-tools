@@ -69,27 +69,31 @@ fi
 
 
 
-#-------------------------------------------------------------------------------
-#  The ${build_dirs} option contains two-part names of various bintar builds
-#  separated by a colon. The first part is the name of the directory that
-#  buildbot saves, the second part is the name we use on the mirrors.
-#-------------------------------------------------------------------------------
-#build_dirs="kvm-bintar-centos5-amd64:bintar-linux-x86_64 kvm-bintar-centos5-x86:bintar-linux-x86 kvm-bintar-hardy-amd64:bintar-linux-hardy-x86_64 kvm-bintar-hardy-x86:bintar-linux-hardy-x86 kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64 kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86 kvm-tarbake-jaunty-x86:source sol10-64:bintar-sol10-64 bsd9-64:bintar-bsd9-64 opensolaris-511-bintar:bintar-opensolaris-511"
-
-# Sunanda Menon : 02/27/2015
-# Splitting build dirs (refer ME-91).
-
 set_build_dirs_variables() {
+  # <ci_dir>:<mirror_dir> pairs for the bintar/source transfer. The left half is
+  # the directory name as published by ci.mariadb.org, since that is where the
+  # files are read from directly.
+  #
+  # The 64-bit systemd bintar comes from a different builder depending on the
+  # series -- centos-7 for 10.6/10.11/11.4, almalinux-8 for 11.8 and later --
+  # and only one of the two ever exists for a given release. Listing both would
+  # mean one always failing to transfer, so pick the right one. This mirrors the
+  # ci_dirs_106 / ci_dirs_118 split below; keep the two in step.
   build_dirs_x86=""
-  build_dirs_x86_64="
-    kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
-    kvm-bintar-almalinux8-amd64:bintar-linux-systemd-x86_64
-    kvm-tarbake-jaunty-x86:source
-  "
-  ci_build_dirs_x86=""
-  ci_build_dirs_x86_64=""
-  ci_build_dirs_aarch64=""
-  ci_build_dirs_ppc64le=""
+  case ${major} in
+    10.6|10.11|11.4)
+      build_dirs_x86_64="
+        amd64-centos-7-bintar:bintar-linux-systemd-x86_64
+        source:source
+      "
+      ;;
+    *)
+      build_dirs_x86_64="
+        amd64-almalinux-8-bintar:bintar-linux-systemd-x86_64
+        source:source
+      "
+      ;;
+  esac
 
 #-------------------------------------------------------------------------------
 # Dirs for buildbot.mariadb.org
@@ -144,50 +148,6 @@ ci_dirs_122="${ci_dirs_121}"
 ci_dirs_123="${ci_dirs_122}"
 ci_dirs_130="${ci_dirs_123}"
 
-
-#-------------------------------------------------------------------------------
-# Dirs for buildbot.mariadb.net 
-#-------------------------------------------------------------------------------
-
-# Nothing has come from buildbot.mariadb.net since 10.6, so every bb_dirs_*
-# below is empty and full_dirs_* is effectively just ci_dirs_*. The cascade is
-# kept as the hook for putting dirs back should that ever change.
-bb_dirs_102=""
-bb_dirs_103="${bb_dirs_102}"
-bb_dirs_104="${bb_dirs_103}"
-bb_dirs_105="${bb_dirs_104}"
-#bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora39-amd64: kvm-rpm-fedora39-aarch64: kvm-zyp-opensuse155-amd64:"
-bb_dirs_106="${bb_dirs_105}"
-bb_dirs_107="${bb_dirs_106}"
-bb_dirs_108="${bb_dirs_107}"
-bb_dirs_109="${bb_dirs_108}"
-bb_dirs_1010="${bb_dirs_109}"
-bb_dirs_1011="${bb_dirs_1010}"
-bb_dirs_110="${bb_dirs_1011}"
-bb_dirs_111="${bb_dirs_110}"
-bb_dirs_112="${bb_dirs_111}"
-bb_dirs_113="${bb_dirs_112}"
-bb_dirs_114="${bb_dirs_113}"
-bb_dirs_115="${bb_dirs_114}"
-bb_dirs_116="${bb_dirs_115}"
-bb_dirs_117="${bb_dirs_116}"
-bb_dirs_118="${bb_dirs_117}"
-bb_dirs_120="${bb_dirs_118}"
-bb_dirs_121="${bb_dirs_120}"
-bb_dirs_122="${bb_dirs_121}"
-bb_dirs_123="${bb_dirs_122}"
-bb_dirs_130="${bb_dirs_123}"
-
-full_dirs_106="${bb_dirs_106} ${ci_dirs_106}"
-full_dirs_1011="${bb_dirs_1011} ${ci_dirs_1011}"
-full_dirs_114="${bb_dirs_114} ${ci_dirs_114}"
-full_dirs_118="${bb_dirs_118} ${ci_dirs_118}"
-full_dirs_120="${bb_dirs_120} ${ci_dirs_120}"
-full_dirs_121="${bb_dirs_121} ${ci_dirs_121}"
-full_dirs_122="${bb_dirs_122} ${ci_dirs_122}"
-full_dirs_123="${bb_dirs_123} ${ci_dirs_123}"
-full_dirs_130="${bb_dirs_130} ${ci_dirs_130}"
-
 }
 
 # defaults (to prevent errors)
@@ -212,8 +172,6 @@ rsync_ubuntu_repo="no"
          numflag=false
          tarflag=false
     prev_release=""
-      win_remote=false
-      ci_release=false
 
 #-------------------------------------------------------------------------------
 # Functions
@@ -369,9 +327,6 @@ UBUNTU="/path/to/mariadb.org-tools/release/mkrepo-ubuntu.sh"
    CPT="/path/to/mariadb.org-tools/release/create_package_tarballs"
 GEN_UPDATEINFO="/path/to/mariadb.org-tools/release/gen-updateinfo.sh"
 
-# URL where Windows Builds are located
-winbuilder="http://example.net/builds"
-
 # Default gpg options, including the key to use
      gpg_key="0xcbcb082a1bb943db"
     gpg_opts="--quiet -u 0xcbcb082a1bb943db --detach-sign --armor"
@@ -397,7 +352,7 @@ dir_local_mirror="/path/to/local/mirror"
 # Full path to P8 builds (if needed)
 dir_archive_p8="/path/to/p8/archive/builds"
 
-# Base URL of the CI server that 'prep -c <ci_tarbuildnum>' downloads from
+# Base URL of the CI server that prep downloads release artifacts from
 ci="https://ci.example.org"
 
 # remote server information
@@ -460,8 +415,6 @@ cat >> ${dir_log}/prep.log <<END
 # DEBIAN="${DEBIAN}"
 # UBUNTU="${UBUNTU}"
 # YUM="${YUM}"
-# winbuilder="${winbuilder}"
-# dir_archive_p8="${dir_archive_p8}"
 # gpg_opts="${gpg_opts}"
 
 END
@@ -901,113 +854,71 @@ update_the_ubuntu_distributions_file() {
 #   DESCRIPTION:  Transfer files over from the buildmaster before prepping
 #===============================================================================
 pull_this_release_from_the_buildmaster() {
-  # This function enables prepping a release remotely. To be able to do this we
-  # need to:
-  # - Fix permissions on the buildmaster
-  # - rsync the needed dirs from the buildmaster such that they can all be
-  #   found at the same paths on the local machine
-  # - Possibly not upload to the staging mirror (because we might be doing this
-  #   on the staging mirror)
-
-  ci_release=false
-
-  MSG_I "Transferring files on ${buildmaster} to here"
-
-  # Create the local directories if they don't exist
-  MSG_L "Making sure local directories exist..."
-  if [ ! -d ${dir_archive}/${tree}/build-${tarbuildnum} ]; then
-    mkdir -vp ${dir_archive}/${tree}/build-${tarbuildnum}
-  fi
-
-  if [ ! -d ${dir_archive_p8}/${tree}/${rev} ]; then
-    mkdir -vp ${dir_archive_p8}/${tree}/${rev}
-  fi
-  echo
-
-  # After the above is finished we should have something like:
-  #   /ds413/archive/pack/10.4/build-25413
-  #   /ds413/archive/builds/10.4/5da6944ea3a592efefd1adc33b1280ad1de66688
-
-  # We can now rsync the builds from the buildmaster
-  MSG "Transferring kvm builds from ${buildmaster}..."
-  rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
-
-  #MSG "Transferring other builds from ${buildmaster}..."
-  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
- 
-  MSG "Transferring galera from ${buildmaster}..."
+  # Server artifacts all come from ci.mariadb.org now; the buildmaster is only
+  # still the source of the Galera packages that get bundled into a release.
+  MSG_I "Transferring galera from ${buildmaster} to here"
   for galera_version in ${ver_galera_real}; do
     rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera_buildmaster}/galera-${galera_version}* ${dir_galera}/"
   done
-  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed ${dir_galera}/"
-  #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera}/galera-${galera_version}-signed-ent ${dir_galera}/"
-
-  # We should be done now
-
 }
 
 pull_this_release_from_ci() {
-  #ci_release=true
   MSG_I "Transferring files on ${ci} to here"
 
   MSG_L "Making sure local directories exist..."
 
-  if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum} ]; then
-    mkdir -vp ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
+  if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum} ]; then
+    mkdir -vp ${dir_archive}/ci/${tree}/${tarbuildnum}
   fi
 
   runCommand pushd ${dir_archive}/ci/${tree}
     MSG "Transferring Windows builds first..."
     set +e
-    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/amd64-windows-packages/ ; then
+    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/amd64-windows-packages/ ; then
       MSG "Downloaded amd64-windows-packages from ci"
     else
-      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/amd64-windows-packages/
+      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/amd64-windows-packages/
     fi
-    cp -avi ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/amd64-windows-packages ${dir_archive}/${tree}/build-${tarbuildnum}/winx64-packages
-    
-    PAUSE
-
     MSG "Transferring builds from ${ci}..."
     set +e
     for ci_pair in ${!ci_dirs} ; do
       ci_dir=(${ci_pair//:/ })
-    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
+    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/${ci_dir[1]}/ ; then
       MSG "Downloaded ${ci_dir[1]} from ci"
 
     else
-      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
+      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/${ci_dir[1]}/
     fi
     done
-    if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86 ]; then
+    if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum}/source ]; then
       echo
       LINE
-      echo "+ creating tarbake dir..."
+      echo "+ creating source dir..."
       LINE
-      mkdir -v ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86
+      mkdir -v ${dir_archive}/ci/${tree}/${tarbuildnum}/source
       echo
     fi
-    pushd ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86
-      runCommand wget -N ${ci}/${ci_tarbuildnum}/mariadb-${num}.tar.gz
-      runCommand wget -N ${ci}/${ci_tarbuildnum}/sha256sums.txt
+    pushd ${dir_archive}/ci/${tree}/${tarbuildnum}/source
+      runCommand wget -N ${ci}/${tarbuildnum}/mariadb-${num}.tar.gz
+      runCommand wget -N ${ci}/${tarbuildnum}/sha256sums.txt
     popd
     set -e
-    runCommand find ${ci_tarbuildnum}/ -name "index.html" -exec rm -v {} \;
+    runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
   runCommand popd
-  #runCommand tree ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
-  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
-  MSG "Done downloading release to ${dir_archive}/ci/${tree}/${ci_tarbuildnum}"
+  #runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
+  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}
+  MSG "Done downloading release to ${dir_archive}/ci/${tree}/${tarbuildnum}"
   shouldI verify_the_ci_download
 }
 
 verify_all_needed_ci_dirs_are_present() {
   MSG "Checking for presence of all needed ci builds..."
   should_I_quit=0
-  MSG_L "${dir_archive}/ci/${tree}/${ci_tarbuildnum}/"
+  MSG_L "${dir_archive}/ci/${tree}/${tarbuildnum}/"
   for ci_pair in ${!ci_dirs}; do
     ci_dir=(${ci_pair//:/ })
-    dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
+    dir_source=${dir_archive}/ci/${tree}/${tarbuildnum}/${ci_dir[1]}
     if [ -d ${dir_source} ]; then
       MSG_L "\e[32m✔  ${ci_dir[1]}\e[0m"
     else
@@ -1021,58 +932,11 @@ verify_all_needed_ci_dirs_are_present() {
   fi
 }
 
-verify_all_needed_dirs_are_present() {
-  MSG "Checking for presence of all needed builds..."
-  should_I_quit=0
-  for dir_pair in ${!full_dirs}; do
-    needed_dir=(${dir_pair//:/ })
-    dir_source=${dir_archive}/${tree}/build-${tarbuildnum}/${needed_dir[0]}
-    if [ -d ${dir_source} ]; then
-      MSG_L "\e[32m✔  ${needed_dir[0]}\e[0m"
-    else
-      MSG_L "\e[31m⚠  ${needed_dir[0]}\e[0m"
-      should_I_quit=1
-    fi
-  done
-  if ((${should_I_quit})) ; then
-    MSG_I "Some needed builds are missing, quitting..."
-    exit 8
-  fi
-}
-
-copy_ci_downloads_to_buildmaster_dir() {
-  verify_all_needed_ci_dirs_are_present
-  MSG "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
-  PAUSE
-
-  for ci_pair in ${!ci_dirs} kvm-tarbake-jaunty-x86:kvm-tarbake-jaunty-x86; do
-    ci_dir=(${ci_pair//:/ })
-    dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
-    dir_dest=${dir_archive}/${tree}/build-${tarbuildnum}/${ci_dir[0]}
-    #if [ -d ${dir_dest} ]; then
-    #  MSG "${dir_dest} already exists, moving..."
-    #  runCommand mv -vi ${dir_dest} ${dir_dest}_orig
-    #fi
-    if [ -d ${dir_source} ]; then
-      #runCommand cp -ai ${dir_source} ${dir_dest}
-      runCommand rsync -av ${dir_source}/ ${dir_dest}/
-    else
-      MSG_I "${dir_source} does not exist"
-      exit 1
-    fi
-  done
-}
-
-
-#===  FUNCTION  ================================================================
-mark_this_release_as_a_ci_release() {
-  ci_release=true
-}
 
 verify_the_ci_download() {
   MSG "Verifying files downloaded from ${ci}..."
-  #for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -name sha256sums.txt) ; do
-  for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -maxdepth 1 -mindepth 1 -type d) ; do
+  #for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -name sha256sums.txt) ; do
+  for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -maxdepth 1 -mindepth 1 -type d) ; do
     #runCommand pushd $(dirname ${shafile})
     runCommand pushd ${shafile}
     case $shafile in
@@ -1207,15 +1071,6 @@ maybe_create_release_dir() {
 
 
 
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  pull_the_win_packages_from_the_win_builder
-#   DESCRIPTION:  Should we pull the the Windows packages from the builder or
-#                 are they already on the local filesystem?
-#-------------------------------------------------------------------------------
-pull_the_win_packages_from_the_win_builder() {
-  win_remote=true
-}
-
 #===  FUNCTION  ================================================================
 #          NAME:  display_the_previous_releases
 #   DESCRIPTION:  A simple function to list (using tree) the contents of the
@@ -1333,7 +1188,7 @@ set_prev_release() {
 copy_win_packages_to_sign-todo_dir() {
   arch=winx64
   #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
-  runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
+  runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/${version}-${arch}.msi ~/sign-todo/
   runCommand tree ~/sign-todo/
   echo;echo
   MSG "Quitting so Windows Package signing can occur."
@@ -1345,13 +1200,13 @@ copy_win_packages_to_sign-todo_dir() {
 move_win_packages_from_sign-done_dir() {
   runCommand tree ~/sign-done/
   #runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
-  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/
+  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/
   runCommand tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
   #for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
-  for msi in ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/*msi ; do
+  for msi in ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/*msi ; do
     MSG "Verifying ${msi}"
     runCommand osslsigncode verify -in ${msi}
   done
@@ -1452,7 +1307,7 @@ copy_the_yum_repos_to_corp() {
 #-------------------------------------------------------------------------------
 
 # The first thing we need to do is parse the options
-while getopts 'b:c:hlr:t:v:y' OPTION
+while getopts 'b:hlr:t:v:y' OPTION
 do
   case $OPTION in
     h)  # Display a helpful usage message
@@ -1477,10 +1332,6 @@ do
       ;;
     b)  # The tarbuildnum of the release
       tarbuildnum="${OPTARG}"
-      tarflag=true
-      ;;
-    c)  # The ci tarbuildnum of the release
-      ci_tarbuildnum="${OPTARG}"
       tarflag=true
       ;;
     y)  # Actually run this script (helps prevent accidental runs)
@@ -1526,9 +1377,8 @@ major=${num%.*}
 
 set_build_dirs_variables
 
-# set various ${xx_dirs} variables to the appropriate version
+# point ${ci_dirs} at the ci_dirs_* variable for this series
 ci_dirs="ci_dirs_${major//./}"
-full_dirs="full_dirs_${major//./}"
 
 # Set the real version of galera to use
 case ${major} in
@@ -1556,11 +1406,7 @@ shouldI pull_this_release_from_ci
 
 shouldI download_this_release_from_the_foundation_archives
 
-shouldI copy_ci_downloads_to_buildmaster_dir
-
-#shouldI mark_this_release_as_a_ci_release
-
-shouldI verify_all_needed_dirs_are_present
+shouldI verify_all_needed_ci_dirs_are_present
 
 MSG_I "Creating the ${version} Release"
 
@@ -1598,11 +1444,7 @@ include_Galera_packages_in_repositories
 # Set various options for the release
 # NOTE: ${gpg_opts} comes from prep.conf and is deliberately not overridden here.
 suffix="signed"
-if ${ci_release}; then
-  build_dirs="source:source ${ci_build_dirs_x86} ${ci_build_dirs_x86_64} ${ci_build_dirs_aarch64} ${ci_build_dirs_ppc64le}"
-else
-  build_dirs="${build_dirs_x86} ${build_dirs_x86_64}" # Default dirs for MariaDB
-fi
+build_dirs="${build_dirs_x86} ${build_dirs_x86_64}"
 if [ "${tree}" = "10.0-FusionIO" ]; then
   dir_name="${version}-FusionIO" # FusionIO releases get a custom directory
 else
@@ -1648,20 +1490,8 @@ if [ "${create_bintar}" != "no" ]; then
       if [ ! -d /run/shm/${dir_name}/${dir_array[1]} ]; then
         runCommand mkdir -vp /run/shm/${dir_name}/${dir_array[1]}
       fi
-      case ${dir_array[1]} in
-        'macOS')
-          location="${dir_archive_p8}/${tree}/${rev}/${dir_array[0]}"
-          ;;
-        *)
-          if ${ci_release}; then
-            location="${dir_archive}/ci/${tree}/${tarbuildnum}/${dir_array[0]}"
-            location_source="${dir_archive}/ci/${tree}/${tarbuildnum}"
-          else
-          location="${dir_archive}/${tree}/build-${tarbuildnum}/${dir_array[0]}"
-            location_source="${location}"
-          fi
-          ;;
-      esac
+      location="${dir_archive}/ci/${tree}/${tarbuildnum}/${dir_array[0]}"
+      location_source="${location}"
       if [ "${dir_array[1]}" = "source" ]; then
         if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb-${num}.tar.gz"; then
           pushd /run/shm/${dir_name}/${dir_array[1]}
@@ -1977,42 +1807,22 @@ if [ "${create_win}" != "no" ]; then
   LINE
   echo "+ transfering Windows packages..."
   LINE
+  # ci.mariadb.org publishes these as amd64-windows-packages; winx64-packages is
+  # the name they go out under on the mirrors.
+  win_ci_dir="${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages"
   for arch in winx64; do
     if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
       mkdir ${dir_release}/${dir_name}/${arch}-packages
     fi
     pushd ${dir_release}/${dir_name}/${arch}-packages
 
-
-    if ${ci_release}; then
-      MSG "Packages are on the local filesystem"
-    else
-    shouldI pull_the_win_packages_from_the_win_builder
-    fi
-
     shouldI copy_win_packages_to_sign-todo_dir
     shouldI move_win_packages_from_sign-done_dir
     verify_signed_win_packages
 
     for pkgtype in msi zip; do
-      #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
-      if ${win_remote};then
-        MSG "Packages are on the Windows Builder"
-      runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
-      elif ${ci_release}; then
-        if [ "${pkgtype}" = "msi" ];then
-        case ${arch} in
-          winx64) windir=windows ;;
-        esac
-        runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
-        fi
-      else
-        MSG "Packages are on the local filesystem"
-        #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
-        runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
-      fi
+      runCommand rsync -avP ${win_ci_dir}/${version}-${arch}.${pkgtype} .
 
-      if ! ${ci_release};then
       # Download debugsymbols package for 10.2+ releases
       if [ "${pkgtype}" = "zip" ]; then
         case ${tree} in
@@ -2021,41 +1831,17 @@ if [ "${create_win}" != "no" ]; then
             ;;
           *)
             echo "+ tree=${tree}, so downloading debugsymbols package..."
-            if ${win_remote};then
-              # Win packages are on the remote builder
-            runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype}
-            else
-              # Win packages are on the local filesystem
-              #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
-              runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}-debugsymbols.${pkgtype} .
-            fi
+            runCommand rsync -avP ${win_ci_dir}/${version}-${arch}-debugsymbols.${pkgtype} .
             ;;
         esac
       fi
-      fi
-
     done
-    #wget ${winbuilder}/${tree}/${rev}/md5sums.txt
-    if ! ${ci_release};then
-    if ${win_remote} ; then
-      # Win packages are on the remote builder
-      if [ -e md5sums.txt ]; then # if md5sums.txt exists, delete it before downloading
-        runCommand rm -v md5sums.txt*
-      fi
-    runCommand wget ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/md5sums.txt
-    fi
-    fi
   done
   MSG "Generating Windows Checksums and Signatures..."
   for arch in winx64; do
     pushd ${dir_release}/${dir_name}/${arch}-packages
     pwd
-    if ${ci_release};then
-      md5sum ./mariadb* > md5sums.txt
-    else
-    md5sum mariadb* >> md5sums.txt
-    md5sum -c md5sums.txt
-    fi
+    md5sum ./mariadb* > md5sums.txt
     sha1sum ./mariadb* > sha1sums.txt
     sha1sum -c sha1sums.txt
     sha256sum ./mariadb* > sha256sums.txt
@@ -2128,12 +1914,7 @@ if [ "${create_debian}" != "no" ]; then
           rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
   echo
 
-  if ${ci_release}; then
-    runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
-  else
-  echo "${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}"
-   ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/${tree}/build-${tarbuildnum}
-  fi
+  runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
 
 
   echo
@@ -2171,11 +1952,7 @@ if [ "${create_ubuntu}" != "no" ]; then
   echo
 
   # This is where the repository is actually updated
-  if ${ci_release}; then
-    runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
-  else
-    runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-  fi
+  runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
 
 
   echo
@@ -2234,11 +2011,7 @@ if [ "${create_yum}" != "no" ]; then
 
   pushd ${dir_yum_prep}/${dir_name}/yum
     # Run the yum script to create/update yum/dnf/zypp repos
-    if ${ci_release}; then
-      runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
-    else
-    runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/${tree}/build-${tarbuildnum} ${dir_archive_p8}/${tree}/${rev}
-    fi
+    runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
   popd
 
   # move the yum dir to where it needs to go
