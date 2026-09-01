@@ -545,12 +545,8 @@ dir_archive="/path/to/archive/pack"
 
 # Full path to where various packages are located
 dir_galera="/path/to/galera"
-dir_jemalloc="/path/to/jemalloc" # Location of jemalloc pkgs
 dir_nmap="/path/to/nmap" # nmap pkg for sles12
-dir_at="/path/to/advance-toolchain" # Location of at pkgs
 dir_rpm_shared="/path/to/shared/rpm/dir"
-dir_judy="/path/to/judy" # Location of judy pkgs
-dir_libzstd="/path/to/libzstd" # Location of libzstd pkgs
 dir_docker="/path/to/docker/repo" # Location of corporation docker repo
 dir_docker_library="/path/to/docker/repo2" # Location of docker library repo
 dir_docker_library_official_images="/path/to/docker/repo3" # Location of official images path
@@ -592,18 +588,39 @@ ent_gpg_opts="--quiet -u 0xce1a3dd5e3c94f49 --detach-sign --armor"
 dir_release_ent="/path/to/mariadb-enterprise/releases"
    dir_yum_prep="/path/to/where/to/prep/yum/repos"
 
+# Local staging copy of the public mirror tree. The release is hard-linked into
+# here, old releases are pruned, the yum/ and repo/ symlinks are updated, and
+# the whole directory is then synced out to \${mirrors_foundation}.
+dir_local_mirror="/path/to/local/mirror"
+
 # Full path to P8 builds (if needed)
 dir_archive_p8="/path/to/p8/archive/builds"
+
+# Base URL of the CI server that 'prep -c <ci_tarbuildnum>' downloads from
+ci="https://ci.example.org"
 
 # remote server information
 buildmaster="buildmaster_ssh"
 primary_mirror="mirror_ssh"
-primary_mirror_rsync="rsync_addr_of_primary_mirror"
 corp_mirror="mirror_ssh"
 corp_tools_path="/home/mariadb-repos/mariadb-enterprise-tools"
 yum_primary_mirror="bb01"
 yum_mirrors="mirror names"
 yum_mirror_path="/dest/dir/on/yum/mirror"
+
+# Paths on \${buildmaster}, as seen from the buildmaster itself. Used when
+# prepping a release from a machine other than the buildmaster.
+dir_archive_buildmaster="/path/to/archive/pack/on/buildmaster"
+dir_release_buildmaster="/path/to/mariadb/releases/on/buildmaster"
+dir_corp_buildmaster="/path/to/corp/releases/on/buildmaster"
+dir_galera_buildmaster="/path/to/galera/on/buildmaster"
+
+# Upload / download targets, given as space-separated <ssh_host>:<path> pairs.
+# Each pair is used whole as an rsync target, and is also split on the colon so
+# the host half can be ssh'd into. Add as many pairs as you have mirrors.
+mirrors_foundation="mirror1_ssh:/path/on/mirror1 mirror2_ssh:/path/on/mirror2"
+archives_foundation="archive1_ssh:/path/on/archive1 archive2_ssh:/path/on/archive2"
+mirrors_corp="corp_mirror_ssh:/path/on/corp/mirror"
 
 # Connectors
 cj_home="/path/to/connector/java/home"
