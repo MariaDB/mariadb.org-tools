@@ -378,34 +378,23 @@ full_dirs_130="${bb_dirs_130} ${ci_dirs_130}"
 
 }
 
-p8_build_dirs="p8-rhel6-bintar:bintar-linux-rhel6-ppc64
-               p8-rhel7-bintar:bintar-linux-rhel7-ppc64
-               p8-rhel71-bintar:bintar-linux-rhel71-ppc64le
-               p8-trusty-bintar:bintar-linux-trusty-ppc64le
-               p8-xenial-bintar:bintar-linux-xenial-ppc64le"
-
 # defaults (to prevent errors)
     displayusage="no"
 log_displayusage=""
-            demo="no"
-        log_demo=""
       run_script="no"
   log_run_script=""
    create_bintar="no"
-create_p8_bintar="no"
       create_win="no"
    create_debian="no"
    create_ubuntu="no"
 rsync_debian_repo="no"
 rsync_ubuntu_repo="no"
       create_yum="no"
-     perms_fixed="no"
      incl_galera="no"
              log="no"
           skipit="no"
          log_log=""
  exclude_release=""
-     remote_prep="no"
         treeflag=false
          revflag=false
          numflag=false
@@ -641,7 +630,7 @@ cat >> ${dir_log}/prep.log <<END
 
 # Prepped $(date)
 # Command:
-#   $0 -${log_displayusage}${log_demo}${log_run_script}${log_log} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum}
+#   $0 -${log_displayusage}${log_run_script}${log_log} -t ${tree} -r ${rev} -v ${num} -b ${tarbuildnum}
 # tree="${tree}"
 # rev="${rev}"
 # num="${num}"
@@ -665,11 +654,6 @@ cat >> ${dir_log}/prep.log <<END
 
 END
 chown ${USER}: ${dir_conf}/prep.conf
-}
-
-readyToSign() {
-  local cont
-  cont=""
 }
 
 shouldI() {
@@ -1037,9 +1021,8 @@ usage() {
   set +x
   echo
   echo
-  echo "usage: $0 -y[dhl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
+  echo "usage: $0 -y[hl] -t <tree> -r <revision> -v <version> -b <tarbuildnum>"
   echo "  -y : actually run the script"
-  echo "  -d : run the script in demo mode"
   echo "  -h : display this usage message"
   echo "  -l : log the <tree>, <revision>, <tarbuildnum>, & etc... to ${dir_log}/prep.log"
   echo "  -t <tree> : the MariaDB source code tree"
@@ -1051,42 +1034,6 @@ usage() {
   set -x
 }
 
-
-rsync_wrapper_primary() {
-  local upload_primary
-  upload_primary=""
-  rsync_body_primary="${@}"
-  MSG_L "Doing a dry run..."
-  set -x
-  ssh -t -t ${primary_mirror} "set -x;rsync --dry-run ${rsync_body_primary} | less"
-  set +x
-  echo
-  while [ -z ${upload_primary} ]; do
-    userResponse "Did the dry run look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        MSG_L "Transferring for real..."
-        set -x
-        ssh -t -t ${primary_mirror} "rsync ${rsync_body_primary}"
-        set +x
-        echo
-        upload_primary="yes"
-        ANSWER=""
-        return 0
-        ;;
-      "n")
-        MSG_L "Something went wrong..."
-        ANSWER=""
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload_primary=""
-        ;;
-    esac
-  done
-}
 
 
 #===  FUNCTION  ================================================================
@@ -1150,9 +1097,6 @@ pull_this_release_from_the_buildmaster() {
   # - Possibly not upload to the staging mirror (because we might be doing this
   #   on the staging mirror)
 
-  # First set the remote_prep variable to yes so that other parts of the script
-  # know what is going on
-  remote_prep="yes"
   ci_release=false
 
   MSG_I "Transferring files on ${buildmaster} to here"
@@ -1191,7 +1135,6 @@ pull_this_release_from_the_buildmaster() {
 }
 
 pull_this_release_from_ci() {
-  remote_prep="yes"
   #ci_release=true
   MSG_I "Transferring files on ${ci} to here"
 
@@ -1450,53 +1393,6 @@ maybe_create_release_dir() {
   fi
 }
 
-#===  FUNCTION  ================================================================
-#          NAME:  maybe_fix_permissions
-#   DESCRIPTION:  Fix permissions on the buildbot dirs, if they haven't been
-#                 fixed already during this run of the script
-#===============================================================================
-maybe_fix_permissions() {
-  if [ "${perms_fixed}" = "no" ]; then
-     MSG "fixing permissions..."
-
-    dirs_to_chmod="${dir_archive}/${tree}/ ${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8}/${tree}/ ${dir_archive_p8}/${tree}/${rev}"
-
-    if [ "${remote_prep}" = "yes" ]; then
-      dirs_to_chmod="${dir_archive_buildmaster}/${tree}/ ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8_buildmaster}/${tree}/ ${dir_archive_p8_buildmaster}/${tree}/${rev}"
-
-      # If we're fixing remote permissions, we want to to it with one ssh
-      # connection, so everything goes on one line
-
-      ssh -t -t ${buildmaster} "if [ ! -d ${dir_archive_p8_buildmaster}/${tree}/${rev} ]; then sudo mkdir -vp ${dir_archive_p8_buildmaster}/${tree}/${rev};fi;" "sudo chmod -c 755 ${dirs_to_chmod};" 'for dir  in $(sudo find' ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ '-type f);do sudo chmod -c 644 ${file};done;' 'for dir  in $(sudo find' ${dir_archive_p8_buildmaster}/${tree}/${rev}/ '-type d);do sudo chmod -c 755 ${dir};done;' 'for file in $(sudo find' ${dir_archive_p8_buildmaster}/${tree}/${rev}/ '-type f);do sudo chmod -c 644 ${file};done'
-
-    else
-      # If we're here we are not fixing remote permissions, so we can do things
-      # on separate lines, which makes everything more readable
-
-      # Make sure parent dirs are OK first
-      sudo chmod -c 755 ${dirs_to_chmod}
-
-      # scan and adjust perms of subdirs
-      for dir in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type d);do
-        sudo chmod 755 "${dir}"
-      done
-      for file in $(sudo find ${dir_archive}/${tree}/build-${tarbuildnum}/ -type f);do
-        sudo chmod 644 "${file}"
-      done
-      for dir in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type d);do
-        sudo chmod 755 "${dir}"
-      done
-      for file in $(sudo find ${dir_archive_p8}/${tree}/${rev}/ -type f);do
-        sudo chmod 644 "${file}"
-      done
-    fi
-
-    perms_fixed="yes" # set perms_fixed to 'yes' so this doesn't run again
-
-    echo "+ done fixing permissions"
-    echo
-  fi
-}
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -1744,13 +1640,9 @@ copy_the_yum_repos_to_corp() {
 #-------------------------------------------------------------------------------
 
 # The first thing we need to do is parse the options
-while getopts 'b:c:dhlr:t:v:y' OPTION
+while getopts 'b:c:hlr:t:v:y' OPTION
 do
   case $OPTION in
-    d)  # Not implemented yet
-      demo="yes"
-      log_demo="d"
-      ;;
     h)  # Display a helpful usage message
       displayusage="yes"
       log_displayusage="h"
@@ -1824,7 +1716,6 @@ set_build_dirs_variables
 
 # set various ${xx_dirs} variables to the appropriate version
 ci_dirs="ci_dirs_${major//./}"
-bb_dirs="bb_dirs_${major//./}"
 full_dirs="full_dirs_${major//./}"
 
 # Set the real version of galera to use
