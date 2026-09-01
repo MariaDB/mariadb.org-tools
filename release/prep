@@ -50,6 +50,22 @@ if [ ! -d ${dir_log}/ ];then
   mkdir -vp ${dir_log}
 fi
 
+# ${dir_conf}/common provides RC, DIV, MSG, MSG_I, MSG_L, LINE, THICKLINE, PAUSE,
+# userResponse, userInput and rsync_wrapper. This script uses all of them and
+# defines none of them, so common is required rather than optional, and is
+# sourced here -- before option parsing -- so the helpers are available to every
+# code path including usage errors and the create_a_template_file bootstrap.
+if [ -f ${dir_conf}/common ]; then
+  . ${dir_conf}/common
+else
+  echo
+  echo "The file ${dir_conf}/common does not exist."
+  echo "It provides RC, DIV, MSG, LINE, userResponse and rsync_wrapper, which"
+  echo "this script cannot run without. Please install it and re-run."
+  echo
+  exit 3
+fi
+
 
 
 
@@ -412,47 +428,6 @@ runCommand() {
   fi
 }
 
-userResponse() {
-  question="${@}"
-  read -p "${question} " -n 1
-  echo
-  ANSWER=${REPLY}
-  RESPONSE=${REPLY}
-  return 0
-}
-
-userInput() {
-  question="$@"
-  echo
-  read -p "${question} "
-  echo
-  INPUT=${REPLY}
-  return 0
-}
-
-secureUserInput() {
-  question="${@}"
-  SECUREINPUT="false"
-  REPLY="alsofalse"
-  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
-    read -s -p "${question} "
-    echo
-    SECUREINPUT="${REPLY}"
-    read -s -p "Please enter it again: "
-    echo
-    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
-      echo
-      echo "The two entries do not match."
-      echo
-    else
-      echo
-      echo "The two entries match. Continuing."
-      echo
-      return 0
-    fi
-  done
-}
-
 skip_it() {
   skipit="yes"
 }
@@ -496,9 +471,9 @@ prepare_yum_packages() {
 set_updateinfo_metadata() {
   local cves_in
   echo
-  line
+  LINE
   echo "+ updateinfo.xml metadata for this release"
-  line
+  LINE
   echo "  1) new release series                  (type=enhancement, severity=)"
   echo "  2) maintenance release, no CVE         (type=bugfix,      severity=)"
   echo "  3) maintenance release with CVE        (type=bugfix,      severity=moderate)"
@@ -675,13 +650,6 @@ END
 chown ${USER}: ${dir_conf}/prep.conf
 }
 
-pressAnyKeyToContinue() {
-  echo
-  read -p "Press any key to continue." -n 1
-  echo
-  return 0
-}
-
 readyToSign() {
   local cont
   cont=""
@@ -732,8 +700,8 @@ sync_the_local_mirror_dir_to_the_mirrors() {
   # update the TIME file just before we start uploading
   date +%s > ${dir_local_mirror}/TIME
 
-  important_message "Only run this once ALL releases are ready in the local mirror dir!"
-  lowkey_message "If not, answer [n]o to uploading as you could mess up the mirrors!"
+  MSG_I "Only run this once ALL releases are ready in the local mirror dir!"
+  MSG_L "If not, answer [n]o to uploading as you could mess up the mirrors!"
   for dest in ${dests} ; do
     local cont
     cont=""
@@ -741,7 +709,7 @@ sync_the_local_mirror_dir_to_the_mirrors() {
       userResponse "Should I upload to ${dest}? [y/n]"
       case ${ANSWER} in
         y)
-          message "Uploading to ${dest}..."
+          MSG "Uploading to ${dest}..."
           case ${dest} in
             *hz-*)
               rsync_local_mirror_opts="${rsync_local_mirror_opts} --no-group --no-owner --no-perms"
@@ -752,12 +720,12 @@ sync_the_local_mirror_dir_to_the_mirrors() {
           ANSWER=""
           ;;
         n)
-          message "Skipping uploading to ${dest}..."
+          MSG "Skipping uploading to ${dest}..."
           cont="yes"
           ANSWER=""
           ;;
         *)
-          lowkey_message "Please answer [y]es or [n]o."
+          MSG_L "Please answer [y]es or [n]o."
           cont=""
           ANSWER=""
           ;;
@@ -806,17 +774,17 @@ remove_a_dir_from_the_local_mirror_dir() {
   local done_removing
   done_removing=""
   while [ -z ${done_removing} ];do
-    message "Releases currently in ${dir_local_mirror}"
+    MSG "Releases currently in ${dir_local_mirror}"
     tree -L 1 ${dir_local_mirror}
-    line
+    LINE
     userInput "What release should I remove? (e.g. mariadb-10.6.7, s to stop)"
     release_to_remove="${INPUT}"
     if [ -z ${release_to_remove} ] ; then
-      message "Please enter a release or 's' to stop."
+      MSG "Please enter a release or 's' to stop."
     else
       case ${release_to_remove} in
         s)
-          lowkey_message "Stopping..."
+          MSG_L "Stopping..."
           done_removing='yes'
           ;;
         *)
@@ -824,19 +792,19 @@ remove_a_dir_from_the_local_mirror_dir() {
             userResponse "Ok to remove ${release_to_remove}? [y/n]"
             case ${ANSWER} in
               y)
-                lowkey_message "Removing ${release_to_remove}..."
+                MSG_L "Removing ${release_to_remove}..."
                 runCommand rm -rf ${dir_local_mirror}/${release_to_remove}
                 ;;
               n)
-                lowkey_message "Not removing ${release_to_remove}"
+                MSG_L "Not removing ${release_to_remove}"
                 ;;
               *)
-                lowkey_message "Please answer [y]es or [n]o."
+                MSG_L "Please answer [y]es or [n]o."
                 ;;
             esac
           else
-            lowkey_message "${release_to_remove} doesn't appear to exist, please try again."
-            pressAnyKeyToContinue
+            MSG_L "${release_to_remove} doesn't appear to exist, please try again."
+            PAUSE
           fi
           done_removing=""
           ;;
@@ -851,7 +819,7 @@ remove_a_dir_from_the_local_mirror_dir() {
 #===============================================================================
 copy_the_release_to_the_local_mirror_dir() {
   if [[ -d ${dir_local_mirror}/${dir_name} ]] ; then
-    lowkey_message "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
+    MSG_L "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
   else
     runCommand cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
   fi
@@ -861,21 +829,21 @@ copy_the_release_to_the_local_mirror_dir() {
 verify_local_mirror_copy_is_good() {
   local dry_run_status
   dry_run_status=""
-  message "Doing an rsync dry-run to verify the local mirror copy is good"
-  lowkey_message "If rsync doesn't find anything to sync then the copy is good."
+  MSG "Doing an rsync dry-run to verify the local mirror copy is good"
+  MSG_L "If rsync doesn't find anything to sync then the copy is good."
   runCommand rsync --dry-run -avP ${dir_release}/${dir_name} ${dir_local_mirror}/
   while [ -z ${dry_run_status} ]; do
     userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        lowkey_message "Local mirror copy is good..."
+        MSG_L "Local mirror copy is good..."
         dry_run_status="yes"
         ANSWER=""
         return 0
         ;;
       "n")
-        lowkey_message "Local mirror copy is not good. Something went wrong..."
-        lowkey_message "You might want to delete the local mirror copy and re-run this step"
+        MSG_L "Local mirror copy is not good. Something went wrong..."
+        MSG_L "You might want to delete the local mirror copy and re-run this step"
         ANSWER=""
         exit 1
         ;;
@@ -901,18 +869,18 @@ downloader() {
       userResponse "Should I download from ${src}? [y/n]"
       case ${ANSWER} in
         y)
-          message "Downloading from ${src}..."
+          MSG "Downloading from ${src}..."
           rsync_wrapper "${rsync_downloader_opts} ${src}/${version} ${dir_release}/"
           cont="yes"
           ANSWER=""
           ;;
         n)
-          message "Skipping downloading from ${src}..."
+          MSG "Skipping downloading from ${src}..."
           cont="yes"
           ANSWER=""
           ;;
         *)
-          lowkey_message "Please answer [y]es or [n]o."
+          MSG_L "Please answer [y]es or [n]o."
           cont=""
           ANSWER=""
           ;;
@@ -952,18 +920,18 @@ uploader() {
                 cont_2="yes"
                 ;;
               n)
-                message "Skipping copying previous release to the current release on ${dest}"
+                MSG "Skipping copying previous release to the current release on ${dest}"
                 cont_2="yes"
                 ANSWER=""
                 ;;
               *)
-                lowkey_message "Please answer [y]es or [n]o."
+                MSG_L "Please answer [y]es or [n]o."
                 cont_2="yes"
                 ANSWER=""
                 ;;
             esac
           done
-          message "Uploading to ${dest}..."
+          MSG "Uploading to ${dest}..."
           case ${dest} in
             *hz-archive*)
               rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
@@ -977,12 +945,12 @@ uploader() {
           ANSWER=""
           ;;
         n)
-          message "Skipping uploading to ${dest}..."
+          MSG "Skipping uploading to ${dest}..."
           cont="yes"
           ANSWER=""
           ;;
         *)
-          lowkey_message "Please answer [y]es or [n]o."
+          MSG_L "Please answer [y]es or [n]o."
           cont=""
           ANSWER=""
           ;;
@@ -1018,7 +986,8 @@ upload_to_the_corp_mirrors() {
 #===  FUNCTION  ================================================================
 #          NAME:  loadDefaults
 #   DESCRIPTION:  Load the defaults file, prep.conf, and if it doesn't exist,
-#                 then create one
+#                 then create one. ${dir_conf}/common is sourced near the top of
+#                 the script, not here.
 #===============================================================================
 loadDefaults() {
   # Load the paths (if they exist)
@@ -1045,9 +1014,6 @@ loadDefaults() {
       exit 0
     fi
   fi
-  if [ -f ${dir_conf}/common ]; then
-    . ${dir_conf}/common
-  fi
 }
 
 usage() {
@@ -1068,78 +1034,12 @@ usage() {
   set -x
 }
 
-thickline() {
-  echo "==============================================================================="
-}
-
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
-
-important_message() {
-  message="${@}"
-  echo;echo;thickline;echo -e "+ ${message}";thickline;
-}
-
-message() {
-  message="${@}"
-  line;echo -e "+ ${message}";line;
-}
-
-lowkey_message() {
-  message="${@}"
-  echo -e "+ ${message}"
-}
-
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  rsync_wrapper
-#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
-#                 the options part of the rsync (everything that would come
-#                 after the rsync command itself on the command-line) and first
-#                 runs it with the --dry-run flag. It then asks if everything
-#                 is OK. Assuming things are OK, it runs the rsync for real.
-#-------------------------------------------------------------------------------
-rsync_wrapper() {
-  local upload
-  upload=""
-  rsync_body="${@}"
-  lowkey_message "Doing a dry run..."
-  lowkey_message "rsync --dry-run ${rsync_body}"
-  runCommand rsync --dry-run ${rsync_body} | less
-  echo
-  while [ -z ${upload} ]; do
-    userResponse "Did the dry run look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        lowkey_message "Transferring for real..."
-        set -x
-        rsync ${rsync_body}
-        set +x
-        echo
-        upload="yes"
-        ANSWER=""
-        return 0
-        ;;
-      "n")
-        lowkey_message "Something went wrong..."
-        ANSWER=""
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
-}
 
 rsync_wrapper_primary() {
   local upload_primary
   upload_primary=""
   rsync_body_primary="${@}"
-  lowkey_message "Doing a dry run..."
+  MSG_L "Doing a dry run..."
   set -x
   ssh -t -t ${primary_mirror} "set -x;rsync --dry-run ${rsync_body_primary} | less"
   set +x
@@ -1148,7 +1048,7 @@ rsync_wrapper_primary() {
     userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        lowkey_message "Transferring for real..."
+        MSG_L "Transferring for real..."
         set -x
         ssh -t -t ${primary_mirror} "rsync ${rsync_body_primary}"
         set +x
@@ -1158,7 +1058,7 @@ rsync_wrapper_primary() {
         return 0
         ;;
       "n")
-        lowkey_message "Something went wrong..."
+        MSG_L "Something went wrong..."
         ANSWER=""
         exit 1
         ;;
@@ -1177,13 +1077,13 @@ rsync_wrapper_primary() {
 #   DESCRIPTION:  Transfer files from the local host to the buildmaster
 #===============================================================================
 upload_this_release_to_the_buildmaster() {
-  important_message "Transferring files from here to the ${buildmaster}"
-  message "Uploading release to ${buildmaster}..."
+  MSG_I "Transferring files from here to the ${buildmaster}"
+  MSG "Uploading release to ${buildmaster}..."
   rsync_wrapper "-av --delete-before ${dir_release}/${dir_name} ${buildmaster}:${dir_release_buildmaster}/"
 
   shouldI update_the_archive_STATUS_file
 
-  message "Uploading corp release to ${buildmaster}..."
+  MSG "Uploading corp release to ${buildmaster}..."
   rsync_wrapper "-av --delete-before ${dir_corp}/${dir_name} ${buildmaster}:${dir_corp_buildmaster}/"
   # All done
 }
@@ -1199,7 +1099,7 @@ update_the_archive_STATUS_file() {
     ssh -t -t ${archive[0]} "set -x; if [ -e ./sync_archive_force ] ; then ./sync_archive_force ; fi"
     set +x
   done
-  lowkey_message "STATUS file updated"
+  MSG_L "STATUS file updated"
 }
 
 #===  FUNCTION  ================================================================
@@ -1238,10 +1138,10 @@ pull_this_release_from_the_buildmaster() {
   remote_prep="yes"
   ci_release=false
 
-  important_message "Transferring files on ${buildmaster} to here"
+  MSG_I "Transferring files on ${buildmaster} to here"
 
   # Create the local directories if they don't exist
-  lowkey_message "Making sure local directories exist..."
+  MSG_L "Making sure local directories exist..."
   if [ ! -d ${dir_archive}/${tree}/build-${tarbuildnum} ]; then
     mkdir -vp ${dir_archive}/${tree}/build-${tarbuildnum}
   fi
@@ -1256,13 +1156,13 @@ pull_this_release_from_the_buildmaster() {
   #   /ds413/archive/builds/10.4/5da6944ea3a592efefd1adc33b1280ad1de66688
 
   # We can now rsync the builds from the buildmaster
-  message "Transferring kvm builds from ${buildmaster}..."
+  MSG "Transferring kvm builds from ${buildmaster}..."
   rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_buildmaster}/${tree}/build-${tarbuildnum}/ ${dir_archive}/${tree}/build-${tarbuildnum}/"
 
-  #message "Transferring other builds from ${buildmaster}..."
+  #MSG "Transferring other builds from ${buildmaster}..."
   #rsync_wrapper "-av --delete-before ${buildmaster}:${dir_archive_p8}/${tree}/${rev}/ ${dir_archive_p8}/${tree}/${rev}/"
  
-  message "Transferring galera from ${buildmaster}..."
+  MSG "Transferring galera from ${buildmaster}..."
   for galera_version in ${ver_galera_real}; do
     rsync_wrapper "-av --delete-before ${buildmaster}:${dir_galera_buildmaster}/galera-${galera_version}* ${dir_galera}/"
   done
@@ -1276,32 +1176,32 @@ pull_this_release_from_the_buildmaster() {
 pull_this_release_from_ci() {
   remote_prep="yes"
   #ci_release=true
-  important_message "Transferring files on ${ci} to here"
+  MSG_I "Transferring files on ${ci} to here"
 
-  lowkey_message "Making sure local directories exist..."
+  MSG_L "Making sure local directories exist..."
 
   if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum} ]; then
     mkdir -vp ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
   fi
 
   runCommand pushd ${dir_archive}/ci/${tree}
-    message "Transferring Windows builds first..."
+    MSG "Transferring Windows builds first..."
     set +e
     if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/amd64-windows-packages/ ; then
-      message "Downloaded amd64-windows-packages from ci"
+      MSG "Downloaded amd64-windows-packages from ci"
     else
       runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/amd64-windows-packages/
     fi
     cp -avi ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/amd64-windows-packages ${dir_archive}/${tree}/build-${tarbuildnum}/winx64-packages
     
-    pressAnyKeyToContinue
+    PAUSE
 
-    message "Transferring builds from ${ci}..."
+    MSG "Transferring builds from ${ci}..."
     set +e
     for ci_pair in ${!ci_dirs} ; do
       ci_dir=(${ci_pair//:/ })
     if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${ci_tarbuildnum}/${ci_dir[1]}/ ; then
-      message "Downloaded ${ci_dir[1]} from ci"
+      MSG "Downloaded ${ci_dir[1]} from ci"
 
     else
       runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${ci_tarbuildnum}/${ci_dir[1]}/
@@ -1309,9 +1209,9 @@ pull_this_release_from_ci() {
     done
     if [ ! -d ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86 ]; then
       echo
-      line
+      LINE
       echo "+ creating tarbake dir..."
-      line
+      LINE
       mkdir -v ${dir_archive}/ci/${tree}/${ci_tarbuildnum}/kvm-tarbake-jaunty-x86
       echo
     fi
@@ -1325,67 +1225,67 @@ pull_this_release_from_ci() {
   runCommand popd
   #runCommand tree ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
   runCommand tree -L 1 ${dir_archive}/ci/${tree}/${ci_tarbuildnum}
-  message "Done downloading release to ${dir_archive}/ci/${tree}/${ci_tarbuildnum}"
+  MSG "Done downloading release to ${dir_archive}/ci/${tree}/${ci_tarbuildnum}"
   shouldI verify_the_ci_download
 }
 
 verify_all_needed_ci_dirs_are_present() {
-  message "Checking for presence of all needed ci builds..."
+  MSG "Checking for presence of all needed ci builds..."
   should_I_quit=0
-  lowkey_message "${dir_archive}/ci/${tree}/${ci_tarbuildnum}/"
+  MSG_L "${dir_archive}/ci/${tree}/${ci_tarbuildnum}/"
   for ci_pair in ${!ci_dirs}; do
     ci_dir=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
     if [ -d ${dir_source} ]; then
-      lowkey_message "\e[32m✔  ${ci_dir[1]}\e[0m"
+      MSG_L "\e[32m✔  ${ci_dir[1]}\e[0m"
     else
-      lowkey_message "\e[31m⚠  ${ci_dir[1]}\e[0m"
+      MSG_L "\e[31m⚠  ${ci_dir[1]}\e[0m"
       should_I_quit=1
     fi
   done
   if ((${should_I_quit})) ; then
-    important_message "Some needed builds are missing, quitting..."
+    MSG_I "Some needed builds are missing, quitting..."
     exit 8
   fi
 }
 
 verify_all_needed_dirs_are_present() {
-  message "Checking for presence of all needed builds..."
+  MSG "Checking for presence of all needed builds..."
   should_I_quit=0
   for dir_pair in ${!full_dirs}; do
     needed_dir=(${dir_pair//:/ })
     dir_source=${dir_archive}/${tree}/build-${tarbuildnum}/${needed_dir[0]}
     if [ -d ${dir_source} ]; then
-      lowkey_message "\e[32m✔  ${needed_dir[0]}\e[0m"
+      MSG_L "\e[32m✔  ${needed_dir[0]}\e[0m"
     else
-      lowkey_message "\e[31m⚠  ${needed_dir[0]}\e[0m"
+      MSG_L "\e[31m⚠  ${needed_dir[0]}\e[0m"
       should_I_quit=1
     fi
   done
   if ((${should_I_quit})) ; then
-    important_message "Some needed builds are missing, quitting..."
+    MSG_I "Some needed builds are missing, quitting..."
     exit 8
   fi
 }
 
 copy_ci_downloads_to_buildmaster_dir() {
   verify_all_needed_ci_dirs_are_present
-  message "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
-  pressAnyKeyToContinue
+  MSG "Copying needed builds from ${dir_archive}/ci/${tree}/${ci_tarbuildnum} to ${dir_archive}/${tree}/build-${tarbuildnum}/"
+  PAUSE
 
   for ci_pair in ${!ci_dirs} kvm-tarbake-jaunty-x86:kvm-tarbake-jaunty-x86; do
     ci_dir=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/${tree}/${ci_tarbuildnum}/${ci_dir[1]}
     dir_dest=${dir_archive}/${tree}/build-${tarbuildnum}/${ci_dir[0]}
     #if [ -d ${dir_dest} ]; then
-    #  message "${dir_dest} already exists, moving..."
+    #  MSG "${dir_dest} already exists, moving..."
     #  runCommand mv -vi ${dir_dest} ${dir_dest}_orig
     #fi
     if [ -d ${dir_source} ]; then
       #runCommand cp -ai ${dir_source} ${dir_dest}
       runCommand rsync -av ${dir_source}/ ${dir_dest}/
     else
-      important_message "${dir_source} does not exist"
+      MSG_I "${dir_source} does not exist"
       exit 1
     fi
   done
@@ -1398,7 +1298,7 @@ mark_this_release_as_a_ci_release() {
 }
 
 verify_the_ci_download() {
-  message "Verifying files downloaded from ${ci}..."
+  MSG "Verifying files downloaded from ${ci}..."
   #for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -name sha256sums.txt) ; do
   for shafile in $(find ${dir_archive}/ci/${tree}/${ci_tarbuildnum} -maxdepth 1 -mindepth 1 -type d) ; do
     #runCommand pushd $(dirname ${shafile})
@@ -1413,10 +1313,10 @@ verify_the_ci_download() {
     if [[ -f sha256sums.txt ]] ; then
       runCommand sha256sum --quiet -c sha256sums.txt
     else
-      lowkey_message "\e[31m⚠  sha256sums.txt missing for ${shafile}\e[0m"
+      MSG_L "\e[31m⚠  sha256sums.txt missing for ${shafile}\e[0m"
     fi
     runCommand popd
-    line
+    LINE
   done
 }
 
@@ -1493,10 +1393,10 @@ create_package_tarballs() {
   pushd ${dir_corp}/${version}
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
-      message "${dir_corp}/${version}/{tarfile}";runCommand tar -tf ${tarfile}
+      MSG "${dir_corp}/${version}/{tarfile}";runCommand tar -tf ${tarfile}
       if [[ $(echo "${major} >= 12.3" | bc -l) -eq 1 ]]
       then
-        message "No galera in 12.3+"
+        MSG "No galera in 12.3+"
       elif ! tar -tf ${tarfile} | grep galera &>/dev/null
       then
         echo "+ ERROR: galera package missing from ${tarfile}"
@@ -1517,17 +1417,17 @@ create_package_tarballs() {
 maybe_create_release_dir() {
   if [ ! -d ${dir_release}/${dir_name} ]; then
     echo
-    line
+    LINE
     echo "+ creating release dir..."
-    line
+    LINE
     mkdir -v ${dir_release}/${dir_name}
     echo
   fi
   if [ ! -d ${dir_corp}/${dir_name} ]; then
     echo
-    line
+    LINE
     echo "+ creating corp release dir..."
-    line
+    LINE
     mkdir -v ${dir_corp}/${dir_name}
     echo
   fi
@@ -1540,7 +1440,7 @@ maybe_create_release_dir() {
 #===============================================================================
 maybe_fix_permissions() {
   if [ "${perms_fixed}" = "no" ]; then
-     message "fixing permissions..."
+     MSG "fixing permissions..."
 
     dirs_to_chmod="${dir_archive}/${tree}/ ${dir_archive}/${tree}/build-${tarbuildnum}/ ${dir_archive_p8}/${tree}/ ${dir_archive_p8}/${tree}/${rev}"
 
@@ -1598,10 +1498,10 @@ pull_the_win_packages_from_the_win_builder() {
 #                 releases are in it.
 #===============================================================================
 display_the_previous_releases() {
-  message "Here are the previous releases in the repository:"
-  for rpm in $(ls ${dir_release}/mariadb-${prev_release}/yum/rhel/9/x86_64/srpms) ; do lowkey_message ${rpm:8:-14} ; done
+  MSG "Here are the previous releases in the repository:"
+  for rpm in $(ls ${dir_release}/mariadb-${prev_release}/yum/rhel/9/x86_64/srpms) ; do MSG_L ${rpm:8:-14} ; done
   echo;
-  pressAnyKeyToContinue
+  PAUSE
 }
 
 #===  FUNCTION  ================================================================
@@ -1648,10 +1548,10 @@ update_the_docker_library_mariadb_version() {
       echo "+ git commit -m \"MariaDB Server ${reldate}\""
       runCommand git push
     fi
-    message "Check https://github.com/MariaDB/mariadb-docker
+    MSG "Check https://github.com/MariaDB/mariadb-docker
 the top commit above the directory listing should have a dot for the CI that
 will eventually run through to be green"
-    pressAnyKeyToContinue
+    PAUSE
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
@@ -1666,7 +1566,7 @@ will eventually run through to be green"
       runCommand git checkout mariadb-release-$reldate
     fi
     runCommand git remote prune origin
-    message "The ${dir_docker_library_official_images} git repo is linked upstream to
+    MSG "The ${dir_docker_library_official_images} git repo is linked upstream to
 the github.com/docker-library/official-images git repository. It was
 added with:
   git remote add upstream git@github.com:docker-library/official-images.git
@@ -1677,7 +1577,7 @@ sure we have the latest from there before doing anything else:"
     runCommand git fetch upstream
     runCommand git merge upstream/master
     #runCommand git push --set-upstream origin mariadb-release-$reldate
-    message "now we can continue"
+    MSG "now we can continue"
     echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
             ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
@@ -1685,7 +1585,7 @@ sure we have the latest from there before doing anything else:"
     echo "+ git commit -m \"MariaDB releases ${reldate}\" library/mariadb"
            git commit -m "MariaDB releases ${reldate}" library/mariadb
     runCommand git push
-    message "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
+    MSG "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
 + visiting link
 + e.g. https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
 + This should be a pull request against the
@@ -1711,8 +1611,8 @@ copy_win_packages_to_sign-todo_dir() {
   runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
   runCommand tree ~/sign-todo/
   echo;echo
-  message "Quitting so Windows Package signing can occur."
-  lowkey_message "Re-run script when signing is completed and move signed packages back."
+  MSG "Quitting so Windows Package signing can occur."
+  MSG_L "Re-run script when signing is completed and move signed packages back."
   echo;echo
   exit 0
 }
@@ -1727,7 +1627,7 @@ move_win_packages_from_sign-done_dir() {
 verify_signed_win_packages() {
   #for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
   for msi in ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/*msi ; do
-    message "Verifying ${msi}"
+    MSG "Verifying ${msi}"
     runCommand osslsigncode verify -in ${msi}
   done
 }
@@ -1881,9 +1781,9 @@ shift $(($OPTIND - 1))
 if ! ${revflag} || ! ${numflag} || ! ${treeflag} || ! ${tarflag} ; then
   #if [[ -d $1 ]]; then
     echo
-    line
+    LINE
     echo "-r -t -v and -b, along with their appropriate arguments, are mandatory" >&2
-    line
+    LINE
     usage
     exit 4
   #fi
@@ -1942,7 +1842,7 @@ shouldI copy_ci_downloads_to_buildmaster_dir
 
 shouldI verify_all_needed_dirs_are_present
 
-important_message "Creating the ${version} Release"
+MSG_I "Creating the ${version} Release"
 
 shouldI prepare_bintar_and_source_packages
 shouldI prepare_Windows_packages
@@ -2010,9 +1910,9 @@ eval $(gpg-agent --daemon)
 if [ "${create_bintar}" != "no" ]; then
   maybe_create_release_dir      # Create release dirs if they don't exist
   pushd ${dir_release}/${dir_name}
-  line
+  LINE
   echo "+ transfering bintar & source packages..."
-  line
+  LINE
   for dir_pair in ${build_dirs}; do
     dir_array=(${dir_pair//:/ })
     if [ -d ${dir_release}/${dir_name}/${dir_array[1]} ]; then
@@ -2116,7 +2016,7 @@ if [ "${create_bintar}" != "no" ]; then
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
-            message "Copying over galera packages for ${dir_array[1]}"
+            MSG "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           fi
@@ -2171,7 +2071,7 @@ if [ "${create_bintar}" != "no" ]; then
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
-            message "Copying over galera packages for ${dir_array[1]}"
+            MSG "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
             runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
           fi
@@ -2218,7 +2118,7 @@ if [ "${create_bintar}" != "no" ]; then
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
-            message "Copying over galera packages for ${dir_array[1]}"
+            MSG "Copying over galera packages for ${dir_array[1]}"
             runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
             runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
           fi
@@ -2319,7 +2219,7 @@ if [ "${create_bintar}" != "no" ]; then
   # if we are creating a Galera release we need to copy in the galera source and
   # packages (for those not using the repositories)
   if [ ${incl_galera} = "yes" ]; then
-    message "transferring Galera source and package files..."
+    MSG "transferring Galera source and package files..."
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
       # rsync the galera dir to the release dir
@@ -2337,17 +2237,17 @@ if [ "${create_bintar}" != "no" ]; then
         echo
       fi
     done
-    lowkey_message "done transferring Galera source and package files"
+    MSG_L "done transferring Galera source and package files"
     echo
   fi
 
-  message "done transfering bintar & source packages"
+  MSG "done transfering bintar & source packages"
   echo
 else
   echo
-  line
+  LINE
   echo "+ skipping transfering bintar & source packages, as requested..."
-  line
+  LINE
   echo
 fi
 
@@ -2357,9 +2257,9 @@ fi
 if [ "${create_win}" != "no" ]; then
   maybe_create_release_dir
   pushd ${dir_release}/${dir_name}
-  line
+  LINE
   echo "+ transfering Windows packages..."
-  line
+  LINE
   for arch in winx64; do
     if [ ! -d ${dir_release}/${dir_name}/${arch}-packages ]; then
       mkdir ${dir_release}/${dir_name}/${arch}-packages
@@ -2368,7 +2268,7 @@ if [ "${create_win}" != "no" ]; then
 
 
     if ${ci_release}; then
-      message "Packages are on the local filesystem"
+      MSG "Packages are on the local filesystem"
     else
     shouldI pull_the_win_packages_from_the_win_builder
     fi
@@ -2380,7 +2280,7 @@ if [ "${create_win}" != "no" ]; then
     for pkgtype in msi zip; do
       #wget -N ${winbuilder}/${tree}/${rev}/${version}-${arch}.${pkgtype}
       if ${win_remote};then
-        message "Packages are on the Windows Builder"
+        MSG "Packages are on the Windows Builder"
       runCommand wget -N ${winbuilder}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype}
       elif ${ci_release}; then
         if [ "${pkgtype}" = "msi" ];then
@@ -2390,7 +2290,7 @@ if [ "${create_win}" != "no" ]; then
         runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/${windir}*/${version}-${arch}.${pkgtype} .
         fi
       else
-        message "Packages are on the local filesystem"
+        MSG "Packages are on the local filesystem"
         #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.${pkgtype} .
         runCommand rsync -avP ${dir_archive}/${tree}/build-${tarbuildnum}/${arch}-packages/${version}-${arch}.${pkgtype} .
       fi
@@ -2429,7 +2329,7 @@ if [ "${create_win}" != "no" ]; then
     fi
     fi
   done
-  message "Generating Windows Checksums and Signatures..."
+  MSG "Generating Windows Checksums and Signatures..."
   for arch in winx64; do
     pushd ${dir_release}/${dir_name}/${arch}-packages
     pwd
@@ -2463,9 +2363,9 @@ if [ "${create_win}" != "no" ]; then
   popd
   echo "+ done transfering Windows packages"
 else
-  line
+  LINE
   echo "+ skipping transfering Windows packages, as requested..."
-  line
+  LINE
 fi
 
 
@@ -2506,7 +2406,7 @@ fi
 #  Create Debian Repos
 #-------------------------------------------------------------------------------
 if [ "${create_debian}" != "no" ]; then
-  message "Prepping Debian repo, as requested..."
+  MSG "Prepping Debian repo, as requested..."
   ## if the debian repo dir exists, delete it
   #if [ -d ${dir_release}/${dir_name}/repo/debian ]; then
   #  rm -rf "${dir_release}/${dir_name}/repo/debian"
@@ -2531,14 +2431,14 @@ if [ "${create_debian}" != "no" ]; then
 elif [ "${rsync_debian_repo}" != "no" ]; then
   # This is a version of MariaDB that no longer gets updates for Debian
   # distros, but we want to maintain the last versions we released
-  line
+  LINE
   echo "+ rsyncing old Debian repos..."
-  line
+  LINE
   echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/"
           rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
   echo
 else
-  message "Skipping Debian repo creation, as requested..."
+  MSG "Skipping Debian repo creation, as requested..."
 fi
 
 
@@ -2546,7 +2446,7 @@ fi
 #  Create Ubuntu Repos
 #-------------------------------------------------------------------------------
 if [ "${create_ubuntu}" != "no" ]; then
-  message "Prepping Ubuntu repo, as requested..."
+  MSG "Prepping Ubuntu repo, as requested..."
   ## if the ubuntu repo dir exists, delete it
   #if [ -d ${dir_release}/${dir_name}/repo/ubuntu ]; then
   #  rm -rf "${dir_release}/${dir_name}/repo/ubuntu"
@@ -2573,14 +2473,14 @@ if [ "${create_ubuntu}" != "no" ]; then
 elif [ "${rsync_ubuntu_repo}" != "no" ]; then
   # This is a version of MariaDB that no longer gets updates for Ubuntu
   # distros, but we want to maintain the last versions we released
-  line
+  LINE
   echo "+ rsyncing old Ubuntu repos..."
-  line
+  LINE
   echo "+ rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/"
           rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/ubuntu ${dir_release}/${dir_name}/repo/
   echo
 else
-  message "Skipping Ubuntu repo creation, as requested..."
+  MSG "Skipping Ubuntu repo creation, as requested..."
 fi
 pushd ${dir_release}/${dir_name}
 echo
@@ -2589,9 +2489,9 @@ echo
 #  Create Yum Repos
 #-------------------------------------------------------------------------------
 if [ "${create_yum}" != "no" ]; then
-  line
+  LINE
   echo "creating Yum repos..."
-  line
+  LINE
   if [ -d ${dir_release}/${dir_name}/yum ]; then
     rm -rf "${dir_release}/${dir_name}/yum"
   fi
@@ -2650,16 +2550,16 @@ if [ "${create_yum}" != "no" ]; then
   #fi
   echo
 else
-  line
+  LINE
   echo "+ Skipping Yum repo creation, as requested..."
-  line
+  LINE
 fi
 
 echo
 echo
-line
+LINE
 echo "+ done with repo creation for the ${version} release"
-line
+LINE
 echo
 
 shouldI copy_the_bintars_to_corp
@@ -2681,23 +2581,23 @@ shouldI create_package_tarballs
 
 echo;echo;echo;echo
 
-important_message "Corp Mirrors"
+MSG_I "Corp Mirrors"
 for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_corp_mirrors
 
-important_message "Foundation Mirrors"
+MSG_I "Foundation Mirrors"
 for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_foundation_mirrors
 
 echo;echo;echo;echo
 
-important_message "Foundation Archives"
+MSG_I "Foundation Archives"
 for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
 shouldI upload_to_the_foundation_archives
 
 echo;echo;echo;echo
 
-important_message "Prep Local Mirror Dir"
+MSG_I "Prep Local Mirror Dir"
 
 shouldI copy_the_release_to_the_local_mirror_dir
 
@@ -2711,7 +2611,7 @@ shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
 
 echo;echo;echo;echo
 
-important_message "WARNING: Only run the following once ALL releases are ready for upload!"
+MSG_I "WARNING: Only run the following once ALL releases are ready for upload!"
 shouldI sync_the_local_mirror_dir_to_the_mirrors
 
 echo;echo;echo;echo
