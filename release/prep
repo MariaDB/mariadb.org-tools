@@ -2006,7 +2006,7 @@ update_the_docker_library_mariadb_version() {
   fi
   if [ ! -d ${dir_docker_library_official_images} ]; then
     # fork from https://github.com/docker-library/official-images
-    runCommand git clone git@github.com:dbart/official-images ${dir_docker_official_images}
+    runCommand git clone git@github.com:dbart/official-images ${dir_docker_library_official_images}
   fi
   export BASHBREW_LIBRARY=${dir_docker_library_official_images}
   if [ ! -d ${dir_docker_library} ]; then
