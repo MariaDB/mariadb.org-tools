@@ -80,189 +80,16 @@ fi
 # Splitting build dirs (refer ME-91).
 
 set_build_dirs_variables() {
-  case ${major} in
-    10.5)
-      build_dirs_x86="
-        kvm-bintar-centos6-x86:bintar-linux-x86
-        kvm-bintar-trusty-x86:bintar-linux-systemd-x86
-        "
-      build_dirs_x86_64="
-        kvm-bintar-centos6-amd64:bintar-linux-x86_64
-        kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
-        kvm-tarbake-jaunty-x86:source
-        mac-1012-pkg:macOS
-        "
-      ci_build_dirs_x86="
-        32bit-debian-9:bintar-debian-9-x86
-        32bit-debian-sid:bintar-debian-sid-x86
-        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
-        "
-      ci_build_dirs_x86_64="
-        amd64-centos-7:bintar-centos-7-amd64
-        amd64-centos-8:bintar-centos-8-amd64
-        amd64-debian-10:bintar-debian-10-amd64
-        amd64-debian-9:bintar-debian-9-amd64
-        amd64-debian-sid:bintar-debian-sid-amd64
-        amd64-fedora-32:bintar-fedora-32-amd64
-        amd64-fedora-33:bintar-fedora-33-amd64
-        amd64-opensuse-15:bintar-opensuse-15-amd64
-        amd64-opensuse-42:bintar-opensuse-42-amd64
-        amd64-rhel-8:bintar-rhel-8-amd64
-        amd64-sles-12:bintar-sles-12-amd64
-        amd64-sles-15:bintar-sles-15-amd64
-        amd64-ubuntu-1604:bintar-ubuntu-1604-amd64
-        amd64-ubuntu-1804:bintar-ubuntu-1804-amd64
-        amd64-ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
-        amd64-ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
-        amd64-ubuntu-2004:bintar-ubuntu-2004-amd64
-        amd64-ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
-        amd64-ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
-        "
-      ci_build_dirs_aarch64="
-        aarch64-centos-7:bintar-centos-7-aarch64
-        aarch64-debian-10:bintar-debian-10-aarch64
-        aarch64-debian-9:bintar-debian-9-aarch64
-        aarch64-fedora-32:bintar-fedora-32-aarch64
-        aarch64-rhel-7:bintar-rhel-7-aarch64
-        aarch64-rhel-8:bintar-rhel-8-aarch64
-        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
-        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
-        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
-        "
-      ci_build_dirs_ppc64le="
-        ppc64le-centos-7:bintar-centos-7-ppc64le
-        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
-        "
-      ;;
-    10.4|10.3)
-      build_dirs_x86="
-        kvm-bintar-centos6-x86:bintar-linux-x86
-        kvm-bintar-trusty-x86:bintar-linux-systemd-x86
-        kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
-        "
-      build_dirs_x86_64="
-        kvm-bintar-centos6-amd64:bintar-linux-x86_64
-        kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
-        kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
-        kvm-tarbake-jaunty-x86:source
-        mac-1012-pkg:macOS
-        "
-      ci_build_dirs_x86="
-        32bit-debian-9:bintar-debian-9-x86
-        32bit-debian-sid:bintar-debian-sid-x86
-        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
-        "
-      ci_build_dirs_x86_64="
-        centos-7:bintar-centos-7-amd64
-        centos-8:bintar-centos-8-amd64
-        debian-10:bintar-debian-10-amd64
-        debian-9:bintar-debian-9-amd64
-        debian-sid:bintar-debian-sid-amd64
-        fedora-32:bintar-fedora-32-amd64
-        fedora-33:bintar-fedora-33-amd64
-        opensuse-15:bintar-opensuse-15-amd64
-        opensuse-42:bintar-opensuse-42-amd64
-        rhel-8:bintar-rhel-8-amd64
-        sles-12:bintar-sles-12-amd64
-        sles-15:bintar-sles-15-amd64
-        ubuntu-1604:bintar-ubuntu-1604-amd64
-        ubuntu-1804:bintar-ubuntu-1804-amd64
-        ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
-        ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
-        ubuntu-2004:bintar-ubuntu-2004-amd64
-        ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
-        ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
-        "
-      ci_build_dirs_aarch64="
-        aarch64-centos-7:bintar-centos-7-aarch64
-        aarch64-debian-10:bintar-debian-10-aarch64
-        aarch64-debian-9:bintar-debian-9-aarch64
-        aarch64-fedora-32:bintar-fedora-32-aarch64
-        aarch64-rhel-7:bintar-rhel-7-aarch64
-        aarch64-rhel-8:bintar-rhel-8-aarch64
-        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
-        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
-        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
-        "
-      ci_build_dirs_ppc64le="
-        ppc64le-centos-7:bintar-centos-7-ppc64le
-        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
-        "
-      ;;
-    10.2)
-      ci_build_dirs_x86="
-        32bit-debian-9:bintar-debian-9-x86
-        32bit-debian-sid:bintar-debian-sid-x86
-        32bit-ubuntu-1604:bintar-ubuntu-1604-x86
-        "
-      ci_build_dirs_x86_64="
-        amd64-centos-7:bintar-centos-7-amd64
-        amd64-centos-8:bintar-centos-8-amd64
-        amd64-debian-10:bintar-debian-10-amd64
-        amd64-debian-9:bintar-debian-9-amd64
-        amd64-debian-sid:bintar-debian-sid-amd64
-        amd64-fedora-32:bintar-fedora-32-amd64
-        amd64-fedora-33:bintar-fedora-33-amd64
-        amd64-opensuse-15:bintar-opensuse-15-amd64
-        amd64-opensuse-42:bintar-opensuse-42-amd64
-        amd64-rhel-8:bintar-rhel-8-amd64
-        amd64-sles-12:bintar-sles-12-amd64
-        amd64-sles-15:bintar-sles-15-amd64
-        amd64-ubuntu-1604:bintar-ubuntu-1604-amd64
-        amd64-ubuntu-1804:bintar-ubuntu-1804-amd64
-        amd64-ubuntu-1804-clang10:bintar-ubuntu-1804-amd64-clang10
-        amd64-ubuntu-1804-clang6:bintar-ubuntu-1804-amd64-clang6
-        amd64-ubuntu-2004:bintar-ubuntu-2004-amd64
-        amd64-ubuntu-2004-clang11:bintar-ubuntu-2004-amd64-clang11
-        amd64-ubuntu-2004-gcc10:bintar-ubuntu-2004-amd64-gcc10
-        "
-      ci_build_dirs_aarch64="
-        aarch64-centos-7:bintar-centos-7-aarch64
-        aarch64-debian-10:bintar-debian-10-aarch64
-        aarch64-debian-9:bintar-debian-9-aarch64
-        aarch64-fedora-32:bintar-fedora-32-aarch64
-        aarch64-rhel-7:bintar-rhel-7-aarch64
-        aarch64-rhel-8:bintar-rhel-8-aarch64
-        aarch64-ubuntu-1604:bintar-ubuntu-1604-aarch64
-        aarch64-ubuntu-1804:bintar-ubuntu-1804-aarch64
-        aarch64-ubuntu-2004:bintar-ubuntu-2004-aarch64
-        "
-      ci_build_dirs_ppc64le="
-        ppc64le-centos-7:bintar-centos-7-ppc64le
-        ppc64le-ubuntu-1604:bintar-ubuntu-1604-ppc64le
-        ppc64le-ubuntu-1804:bintar-ubuntu-1804-ppc64le
-        ppc64le-ubuntu-2004:bintar-ubuntu-2004-ppc64le
-        "
-build_dirs_x86="kvm-bintar-centos5-x86:bintar-linux-x86
-                kvm-bintar-quantal-x86:bintar-linux-glibc_214-x86
-                kvm-bintar-trusty-x86:bintar-linux-systemd-x86"
-
-build_dirs_x86_64="kvm-bintar-centos5-amd64:bintar-linux-x86_64
-                   kvm-bintar-quantal-amd64:bintar-linux-glibc_214-x86_64
-                   kvm-bintar-trusty-amd64:bintar-linux-systemd-x86_64
-                   kvm-tarbake-jaunty-x86:source
-                   sol10-64:bintar-sol10-64
-                   mac-1012-pkg:macOS
-                   bsd9-64:bintar-bsd9-64
-                   opensolaris-511-bintar:bintar-opensolaris-511"
-       ;;
-     *)
-      build_dirs_x86=""
-      build_dirs_x86_64="
-        kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
-        kvm-bintar-almalinux8-amd64:bintar-linux-systemd-x86_64
-        kvm-tarbake-jaunty-x86:source
-      "
-      ci_build_dirs_x86=""
-      ci_build_dirs_x86_64=""
-      ci_build_dirs_aarch64=""
-      ci_build_dirs_ppc64le=""
-      ;;
-  esac
+  build_dirs_x86=""
+  build_dirs_x86_64="
+    kvm-bintar-centos74-amd64:bintar-linux-systemd-x86_64
+    kvm-bintar-almalinux8-amd64:bintar-linux-systemd-x86_64
+    kvm-tarbake-jaunty-x86:source
+  "
+  ci_build_dirs_x86=""
+  ci_build_dirs_x86_64=""
+  ci_build_dirs_aarch64=""
+  ci_build_dirs_ppc64le=""
 
 #-------------------------------------------------------------------------------
 # Dirs for buildbot.mariadb.org
@@ -322,26 +149,11 @@ ci_dirs_130="${ci_dirs_123}"
 # Dirs for buildbot.mariadb.net 
 #-------------------------------------------------------------------------------
 
-case ${major} in
-  10.3|10.4|10.5)
-    bb_dirs_102="kvm-rpm-centos74-amd64: kvm-zyp-opensuse150-amd64: kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
-    ;;
-  10.6|10.11) # No opensuse150 in 10.6+
-    #bb_dirs_102="kvm-zyp-sles125-amd64: kvm-zyp-sles15-amd64:"
-    bb_dirs_102=""
-    ;;
-  *) # No sles125 in 11.4+
-    bb_dirs_102=""
-    ;;
-esac
-case ${major} in
-  10*|11.1|11.2|11.3)
-    bb_dirs_103="${bb_dirs_102}"
-    ;;
-  *) # No rhel8 from bb in 11.4+
-    bb_dirs_103="${bb_dirs_102}"
-    ;;
-esac
+# Nothing has come from buildbot.mariadb.net since 10.6, so every bb_dirs_*
+# below is empty and full_dirs_* is effectively just ci_dirs_*. The cascade is
+# kept as the hook for putting dirs back should that ever change.
+bb_dirs_102=""
+bb_dirs_103="${bb_dirs_102}"
 bb_dirs_104="${bb_dirs_103}"
 bb_dirs_105="${bb_dirs_104}"
 #bb_dirs_106="${bb_dirs_105} kvm-deb-jammy-amd64: kvm-deb-jammy-aarch64: kvm-rpm-fedora39-amd64: kvm-rpm-fedora39-aarch64: kvm-zyp-opensuse155-amd64:"
@@ -653,7 +465,7 @@ cat >> ${dir_log}/prep.log <<END
 # gpg_opts="${gpg_opts}"
 
 END
-chown ${USER}: ${dir_conf}/prep.conf
+chown ${USER}: ${dir_log}/prep.log
 }
 
 shouldI() {
@@ -1913,9 +1725,8 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          # All releases include Galera now
-            # If this is a galera release we need to copy in the galera libraries
-            # and repack the bintar
+          # All releases include Galera now: copy in the galera libraries
+          # and repack the bintar
             runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
             runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
             if [ -d *-linux-${galera_arch} ]; then
@@ -1966,9 +1777,8 @@ if [ "${create_bintar}" != "no" ]; then
             galera_arch="i686"
           fi
 
-          # All releases include Galera now
-            # If this is a galera release we need to copy in the galera libraries
-            # and repack the bintar
+          # All releases include Galera now: copy in the galera libraries
+          # and repack the bintar
             runCommand tar -zxf ${version}*-linux-systemd-${galera_arch}.tar.gz
             runCommand mv -vi ${version}*-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             if [ -d *-linux-${galera_arch} ]; then
@@ -2009,9 +1819,8 @@ if [ "${create_bintar}" != "no" ]; then
 
         elif [ "${dir_array[1]}" = "bintar-linux-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-x86" ]; then
           if [[ "${tree}" = *10.[1-9]* ]]; then
-            # If this is a galera release we need to copy in the galera libraries
-            # and repack the bintar, but first we need to set ${galera_arch} to the
-            # correct value
+            # Copy in the galera libraries and repack the bintar, but first
+            # we need to set ${galera_arch} to the correct value
             if [ "${dir_array[1]}" = "bintar-linux-x86_64" ]; then
               galera_arch="x86_64"
             else
@@ -2295,14 +2104,6 @@ if [ ! -d ${dir_corp}/${dir_name}/repo ]; then
 fi
 
 pushd ${dir_release}/${dir_name}/repo
-
-# create directory for the non-mgc version, if ubuntu or debian packages are
-# going to be created and if it doesn't already exist
-if [ "${create_debian}" != "no" ] || [ "${create_ubuntu}" != "no" ]; then
-  if [ ! -d ${dir_release}/repo-no-mgc/${num} ]; then
-    mkdir -vp ${dir_release}/repo-no-mgc/${num}
-  fi
-fi
 
 if [ "${create_ubuntu}" != "no" ] || [ "${create_debian}" != "no" ] || [ "${create_yum}" != "no" ] || [ "${rsync_debian_repo}" != "no" ] || [ "${rsync_ubuntu_repo}" != "no" ]; then
   if [ ! ${prev_release} ] ; then
