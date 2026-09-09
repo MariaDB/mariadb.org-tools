@@ -1,0 +1,103 @@
+#-------------------------------------------------------------------------------
+# Common functions used by the release prep scripts
+#-------------------------------------------------------------------------------
+# Symlink this file under `~/.config/`, e.g.:
+#   cd ~/.config
+#   ln -sv /path/to/mariadb.org-tools/release/common ./
+
+DIV() { echo;echo;LINE;echo;echo;}
+DIV_I() { echo;echo;THICKLINE;echo;echo;}
+LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
+THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
+RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
+PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
+
+MSG() { LINE;echo -e "# ${@}";LINE;}
+MSG_I() { echo;echo;THICKLINE;echo -e "# ${@}";THICKLINE;}
+MSG_L() { echo -e "# ${@}";}
+
+userResponse() {
+  question="${@}"
+  read -p "${question} " -n 1
+  echo
+  ANSWER=${REPLY}
+  RESPONSE=${REPLY}
+  return 0
+}
+
+userInput() {
+  question="$@"
+  echo
+  read -p "${question} "
+  echo
+  INPUT=${REPLY}
+  return 0
+}
+
+secureUserInput() {
+  question="${@}"
+  SECUREINPUT="false"
+  REPLY="alsofalse"
+  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
+    read -s -p "${question} "
+    echo
+    SECUREINPUT="${REPLY}"
+    read -s -p "Please enter it again: "
+    echo
+    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
+      echo
+      echo "The two entries do not match."
+      echo
+    else
+      echo
+      echo "The two entries match. Continuing."
+      echo
+      return 0
+    fi
+  done
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  rsync_wrapper
+#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
+#                 the options part of the rsync (everything that would come
+#                 after the rsync command itself on the command-line) and first
+#                 runs it with the --dry-run flag. It then asks if everything
+#                 is OK. Assuming things are OK, it runs the rsync for real.
+#-------------------------------------------------------------------------------
+rsync_wrapper() {
+  local upload
+  upload=""
+  rsync_body="${@}"
+  MSG_L "Doing a dry run..."
+  set -x
+  rsync --dry-run ${rsync_body}
+  set +x
+  echo
+  while [ -z ${upload} ]; do
+    userResponse "Does the above look OK? [y/n]"
+    case ${ANSWER} in
+      "y")
+        MSG_L "Transferring for real..."
+        RC rsync ${rsync_body}
+        echo
+        upload="yes"
+        ANSWER=""
+        return 0
+        ;;
+      "n")
+        MSG "Something went wrong..."
+        upload="no"
+        ANSWER=""
+        return 1
+        ;;
+      *)
+        echo "Please answer [y]es or [n]o."
+        echo
+        upload=""
+        ;;
+    esac
+  done
+}
+
+# vim: filetype=sh
