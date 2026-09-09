@@ -7,6 +7,7 @@
 
 DIV() { echo;echo;LINE;echo;echo;}
 DIV_I() { echo;echo;THICKLINE;echo;echo;}
+SPACE() { echo;echo;echo;}
 LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
 THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
 RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}

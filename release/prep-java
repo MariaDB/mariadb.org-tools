@@ -33,20 +33,25 @@ tarballs="mariadb-connector-j-${version}.tar.gz mariadb-connector-j-${version}.z
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
+# ${dir_conf}/common provides RC, DIV, LINE, THICKLINE, PAUSE, MSG, MSG_I,
+# MSG_L, userResponse and userInput. This script used to carry its own copies of
+# all of them; it now sources them here -- before the function definitions and
+# the main script -- so they are available to every code path.
+if [ -f ${dir_conf}/common ]; then
+  . ${dir_conf}/common
+else
+  echo
+  echo "The file ${dir_conf}/common does not exist."
+  echo "It provides RC, DIV, MSG, LINE and userResponse, which this script"
+  echo "cannot run without. Please install it and re-run."
+  echo
+  exit 3
+fi
+
 
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
-
-DIV() { echo;echo;LINE;echo;echo;}
-LINE() { echo -n '#';for i in {1..77} ; do echo -n '-';done;echo '-';}
-THICKLINE() { echo -n '#';for i in {1..77} ; do echo -n '=';done;echo '=';}
-RC() { echo "+ ${@}";if ${@};then return 0;else return 1;fi;}
-PAUSE() { echo;read -p "Press any key to continue." -n 1;echo;return 0;}
-
-MSG() { LINE;echo "# ${@}";LINE;}
-MSG_I() { echo;echo;THICKLINE;echo "# ${@}";THICKLINE;}
-MSG_L() { echo "# ${@}";}
 
 sumgen() {
   for sum in md5 sha1 sha256 sha512;do
@@ -54,24 +59,6 @@ sumgen() {
 	${sum}sum -c ${sum}sums.txt
   done
   DIV
-}
-
-userInput() {
-  question="$@"
-  echo
-  read -p "${question} "
-  echo
-  INPUT=${REPLY}
-  return 0
-}
-
-userResponse() {
-  question="${@}"
-  read -p "${question} " -n 1
-  echo
-  ANSWER=${REPLY}
-  RESPONSE=${REPLY}
-  return 0
 }
 
 loadDefaults() {
@@ -353,6 +340,10 @@ upload_to_the_archives() {
 #                 after the rsync command itself on the command-line) and first
 #                 runs it with the --dry-run flag. It then asks if everything
 #                 is OK. Assuming things are OK, it runs the rsync for real.
+#
+#                 This deliberately overrides the rsync_wrapper in common: the
+#                 connector dry runs are paged through less, where common's
+#                 version dumps them straight to the terminal under set -x.
 #-------------------------------------------------------------------------------
 rsync_wrapper() {
   local upload

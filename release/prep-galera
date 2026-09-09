@@ -307,70 +307,36 @@ rsync_opts="-a -L"
 dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
+# ${dir_conf}/common provides RC, DIV, LINE, THICKLINE, SPACE, PAUSE, MSG,
+# MSG_I, MSG_L, userResponse, userInput, secureUserInput and rsync_wrapper. This
+# script used to carry its own copies, under lowercase names (message, line,
+# thickline, spacer, pressAnyKeyToContinue and friends); it now sources them
+# here -- before the function definitions and the main script -- so they are
+# available to every code path.
+if [ -f ${dir_conf}/common ]; then
+  . ${dir_conf}/common
+else
+  echo
+  echo "The file ${dir_conf}/common does not exist."
+  echo "It provides RC, DIV, MSG, LINE, userResponse and rsync_wrapper, which"
+  echo "this script cannot run without. Please install it and re-run."
+  echo
+  exit 3
+fi
+
 
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
-
-RC() {
-  lowkey_message "${@}"
-  sleep 1
-  if ${@} ; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-userResponse() {
-  question="${@}"
-  read -p "${question} " -n 1
-  echo
-  ANSWER=${REPLY}
-  RESPONSE=${REPLY}
-  return 0
-}
-
-userInput() {
-  question="$@"
-  echo
-  read -p "${question} "
-  echo
-  INPUT=${REPLY}
-  return 0
-}
-
-secureUserInput() {
-  question="${@}"
-  SECUREINPUT="false"
-  REPLY="alsofalse"
-  while [ "${SECUREINPUT}" != "${REPLY}" ]; do
-    read -s -p "${question} "
-    echo
-    SECUREINPUT="${REPLY}"
-    read -s -p "Please enter it again: "
-    echo
-    if [ "${SECUREINPUT}" != "${REPLY}" ]; then
-      echo
-      echo "The two entries do not match."
-      echo
-    else
-      echo
-      echo "The two entries match. Continuing."
-      echo
-      return 0
-    fi
-  done
-}
 
 delete_the_lib_dir() {
   RC rm -rfv lib
 }
 
 prepare_the_bintar_packages() {
-  important_message "Preparing bintar packages..."
+  MSG_I "Preparing bintar packages..."
   if [ -d ${dir_release}/${dir_name}/bintar ] ; then
-    message "Removing old bintar dirs..."
+    MSG "Removing old bintar dirs..."
     RC rm -rf ${dir_release}/${dir_name}/bintar
     RC rm -rf ${dir_release}/${dir_name}-signed/bintar
     RC rm -rf ${dir_release}/${dir_name}-signed-ent/bintar
@@ -402,7 +368,7 @@ prepare_the_bintar_packages() {
       #"galera-${num}-x86_64"|"galera-${num}-i686"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
       "galera-${num}-x86_64"|"galera-${num}-ppc64le"|"galera-${num}-ppc64"|"galera-${num}-aarch64")
           # we are dealing with an .rpm file
-          lowkey_message "rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv"
+          MSG_L "rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv"
                           rpm2cpio ${dir_archive}/${tree}/${rev}/${dir_array[0]}/rpms/galera*.rpm | cpio -idmv
           RC cd usr
           case ${dir_array[1]} in
@@ -467,36 +433,36 @@ prepare_the_bintar_packages() {
     #cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]} ${dir_release}/${dir_name}-signed/bintar/
     #cp -avi ${dir_release}/${dir_name}/bintar/${dir_array[1]} ${dir_release}/${dir_name}-signed-ent/bintar/
 
-    lowkey_message "transfer of ${dir_array[1]} done"
-    echo;line;echo
+    MSG_L "transfer of ${dir_array[1]} done"
+    echo;LINE;echo
   done
 
 
 
   # sign the bintars
   RC cd ${dir_release}/${dir_name}-signed/bintar/
-  lowkey_message "About to sign the bintars..."
-  pressAnyKeyToContinue
+  MSG_L "About to sign the bintars..."
+  PAUSE
   for file in galera*.tar.gz ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # copy the sum files over and sign them
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
 
   # sign the ent-bintars
   cd ${dir_release}/${dir_name}-signed-ent/bintar/
-  lowkey_message "About to sign the ent bintars..."
-  pressAnyKeyToContinue
+  MSG_L "About to sign the ent bintars..."
+  PAUSE
   for file in galera*.tar.gz ; do RC "gpg ${ent_gpg_opts} ${file}";done
   # copy the sum files over and sign them
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; RC cp -avi ${dir_release}/${dir_name}/bintar/${sum}sums.txt ./ ; RC ${sum}sum -c ${sum}sums.txt ; RC "gpg ${ent_gpg_opts} ${sum}sums.txt";done
 
-  message "Done preparing bintar packages"
-  spacer
+  MSG "Done preparing bintar packages"
+  SPACE
 }
 
 prepare_the_source_tarball() {
-  important_message "Preparing source tarball..."
+  MSG_I "Preparing source tarball..."
   if [ -d ${dir_release}/${dir_name}/src ]; then
-    message "Removing old src dir..."
+    MSG "Removing old src dir..."
     RC rm -rf ${dir_release}/${dir_name}/src
     RC rm -rf ${dir_release}/${dir_name}-signed/src
     RC rm -rf ${dir_release}/${dir_name}-signed-ent/src
@@ -508,12 +474,12 @@ prepare_the_source_tarball() {
   rsync_wrapper "-av ${dir_archive}/${tree}/${rev}/kvm-src-rocky9-amd64-gal/src/galera* ${dir_release}/${dir_name}/src/"
 
     cd ${dir_release}/${dir_name}/src
-    for sum in md5 sha1 sha256 sha512;do echo ${sum}; lowkey_message "${sum}sum ./galera* >> ${sum}sums.txt" ; ${sum}sum ./galera* >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
+    for sum in md5 sha1 sha256 sha512;do echo ${sum}; MSG_L "${sum}sum ./galera* >> ${sum}sums.txt" ; ${sum}sum ./galera* >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
 
     # before signing the files, copy them to the ent dir
     RC cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed-ent/
 
-    lowkey_message "signing source tarball and sum files..."
+    MSG_L "signing source tarball and sum files..."
     RC cd ${dir_release}/${dir_name}/src/
     # remove any signature files before signing, if they exist
     for sig_file in $(ls ./*.asc); do
@@ -521,7 +487,7 @@ prepare_the_source_tarball() {
     done
     # sign the source tarball
     echo "About to sign the source tarball..."
-    pressAnyKeyToContinue
+    PAUSE
     RC gpg ${gpg_opts_2016} ${version}.tar.gz
     # sign the sum files as well
     for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
@@ -530,7 +496,7 @@ prepare_the_source_tarball() {
     RC cp -avi ${dir_release}/${dir_name}/src ${dir_release}/${dir_name}-signed/
 
     # Switch over to the -signed-ent folder and sign those
-    lowkey_message "signing source tarball and sum files in the -signed-ent folder..."
+    MSG_L "signing source tarball and sum files in the -signed-ent folder..."
     RC cd ${dir_release}/${dir_name}-signed-ent/src/
     # remove any signature files before signing, if they exist
     for sig_file in $(ls ./*.asc); do
@@ -538,20 +504,20 @@ prepare_the_source_tarball() {
     done
     # sign the source tarball
     echo "About to sign the ent source tarball..."
-    pressAnyKeyToContinue
+    PAUSE
     RC gpg ${ent_gpg_opts} ${version}.tar.gz
     # sign the sum files as well
     for sum in md5 sha1 sha256 sha512;do RC "gpg ${ent_gpg_opts} ${sum}sums.txt";done
   #fi # removing src rsync if statement (db:2017-01-06)
-  message "prep of src done"
-  spacer
+  MSG "prep of src done"
+  SPACE
 }
 
 prepare_the_deb_packages() {
-  important_message "Preparing deb packages..."
+  MSG_I "Preparing deb packages..."
   # if the deb dir exists, delete it
   if [ -d ${dir_release}/${dir_name}/deb ]; then
-    message "Removing old deb dir..."
+    MSG "Removing old deb dir..."
     RC rm -rf "${dir_release}/${dir_name}/deb"
   fi
   if [ -d ${dir_release}/${dir_name}-signed/deb ]; then
@@ -564,7 +530,7 @@ prepare_the_deb_packages() {
 
   # Copy over the deb packages
   for dist in ${deb_dists_full}; do
-    message "Copying ${dist}"
+    MSG "Copying ${dist}"
     find ${dir_archive}/${tree}/${rev}/kvm-deb-${dist}-gal/debs/ -name 'galera*' -exec cp -avi {} ${dir_release}/${dir_name}/deb/ \;
   done
 
@@ -581,7 +547,7 @@ prepare_the_deb_packages() {
   cd ${dir_release}/${dir_name}-signed/deb/
   # sign the deb files
   echo "About to sign the debs..."
-  pressAnyKeyToContinue
+  PAUSE
   for file in galera* ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
@@ -591,20 +557,20 @@ prepare_the_deb_packages() {
   RC cd ${dir_release}/${dir_name}-signed-ent/deb/
   # sign the deb files
   echo "About to sign the ent debs..."
-  pressAnyKeyToContinue
+  PAUSE
   for file in galera* ; do RC "gpg ${ent_gpg_opts} ${file}";done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do RC "gpg ${ent_gpg_opts} ${sum}sums.txt";done
 
   RC tree "${dir_release}/${dir_name}/deb" "${dir_release}/${dir_name}-signed/deb" "${dir_release}/${dir_name}-signed-ent/deb"
-  message "Done preparing deb packages"
-  spacer
+  MSG "Done preparing deb packages"
+  SPACE
 }
 
 prepare_the_rpm_packages() {
-  important_message "Preparing rpm packages..."
+  MSG_I "Preparing rpm packages..."
   if [ -d ${dir_release}/${dir_name}/rpm ]; then
-    message "Removing old rpm dir..."
+    MSG "Removing old rpm dir..."
     RC rm -rf "${dir_release}/${dir_name}/rpm"
   fi
   if [ -d ${dir_release}/${dir_name}-signed/rpm ]; then
@@ -617,7 +583,7 @@ prepare_the_rpm_packages() {
   RC cd ${dir_release}/${dir_name}/rpm/
 
   for dist in ${rpm_dists}; do
-    message "Preparing ${dist}"
+    MSG "Preparing ${dist}"
     RC mkdir -v ${dir_release}/${dir_name}/rpm/${dist}
     case ${dist} in
       'sles11-amd64'|'sles11-x86')
@@ -650,7 +616,7 @@ prepare_the_rpm_packages() {
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   echo "About to sign the rpms..."
-  pressAnyKeyToContinue
+  PAUSE
   for file in ./*/*.rpm ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
@@ -660,7 +626,7 @@ prepare_the_rpm_packages() {
   #-------------------------------------------------------------------------------
   cd ${HOME}
   echo
-  lowkey_message "Switching ~/.rpmmacros file to std version..."
+  MSG_L "Switching ~/.rpmmacros file to std version..."
   echo 
   RC rm -v .rpmmacros
   RC ln -sv .rpmmacros-std .rpmmacros
@@ -669,7 +635,7 @@ prepare_the_rpm_packages() {
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
   echo "About to sign the rpms..."
-  pressAnyKeyToContinue
+  PAUSE
   for file in ./*/*.rpm ; do RC "gpg ${gpg_opts_2016} ${file}";done
   # sign the sum files as well
   for sum in md5 sha1 sha256 sha512;do RC "gpg ${gpg_opts_2016} ${sum}sums.txt";done
@@ -679,13 +645,13 @@ prepare_the_rpm_packages() {
   #  sign and sum rpm files for mariadb.com (aka MariaDB Enterprise)
   #-------------------------------------------------------------------------------
   cd ${HOME}
-  lowkey_message "Switching ~/.rpmmacros file to ent version..."
+  MSG_L "Switching ~/.rpmmacros file to ent version..."
   RC rm -v .rpmmacros
   RC ln -sv .rpmmacros-ent-v3 .rpmmacros
 
   cd ${dir_release}/${dir_name}-signed-ent/rpm/
   echo "About to sign the ent rpms..."
-  pressAnyKeyToContinue
+  PAUSE
   RC rpmsign --addsign --key-id=${ent_gpg_key} $(find . -name '*.rpm')
   for sum in md5 sha1 sha256 sha512;do echo ${sum}; ${sum}sum ./*/*.rpm >> ${sum}sums.txt; RC ${sum}sum -c ${sum}sums.txt;done
   # sign the rpms
@@ -694,7 +660,7 @@ prepare_the_rpm_packages() {
   for sum in md5 sha1 sha256 sha512;do RC "gpg ${ent_gpg_opts} ${sum}sums.txt";done
   
   cd ${HOME}
-  lowkey_message "Switching ~/.rpmmacros file back to standard version..."
+  MSG_L "Switching ~/.rpmmacros file back to standard version..."
   RC rm -v .rpmmacros
   RC ln -sv .rpmmacros-std .rpmmacros
   RC cd ${dir_release}/${dir_name}-signed-ent/rpm/
@@ -710,15 +676,15 @@ prepare_the_rpm_packages() {
   done
 
   RC tree "${dir_release}/${dir_name}/rpm" "${dir_release}/${dir_name}-signed/rpm" "${dir_release}/${dir_name}-signed-ent/rpm"
-  message "Done preparing rpm packages"
-  spacer
+  MSG "Done preparing rpm packages"
+  SPACE
 }
 
 prepare_the_deb_repository() {
-  important_message "Preparing deb repository..."
+  MSG_I "Preparing deb repository..."
   # Delete the directory if it exists (we want to start from scratch)
   if [ -d ${dir_release}/${dir_name}/${repo}/deb ]; then
-    message "Removing old deb repository..."
+    MSG "Removing old deb repository..."
     RC rm -rf "${dir_release}/${dir_name}/${repo}/deb"
   fi
 
@@ -790,15 +756,15 @@ END
     esac
 
   done
-  message "Finished preparing the deb repository"
-  spacer
+  MSG "Finished preparing the deb repository"
+  SPACE
 }
 
 prepare_the_yum_repository() {
-  important_message "Preparing yum repository..."
+  MSG_I "Preparing yum repository..."
   # Delete the directory if it exists (we want to start from scratch)
   if [ -d ${dir_release}/${dir_name}/${repo}/rpm ]; then
-    message "Removing old rpm repository..."
+    MSG "Removing old rpm repository..."
     RC rm -rf "${dir_release}/${dir_name}/${repo}/rpm"
   fi
   RC mkdir -vp ${dir_release}/${dir_name}/${repo}/rpm
@@ -812,7 +778,7 @@ prepare_the_yum_repository() {
     case ${dist} in
       'sles12-ppc64le'|'sles11-amd64'|'sles11-x86')
         if [[ "${tree}" = "mariadb-4.x" ]]; then
-          lowkey_message "no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86"
+          MSG_L "no galera4 packages for sles12-ppc64le, sles11-amd64, or sles11-x86"
         else
           RC rsync -avP --keep-dirlinks --exclude=*.asc ${dir_release}/${dir_name}-${suffix}/rpm/${dist}/ ${dir_release}/${dir_name}/${repo}/rpm/${dist}/rpms/
         fi
@@ -852,26 +818,26 @@ prepare_the_yum_repository() {
   RC ln -sv rhel8-aarch64 rocky84-aarch64
   RC ln -sv rhel8-aarch64 alma84-aarch64
   RC ln -sv rhel9-aarch64 rocky9-aarch64
-  message "Finished preparing the yum repository"
+  MSG "Finished preparing the yum repository"
 }
 
 upload_the_test_repos() {
-  important_message "Uploading the test repositories..."
-  message "Uploading to ${yum_primary_mirror}..."
+  MSG_I "Uploading the test repositories..."
+  MSG "Uploading to ${yum_primary_mirror}..."
   rsync_wrapper "-av --delete-after ${dir_release}/${dir_name}/${repo} ${yum_primary_mirror}:${yum_mirror_path}/galera/${date}"
-  message "Pointing ${repo} link at ${date}/${repo}..."
+  MSG "Pointing ${repo} link at ${date}/${repo}..."
   echo "+ ssh ${yum_primary_mirror} \"hostname ; set -x ; cd ${yum_mirror_path}/galera/ ; rm -v ${repo} ; ln -sv ${date}/${repo} ./\""
   ssh ${yum_primary_mirror} "hostname ; set -x ; cd ${yum_mirror_path}/galera/ ; rm -v ${repo} ; ln -sv ${date}/${repo} ./"
 
   for yum_mirror in ${yum_mirrors} ; do
-    message "Uploading to ${yum_mirror}..."
+    MSG "Uploading to ${yum_mirror}..."
     rsync_wrapper "-av --delete-after ${dir_release}/${dir_name}/${repo} ${yum_mirror}:${yum_mirror_path}/galera/${date}"
-    message "Pointing ${repo} link at ${date}/${repo}..."
+    MSG "Pointing ${repo} link at ${date}/${repo}..."
     echo "+ ssh ${yum_mirror} \"hostname ; set -x ; cd ${yum_mirror_path}/galera/ ; rm -v ${repo} ; ln -sv ${date}/${repo} ./\""
     ssh ${yum_mirror} "hostname ; set -x ; cd ${yum_mirror_path}/galera/ ; rm -v ${repo} ; ln -sv ${date}/${repo} ./"
   done
-  message "Done uploading the test repositories"
-  spacer
+  MSG "Done uploading the test repositories"
+  SPACE
 }
 
 logSettings() {
@@ -893,13 +859,6 @@ END
 chown ${USER}: ${dir_log}/prep.log
 }
 
-
-pressAnyKeyToContinue() {
-  echo
-  read -p "Press any key to continue." -n 1
-  echo
-  return 0
-}
 
 shouldI() {
   local cont
@@ -960,79 +919,8 @@ usage() {
   set -x
 }
 
-spacer() {
-  echo;echo;echo;
-}
-
-thickline() {
-  echo "==============================================================================="
-}
-
-line() {
-  echo "-------------------------------------------------------------------------------"
-}
-
-important_message() {
-  message="${@}"
-  echo;echo;thickline;echo "+ ${message}";thickline;
-}
-
-message() {
-  message="${@}"
-  line;echo "+ ${message}";line;
-}
-
-lowkey_message() {
-  message="${@}"
-  echo "+ ${message}"
-}
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  rsync_wrapper
-#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
-#                 the options part of the rsync (everything that would come
-#                 after the rsync command itself on the command-line) and first
-#                 runs it with the --dry-run flag. It then asks if everything
-#                 is OK. Assuming things are OK, it runs the rsync for real.
-#-------------------------------------------------------------------------------
-rsync_wrapper() {
-  local upload
-  upload=""
-  rsync_body="${@}"
-  lowkey_message "Doing a dry run..."
-  set -x
-  rsync --dry-run ${rsync_body}
-  set +x
-  echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        lowkey_message "Transferring for real..."
-        set -x
-        rsync ${rsync_body}
-        set +x
-        echo
-        upload="yes"
-        ANSWER=""
-        return 0
-        ;;
-      "n")
-        lowkey_message "Something went wrong..."
-        ANSWER=""
-        exit 1
-        ;;
-      *)
-        lowkey_message "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
-}
-
 update_galera_version_in_conf_file() {
-  message "Updating Galera version in prep.conf..."
+  MSG "Updating Galera version in prep.conf..."
   RC cp -avi ${dir_conf}/prep.conf ${dir_conf}/prep.conf.bak
   case ${tree} in
     mariadb-3.x)
@@ -1053,21 +941,21 @@ update_galera_version_in_conf_file() {
     userResponse "Does the above look OK? [y/n]"
     case ${ANSWER} in
       "y")
-        lowkey_message "Cleaning up and continuing..."
+        MSG_L "Cleaning up and continuing..."
         RC rm -v ${dir_conf}/prep.conf.bak
         cont="yes"
         ANSWER=""
         return 0
         ;;
       "n")
-        lowkey_message "Something went wrong, restoring prep.conf file..."
+        MSG_L "Something went wrong, restoring prep.conf file..."
         RC mv -v ${dir_conf}/prep.conf.bak ${dir_conf}/prep.conf
         ANSWER=""
-        lowkey_message "Exiting..."
+        MSG_L "Exiting..."
         exit 1
         ;;
       *)
-        lowkey_message "Please answer [y]es or [n]o."
+        MSG_L "Please answer [y]es or [n]o."
         echo
         cont=""
         ;;
@@ -1081,11 +969,11 @@ update_galera_version_in_conf_file() {
 #   DESCRIPTION:  Transfer files from the local host to the buildmaster
 #===============================================================================
 upload_this_release_to_the_buildmaster() {
-  important_message "Transferring files from here to ${buildmaster}..."
-  message "Uploading ${dir_release}/${dir_name} to ${buildmaster}:${dir_release_buildmaster}/..."
+  MSG_I "Transferring files from here to ${buildmaster}..."
+  MSG "Uploading ${dir_release}/${dir_name} to ${buildmaster}:${dir_release_buildmaster}/..."
   rsync_wrapper "-av --delete-after ${dir_release}/${dir_name}* ${buildmaster}:${dir_release_buildmaster}/"
 
-  message "Done transferring files from here to ${buildmaster}"
+  MSG "Done transferring files from here to ${buildmaster}"
 }
 
 #===  FUNCTION  ================================================================
@@ -1106,38 +994,38 @@ pull_this_release_from_the_buildmaster() {
   # know what is going on
   remote_prep="yes"
 
-  important_message "Pulling this release from ${buildmaster} to here..."
+  MSG_I "Pulling this release from ${buildmaster} to here..."
 
   # Fix permissions on the buildmaster
   #maybe_fix_permissions
 
   # Create the local directories if they don't exist
-  lowkey_message "Making sure local directories exist..."
+  MSG_L "Making sure local directories exist..."
   if [ ! -d ${dir_archive}/${tree}/${rev} ]; then
     mkdir -vp ${dir_archive}/${tree}/${rev}
   fi
 
   # We can now rsync the builds from the buildmaster
-  message "Transferring builds from ${buildmaster}..."
+  MSG "Transferring builds from ${buildmaster}..."
   rsync_wrapper "-av --delete-after ${buildmaster}:${dir_archive_buildmaster}/${tree}/${rev}/ ${dir_archive}/${tree}/${rev}/"
 
   # We should be done now
   RC tree ${dir_archive}/${tree}/${rev}/
-  message "Done pulling ${tree}/${rev}/ from ${buildmaster}"
+  MSG "Done pulling ${tree}/${rev}/ from ${buildmaster}"
 
 }
 
 pull_this_release_from_the_ci() {
-  important_message "Pulling this release from ${ci} to here..."
+  MSG_I "Pulling this release from ${ci} to here..."
 
-  lowkey_message "Making sure local directories exist..."
+  MSG_L "Making sure local directories exist..."
 
   if [ ! -d ${dir_archive}/ci/galera/${tree}/${rev} ]; then
     mkdir -vp ${dir_archive}/ci/galera/${tree}/${rev}
   fi
 
   RC pushd ${dir_archive}/ci/
-    message "Transferring builds from ${ci}..."
+    MSG "Transferring builds from ${ci}..."
     set +e
     RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/galera/${tree}/${rev}/
     #RC wget --no-parent -r -N --no-host-directories --exclude-directories=logs ${ci}/galera/${tree}/${rev}/
@@ -1147,11 +1035,11 @@ pull_this_release_from_the_ci() {
   RC popd
 
   RC tree ${dir_archive}/ci/galera/${tree}/${rev}
-  message "Done downloading release to ${dir_archive}/ci/galera/${tree}/${rev}"
+  MSG "Done downloading release to ${dir_archive}/ci/galera/${tree}/${rev}"
 }
 
 verify_the_ci_download() {
-  message "Verifying files downloaded from ${ci}..."
+  MSG "Verifying files downloaded from ${ci}..."
   for shafile in $(find ${dir_archive}/ci/galera/${tree}/${rev} -name sha256sums.txt) ; do
     RC pushd $(dirname ${shafile})
     case $shafile in
@@ -1167,34 +1055,34 @@ verify_the_ci_download() {
 }
 
 verify_all_needed_ci_dirs_are_present() {
-  message "Checking for presence of all needed ci builds..."
+  MSG "Checking for presence of all needed ci builds..."
   should_I_quit=0
   for ci_pair in ${ci_mappings}; do
     ci_array=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/galera/${tree}/${rev}/${ci_array[0]}
     if [ -d ${dir_source} ]; then
-      lowkey_message "✔  ${ci_array[0]}"
+      MSG_L "✔  ${ci_array[0]}"
     else
-      lowkey_message "⚠  ${ci_array[0]}"
+      MSG_L "⚠  ${ci_array[0]}"
       should_I_quit=1
     fi
   done
   if ((${should_I_quit})) ; then
-    important_message "Some needed builds are missing, quitting..."
+    MSG_I "Some needed builds are missing, quitting..."
     exit 8
   fi
 }
 
 copy_ci_downloads_to_buildmaster_dir() {
   verify_all_needed_ci_dirs_are_present
-  message "Copying needed builds from ${dir_archive}/ci/galera/${tree}/${rev} to ${dir_archive}/${tree}/${rev}/"
+  MSG "Copying needed builds from ${dir_archive}/ci/galera/${tree}/${rev} to ${dir_archive}/${tree}/${rev}/"
 
   for ci_pair in ${ci_mappings}; do
     ci_array=(${ci_pair//:/ })
     dir_source=${dir_archive}/ci/galera/${tree}/${rev}/${ci_array[0]}
     dir_dest=${dir_archive}/${tree}/${rev}/${ci_array[1]}
     if [ -d ${dir_dest} ]; then
-      message "${dir_dest} already exists, moving..."
+      MSG "${dir_dest} already exists, moving..."
       RC mv -vi ${dir_dest} ${dir_dest}_orig
     fi
     if [ -d ${dir_source} ]; then
@@ -1212,7 +1100,7 @@ copy_ci_downloads_to_buildmaster_dir() {
         fi
       RC popd
     else
-      important_message "${dir_source} does not exist"
+      MSG_I "${dir_source} does not exist"
       exit 1
     fi
   done
@@ -1226,7 +1114,7 @@ copy_ci_downloads_to_buildmaster_dir() {
 #===============================================================================
 maybe_fix_permissions() {
   if [ "${perms_fixed}" = "no" ]; then
-     message "fixing permissions..."
+     MSG "fixing permissions..."
 
 
     if [ "${remote_prep}" = "yes" ]; then
@@ -1254,14 +1142,14 @@ maybe_fix_permissions() {
 
     perms_fixed="yes" # set perms_fixed to 'yes' so this doesn't run again
 
-    lowkey_message "done fixing permissions"
+    MSG_L "done fixing permissions"
     echo
   fi
 }
 
 maybe_create_release_dir() {
 if [ ! -d ${dir_release}/${dir_name} ]; then
-  message "Creating release dir..."
+  MSG "Creating release dir..."
   RC mkdir -v ${dir_release}/${dir_name}
   if [ ! -d ${dir_release}/${dir_name}-signed ]; then
     RC mkdir -v ${dir_release}/${dir_name}-signed
@@ -1281,9 +1169,9 @@ fi
 if ! ${revflag} || ! ${numflag} || ! ${treeflag} ; then
   #if [[ -d $1 ]]; then
     echo
-    line
+    LINE
     echo "-r -t and -v, along with their appropriate arguments, are mandatory" >&2
-    line
+    LINE
     usage
     exit 4
   #fi
@@ -1364,7 +1252,7 @@ fi
 #-------------------------------------------------------------------------------
 #  All done
 #-------------------------------------------------------------------------------
-important_message "Done creating the Galera ${version} release!"
+MSG_I "Done creating the Galera ${version} release!"
 
 
 # vim: filetype=sh
