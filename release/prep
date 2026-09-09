@@ -147,6 +147,7 @@ ci_dirs_121="${ci_dirs_120}"
 ci_dirs_122="${ci_dirs_121}"
 ci_dirs_123="${ci_dirs_122}"
 ci_dirs_130="${ci_dirs_123}"
+ci_dirs_131="${ci_dirs_130}"
 
 }
 
@@ -507,13 +508,19 @@ update_the_local_mirror_dir_yum_and_repo_symlinks() {
       fi
       RC ln -sv ../${version}/${distro_type} ${major}
       RC ln -sv ../${version}/${distro_type} ${num}
+      # ${major_gen}.rc tracks the current RC (x.y.1), ${major_gen}.rolling the
+      # current rolling release (x.y.2), for this generation only. The -L test
+      # matters for the first release of a new generation, where the link does
+      # not exist yet and a bare RC rm would abort the script under set -e.
       case ${num} in
-        *.1) RC rm -v 13.rc
-             RC ln -sv ../${version}/${distro_type} 13.rc
-             ;;
-        *.2) RC rm -v 13.rolling
-             RC ln -sv ../${version}/${distro_type} 13.rolling
-             ;;
+        *.1)
+          if [[ -L ${major_gen}.rc ]]; then RC rm -v ${major_gen}.rc ; fi
+          RC ln -sv ../${version}/${distro_type} ${major_gen}.rc
+          ;;
+        *.2)
+          if [[ -L ${major_gen}.rolling ]]; then RC rm -v ${major_gen}.rolling ; fi
+          RC ln -sv ../${version}/${distro_type} ${major_gen}.rolling
+          ;;
       esac
       RC tree -L 1
     popd
@@ -987,14 +994,17 @@ trigger_the_primary_mirror() {
 update_the_archive_symlinks() {
   local rc_rolling_yum
   local rc_rolling_repo
+  # As in update_the_local_mirror_dir_yum_and_repo_symlinks, the links are named
+  # after ${major_gen} so a release only ever touches its own generation. -f
+  # because the first release of a new generation has no link to remove yet.
   case ${num} in
     *.1)
-      rc_rolling_repo="; rm -v 13.rc ; ln -sv ../${dir_name}/repo 13.rc ;"
-      rc_rolling_yum="; rm -v 13.rc ; ln -sv ../${dir_name}/yum 13.rc ;"
+      rc_rolling_repo="; rm -vf ${major_gen}.rc ; ln -sv ../${dir_name}/repo ${major_gen}.rc ;"
+      rc_rolling_yum="; rm -vf ${major_gen}.rc ; ln -sv ../${dir_name}/yum ${major_gen}.rc ;"
       ;;
     *.2)
-      rc_rolling_repo="; rm -v 13.rolling ; ln -sv ../${dir_name}/repo 13.rolling ;"
-      rc_rolling_yum="; rm -v 13.rolling ; ln -sv ../${dir_name}/yum 13.rolling ;"
+      rc_rolling_repo="; rm -vf ${major_gen}.rolling ; ln -sv ../${dir_name}/repo ${major_gen}.rolling ;"
+      rc_rolling_yum="; rm -vf ${major_gen}.rolling ; ln -sv ../${dir_name}/yum ${major_gen}.rolling ;"
       ;;
     *)
       rc_rolling_repo=';'
@@ -1364,6 +1374,13 @@ loadDefaults                                    # Load Default paths and vars
 
 # create major variable that has the base major version of mariadb (e.g. 10.3)
 major=${num%.*}
+
+# The major generation (e.g. 13 for 13.0 and 13.1) is what names the .rc and
+# .rolling symlinks in the archive and local mirror dirs. Deriving it from
+# ${major} keeps a release from ever repointing another generation's links --
+# which is what a hardcoded generation did whenever an older series was
+# re-released -- and means there is nothing to bump by hand at 14.0.
+major_gen=${major%%.*}
 
 set_build_dirs_variables
 

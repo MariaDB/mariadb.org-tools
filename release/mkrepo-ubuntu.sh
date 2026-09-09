@@ -126,7 +126,7 @@ case ${ARCHDIR} in
   *11.4*|*11.5*|*11.6*|*11.7*)
     ubuntu_dists="jammy noble plucky"
     ;;
-  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*13.0*|*main*)
+  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*13.0*|*13.1*|*main*)
     ubuntu_dists="jammy noble plucky questing resolute"
     #ubuntu_dists="jammy noble plucky"
     ;;
