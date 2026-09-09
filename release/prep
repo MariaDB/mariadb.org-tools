@@ -177,16 +177,6 @@ rsync_ubuntu_repo="no"
 # Functions
 #-------------------------------------------------------------------------------
 
-runCommand() {
-  echo "+ ${@}"
-  sleep 1
-  if ${@} ; then
-    return 0
-  else
-    return 1
-  fi
-}
-
 skip_it() {
   skipit="yes"
 }
@@ -509,23 +499,23 @@ update_the_local_mirror_dir_yum_and_repo_symlinks() {
   local distro_type
   for distro_type in repo yum ; do
     pushd ${dir_local_mirror}/${distro_type}
-      runCommand tree -L 1
+      RC tree -L 1
       if [[ -L ${major} ]]; then
-        runCommand rm -v ${major}*
+        RC rm -v ${major}*
       elif [[ -L ${num} ]]; then
-        runCommand rm -v ${major}*
+        RC rm -v ${major}*
       fi
-      runCommand ln -sv ../${version}/${distro_type} ${major}
-      runCommand ln -sv ../${version}/${distro_type} ${num}
+      RC ln -sv ../${version}/${distro_type} ${major}
+      RC ln -sv ../${version}/${distro_type} ${num}
       case ${num} in
-        *.1) runCommand rm -v 13.rc
-             runCommand ln -sv ../${version}/${distro_type} 13.rc
+        *.1) RC rm -v 13.rc
+             RC ln -sv ../${version}/${distro_type} 13.rc
              ;;
-        *.2) runCommand rm -v 13.rolling
-             runCommand ln -sv ../${version}/${distro_type} 13.rolling
+        *.2) RC rm -v 13.rolling
+             RC ln -sv ../${version}/${distro_type} 13.rolling
              ;;
       esac
-      runCommand tree -L 1
+      RC tree -L 1
     popd
   done
 }
@@ -559,7 +549,7 @@ remove_a_dir_from_the_local_mirror_dir() {
             case ${ANSWER} in
               y)
                 MSG_L "Removing ${release_to_remove}..."
-                runCommand rm -rf ${dir_local_mirror}/${release_to_remove}
+                RC rm -rf ${dir_local_mirror}/${release_to_remove}
                 ;;
               n)
                 MSG_L "Not removing ${release_to_remove}"
@@ -587,7 +577,7 @@ copy_the_release_to_the_local_mirror_dir() {
   if [[ -d ${dir_local_mirror}/${dir_name} ]] ; then
     MSG_L "Found existing ${dir_name} under ${dir_local_mirror}/, not copying..."
   else
-    runCommand cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
+    RC cp -ail ${dir_release}/${dir_name} ${dir_local_mirror}/
   fi
   verify_local_mirror_copy_is_good
 }
@@ -597,7 +587,7 @@ verify_local_mirror_copy_is_good() {
   dry_run_status=""
   MSG "Doing an rsync dry-run to verify the local mirror copy is good"
   MSG_L "If rsync doesn't find anything to sync then the copy is good."
-  runCommand rsync --dry-run -avP ${dir_release}/${dir_name} ${dir_local_mirror}/
+  RC rsync --dry-run -avP ${dir_release}/${dir_name} ${dir_local_mirror}/
   while [ -z ${dry_run_status} ]; do
     userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
@@ -871,23 +861,23 @@ pull_this_release_from_ci() {
     mkdir -vp ${dir_archive}/ci/${tree}/${tarbuildnum}
   fi
 
-  runCommand pushd ${dir_archive}/ci/${tree}
+  RC pushd ${dir_archive}/ci/${tree}
     MSG "Transferring Windows builds first..."
     set +e
-    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/amd64-windows-packages/ ; then
+    if RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/amd64-windows-packages/ ; then
       MSG "Downloaded amd64-windows-packages from ci"
     else
-      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/amd64-windows-packages/
+      RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/amd64-windows-packages/
     fi
     MSG "Transferring builds from ${ci}..."
     set +e
     for ci_pair in ${!ci_dirs} ; do
       ci_dir=(${ci_pair//:/ })
-    if runCommand wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/${ci_dir[1]}/ ; then
+    if RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/${ci_dir[1]}/ ; then
       MSG "Downloaded ${ci_dir[1]} from ci"
 
     else
-      runCommand wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/${ci_dir[1]}/
+      RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/${ci_dir[1]}/
     fi
     done
     if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum}/source ]; then
@@ -899,15 +889,15 @@ pull_this_release_from_ci() {
       echo
     fi
     pushd ${dir_archive}/ci/${tree}/${tarbuildnum}/source
-      runCommand wget -N ${ci}/${tarbuildnum}/mariadb-${num}.tar.gz
-      runCommand wget -N ${ci}/${tarbuildnum}/sha256sums.txt
+      RC wget -N ${ci}/${tarbuildnum}/mariadb-${num}.tar.gz
+      RC wget -N ${ci}/${tarbuildnum}/sha256sums.txt
     popd
     set -e
-    runCommand find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
+    RC find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
 
-  runCommand popd
-  #runCommand tree ${dir_archive}/ci/${tree}/${tarbuildnum}
-  runCommand tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}
+  RC popd
+  #RC tree ${dir_archive}/ci/${tree}/${tarbuildnum}
+  RC tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}
   MSG "Done downloading release to ${dir_archive}/ci/${tree}/${tarbuildnum}"
   shouldI verify_the_ci_download
 }
@@ -937,8 +927,8 @@ verify_the_ci_download() {
   MSG "Verifying files downloaded from ${ci}..."
   #for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -name sha256sums.txt) ; do
   for shafile in $(find ${dir_archive}/ci/${tree}/${tarbuildnum} -maxdepth 1 -mindepth 1 -type d) ; do
-    #runCommand pushd $(dirname ${shafile})
-    runCommand pushd ${shafile}
+    #RC pushd $(dirname ${shafile})
+    RC pushd ${shafile}
     case $shafile in
       *windows*)
         dos2unix sha256sums.txt
@@ -947,11 +937,11 @@ verify_the_ci_download() {
         ;;
     esac
     if [[ -f sha256sums.txt ]] ; then
-      runCommand sha256sum --quiet -c sha256sums.txt
+      RC sha256sum --quiet -c sha256sums.txt
     else
       MSG_L "\e[31m⚠  sha256sums.txt missing for ${shafile}\e[0m"
     fi
-    runCommand popd
+    RC popd
     LINE
   done
 }
@@ -1029,7 +1019,7 @@ create_package_tarballs() {
   pushd ${dir_corp}/${version}
     tarfiles=$(find . -name '*.tar')
     for tarfile in ${tarfiles}; do
-      MSG "${dir_corp}/${version}/{tarfile}";runCommand tar -tf ${tarfile}
+      MSG "${dir_corp}/${version}/{tarfile}";RC tar -tf ${tarfile}
       if [[ $(echo "${major} >= 12.3" | bc -l) -eq 1 ]]
       then
         MSG "No galera in 12.3+"
@@ -1104,29 +1094,29 @@ exclude_an_old_release_from_the_yum_dir() {
 update_the_docker_library_mariadb_version() {
   if ! command -v bashbrew
   then
-    runCommand wget https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64 -O ~/bin/bashbrew
-    runCommand chmod a+x ~/bin/bashbrew
+    RC wget https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64 -O ~/bin/bashbrew
+    RC chmod a+x ~/bin/bashbrew
   fi
   if [ ! -d ${dir_docker_library_official_images} ]; then
     # fork from https://github.com/docker-library/official-images
-    runCommand git clone git@github.com:dbart/official-images ${dir_docker_library_official_images}
+    RC git clone git@github.com:dbart/official-images ${dir_docker_library_official_images}
   fi
   export BASHBREW_LIBRARY=${dir_docker_library_official_images}
   if [ ! -d ${dir_docker_library} ]; then
-    runCommand git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
+    RC git clone git@github.com:MariaDB/mariadb-docker ${dir_docker}
   fi
   pushd ${dir_docker_library}
-    runCommand git fetch
-    runCommand git checkout master
-    runCommand git pull
-    runCommand git merge orgin/next
-    runCommand ./update.sh
+    RC git fetch
+    RC git checkout master
+    RC git pull
+    RC git merge orgin/next
+    RC ./update.sh
     # This should show the new release in all versions
-    runCommand git diff
-    runCommand git add [0-9]*
+    RC git diff
+    RC git add [0-9]*
     if git commit -m "MariaDB Server releases ${reldate}" ; then
       echo "+ git commit -m \"MariaDB Server ${reldate}\""
-      runCommand git push
+      RC git push
     fi
     MSG "Check https://github.com/MariaDB/mariadb-docker
 the top commit above the directory listing should have a dot for the CI that
@@ -1135,17 +1125,17 @@ will eventually run through to be green"
   popd
   # prepare the release
   pushd ${dir_docker_library_official_images}
-    runCommand git checkout master
-    runCommand git pull
+    RC git checkout master
+    RC git pull
     reldate=$(date +%Y%m%d)
     if git checkout -b mariadb-release-$reldate ; then
       echo "+ git checkout -b mariadb-release-$reldate"
     else 
       # if the checkout -b command fails that means the branch already exists,
       # so we can simply check it out with:
-      runCommand git checkout mariadb-release-$reldate
+      RC git checkout mariadb-release-$reldate
     fi
-    runCommand git remote prune origin
+    RC git remote prune origin
     MSG "The ${dir_docker_library_official_images} git repo is linked upstream to
 the github.com/docker-library/official-images git repository. It was
 added with:
@@ -1154,17 +1144,17 @@ use the git remote command to check:
   git remote -v
 Anyway, before doing anything else, let's merge with upstream to make
 sure we have the latest from there before doing anything else:"
-    runCommand git fetch upstream
-    runCommand git merge upstream/master
-    #runCommand git push --set-upstream origin mariadb-release-$reldate
+    RC git fetch upstream
+    RC git merge upstream/master
+    #RC git push --set-upstream origin mariadb-release-$reldate
     MSG "now we can continue"
     echo "+ ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb"
             ${dir_docker_library}/generate-stackbrew-library.sh | tee library/mariadb
     # note non-GA releases shouldn't have the latest or 10 tag
-    runCommand git push --set-upstream origin mariadb-release-$reldate
+    RC git push --set-upstream origin mariadb-release-$reldate
     echo "+ git commit -m \"MariaDB releases ${reldate}\" library/mariadb"
            git commit -m "MariaDB releases ${reldate}" library/mariadb
-    runCommand git push
+    RC git push
     MSG "Follow Create a pull request for 'mariadb-release-${reldate}' on GitHub by
 + visiting link
 + e.g. https://github.com/dbart/official-images/pull/new/mariadb-release-${reldate}
@@ -1187,9 +1177,9 @@ set_prev_release() {
 
 copy_win_packages_to_sign-todo_dir() {
   arch=winx64
-  #runCommand rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
-  runCommand rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/${version}-${arch}.msi ~/sign-todo/
-  runCommand tree ~/sign-todo/
+  #RC rsync -avP ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/${version}-${arch}.msi ~/sign-todo/
+  RC rsync -avP ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/${version}-${arch}.msi ~/sign-todo/
+  RC tree ~/sign-todo/
   echo;echo
   MSG "Quitting so Windows Package signing can occur."
   MSG_L "Re-run script when signing is completed and move signed packages back."
@@ -1198,29 +1188,29 @@ copy_win_packages_to_sign-todo_dir() {
 }
 
 move_win_packages_from_sign-done_dir() {
-  runCommand tree ~/sign-done/
-  #runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
-  runCommand mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/
-  runCommand tree ~/sign-done/
+  RC tree ~/sign-done/
+  #RC mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
+  RC mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/
+  RC tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
   #for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
   for msi in ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/*msi ; do
     MSG "Verifying ${msi}"
-    runCommand osslsigncode verify -in ${msi}
+    RC osslsigncode verify -in ${msi}
   done
 }
 
 copy_the_bintars_to_corp() {
   echo "+ copying bintars to ${dir_corp}/${dir_name}/"
-  runCommand rsync -avP --delete ${dir_release}/${dir_name}/bintar* ${dir_corp}/${dir_name}/
+  RC rsync -avP --delete ${dir_release}/${dir_name}/bintar* ${dir_corp}/${dir_name}/
   RC tree ${dir_corp}/${dir_name}/bintar*
 }
 
 copy_the_source_dir_to_corp() {
   echo "+ copying the source dir to ${dir_corp}/${dir_name}/"
-  runCommand rsync -avP --delete ${dir_release}/${dir_name}/source ${dir_corp}/${dir_name}/
+  RC rsync -avP --delete ${dir_release}/${dir_name}/source ${dir_corp}/${dir_name}/
   RC tree ${dir_corp}/${dir_name}/source
 }
 
@@ -1265,8 +1255,8 @@ copy_the_ubuntu_repos_to_corp() {
   #sed -i s'/ppc64el //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
   #sed -i s'/s390x //' ${dir_corp}/${dir_name}/repo/ubuntu/conf/distributions
   #pushd ${dir_corp}/${dir_name}/repo/ubuntu/
-  #  runCommand editor conf/distributions # remove deprecated distros
-  #  runCommand reprepro -V --basedir . --delete clearvanished
+  #  RC editor conf/distributions # remove deprecated distros
+  #  RC reprepro -V --basedir . --delete clearvanished
   #  # remove the now missing entries from the sum files
   #  for sum in md5 sha1 sha256 sha512;do
   #    sed -i '/ppc64el/d' ${sum}sums.txt
@@ -1488,108 +1478,108 @@ if [ "${create_bintar}" != "no" ]; then
     else
       # Not skipping
       if [ ! -d /run/shm/${dir_name}/${dir_array[1]} ]; then
-        runCommand mkdir -vp /run/shm/${dir_name}/${dir_array[1]}
+        RC mkdir -vp /run/shm/${dir_name}/${dir_array[1]}
       fi
       location="${dir_archive}/ci/${tree}/${tarbuildnum}/${dir_array[0]}"
       location_source="${location}"
       if [ "${dir_array[1]}" = "source" ]; then
-        if runCommand rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb-${num}.tar.gz"; then
+        if RC rsync ${rsync_opts} "${location_source}/mariadb-${num}.tar.gz" "/run/shm/${dir_name}/${dir_array[1]}/mariadb-${num}.tar.gz"; then
           pushd /run/shm/${dir_name}/${dir_array[1]}
           echo "+ updating source tarball md5sum..."
           if [ -e md5sums.txt ]; then
-            runCommand rm -v md5sums.txt
+            RC rm -v md5sums.txt
           fi
           md5sum ./mariadb* >> md5sums.txt
 
           echo "+ updating source tarball sha1sum..."
           if [ -e sha1sums.txt ]; then
-            runCommand rm -v sha1sums.txt
+            RC rm -v sha1sums.txt
           fi
           sha1sum ./mariadb* >> sha1sums.txt
 
           echo "+ updating source tarball sha256sum..."
           if [ -e sha256sums.txt ]; then
-            runCommand rm -v sha256sums.txt
+            RC rm -v sha256sums.txt
           fi
           sha256sum ./mariadb* >> sha256sums.txt
 
           echo "+ updating source tarball sha512sum..."
           if [ -e sha512sums.txt ]; then
-            runCommand rm -v sha512sums.txt
+            RC rm -v sha512sums.txt
           fi
           sha512sum ./mariadb* >> sha512sums.txt
 
           echo "+ signing source tarball and sum files..."
           # remove any signature files before signing, if they exist
           for sig_file in $(ls ./*.asc); do
-            runCommand rm -v "${sig_file}"
+            RC rm -v "${sig_file}"
           done
           # sign the MariaDB source tarball
-          runCommand gpg ${gpg_opts} mariadb*-${num}.tar.gz
+          RC gpg ${gpg_opts} mariadb*-${num}.tar.gz
           # sign the sum files as well
-          runCommand gpg ${gpg_opts} md5sums.txt
-          runCommand gpg ${gpg_opts} sha1sums.txt
-          runCommand gpg ${gpg_opts} sha256sums.txt
-          runCommand gpg ${gpg_opts} sha512sums.txt
+          RC gpg ${gpg_opts} md5sums.txt
+          RC gpg ${gpg_opts} sha1sums.txt
+          RC gpg ${gpg_opts} sha256sums.txt
+          RC gpg ${gpg_opts} sha512sums.txt
           popd
           mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
           echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
-          runCommand rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
+          RC rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
         fi
         echo "+ transfer of ${dir_array[1]} done"
         echo
-      elif runCommand rsync ${rsync_opts} "${location}/" "/run/shm/${dir_name}/${dir_array[1]}/"; then
+      elif RC rsync ${rsync_opts} "${location}/" "/run/shm/${dir_name}/${dir_array[1]}/"; then
         echo "+ transfer of ${dir_array[1]} done"
         pushd /run/shm/${dir_name}/${dir_array[1]}/
         if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ] || [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86" ]; then
           # for the quantal bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-glibc_214-x86_64" ]; then
             if [ -e *-linux-x86_64.tar.gz ] ; then
-            runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
+            RC mv -vi *-linux-x86_64.tar.gz ${version}-linux-glibc_214-x86_64.tar.gz
             fi
             galera_arch="x86_64"
           else
             if [ -e *-linux-i686.tar.gz ] ; then
-            runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
+            RC mv -vi *-linux-i686.tar.gz ${version}-linux-glibc_214-i686.tar.gz
             fi
             galera_arch="i686"
           fi
 
           # All releases include Galera now: copy in the galera libraries
           # and repack the bintar
-            runCommand tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
-            runCommand mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
+            RC tar -zxf ${version}-linux-glibc_214-${galera_arch}.tar.gz
+            RC mv -vi ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}.tar.gz.orig
             if [ -d *-linux-${galera_arch} ]; then
-            runCommand mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
+            RC mv -vi *-linux-${galera_arch} ${version}-linux-glibc_214-${galera_arch}
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/* ${version}-linux-glibc_214-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/* ${version}-linux-glibc_214-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
             MSG "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
-            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
+            RC rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/bin/ ${version}-linux-glibc_214-${galera_arch}/bin/
+            RC rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-glibc_214-${galera_arch}/usr/lib/ ${version}-linux-glibc_214-${galera_arch}/lib/
           fi
-            runCommand tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
+            RC tar -czf ${version}-linux-glibc_214-${galera_arch}.tar.gz ${version}-linux-glibc_214-${galera_arch}
             rm -rf ${version}-linux-glibc_214-${galera_arch}
 
           # since we renamed them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
-            runCommand rm -v md5sums.txt
+            RC rm -v md5sums.txt
           fi
           md5sum ./${version}-*.tar.gz >> md5sums.txt
 
           if [ -e sha1sums.txt ]; then
-            runCommand rm -v sha1sums.txt
+            RC rm -v sha1sums.txt
           fi
           sha1sum ./${version}-*.tar.gz >> sha1sums.txt
 
           if [ -e sha256sums.txt ]; then
-            runCommand rm -v sha256sums.txt
+            RC rm -v sha256sums.txt
           fi
           sha256sum ./${version}-*.tar.gz >> sha256sums.txt
 
           if [ -e sha512sums.txt ]; then
-            runCommand rm -v sha512sums.txt
+            RC rm -v sha512sums.txt
           fi
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
@@ -1597,53 +1587,53 @@ if [ "${create_bintar}" != "no" ]; then
           # for the systemd bintars, we need to rename them before signing
           if [ "${dir_array[1]}" = "bintar-linux-systemd-x86_64" ]; then
             if [ -e *-linux-x86_64.tar.gz ]; then
-            runCommand mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
+            RC mv -vi *-linux-x86_64.tar.gz ${version}-linux-systemd-x86_64.tar.gz
             fi
             galera_arch="x86_64"
           else
             if [ -e *-linux-i686.tar.gz ]; then
-            runCommand mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
+            RC mv -vi *-linux-i686.tar.gz ${version}-linux-systemd-i686.tar.gz
             fi
             galera_arch="i686"
           fi
 
           # All releases include Galera now: copy in the galera libraries
           # and repack the bintar
-            runCommand tar -zxf ${version}*-linux-systemd-${galera_arch}.tar.gz
-            runCommand mv -vi ${version}*-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
+            RC tar -zxf ${version}*-linux-systemd-${galera_arch}.tar.gz
+            RC mv -vi ${version}*-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}.tar.gz.orig
             if [ -d *-linux-${galera_arch} ]; then
-              runCommand mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
+              RC mv -vi *-linux-${galera_arch} ${version}-linux-systemd-${galera_arch}
             elif [ -d *preview-linux-systemd-${galera_arch} ]; then
-              runCommand mv -vi *preview-linux-systemd-${galera_arch} ${version}-linux-systemd-${galera_arch}
+              RC mv -vi *preview-linux-systemd-${galera_arch} ${version}-linux-systemd-${galera_arch}
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/* ${version}-linux-systemd-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/* ${version}-linux-systemd-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
             MSG "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
-            runCommand rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
+            RC rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/bin/ ${version}-linux-systemd-${galera_arch}/bin/
+            RC rsync --force -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-systemd-${galera_arch}/usr/lib/ ${version}-linux-systemd-${galera_arch}/lib/
           fi
-            runCommand tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
-            runCommand rm -rf ${version}-linux-systemd-${galera_arch}
+            RC tar -czf ${version}-linux-systemd-${galera_arch}.tar.gz ${version}-linux-systemd-${galera_arch}
+            RC rm -rf ${version}-linux-systemd-${galera_arch}
 
           # since we renamed them, we also need to regenerate the sums
           if [ -e md5sums.txt ]; then
-            runCommand rm -v md5sums.txt
+            RC rm -v md5sums.txt
           fi
           md5sum ./${version}-*.tar.gz >> md5sums.txt
 
           if [ -e sha1sums.txt ]; then
-            runCommand rm -v sha1sums.txt
+            RC rm -v sha1sums.txt
           fi
           sha1sum ./${version}-*.tar.gz >> sha1sums.txt
 
           if [ -e sha256sums.txt ]; then
-            runCommand rm -v sha256sums.txt
+            RC rm -v sha256sums.txt
           fi
           sha256sum ./${version}-*.tar.gz >> sha256sums.txt
 
           if [ -e sha512sums.txt ]; then
-            runCommand rm -v sha512sums.txt
+            RC rm -v sha512sums.txt
           fi
           sha512sum ./${version}-*.tar.gz >> sha512sums.txt
 
@@ -1656,27 +1646,27 @@ if [ "${create_bintar}" != "no" ]; then
             else
               galera_arch="i686"
             fi
-            runCommand tar -zxf ${version}-linux-${galera_arch}.tar.gz
-            runCommand mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
+            RC tar -zxf ${version}-linux-${galera_arch}.tar.gz
+            RC mv -vi ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}.tar.gz.orig
             # if the directory isn't named like we want, rename it
             if [ ! -d ${version}-linux-${galera_arch} ]; then
-              runCommand mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
+              RC mv -vi *-linux-${galera_arch} ${version}-linux-${galera_arch}
             fi
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/* ${version}-linux-${galera_arch}/bin/
             #cp -avi ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib*/* ${version}-linux-${galera_arch}/lib/
           if [ ${incl_galera} = "yes" ]; then
             MSG "Copying over galera packages for ${dir_array[1]}"
-            runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
-            runCommand rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
+            RC rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/bin/ ${version}-linux-${galera_arch}/bin/
+            RC rsync --force -av --exclude=*systemd ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib/ ${version}-linux-${galera_arch}/lib/
           fi
             #if [ -d ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ];then
             #  rsync -av ${dir_galera}/galera-${ver_galera_preferred_real}/bintar/galera-${ver_galera_preferred_real}-${galera_arch}/usr/lib64 ${version}-linux-${galera_arch}/
             #fi
-            runCommand tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
+            RC tar -czf ${version}-linux-${galera_arch}.tar.gz ${version}-linux-${galera_arch}
             rm -rf ${version}-linux-${galera_arch}
             # since we repacked them, we also need to regenerate the sums
             if [ -e md5sums.txt ]; then
-              runCommand rm -v md5sums.txt
+              RC rm -v md5sums.txt
             fi
             md5sum ./${version}-*.tar.gz >> md5sums.txt
 
@@ -1734,11 +1724,11 @@ if [ "${create_bintar}" != "no" ]; then
         echo "+ signing files in ${dir_array[1]}..."
         # remove any signature files before signing, if they exist
         for sig_file in $(ls ./*.asc); do
-          runCommand rm -v "${sig_file}"
+          RC rm -v "${sig_file}"
         done
         # now that old signatures are gone, sign all files that remain
         for dir_file in $(find . -type f | grep -v orig); do
-          runCommand gpg ${gpg_opts} ${dir_file}
+          RC gpg ${gpg_opts} ${dir_file}
         done
         popd
         mv -vi /run/shm/${dir_name}/${dir_array[1]} ${dir_release}/${dir_name}/
@@ -1747,7 +1737,7 @@ if [ "${create_bintar}" != "no" ]; then
         echo
         # copy the dir to the corp dir
         echo "+ copying ${dir_array[1]} to ${dir_corp}/${dir_name}/"
-        runCommand rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
+        RC rsync -avP --delete ${dir_release}/${dir_name}/${dir_array[1]} ${dir_corp}/${dir_name}/
         echo
         echo
       else
@@ -1755,8 +1745,8 @@ if [ "${create_bintar}" != "no" ]; then
         # if the transfer failed, the directory might be empty, if it is we want it
         # removed, so we run rmdir on it
         #rmdir ${dir_release}/${dir_name}/${dir_array[1]}
-        runCommand rmdir -v /run/shm/${dir_name}/${dir_array[1]}
-        runCommand rmdir -v /run/shm/${dir_name}
+        RC rmdir -v /run/shm/${dir_name}/${dir_array[1]}
+        RC rmdir -v /run/shm/${dir_name}
         echo
       fi
     fi
@@ -1770,9 +1760,9 @@ if [ "${create_bintar}" != "no" ]; then
     for galera_version in ${ver_galera_real}; do
       mkdir -vp ./galera-${galera_version}
       # rsync the galera dir to the release dir
-      if runCommand rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
+      if RC rsync ${rsync_opts} --exclude=repo "${dir_galera}/galera-${galera_version}-${suffix}/" "./galera-${galera_version}/"; then
         # rsync the galera dir to the corp dir
-        if runCommand rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* --exclude=deb/ --exclude=rpm/ "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
+        if RC rsync ${rsync_opts} --exclude=repo --exclude=*ppc64* --exclude=deb/ --exclude=rpm/ "${dir_galera}/galera-${galera_version}-${suffix}/" "${dir_corp}/${dir_name}/galera-${galera_version}/"; then
           echo "+ transfer of ${dir_galera}/galera-${galera_version} done"
         fi
         echo
@@ -1821,7 +1811,7 @@ if [ "${create_win}" != "no" ]; then
     verify_signed_win_packages
 
     for pkgtype in msi zip; do
-      runCommand rsync -avP ${win_ci_dir}/${version}-${arch}.${pkgtype} .
+      RC rsync -avP ${win_ci_dir}/${version}-${arch}.${pkgtype} .
 
       # Download debugsymbols package for 10.2+ releases
       if [ "${pkgtype}" = "zip" ]; then
@@ -1831,7 +1821,7 @@ if [ "${create_win}" != "no" ]; then
             ;;
           *)
             echo "+ tree=${tree}, so downloading debugsymbols package..."
-            runCommand rsync -avP ${win_ci_dir}/${version}-${arch}-debugsymbols.${pkgtype} .
+            RC rsync -avP ${win_ci_dir}/${version}-${arch}-debugsymbols.${pkgtype} .
             ;;
         esac
       fi
@@ -1914,7 +1904,7 @@ if [ "${create_debian}" != "no" ]; then
           rsync -a --info=progress2 --delete ${dir_release}/mariadb-${prev_release}/repo/debian ${dir_release}/${dir_name}/repo/
   echo
 
-  runCommand ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
+  RC ${DEBIAN} ${incl_galera} no ${tree} debian ${dir_archive}/ci/${tree}/${tarbuildnum}
 
 
   echo
@@ -1952,7 +1942,7 @@ if [ "${create_ubuntu}" != "no" ]; then
   echo
 
   # This is where the repository is actually updated
-  runCommand ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
+  RC ${UBUNTU} ${incl_galera} no ubuntu ${dir_archive}/ci/${tree}/${tarbuildnum}
 
 
   echo
@@ -2011,7 +2001,7 @@ if [ "${create_yum}" != "no" ]; then
 
   pushd ${dir_yum_prep}/${dir_name}/yum
     # Run the yum script to create/update yum/dnf/zypp repos
-    runCommand ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
+    RC ${YUM} ${num} ${incl_galera} no ${dir_archive}/ci/${tree}/${tarbuildnum}
   popd
 
   # move the yum dir to where it needs to go
