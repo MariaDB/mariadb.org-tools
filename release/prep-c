@@ -27,9 +27,9 @@ dir_conf=${XDG_CONFIG_HOME:-~/.config}
 dir_log=${XDG_DATA_HOME:-~/.local/share}
 
 # ${dir_conf}/common provides RC, DIV, LINE, THICKLINE, PAUSE, MSG, MSG_I,
-# MSG_L, userResponse and userInput. This script used to carry its own copies of
-# all of them; it now sources them here -- before the function definitions and
-# the main script -- so they are available to every code path.
+# MSG_L, userResponse, userInput and rsync_wrapper. This script used to carry
+# its own copies of all of them; it now sources them here -- before the function
+# definitions and the main script -- so they are available to every code path.
 if [ -f ${dir_conf}/common ]; then
   . ${dir_conf}/common
 else
@@ -384,50 +384,6 @@ upload_to_the_mirrors() {
 
 upload_to_the_archives() {
   uploader "${archives_foundation}"
-}
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  rsync_wrapper
-#   DESCRIPTION:  This function provides a safety net for using rsync. It takes
-#                 the options part of the rsync (everything that would come
-#                 after the rsync command itself on the command-line) and first
-#                 runs it with the --dry-run flag. It then asks if everything
-#                 is OK. Assuming things are OK, it runs the rsync for real.
-#
-#                 This deliberately overrides the rsync_wrapper in common: the
-#                 connector dry runs are paged through less, where common's
-#                 version dumps them straight to the terminal under set -x.
-#-------------------------------------------------------------------------------
-rsync_wrapper() {
-  local upload
-  upload=""
-  rsync_body="${@}"
-  MSG_L "Doing a dry run..."
-  RC rsync --dry-run ${rsync_body} | less
-  echo
-  while [ -z ${upload} ]; do
-    userResponse "Did the dry run look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        MSG_L "Transferring for real..."
-        RC rsync ${rsync_body}
-        echo
-        upload="yes"
-        ANSWER=""
-        return 0
-        ;;
-      "n")
-        MSG_L "Something went wrong..."
-        ANSWER=""
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
 }
 
 #===  FUNCTION  ================================================================

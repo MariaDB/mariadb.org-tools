@@ -65,18 +65,29 @@ secureUserInput() {
 #                 after the rsync command itself on the command-line) and first
 #                 runs it with the --dry-run flag. It then asks if everything
 #                 is OK. Assuming things are OK, it runs the rsync for real.
+#
+#                 The dry run is paged through ${PAGER:-less} so a long file
+#                 list can be read from the top. Piping into a pager would
+#                 normally hide rsync's exit status behind the pager's, so the
+#                 pipeline runs in a subshell with pipefail set -- a subshell so
+#                 pipefail cannot leak into the script that sourced this file --
+#                 and a failed dry run returns without offering to transfer.
+#                 stderr is folded into the paged output so the reason is
+#                 visible there rather than scrolling past behind the pager.
 #-------------------------------------------------------------------------------
 rsync_wrapper() {
   local upload
   upload=""
   rsync_body="${@}"
   MSG_L "Doing a dry run..."
-  set -x
-  rsync --dry-run ${rsync_body}
-  set +x
+  echo "+ rsync --dry-run ${rsync_body}"
+  if ! ( set -o pipefail; rsync --dry-run ${rsync_body} 2>&1 | ${PAGER:-less} ); then
+    MSG "The dry run itself failed. Not transferring."
+    return 1
+  fi
   echo
   while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
+    userResponse "Did the dry run look OK? [y/n]"
     case ${ANSWER} in
       "y")
         MSG_L "Transferring for real..."
