@@ -859,6 +859,45 @@ pull_this_release_from_the_buildmaster() {
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  pull_Windows_packages_from_ci
+#   DESCRIPTION:  Download just the Windows packages from ci.mariadb.org, ahead
+#                 of the rest of the release. The .msi has to go out for signing
+#                 and come back before prepare_Windows_packages can finish, so
+#                 fetching it on its own first means signing can be started
+#                 while the rest of the release is still downloading.
+#
+#                 The main transfer fetches these again -- ${ci_dirs} carries
+#                 winx64-packages:amd64-windows-packages -- which is a no-op
+#                 thanks to wget2 -N, and is what
+#                 verify_all_needed_ci_dirs_are_present checks against. So
+#                 skipping this step costs nothing but the early start.
+#===============================================================================
+pull_Windows_packages_from_ci() {
+  MSG_I "Transferring the Windows builds on ${ci} to here"
+
+  MSG_L "Making sure local directories exist..."
+
+  if [ ! -d ${dir_archive}/ci/${tree}/${tarbuildnum} ]; then
+    mkdir -vp ${dir_archive}/ci/${tree}/${tarbuildnum}
+  fi
+
+  RC pushd ${dir_archive}/ci/${tree}
+    set +e
+    if RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/amd64-windows-packages/ ; then
+      MSG "Downloaded amd64-windows-packages from ci"
+    else
+      RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/amd64-windows-packages/
+    fi
+    # The full download cleans these up at the end, but this step is meant to be
+    # followed by signing rather than by the rest of the transfer.
+    RC find ${tarbuildnum}/ -name "index.html" -exec rm -v {} \;
+    set -e
+  RC popd
+  RC tree -L 1 ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages
+  MSG "Done downloading the Windows builds to ${dir_archive}/ci/${tree}/${tarbuildnum}"
+}
+
 pull_this_release_from_ci() {
   MSG_I "Transferring files on ${ci} to here"
 
@@ -869,13 +908,6 @@ pull_this_release_from_ci() {
   fi
 
   RC pushd ${dir_archive}/ci/${tree}
-    MSG "Transferring Windows builds first..."
-    set +e
-    if RC wget2 --progress=bar --no-robots --no-parent -r -N --no-host-directories ${ci}/${tarbuildnum}/amd64-windows-packages/ ; then
-      MSG "Downloaded amd64-windows-packages from ci"
-    else
-      RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${ci}/older_builds/${tarbuildnum}/amd64-windows-packages/
-    fi
     MSG "Transferring builds from ${ci}..."
     set +e
     for ci_pair in ${!ci_dirs} ; do
@@ -1197,16 +1229,40 @@ copy_win_packages_to_sign-todo_dir() {
   exit 0
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  move_win_packages_from_sign-done_dir
+#   DESCRIPTION:  Move the signed .msi out of ~/sign-done and into
+#                 ${dir_win_signed}.
+#
+#                 It deliberately does NOT go back into the ci download dir it
+#                 came from. Everything under ${dir_archive}/ci/ is re-fetched
+#                 by pull_this_release_from_ci and pull_Windows_packages_from_ci,
+#                 so a later download could drop the unsigned .msi straight back
+#                 on top of the signed one -- and the signed .msi does not match
+#                 the sha256sums.txt that ci published, so leaving it there also
+#                 makes verify_the_ci_download fail.
+#===============================================================================
 move_win_packages_from_sign-done_dir() {
   RC tree ~/sign-done/
+  if [ ! -d ${dir_win_signed} ]; then
+    mkdir -vp ${dir_win_signed}
+  fi
   #RC mv -vi ~/sign-done/${version}-winx64.msi ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/
-  RC mv -vi ~/sign-done/${version}-winx64.msi ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/
+  RC mv -vi ~/sign-done/${version}-winx64.msi ${dir_win_signed}/
+  RC tree ${dir_win_signed}/
   RC tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
+  if [ ! -f ${dir_win_signed}/${version}-winx64.msi ]; then
+    MSG_I "No signed .msi in ${dir_win_signed}"
+    MSG_L "Expected ${version}-winx64.msi there. The .msi has to be signed"
+    MSG_L "before the release can be built: run the sign-todo copy, get the"
+    MSG_L ".msi signed, then run the sign-done move. Quitting..."
+    exit 9
+  fi
   #for msi in ${dir_builds}/${tree}/${rev}/${arch}-packages/${arch}-packages/*msi ; do
-  for msi in ${dir_archive}/ci/${tree}/${tarbuildnum}/amd64-windows-packages/*msi ; do
+  for msi in ${dir_win_signed}/*msi ; do
     MSG "Verifying ${msi}"
     RC osslsigncode verify -in ${msi}
   done
@@ -1402,12 +1458,30 @@ esac
 # Build the base version string
 version="mariadb-${num}"
 
+# Where the signed Windows .msi is kept. This sits alongside the ci download
+# tree rather than inside it, because everything under ${dir_archive}/ci/ is
+# re-fetched by the pull_*_from_ci functions and the unsigned .msi would land
+# back on top of the signed one.
+dir_win_signed="${dir_archive}/signed/${tree}/${tarbuildnum}"
+
 case ${HOSTNAME} in
   ${buildmaster} ) ;;
   *)
 shouldI pull_this_release_from_the_buildmaster
     ;;
 esac
+
+MSG_I "Windows packages first, on their own"
+MSG_L "Copying the .msi to the sign-todo dir quits the script, so that signing"
+MSG_L "can happen out of band. Doing it before the rest of the release"
+MSG_L "downloads means signing is under way while everything else transfers."
+MSG_L "Re-run prep once the signed .msi is back."
+MSG_L ""
+MSG_L "Answer n to both of the next two steps to skip ahead and download the"
+MSG_L "whole release in one pass instead."
+echo
+shouldI pull_Windows_packages_from_ci
+shouldI copy_win_packages_to_sign-todo_dir
 
 shouldI pull_this_release_from_ci
 
@@ -1827,22 +1901,22 @@ if [ "${create_win}" != "no" ]; then
     shouldI move_win_packages_from_sign-done_dir
     verify_signed_win_packages
 
-    for pkgtype in msi zip; do
-      RC rsync -avP ${win_ci_dir}/${version}-${arch}.${pkgtype} .
+    # The .msi is the signed one from ${dir_win_signed}, NOT the unsigned one
+    # sitting in the ci download dir. The .zip packages are unsigned either way,
+    # so those still come straight from ci.
+    RC rsync -avP ${dir_win_signed}/${version}-${arch}.msi .
+    RC rsync -avP ${win_ci_dir}/${version}-${arch}.zip .
 
-      # Download debugsymbols package for 10.2+ releases
-      if [ "${pkgtype}" = "zip" ]; then
-        case ${tree} in
-          '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release'|'bb-10.0-release')
-            echo "+ tree=${tree}, so not downloading debugsymbols package..."
-            ;;
-          *)
-            echo "+ tree=${tree}, so downloading debugsymbols package..."
-            RC rsync -avP ${win_ci_dir}/${version}-${arch}-debugsymbols.${pkgtype} .
-            ;;
-        esac
-      fi
-    done
+    # Download debugsymbols package for 10.2+ releases
+    case ${tree} in
+      '5.5'|'5.5-galera'|'10.0'|'10.0-galera'|'10.1'|'bb-10.1-release'|'bb-10.0-release')
+        echo "+ tree=${tree}, so not downloading debugsymbols package..."
+        ;;
+      *)
+        echo "+ tree=${tree}, so downloading debugsymbols package..."
+        RC rsync -avP ${win_ci_dir}/${version}-${arch}-debugsymbols.zip .
+        ;;
+    esac
   done
   MSG "Generating Windows Checksums and Signatures..."
   for arch in winx64; do
