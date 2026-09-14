@@ -2239,20 +2239,24 @@ shouldI create_package_tarballs
 
 echo;echo;echo;echo
 
-MSG_I "Corp Mirrors"
-for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
-shouldI upload_to_the_corp_mirrors
-
 if [ "${foundation_is_prepping}" = "yes" ]; then
+  # Windows-only release: upload to the foundation (archives, then mirrors)
+  # before the corp mirror
+  MSG_I "Foundation Archives (Windows only)"
+  for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
+  shouldI upload_windows_to_the_foundation_archives
+
+  echo;echo;echo;echo
+
   MSG_I "Foundation Mirrors (Windows only)"
   for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
   shouldI upload_windows_to_the_foundation_mirrors
 
   echo;echo;echo;echo
 
-  MSG_I "Foundation Archives (Windows only)"
-  for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
-  shouldI upload_windows_to_the_foundation_archives
+  MSG_I "Corp Mirrors"
+  for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
+  shouldI upload_to_the_corp_mirrors
 
   echo;echo;echo;echo
 
@@ -2261,6 +2265,12 @@ if [ "${foundation_is_prepping}" = "yes" ]; then
   MSG_L "buildmaster steps -- the foundation handles those for the parts they"
   MSG_L "prepared."
 else
+  MSG_I "Corp Mirrors"
+  for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
+  shouldI upload_to_the_corp_mirrors
+
+  echo;echo;echo;echo
+
   MSG_I "Foundation Mirrors"
   for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
   shouldI upload_to_the_foundation_mirrors
