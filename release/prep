@@ -624,7 +624,11 @@ downloader() {
   local sources
   local rsync_downloader_opts
   sources="$@"
-  rsync_downloader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt"
+  # winx64-packages is excluded because Windows is always prepped locally, never
+  # downloaded from the foundation -- without this, --delete-before would wipe
+  # out a winx64-packages dir we'd already built before the foundation has a
+  # copy of it to send back.
+  rsync_downloader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt --exclude=winx64-packages"
   for src in ${sources} ; do
     local cont
     cont=""
@@ -743,6 +747,69 @@ download_this_release_from_the_foundation_archives() {
 
 upload_to_the_corp_mirrors() {
   uploader "${mirrors_corp}"
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  upload_windows_only
+#   DESCRIPTION:  Upload just winx64-packages to a set of destinations. Used
+#                 when the foundation is preparing the rest of the release
+#                 (source/bintar/debian/ubuntu/yum) and we're only responsible
+#                 for Windows -- uploading the whole ${dir_name} tree the way
+#                 uploader() does would --delete-before the sibling
+#                 directories the foundation is publishing itself. Restricting
+#                 the rsync source to winx64-packages keeps the deletion
+#                 scoped to that directory, since rsync --delete only prunes
+#                 within directories it actually recurses into.
+#===============================================================================
+upload_windows_only() {
+  local dest
+  local dests
+  local rsync_windows_opts
+  local src
+  dests="$@"
+  rsync_windows_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt"
+  for dest in ${dests} ; do
+    local cont
+    cont=""
+    src="${dir_release}/${dir_name}/winx64-packages"
+    while [ -z ${cont} ]; do
+      userResponse "Should I upload the Windows packages to ${dest}? [y/n]"
+      case ${ANSWER} in
+        y)
+          MSG "Uploading Windows packages to ${dest}..."
+          case ${dest} in
+            *hz-archive*)
+              rsync_windows_opts="${rsync_windows_opts} --no-group --no-owner --no-perms"
+              ;;
+            dl*)
+              src="${dir_corp}/${dir_name}/winx64-packages"
+              ;;
+          esac
+          rsync_wrapper "${rsync_windows_opts} ${src} ${dest}/${dir_name}/"
+          cont="yes"
+          ANSWER=""
+          ;;
+        n)
+          MSG "Skipping uploading Windows packages to ${dest}..."
+          cont="yes"
+          ANSWER=""
+          ;;
+        *)
+          MSG_L "Please answer [y]es or [n]o."
+          cont=""
+          ANSWER=""
+          ;;
+      esac
+    done
+  done
+}
+
+upload_windows_to_the_foundation_mirrors() {
+  upload_windows_only "${mirrors_foundation}"
+}
+
+upload_windows_to_the_foundation_archives() {
+  upload_windows_only "${archives_foundation}"
 }
 
 
@@ -1483,41 +1550,69 @@ echo
 shouldI pull_Windows_packages_from_ci
 shouldI copy_win_packages_to_sign-todo_dir
 
-shouldI pull_this_release_from_ci
-
-shouldI download_this_release_from_the_foundation_archives
-
-shouldI verify_all_needed_ci_dirs_are_present
+MSG_I "Source / bintar / Debian / Ubuntu / Yum"
+MSG_L "The foundation now prepares most of these for a Community Server release."
+MSG_L "Answer y here if the foundation is handling them for this release; answer"
+MSG_L "n if we're preparing them ourselves."
+echo
+foundation_is_prepping=""
+while [ -z "${foundation_is_prepping}" ]; do
+  userResponse "Is the foundation prepping the source/bintar/debian/ubuntu/yum packages for this release? [y/n]"
+  case ${ANSWER} in
+    y)
+      foundation_is_prepping="yes"
+      ANSWER=""
+      ;;
+    n)
+      foundation_is_prepping="no"
+      ANSWER=""
+      ;;
+    *)
+      echo "Please answer [y]es or [n]o."
+      echo
+      ;;
+  esac
+done
 
 MSG_I "Creating the ${version} Release"
 
-shouldI prepare_bintar_and_source_packages
+if [ "${foundation_is_prepping}" = "yes" ]; then
+  shouldI download_this_release_from_the_foundation_archives
+else
+  shouldI pull_this_release_from_ci
+
+  shouldI verify_all_needed_ci_dirs_are_present
+
+  shouldI prepare_bintar_and_source_packages
+
+  case $tree in
+    *5.5* )
+      echo "+ no Debian for 5.5"
+      shouldI rsync_the_debian_repo
+      ;;
+    *)
+      shouldI prepare_Debian_packages
+      ;;
+  esac
+
+  case $tree in
+    *5.5* )
+      echo "+ no Ubuntu for 5.5"
+      shouldI rsync_the_ubuntu_repo
+      ;;
+    *)
+      shouldI prepare_Ubuntu_packages
+      ;;
+  esac
+
+  shouldI prepare_yum_packages
+  if [ "${create_yum:-no}" = "yes" ]; then
+    set_updateinfo_metadata
+  fi
+fi
+
 shouldI prepare_Windows_packages
 
-case $tree in
-  *5.5* )
-    echo "+ no Debian for 5.5"
-    shouldI rsync_the_debian_repo
-    ;;
-  *)
-    shouldI prepare_Debian_packages
-    ;;
-esac
-
-case $tree in
-  *5.5* )
-    echo "+ no Ubuntu for 5.5"
-    shouldI rsync_the_ubuntu_repo
-    ;;
-  *)
-    shouldI prepare_Ubuntu_packages
-    ;;
-esac
-
-shouldI prepare_yum_packages
-if [ "${create_yum:-no}" = "yes" ]; then
-  set_updateinfo_metadata
-fi
 #shouldI include_Galera_packages_in_repositories
 include_Galera_packages_in_repositories
 
@@ -2148,65 +2243,84 @@ MSG_I "Corp Mirrors"
 for mirror in ${mirrors_corp} ; do echo "- ${mirror}";done;echo
 shouldI upload_to_the_corp_mirrors
 
-MSG_I "Foundation Mirrors"
-for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
-shouldI upload_to_the_foundation_mirrors
+if [ "${foundation_is_prepping}" = "yes" ]; then
+  MSG_I "Foundation Mirrors (Windows only)"
+  for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
+  shouldI upload_windows_to_the_foundation_mirrors
 
-echo;echo;echo;echo
-
-MSG_I "Foundation Archives"
-for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
-shouldI upload_to_the_foundation_archives
-
-echo;echo;echo;echo
-
-MSG_I "Prep Local Mirror Dir"
-
-shouldI copy_the_release_to_the_local_mirror_dir
-
-echo;echo;echo;echo
-
-shouldI remove_a_dir_from_the_local_mirror_dir
-
-echo;echo;echo;echo
-
-shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
-
-echo;echo;echo;echo
-
-MSG_I "WARNING: Only run the following once ALL releases are ready for upload!"
-shouldI sync_the_local_mirror_dir_to_the_mirrors
-
-echo;echo;echo;echo
-
-shouldI trigger_the_primary_mirror
-
-echo;echo;echo;echo
-
-shouldI update_the_archive_symlinks
-
-shouldI update_the_archive_STATUS_file
-
-echo;echo;echo;echo
-
-case $tree in
-  *5.5* )
-    echo "+ no Docker for 5.5"
-    ;;
-  *)
-    shouldI update_the_docker_library_mariadb_version
-    ;;
-esac
-
-echo;echo;echo;echo
-
-case ${HOSTNAME} in
-  ${buildmaster} ) ;;
-  *)
-  shouldI upload_this_release_to_the_buildmaster
   echo;echo;echo;echo
-  ;;
-esac
+
+  MSG_I "Foundation Archives (Windows only)"
+  for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
+  shouldI upload_windows_to_the_foundation_archives
+
+  echo;echo;echo;echo
+
+  MSG_I "Foundation is prepping the rest of this release"
+  MSG_L "Skipping the local mirror dir, symlink, STATUS file, Docker, and"
+  MSG_L "buildmaster steps -- the foundation handles those for the parts they"
+  MSG_L "prepared."
+else
+  MSG_I "Foundation Mirrors"
+  for mirror in ${mirrors_foundation} ; do echo "- ${mirror}";done;echo
+  shouldI upload_to_the_foundation_mirrors
+
+  echo;echo;echo;echo
+
+  MSG_I "Foundation Archives"
+  for archive in ${archives_foundation} ; do echo "- ${archive}";done;echo
+  shouldI upload_to_the_foundation_archives
+
+  echo;echo;echo;echo
+
+  MSG_I "Prep Local Mirror Dir"
+
+  shouldI copy_the_release_to_the_local_mirror_dir
+
+  echo;echo;echo;echo
+
+  shouldI remove_a_dir_from_the_local_mirror_dir
+
+  echo;echo;echo;echo
+
+  shouldI update_the_local_mirror_dir_yum_and_repo_symlinks
+
+  echo;echo;echo;echo
+
+  MSG_I "WARNING: Only run the following once ALL releases are ready for upload!"
+  shouldI sync_the_local_mirror_dir_to_the_mirrors
+
+  echo;echo;echo;echo
+
+  shouldI trigger_the_primary_mirror
+
+  echo;echo;echo;echo
+
+  shouldI update_the_archive_symlinks
+
+  shouldI update_the_archive_STATUS_file
+
+  echo;echo;echo;echo
+
+  case $tree in
+    *5.5* )
+      echo "+ no Docker for 5.5"
+      ;;
+    *)
+      shouldI update_the_docker_library_mariadb_version
+      ;;
+  esac
+
+  echo;echo;echo;echo
+
+  case ${HOSTNAME} in
+    ${buildmaster} ) ;;
+    *)
+    shouldI upload_this_release_to_the_buildmaster
+    echo;echo;echo;echo
+    ;;
+  esac
+fi
 
 echo "+ all done!"
 echo;echo;echo;echo
