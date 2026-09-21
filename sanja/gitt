@@ -1,8 +1,18 @@
 #!/bin/bash
 
 BRANCH=`git branch|grep '^\*'|awk '{print $2}'`
+
+if ! command -v gh >/dev/null 2>&1; then
+	echo 'gh (GitHub CLI) is not installed; install it to enable PR detection: https://cli.github.com/' >&2
+	PR=''
+else
+	PR=`gh pr view --json number -q .number 2>/dev/null`
+fi
+
 echo ''
-echo 'https://buildbot.mariadb.net/buildbot/grid?category=main&branch='${BRANCH}
-echo 'https://internal.mariadb.net/buildbot/grid?category=main&branch='${BRANCH}
-echo 'https://buildbot.mariadb.org/#/grid?branch='${BRANCH}
+if [ -n "$PR" ]; then
+	echo 'https://buildbot.mariadb.org/#/grid?branch=refs/pull/'${PR}'/head'
+else
+	echo 'https://buildbot.mariadb.org/#/grid?branch='${BRANCH}
+fi
 echo ''
