@@ -1,0 +1,13 @@
+#!/bin/bash
+# Create a log file of the script's activities.
+exec >>/var/log/mariadb_installer.log 2>&1
+
+# Load the .plist file into launchctl, which will also start MariaDB Server
+launchctl load /Library/LaunchDaemons/com.mariadb.server.plist
+
+# Wait 30 seconds for MariaDB Server to start
+i=0; while ((i++ < 30)); do pgrep mariadbd && [[ -e /usr/local/mariadb/data/mariadb.sock ]] && break; sleep 1; done
+
+/usr/local/mariadb/server/bin/mysql_upgrade
+
+# ln -sf /usr/local/mariadb/server/bin/* /usr/local/bin/
