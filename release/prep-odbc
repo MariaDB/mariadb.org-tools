@@ -119,14 +119,47 @@ copy_win_packages_to_sign-todo_dir() {
   exit 0
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  move_win_packages_from_sign-done_dir
+#   DESCRIPTION:  Move the signed .msi packages out of ~/sign-done and into
+#                 ${dir_win_signed}.
+#
+#                 They deliberately do NOT go back into the ci download dirs
+#                 they came from. Everything under ${co_builds}/${tarbuildnum}
+#                 is re-fetched by download_files_from_ci, and wget2 -N will
+#                 pull a file again when the local copy differs in size, which
+#                 a signed .msi always does -- so a later download would drop
+#                 the unsigned .msi straight back on top of the signed one.
+#                 ${dir_win_signed} sits beside that tree rather than inside
+#                 it, so nothing download_files_from_ci does can reach it.
+#===============================================================================
 move_win_packages_from_sign-done_dir() {
-  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win32.msi ${dir_build}/codbc-x86-windows/
-  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win64.msi ${dir_build}/codbc-amd64-windows/
+  RC tree ~/sign-done/
+  if [ ! -d ${dir_win_signed} ]; then
+    mkdir -vp ${dir_win_signed}
+  fi
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win32.msi ${dir_win_signed}/
+  RC mv -vi ~/sign-done/mariadb-connector-odbc*${version}*win64.msi ${dir_win_signed}/
+  RC tree ${dir_win_signed}/
   RC tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
-  for msi in ${dir_build}/codbc-*-windows/*msi ; do
+  local missing
+  missing=""
+  for arch in win32 win64 ; do
+    if ! compgen -G "${dir_win_signed}/*${arch}.msi" > /dev/null ; then
+      missing="${missing} ${arch}"
+    fi
+  done
+  if [ -n "${missing}" ]; then
+    MSG_I "No signed${missing} .msi in ${dir_win_signed}"
+    MSG_L "Both .msi packages have to be signed before the release can be"
+    MSG_L "built: run the sign-todo copy, get them signed, then run the"
+    MSG_L "sign-done move. Quitting..."
+    exit 9
+  fi
+  for msi in ${dir_win_signed}/*msi ; do
     MSG "Verifying ${msi}"
     RC osslsigncode verify -in ${msi}
   done
@@ -155,9 +188,44 @@ copy_and_stage_files() {
       mkdir -v ${dir_name}
     fi
     for dir in ${dir_build}/codbc* ; do
-      RC rsync -av --exclude=index.html ${dir} ${dir_name}/
+      case $(basename ${dir}) in
+        codbc-*-windows)
+          # The .msi in the ci download dir is the unsigned one. Exclude it
+          # here and take the signed .msi from ${dir_win_signed} below. Not
+          # using RC for this one: it runs its arguments unquoted, which would
+          # let the shell expand the *.msi exclude pattern against the cwd.
+          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir} ${dir_name}/"
+          rsync -av --exclude=index.html --exclude='*.msi' "${dir}" "${dir_name}/"
+          ;;
+        *)
+          RC rsync -av --exclude=index.html ${dir} ${dir_name}/
+          ;;
+      esac
       DIV
     done
+
+    # The Windows packages are the signed ones from ${dir_win_signed}, NOT the
+    # unsigned ones sitting in the ci download dir.
+    if ! compgen -G "${dir_win_signed}/*msi" > /dev/null ; then
+      MSG "No signed .msi in ${dir_win_signed}, refusing to stage the release"
+      MSG_L "without the Windows packages. Get them signed first."
+      return 1
+    fi
+    for msi in ${dir_win_signed}/*msi ; do
+      case $(basename ${msi}) in
+        *win32.msi) win_dir="codbc-x86-windows"   ;;
+        *win64.msi) win_dir="codbc-amd64-windows" ;;
+        *)
+          MSG "Do not know where to stage $(basename ${msi}). Quitting..."
+          return 1
+          ;;
+      esac
+      if [[ ! -d "${dir_name}/${win_dir}" ]] ; then
+        mkdir -v ${dir_name}/${win_dir}
+      fi
+      RC cp -avi ${msi} ${dir_name}/${win_dir}/
+    done
+    DIV
 
     # Linux files
     #if cp -avi ${dir_build}/*/*i386.tar.gz ${dir_name}/ ; then
@@ -556,6 +624,9 @@ update_the_STATUS_file() {
 loadDefaults
 
 dir_build="${co_builds}/${tarbuildnum}"
+# Beside the ci download tree, never inside it -- see
+# move_win_packages_from_sign-done_dir.
+dir_win_signed="${co_builds}/signed/${tarbuildnum}"
 
 case ${version} in
   ""|"-h") usage
