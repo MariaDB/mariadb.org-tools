@@ -372,6 +372,10 @@ mirrors_corp="corp_mirror_ssh:/path/on/corp/mirror"
 # Connectors
 cj_home="/path/to/connector/java/home"
 cj_home_corp="remote_home"
+# cc_builds is where prep-c mirrors a connector/c build down from cc_url; the
+# build is then staged out of \${cc_builds}/\${tarbuildnum}.
+cc_builds="/path/to/local/connector/c/ci/downloads"
+cc_url="https://ci.example.org/connector-c"
 cc_home="/path/to/connector/c/home"
 cc_home_corp="remote_home"
 co_home="/path/to/connector/odbc/home"

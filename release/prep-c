@@ -3,7 +3,7 @@
 #
 #          FILE:  prep-c
 # 
-#         USAGE:  ./prep-c <version> <build_dir>
+#         USAGE:  ./prep-c <version> <tarbuildnum>
 # 
 #   DESCRIPTION:  This script is used to prepare files for a MariaDB
 #                 Connector/C release
@@ -17,7 +17,7 @@
 #  Variables
 #-------------------------------------------------------------------------------
 version=${1}
-dir_build=${2}
+tarbuildnum=${2}
 
 dir_name="connector-c-${version}"
 
@@ -68,8 +68,12 @@ loadDefaults() {
 }
 
 usage() {
+  DIV
+  echo "usage: $0 <version> <tarbuildnum>"
+  echo " e.g.: $0 3.4.11 121"
   echo
-  echo "usage: $0 <version> <build_dir>"
+  echo "<tarbuildnum> is the build number under ${cc_url:-\${cc_url}}/"
+  echo;LINE
   echo
   exit 1
 }
@@ -100,72 +104,207 @@ shouldI() {
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  download_files_from_ci
+#   DESCRIPTION:  Mirror this build's artifacts from ci.mariadb.org into
+#                 ${cc_builds}/${tarbuildnum}. The packages used to be read
+#                 straight off a local buildbot archive path; they are now
+#                 pulled down here first, exactly as prep-odbc and prep-cpp do.
+#===============================================================================
+download_files_from_ci() {
+  MSG "Downloading files from CI"
+  pushd ${cc_builds}
+    RC wget2 --progress=bar --no-robots --cut-dirs=1 --no-parent -r -N --no-host-directories ${cc_url}/${tarbuildnum}/
+  popd
+}
+
 copy_win_packages_to_sign-todo_dir() {
-  RC cp -avi ${dir_build}/win-connector_c_3/*.msi ~/sign-todo/
+  RC cp -avi ${dir_build}/cc-x86-windows/*.msi ~/sign-todo/
+  RC cp -avi ${dir_build}/cc-amd64-windows/*.msi ~/sign-todo/
   RC tree ~/sign-todo/
   MSG "Quitting so Win Package signing can occur."
   MSG_L "Re-run script when signing is completed and move signed packages back."
   exit 0
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  move_win_packages_from_sign-done_dir
+#   DESCRIPTION:  Move the signed .msi packages out of ~/sign-done and into
+#                 ${dir_win_signed}.
+#
+#                 They deliberately do NOT go back into the ci download dirs
+#                 they came from. Everything under ${cc_builds}/${tarbuildnum}
+#                 is re-fetched by download_files_from_ci, and wget2 -N will
+#                 pull a file again when the local copy differs in size, which
+#                 a signed .msi always does -- so a later download would drop
+#                 the unsigned .msi straight back on top of the signed one.
+#                 ${dir_win_signed} sits beside that tree rather than inside
+#                 it, so nothing download_files_from_ci does can reach it.
+#===============================================================================
 move_win_packages_from_sign-done_dir() {
-  RC mv -vi ~/sign-done/mariadb-connector-c-*${version}*msi ${dir_build}/win-connector_c_3/
+  RC tree ~/sign-done/
+  if [ ! -d ${dir_win_signed} ]; then
+    mkdir -vp ${dir_win_signed}
+  fi
+  RC mv -vi ~/sign-done/mariadb-connector-c-*${version}*win32.msi ${dir_win_signed}/
+  RC mv -vi ~/sign-done/mariadb-connector-c-*${version}*win64.msi ${dir_win_signed}/
+  RC tree ${dir_win_signed}/
   RC tree ~/sign-done/
 }
 
 verify_signed_win_packages() {
-  for msi in ${dir_build}/win-connector_c_3/*msi ; do
+  local missing
+  missing=""
+  for arch in win32 win64 ; do
+    if ! compgen -G "${dir_win_signed}/*${arch}.msi" > /dev/null ; then
+      missing="${missing} ${arch}"
+    fi
+  done
+  if [ -n "${missing}" ]; then
+    MSG_I "No signed${missing} .msi in ${dir_win_signed}"
+    MSG_L "Both .msi packages have to be signed before the release can be"
+    MSG_L "built: run the sign-todo copy, get them signed, then run the"
+    MSG_L "sign-done move. Quitting..."
+    exit 9
+  fi
+  for msi in ${dir_win_signed}/*msi ; do
     MSG "Verifying ${msi}"
     RC osslsigncode verify -in ${msi}
   done
 }
 
+#===  FUNCTION  ================================================================
+#          NAME:  copy_and_stage_files
+#   DESCRIPTION:  Stage the downloaded build into ${cc_home}/${dir_name}.
+#                 Each builder directory is kept as a directory rather than
+#                 being flattened: ci names the aarch64 and amd64 tarballs
+#                 identically (e.g. both cc-aarch64-debian-12 and
+#                 cc-amd64-debian-12 hold mariadb-connector-c-X-debian12.tar.gz)
+#                 so flattening them would silently lose half the packages.
+#===============================================================================
 copy_and_stage_files() {
   MSG "Copying and staging files"
   pushd ${cc_home}
     if [[ ! -d "${dir_name}" ]];then
       mkdir -v ${dir_name}
     fi
-    for dir in ${dir_build}/*;do
-      echo ${dir}
-      case $(basename ${dir}) in 
-        cc-rhel9-amd64)
-          cp -avi ${dir}/*.gz ${dir_name}/
-          cp -avi ${dir}/*.zip ${dir_name}/
-          ;;
-        linux_x86-connector_c)
-          cp -avi ${dir}/*.gz ${dir_name}/
-          cp -avi ${dir}/*.zip ${dir_name}/
-          ;;
-        linux_x64-connector_c)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
-          ;;
-        cc-*-amd64)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
-          ;;
-        cc-*-aarch64)
-          cp -avi ${dir}/*aarch64.tar.gz ${dir_name}/
-          ;;
-        cc-*-x86)
-          cp -avi ${dir}/*i386.tar.gz ${dir_name}/
-          ;;
-        win-connector_c_3)
-          echo
-          cp -avi ${dir}/*.msi ${dir_name}/
-          ;;
-        freebsd11_x64-connector_c)
-          cp -avi ${dir}/*amd64.tar.gz ${dir_name}/
-          ;;
-        freebsd11_x86-connector_c)
-          cp -avi ${dir}/*i386.tar.gz ${dir_name}/
+    for dir in ${dir_build}/cc-* ; do
+      case $(basename ${dir}) in
+        cc-*-windows)
+          # The .msi in the ci download dir is the unsigned one. Exclude it
+          # here and take the signed .msi from ${dir_win_signed} below. Not
+          # using RC for this one: it runs its arguments unquoted, which would
+          # let the shell expand the *.msi exclude pattern against the cwd.
+          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir} ${dir_name}/"
+          rsync -av --exclude=index.html --exclude='*.msi' "${dir}" "${dir_name}/"
           ;;
         *)
-          MSG_I "+ fail: ${dir}"
+          RC rsync -av --exclude=index.html ${dir} ${dir_name}/
           ;;
       esac
+      DIV
     done
+
+    # The Windows packages are the signed ones from ${dir_win_signed}, NOT the
+    # unsigned ones sitting in the ci download dir.
+    if ! compgen -G "${dir_win_signed}/*msi" > /dev/null ; then
+      MSG "No signed .msi in ${dir_win_signed}, refusing to stage the release"
+      MSG_L "without the Windows packages. Get them signed first."
+      return 1
+    fi
+    for msi in ${dir_win_signed}/*msi ; do
+      case $(basename ${msi}) in
+        *win32.msi) win_dir="cc-x86-windows"   ;;
+        *win64.msi) win_dir="cc-amd64-windows" ;;
+        *)
+          MSG "Do not know where to stage $(basename ${msi}). Quitting..."
+          return 1
+          ;;
+      esac
+      if [[ ! -d "${dir_name}/${win_dir}" ]] ; then
+        mkdir -v ${dir_name}/${win_dir}
+      fi
+      RC cp -avi ${msi} ${dir_name}/${win_dir}/
+    done
+    DIV
+
+    # Src files. ci publishes the source tarball at the top of the build dir.
+    RC cp -avi ${dir_build}/*src.tar.gz ${dir_name}/
+    # ci does not build a source .zip; create_the_source_zip_from_the_source_
+    # tarball makes one in the next step. Copy one in anyway if ci ever starts
+    # publishing its own, so the generated one is never preferred over it.
+    if compgen -G "${dir_build}/*src.zip" > /dev/null ; then
+      RC cp -avi ${dir_build}/*src.zip ${dir_name}/
+    else
+      MSG_L "No source .zip in ${dir_build}, one will be built from the tarball..."
+    fi
+
     tree ${dir_name}/
   popd
+  echo;echo;echo
+}
+
+#===  FUNCTION  ================================================================
+#          NAME:  create_the_source_zip_from_the_source_tarball
+#   DESCRIPTION:  ci publishes a source .tar.gz for connector/c but no source
+#                 .zip, and mariadb.org has always served both. The two have
+#                 held identical trees historically -- the published 3.4.9
+#                 .zip and .tar.gz unpack to trees `diff -r` reports as
+#                 identical, same 521 entries, no line-ending conversion -- so
+#                 the .zip is repacked here from the .tar.gz rather than
+#                 fetched from anywhere. The entry lists are compared
+#                 afterwards, and a mismatched .zip is deleted rather than
+#                 shipped, so a partial repack is caught here and not on the
+#                 mirrors.
+#
+#                 An existing .zip is left alone, so a real one from ci (see
+#                 copy_and_stage_files) always wins over a generated one.
+#===============================================================================
+create_the_source_zip_from_the_source_tarball() {
+  local tarball
+  local zipfile
+  local src_dir
+  local tmp_dir
+
+  for cmd in zip unzip ; do
+    if ! command -v ${cmd} > /dev/null ; then
+      MSG "${cmd} is not installed, cannot build the source .zip."
+      return 1
+    fi
+  done
+
+  tarball=$(ls ${cc_home}/${dir_name}/*src.tar.gz)
+  zipfile="${tarball%.tar.gz}.zip"
+
+  if [[ -f "${zipfile}" ]] ; then
+    MSG_L "Found an existing $(basename ${zipfile}), not rebuilding it..."
+    return 0
+  fi
+
+  MSG "Building $(basename ${zipfile}) from $(basename ${tarball})"
+  src_dir=$(basename ${tarball} .tar.gz)
+  tmp_dir=$(mktemp -d)
+  RC tar -xzf ${tarball} -C ${tmp_dir}
+  if [[ ! -d "${tmp_dir}/${src_dir}" ]] ; then
+    MSG "$(basename ${tarball}) does not unpack to ${src_dir}/, not building a .zip."
+    rm -rf ${tmp_dir}
+    return 1
+  fi
+  pushd ${tmp_dir}
+    RC zip -q -r -X ${zipfile} ${src_dir}
+  popd
+  rm -rf ${tmp_dir}
+
+  MSG_L "Checking the .zip holds what the .tar.gz holds..."
+  if diff <(tar -tzf ${tarball} | sed 's|/$||' | sort -u) \
+          <(unzip -Z1 ${zipfile} | sed 's|/$||' | sort -u) ; then
+    MSG_L "The .zip and the .tar.gz hold the same files."
+    RC ls -l ${tarball} ${zipfile}
+  else
+    MSG "The .zip does not match the .tar.gz. Removing it."
+    rm -f ${zipfile}
+    return 1
+  fi
   echo;echo;echo
 }
 
@@ -191,19 +330,21 @@ update_org_current_to_this_release() {
     rm -rf ${cc_home_org}/connector-c-current
   fi
   MSG "Updating current org release to this one..."
-  set -x
-  mkdir ${cc_home_org}/connector-c-current
-  cp -avi ${cc_home}/${dir_name}/*src.tar.gz ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.tar.gz
-  cp -avi ${cc_home}/${dir_name}/*src.zip ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.zip
+  RC mkdir ${cc_home_org}/connector-c-current
+  RC cp -avi ${cc_home}/${dir_name}/*src.tar.gz ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.tar.gz
+  if compgen -G "${cc_home}/${dir_name}/*src.zip" > /dev/null ; then
+    RC cp -avi ${cc_home}/${dir_name}/*src.zip ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.zip
+  else
+    MSG_L "No source .zip staged, not publishing a -current-src.zip..."
+    MSG_L "Re-run the create the source zip step if that was not deliberate."
+  fi
   pushd ${cc_home_org}/connector-c-current/
-  set +x
-  sumgen
-  for file in *;do
-    echo "+ gpg ${gpg_opts} ${file}"
-            gpg ${gpg_opts} ${file}
-  done
+    sumgen
+    for file in *;do
+      echo "+ gpg ${gpg_opts} ${file}"
+              gpg ${gpg_opts} ${file}
+    done
   popd
-  set +x
   echo;echo;echo
 }
 
@@ -212,106 +353,26 @@ prep_com_files() {
   MSG "Prepping com files"
   pushd ${cc_home}/${dir_name}
     sumgen
-    for file in *;do
-      echo "+ gpg ${ent_gpg_opts} ${file}"
-              gpg ${ent_gpg_opts} ${file}
+    # The per-builder packages live one level down now, so sign both the
+    # top-level source archives and everything inside the builder dirs.
+    for file in *tar.gz *zip */* ;do
+      [[ -f "${file}" ]] || continue
+      RC gpg ${ent_gpg_opts} ${file}
     done
   popd
   echo;echo;echo
 }
 
 upload_to_the_primary_mirror() {
-  local upload
-  upload=""
-  echo;echo;echo;
-  MSG "Doing a dry-run..."
-  echo "+ rsync --dry-run -av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
-          rsync --dry-run -av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/
-  echo;echo;echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        echo "+ rsync -av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
-                rsync -av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/
-        echo;echo;echo
-        upload="yes"
-        return 0
-        ;;
-      "n")
-        echo "Something went wrong..."
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
+  rsync_wrapper "-av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
 }
 
 upload_to_staging() {
-  local upload
-  upload=""
-  echo;echo;echo;
-  MSG "Doing a dry-run..."
-  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/"
-          rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/
-  echo;echo;echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        echo "+ rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/"
-                rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/
-        echo;echo;echo
-        upload="yes"
-        return 0
-        ;;
-      "n")
-        echo "Something went wrong..."
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
+  rsync_wrapper "-av --delete-after ${cc_home}/${dir_name} ${cc_home_corp_staging}/"
 }
 
-
 upload_to_prod() {
-  local upload
-  upload=""
-  echo;echo;echo;
-  MSG "Doing a dry-run..."
-  echo "+ rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/"
-          rsync --dry-run -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/
-  echo;echo;echo
-  while [ -z ${upload} ]; do
-    userResponse "Does the above look OK? [y/n]"
-    case ${ANSWER} in
-      "y")
-        echo "+ rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/"
-                rsync -av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/
-        echo;echo;echo
-        upload="yes"
-        return 0
-        ;;
-      "n")
-        echo "Something went wrong..."
-        exit 1
-        ;;
-      *)
-        echo "Please answer [y]es or [n]o."
-        echo
-        upload=""
-        ;;
-    esac
-  done
+  rsync_wrapper "-av --delete-after ${cc_home}/${dir_name} ${cc_home_corp}/"
 }
 
 #===  FUNCTION  ================================================================
@@ -426,7 +487,7 @@ remove_a_dir_from_the_local_mirror_dir() {
             esac
           else
             MSG_L "${release_to_remove} doesn't appear to exist, please try again."
-            pressAnyKeyToContinue
+            PAUSE
           fi
           done_removing=""
           ;;
@@ -490,11 +551,17 @@ verify_local_mirror_copy_is_good() {
 
 loadDefaults
 
-if [ "${version}" = "" ]; then
-  usage
-fi
+dir_build="${cc_builds}/${tarbuildnum}"
+# Beside the ci download tree, never inside it -- see
+# move_win_packages_from_sign-done_dir.
+dir_win_signed="${cc_builds}/signed/${tarbuildnum}"
 
-if [ "${dir_build}" = "" ]; then
+case ${version} in
+  ""|"-h"|"--help") usage
+    ;;
+esac
+
+if [ "${tarbuildnum}" = "" ]; then
   usage
 fi
 
@@ -513,6 +580,8 @@ set -eu
 
 MSG_I "Preparing MariaDB Connector/C ${version} release..."
 echo;echo
+shouldI download_files_from_ci
+echo;echo
 shouldI copy_win_packages_to_sign-todo_dir
 echo;echo
 shouldI move_win_packages_from_sign-done_dir
@@ -520,6 +589,8 @@ echo;echo
 verify_signed_win_packages
 echo;echo
 shouldI copy_and_stage_files
+echo;echo
+shouldI create_the_source_zip_from_the_source_tarball
 echo;echo
 shouldI prep_org_files
 echo;echo
