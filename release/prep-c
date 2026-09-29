@@ -45,10 +45,30 @@ fi
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
+#===  FUNCTION  ================================================================
+#          NAME:  sumgen
+#   DESCRIPTION:  Write md5/sha1/sha256/sha512 sums for every mariadb-* file
+#                 at or below the cwd, then verify them.
+#
+#                 Only the org side uses this now -- the org release dir and
+#                 connector-c-current, both flat, where mariadb.org publishes
+#                 the sums files beside the archives they cover. The com side
+#                 uses CHECKSUM_AND_SIGN instead, one checksums/ dir per
+#                 package dir. find turns up exactly what the old ./mar* glob
+#                 did here, in the same order and with the same ./ prefix, so
+#                 these sums files are byte-for-byte what they always were.
+#===============================================================================
 sumgen() {
+  local files
+  files=$(find . -type f -name 'mar*' | sort)
+  if [ -z "${files}" ]; then
+    # Without this the sum commands below would read stdin and just sit there.
+    MSG "No mariadb-* files to checksum in $(pwd). Quitting..."
+    return 1
+  fi
   for sum in md5 sha1 sha256 sha512;do
 	echo;LINE;echo ${sum};
-	${sum}sum ./mar* >> ${sum}sums.txt
+	${sum}sum ${files} >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
   DIV
@@ -189,17 +209,21 @@ copy_and_stage_files() {
       mkdir -v ${dir_name}
     fi
     for dir in ${dir_build}/cc-* ; do
+      # STAGE_DIR_NAME drops the cc- prefix and moves the arch to the end so
+      # that the release sorts by distribution rather than by architecture.
+      # The trailing slash on the source is what makes rsync rename the dir.
+      stage_dir=$(STAGE_DIR_NAME ${dir})
       case $(basename ${dir}) in
         cc-*-windows)
           # The .msi in the ci download dir is the unsigned one. Exclude it
           # here and take the signed .msi from ${dir_win_signed} below. Not
           # using RC for this one: it runs its arguments unquoted, which would
           # let the shell expand the *.msi exclude pattern against the cwd.
-          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir} ${dir_name}/"
-          rsync -av --exclude=index.html --exclude='*.msi' "${dir}" "${dir_name}/"
+          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir}/ ${dir_name}/${stage_dir}/"
+          rsync -av --exclude=index.html --exclude='*.msi' "${dir}/" "${dir_name}/${stage_dir}/"
           ;;
         *)
-          RC rsync -av --exclude=index.html ${dir} ${dir_name}/
+          RC rsync -av --exclude=index.html ${dir}/ ${dir_name}/${stage_dir}/
           ;;
       esac
       DIV
@@ -214,8 +238,8 @@ copy_and_stage_files() {
     fi
     for msi in ${dir_win_signed}/*msi ; do
       case $(basename ${msi}) in
-        *win32.msi) win_dir="cc-x86-windows"   ;;
-        *win64.msi) win_dir="cc-amd64-windows" ;;
+        *win32.msi) win_dir="windows-x86"   ;;
+        *win64.msi) win_dir="windows-amd64" ;;
         *)
           MSG "Do not know where to stage $(basename ${msi}). Quitting..."
           return 1
@@ -228,13 +252,19 @@ copy_and_stage_files() {
     done
     DIV
 
-    # Src files. ci publishes the source tarball at the top of the build dir.
-    RC cp -avi ${dir_build}/*src.tar.gz ${dir_name}/
+    # Src files. ci publishes the source archives loose at the top of the
+    # build dir; they go into source/ here so that every package in the
+    # staged release sits in a directory of its own, like the ci builder
+    # dirs do. Nothing is left at the top level but the checksum files.
+    if [[ ! -d "${dir_name}/source" ]] ; then
+      mkdir -v ${dir_name}/source
+    fi
+    RC cp -avi ${dir_build}/*src.tar.gz ${dir_name}/source/
     # ci does not build a source .zip; create_the_source_zip_from_the_source_
     # tarball makes one in the next step. Copy one in anyway if ci ever starts
     # publishing its own, so the generated one is never preferred over it.
     if compgen -G "${dir_build}/*src.zip" > /dev/null ; then
-      RC cp -avi ${dir_build}/*src.zip ${dir_name}/
+      RC cp -avi ${dir_build}/*src.zip ${dir_name}/source/
     else
       MSG_L "No source .zip in ${dir_build}, one will be built from the tarball..."
     fi
@@ -273,7 +303,7 @@ create_the_source_zip_from_the_source_tarball() {
     fi
   done
 
-  tarball=$(ls ${cc_home}/${dir_name}/*src.tar.gz)
+  tarball=$(ls ${cc_home}/${dir_name}/source/*src.tar.gz)
   zipfile="${tarball%.tar.gz}.zip"
 
   if [[ -f "${zipfile}" ]] ; then
@@ -314,7 +344,9 @@ prep_org_files() {
   if [[ ! -d "${cc_home_org}/${dir_name}" ]];then
     mkdir -v ${cc_home_org}/${dir_name}
   fi
-  cp -avi ${cc_home}/${dir_name}/*src* ${cc_home_org}/${dir_name}/
+  # The org tree stays flat: mariadb.org publishes these at the top of
+  # connector-c-<version>/, so they must not pick up the source/ level.
+  cp -avi ${cc_home}/${dir_name}/source/*src* ${cc_home_org}/${dir_name}/
   pushd ${cc_home_org}/${dir_name}
     sumgen
     for file in *;do
@@ -331,9 +363,9 @@ update_org_current_to_this_release() {
   fi
   MSG "Updating current org release to this one..."
   RC mkdir ${cc_home_org}/connector-c-current
-  RC cp -avi ${cc_home}/${dir_name}/*src.tar.gz ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.tar.gz
-  if compgen -G "${cc_home}/${dir_name}/*src.zip" > /dev/null ; then
-    RC cp -avi ${cc_home}/${dir_name}/*src.zip ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.zip
+  RC cp -avi ${cc_home}/${dir_name}/source/*src.tar.gz ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.tar.gz
+  if compgen -G "${cc_home}/${dir_name}/source/*src.zip" > /dev/null ; then
+    RC cp -avi ${cc_home}/${dir_name}/source/*src.zip ${cc_home_org}/connector-c-current/mariadb-connector-c-current-src.zip
   else
     MSG_L "No source .zip staged, not publishing a -current-src.zip..."
     MSG_L "Re-run the create the source zip step if that was not deliberate."
@@ -352,12 +384,17 @@ prep_com_files() {
   # Prep .com files
   MSG "Prepping com files"
   pushd ${cc_home}/${dir_name}
-    sumgen
-    # The per-builder packages live one level down now, so sign both the
-    # top-level source archives and everything inside the builder dirs.
-    for file in *tar.gz *zip */* ;do
-      [[ -f "${file}" ]] || continue
-      RC gpg ${ent_gpg_opts} ${file}
+    # Each package directory carries its own checksums/ holding that
+    # directory's sums files and detached signatures, rather than the whole
+    # release sharing one set at the top level. Same layout prep-es builds
+    # for the package tarballs, and what the mariadb.com CDN wants.
+    for dir in */ ; do
+      [[ -d "${dir}" ]] || continue
+      DIV
+      MSG "${dir}"
+      pushd ${dir}
+        CHECKSUM_AND_SIGN "${ent_gpg_opts}"
+      popd
     done
   popd
   echo;echo;echo
