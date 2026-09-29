@@ -401,7 +401,9 @@ prep_com_files() {
 }
 
 upload_to_the_primary_mirror() {
-  rsync_wrapper "-av --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
+  # -O for the same reason as in uploader: connector-c-current already
+  # exists on the far side and its directory mtime is not always ours to set.
+  rsync_wrapper "-av -O --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
 }
 
 upload_to_staging() {
@@ -440,6 +442,7 @@ uploader() {
   local dest
   local dests
   local rsync_uploader_opts
+  local rsync_dest_opts
   dests="$@"
   rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig"
   for dest in ${dests} ; do
@@ -450,13 +453,22 @@ uploader() {
       case ${ANSWER} in
         y)
           MSG "Uploading to ${dest}..."
+          # Built fresh for each destination. Appending to
+          # rsync_uploader_opts itself meant the first hz-archive in the
+          # list left its extra flags set for every mirror after it.
+          rsync_dest_opts="${rsync_uploader_opts}"
           case ${dest} in
             *hz-archive*)
-              rsync_uploader_opts="${rsync_uploader_opts} --no-group --no-owner --no-perms"
+              rsync_dest_opts="${rsync_dest_opts} --no-group --no-owner --no-perms"
               ;;
           esac
-          rsync_wrapper "${rsync_uploader_opts} ${cc_home_org}/${dir_name} ${dest}/"
-          rsync_wrapper "${rsync_uploader_opts} ${cc_home_org}/connector-c-current ${dest}/"
+          rsync_wrapper "${rsync_dest_opts} ${cc_home_org}/${dir_name} ${dest}/"
+          # -O (--omit-dir-times) on connector-c-current: that directory
+          # already exists on the mirrors and is not ours on all of them, so
+          # rsync cannot set its mtime and the whole transfer fails. The
+          # versioned release dir is created fresh by this upload, so it
+          # does not need it.
+          rsync_wrapper "${rsync_dest_opts} -O ${cc_home_org}/connector-c-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
