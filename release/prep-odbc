@@ -30,10 +30,30 @@ dir_log=${XDG_DATA_HOME:-~/.local/share}
 #-------------------------------------------------------------------------------
 #  Functions
 #-------------------------------------------------------------------------------
+#===  FUNCTION  ================================================================
+#          NAME:  sumgen
+#   DESCRIPTION:  Write md5/sha1/sha256/sha512 sums for every mariadb-* file
+#                 at or below the cwd, then verify them.
+#
+#                 Only the org side uses this now -- the org release dir,
+#                 which is flat, and where mariadb.org publishes the sums
+#                 files beside the archives they cover. The com side uses
+#                 CHECKSUM_AND_SIGN instead, one checksums/ dir per package
+#                 dir. find turns up exactly what the old ./mar* glob did
+#                 here, in the same order and with the same ./ prefix, so
+#                 this sums file is byte-for-byte what it always was.
+#===============================================================================
 sumgen() {
+  local files
+  files=$(find . -type f -name 'mar*' | sort)
+  if [ -z "${files}" ]; then
+    # Without this the sum commands below would read stdin and just sit there.
+    MSG "No mariadb-* files to checksum in $(pwd). Quitting..."
+    return 1
+  fi
   for sum in md5 sha1 sha256 sha512;do
 	echo;LINE;echo ${sum};
-	${sum}sum ./mar* >> ${sum}sums.txt
+	${sum}sum ${files} >> ${sum}sums.txt
 	${sum}sum -c ${sum}sums.txt
   done
   DIV
@@ -188,17 +208,21 @@ copy_and_stage_files() {
       mkdir -v ${dir_name}
     fi
     for dir in ${dir_build}/codbc* ; do
+      # STAGE_DIR_NAME drops the codbc- prefix and moves the arch to the end so
+      # that the release sorts by distribution rather than by architecture.
+      # The trailing slash on the source is what makes rsync rename the dir.
+      stage_dir=$(STAGE_DIR_NAME ${dir})
       case $(basename ${dir}) in
         codbc-*-windows)
           # The .msi in the ci download dir is the unsigned one. Exclude it
           # here and take the signed .msi from ${dir_win_signed} below. Not
           # using RC for this one: it runs its arguments unquoted, which would
           # let the shell expand the *.msi exclude pattern against the cwd.
-          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir} ${dir_name}/"
-          rsync -av --exclude=index.html --exclude='*.msi' "${dir}" "${dir_name}/"
+          echo "+ rsync -av --exclude=index.html --exclude=*.msi ${dir}/ ${dir_name}/${stage_dir}/"
+          rsync -av --exclude=index.html --exclude='*.msi' "${dir}/" "${dir_name}/${stage_dir}/"
           ;;
         *)
-          RC rsync -av --exclude=index.html ${dir} ${dir_name}/
+          RC rsync -av --exclude=index.html ${dir}/ ${dir_name}/${stage_dir}/
           ;;
       esac
       DIV
@@ -213,8 +237,8 @@ copy_and_stage_files() {
     fi
     for msi in ${dir_win_signed}/*msi ; do
       case $(basename ${msi}) in
-        *win32.msi) win_dir="codbc-x86-windows"   ;;
-        *win64.msi) win_dir="codbc-amd64-windows" ;;
+        *win32.msi) win_dir="windows-x86"   ;;
+        *win64.msi) win_dir="windows-amd64" ;;
         *)
           MSG "Do not know where to stage $(basename ${msi}). Quitting..."
           return 1
@@ -275,16 +299,35 @@ copy_and_stage_files() {
     #  MSG "ERROR: Windows files not Found"
     #fi
     # Mac files
-    if cp -avi ${dir_build}/*/*pkg ${dir_name}/;then
+    # The MacOS .pkg gets its own directory too. It is the one package that
+    # does not come from ci -- it is normally hand-delivered to
+    # ${co_dir_mac} -- so macos/ is only created when there is something to
+    # put in it, rather than leaving an empty dir in every release.
+    #
+    # Testing for the files with compgen rather than branching on cp's exit
+    # status: cp failing used to mean either "no MacOS build this time" or
+    # "the copy went wrong", and the second one fell through to the next
+    # branch unnoticed. Now a real copy failure fails the step.
+    if compgen -G "${dir_build}/*/*pkg" > /dev/null ; then
+      mkdir -vp ${dir_name}/macos
+      RC cp -avi ${dir_build}/*/*pkg ${dir_name}/macos/
       MSG "Copied MacOS files"
-    elif cp -avi ${co_dir_mac}/*${version}*pkg ${dir_name}/;then
+    elif compgen -G "${co_dir_mac}/*${version}*pkg" > /dev/null ; then
+      mkdir -vp ${dir_name}/macos
+      RC cp -avi ${co_dir_mac}/*${version}*pkg ${dir_name}/macos/
       MSG "Copied MacOS files from ${co_dir_mac}"
     else
       MSG "No MacOS files"
     fi
     # Src files
     #cp -avi ${dir_build}/*src.zip ${dir_name}/
-    cp -avi ${dir_build}/*src.tar.gz ${dir_name}/
+    # The source archive goes into source/ so that every package in the
+    # staged release sits in a directory of its own, like the ci builder
+    # dirs do. Nothing is left at the top level but the checksum files.
+    if [[ ! -d "${dir_name}/source" ]] ; then
+      mkdir -v ${dir_name}/source
+    fi
+    cp -avi ${dir_build}/*src.tar.gz ${dir_name}/source/
   popd
   echo;echo;echo
 }
@@ -295,7 +338,9 @@ prep_org_files() {
   if [[ ! -d "${co_home_org}/${dir_name}" ]];then
     mkdir -v ${co_home_org}/${dir_name}
   fi
-  cp -avi ${co_home}/${dir_name}/*src* ${co_home_org}/${dir_name}/
+  # The org tree stays flat: mariadb.org publishes these at the top of
+  # connector-odbc-<version>/, so they must not pick up the source/ level.
+  cp -avi ${co_home}/${dir_name}/source/*src* ${co_home_org}/${dir_name}/
   pushd ${co_home_org}/${dir_name}
     sumgen
     for file in *;do
@@ -310,9 +355,17 @@ prep_com_files() {
   # Prep .com files
   MSG "Prepping com files"
   pushd ${co_home}/${dir_name}
-    sumgen
-    for file in *tar.gz */*;do
-      RC gpg ${ent_gpg_opts} ${file}
+    # Each package directory carries its own checksums/ holding that
+    # directory's sums files and detached signatures, rather than the whole
+    # release sharing one set at the top level. Same layout prep-es builds
+    # for the package tarballs, and what the mariadb.com CDN wants.
+    for dir in */ ; do
+      [[ -d "${dir}" ]] || continue
+      DIV
+      MSG "${dir}"
+      pushd ${dir}
+        CHECKSUM_AND_SIGN "${ent_gpg_opts}"
+      popd
     done
   popd
   echo;echo;echo
