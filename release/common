@@ -112,4 +112,99 @@ rsync_wrapper() {
   done
 }
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  STAGE_DIR_NAME
+#   DESCRIPTION:  Turn a ci builder directory name into the name it should be
+#                 staged under in a release tree, and echo it.
+#
+#                 ci names its builder dirs <connector>-<arch>-<dist>-<ver>,
+#                 e.g. cc-aarch64-ubuntu-24.04, or <connector>-<arch>-windows
+#                 for the Windows builders. Staged as-is, a release sorts by
+#                 architecture, which is not how anyone reads one. This drops
+#                 the connector prefix and moves the arch to the end:
+#
+#                   cc-aarch64-ubuntu-24.04  ->  ubuntu-24.04-aarch64
+#                   codbc-amd64-sles-1507    ->  sles-1507-amd64
+#                   cc-amd64-windows         ->  windows-amd64
+#                   cc-x86-windows           ->  windows-x86
+#
+#                 so a release sorts by distribution and version instead.
+#
+#                 A name with fewer than three fields has nothing to reorder
+#                 and is passed through unchanged; quietly turning cc-windows
+#                 into windows-windows would be worse than leaving it be.
+#-------------------------------------------------------------------------------
+STAGE_DIR_NAME() {
+  local name
+  local arch
+  local rest
+  name=$(basename "${1}")
+  case ${name} in
+    *-*-*)
+      ;;
+    *)
+      echo "${name}"
+      return 0
+      ;;
+  esac
+  rest="${name#*-}"
+  arch="${rest%%-*}"
+  rest="${rest#*-}"
+  echo "${rest}-${arch}"
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CHECKSUM_AND_SIGN
+#   DESCRIPTION:  Checksum and sign every package in the current directory,
+#                 then collect the checksum files and the detached signatures
+#                 into a checksums/ subdirectory of it, leaving the packages
+#                 themselves as the only files directly in the dir.
+#
+#                 This is the layout prep-es builds for the package tarballs
+#                 in checksum_package_tarballs, and it is what the
+#                 mariadb.com CDN wants: the caller walks the release one
+#                 package directory at a time, so each one ends up carrying
+#                 its own checksums rather than the whole release sharing a
+#                 set of sums files at the top level.
+#
+#                 Takes the gpg options to sign with as its only argument,
+#                 since the community and enterprise keys differ.
+#
+#                 An existing checksums/ is removed first: re-running would
+#                 otherwise append to the last run's sums files and re-sign
+#                 signatures it had already made. Files already ending in
+#                 .asc are left out of the list for the same reason.
+#-------------------------------------------------------------------------------
+CHECKSUM_AND_SIGN() {
+  local sign_opts
+  local files
+  local sum
+  local file
+  sign_opts="${1}"
+  files=$(find . -maxdepth 1 -type f ! -name '*.asc' | sort)
+  if [ -z "${files}" ]; then
+    MSG_L "Nothing to checksum in $(pwd), skipping..."
+    return 0
+  fi
+  if [ -d checksums ]; then
+    RC rm -rf checksums
+  fi
+  RC mkdir checksums
+  for sum in md5 sha1 sha256 sha512 ; do
+    MSG_L "${sum}sum ${files} >> checksums/${sum}sums.txt"
+           ${sum}sum ${files} >> checksums/${sum}sums.txt
+    RC ${sum}sum -c checksums/${sum}sums.txt
+  done
+  for file in ${files} ; do
+    RC gpg ${sign_opts} ${file}
+    RC mv -i ${file}.asc checksums/
+  done
+  # and sign the checksum files themselves, in place
+  RC pushd checksums
+    for file in ./*.txt ; do
+      RC gpg ${sign_opts} ${file}
+    done
+  RC popd
+}
+
 # vim: filetype=sh
