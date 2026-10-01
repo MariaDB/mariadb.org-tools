@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>Label</key> <string>com.mariadb.server</string>
+
+        <key>KeepAlive</key>
+        <dict>
+            <key>SuccessfulExit</key> <false/>
+        </dict>
+
+        <key>ExitTimeOut</key> <integer>600</integer>
+        <key>UserName</key> <string>_mysql</string>
+        <key>GroupName</key> <string>_mysql</string>
+
+        <key>WorkingDirectory</key> <string>/usr/local/mariadb/data</string>
+        <key>Program</key> <string>/usr/local/mariadb/server/bin/mariadbd</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>/usr/local/mariadb/server/bin/mariadbd</string>
+            <string>--user=_mysql</string>
+            <string>--basedir=/usr/local/mariadb/server</string>
+            <string>--datadir=/usr/local/mariadb/data</string>
+            <string>--log-basename=mariadb</string>
+            <string>--plugin-dir=/usr/local/mariadb/server/lib/plugin</string>
+        </array>
+        <key>EnvironmentVariables</key>
+        <dict>
+            <key>MYSQL_HOME</key> <string>/usr/local/mariadb</string>
+        </dict>
+</dict>
+</plist>
