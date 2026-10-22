@@ -74,14 +74,22 @@ secureUserInput() {
 #                 and a failed dry run returns without offering to transfer.
 #                 stderr is folded into the paged output so the reason is
 #                 visible there rather than scrolling past behind the pager.
+#
+#                 The dry run also gets --no-progress, and it goes *after* the
+#                 caller's options because the last of -P/--progress and
+#                 --no-progress wins. With -P, and a full file list (which
+#                 --delete-after forces), rsync prints a "0 files...\r100
+#                 files...\r" counter that the pager shows as ^M garbage. The
+#                 real transfer keeps the caller's -P, where the progress
+#                 display is wanted.
 #-------------------------------------------------------------------------------
 rsync_wrapper() {
   local upload
   upload=""
   rsync_body="${@}"
   MSG_L "Doing a dry run..."
-  echo "+ rsync --dry-run ${rsync_body}"
-  if ! ( set -o pipefail; rsync --dry-run ${rsync_body} 2>&1 | ${PAGER:-less} ); then
+  echo "+ rsync --dry-run ${rsync_body} --no-progress"
+  if ! ( set -o pipefail; rsync --dry-run ${rsync_body} --no-progress 2>&1 | ${PAGER:-less} ); then
     MSG "The dry run itself failed. Not transferring."
     return 1
   fi
