@@ -28,6 +28,9 @@ fi
 
 url_staging="https://github.com/mariadb-corporation/mariadb-connector-nodejs/archive"
 url="https://github.com/MariaDB/mariadb-connector-nodejs/archive"
+# GitHub repos, for the release assets (the SBOM)
+repo_staging="https://github.com/mariadb-corporation/mariadb-connector-nodejs"
+repo="https://github.com/MariaDB/mariadb-connector-nodejs"
 dir_name="connector-nodejs-${version}"
 
 # set location of prep.conf and prep.log to XDG-compatible directories and then
@@ -55,6 +58,39 @@ sumgen() {
 	${sum}sum ./mar* >> ${sum}sums.txt
 	RC ${sum}sum -c ${sum}sums.txt
   done
+}
+
+download_sbom() {
+  # CONJS-373: from 3.5.5, the GitHub release carries a CycloneDX SBOM,
+  # mariadb-<version>.cdx.json. The 3.4 and older series do not make one,
+  # and a draft release's assets are not downloadable yet, so a missing file
+  # is skipped rather than treated as an error. Run from inside the release
+  # dir; the file goes in an SBOM subdir.
+  local sbom_url
+  sbom_url="${1}/releases/download/${release}/mariadb-${release}.cdx.json"
+  if wget -q --spider ${sbom_url}; then
+    RC mkdir -v SBOM
+    RC pushd SBOM
+      RC wget -N ${sbom_url}
+    RC popd
+  else
+    MSG_L "No SBOM at ${sbom_url} (none for this series, or the release is still a draft), skipping..."
+  fi
+}
+
+sign_sbom_dir() {
+  # Checksums and signatures for the SBOM subdir, if download_sbom made one.
+  # Takes the gpg options to sign with. Run from inside the release dir.
+  local opts
+  opts="${@}"
+  if [[ -d SBOM ]]; then
+    RC pushd SBOM
+      sumgen
+      for file in *;do
+        RC gpg ${opts} ${file}
+      done
+    RC popd
+  fi
 }
 
 userResponse() {
@@ -124,6 +160,7 @@ prep_files_for_staging() {
       RC mv -vi ${commit}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
       RC wget -N ${url_staging}/${commit}.zip
       RC mv -vi ${commit}.zip mariadb-connector-nodejs-${release}.zip
+      download_sbom ${repo_staging}
     RC popd
   RC popd
   echo;echo;echo
@@ -142,6 +179,7 @@ prep_files_for_prod() {
       RC mv -vi ${release}.tar.gz mariadb-connector-nodejs-${release}.tar.gz
       RC wget -N ${url}/${release}.zip
       RC mv -vi ${release}.zip mariadb-connector-nodejs-${release}.zip
+      download_sbom ${repo}
       #cp -avi ${tarball} ./
     RC popd
   RC popd
@@ -152,12 +190,17 @@ prep_files_for_prod() {
 prep_and_sign_org_files() {
   # Prep .org files
   MSG "Prepping org files..."
-  RC rsync -av --exclude=*asc ${cn_home}/${dir_name} ${cn_home_org}/
+  # *sums.txt too: sumgen appends, so copying the com sums files in first
+  # left every line in the org sums files twice.
+  RC rsync -av --exclude=*asc --exclude=*sums.txt ${cn_home}/${dir_name} ${cn_home_org}/
   RC pushd ${cn_home_org}/${dir_name}
   sumgen
   for file in *;do
+    # skip the SBOM subdir; sign_sbom_dir signs what is in it
+    [[ -f ${file} ]] || continue
     RC gpg ${gpg_opts} ${file}
   done
+  sign_sbom_dir ${gpg_opts}
   RC popd
   echo;echo;echo
 }
@@ -185,8 +228,11 @@ sign_com_files() {
   RC pushd ${cn_home}/${dir_name}
 	sumgen
 	for file in *;do
+	  # skip the SBOM subdir; sign_sbom_dir signs what is in it
+	  [[ -f ${file} ]] || continue
 	  RC gpg ${ent_gpg_opts} ${file}
 	done
+	sign_sbom_dir ${ent_gpg_opts}
   RC popd
   echo;echo;echo
 }
