@@ -305,7 +305,11 @@ uploader() {
           # rsync cannot set its mtime and the whole transfer fails. The
           # versioned release dir is created fresh by this upload, so it
           # does not need it.
-          rsync_wrapper "${rsync_dest_opts} -O ${cn_home_org}/connector-nodejs-current ${dest}/"
+          # --no-perms for the same reason, one level down: the files in it
+          # are owned by another user on some mirrors and have different
+          # modes there (644 against 664 here), so an unchanged file still
+          # gets a chmod that fails.
+          rsync_wrapper "${rsync_dest_opts} -O --no-perms ${cn_home_org}/connector-nodejs-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
