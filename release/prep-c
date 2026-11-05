@@ -403,7 +403,8 @@ prep_com_files() {
 upload_to_the_primary_mirror() {
   # -O for the same reason as in uploader: connector-c-current already
   # exists on the far side and its directory mtime is not always ours to set.
-  rsync_wrapper "-av -O --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
+  # --no-perms likewise, for the modes of the files already in it.
+  rsync_wrapper "-av -O --no-perms --delete-after ${cc_home_org}/${dir_name} ${cc_home_org}/connector-c-current ${primary_mirror}:data/"
 }
 
 upload_to_staging() {
@@ -468,7 +469,11 @@ uploader() {
           # rsync cannot set its mtime and the whole transfer fails. The
           # versioned release dir is created fresh by this upload, so it
           # does not need it.
-          rsync_wrapper "${rsync_dest_opts} -O ${cc_home_org}/connector-c-current ${dest}/"
+          # --no-perms for the same reason, one level down: the files in it
+          # are owned by another user on some mirrors and can have a
+          # different mode there, so an unchanged file still gets a chmod
+          # that fails.
+          rsync_wrapper "${rsync_dest_opts} -O --no-perms ${cc_home_org}/connector-c-current ${dest}/"
           cont="yes"
           ANSWER=""
           ;;
