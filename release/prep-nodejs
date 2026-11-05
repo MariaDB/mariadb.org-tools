@@ -65,13 +65,15 @@ download_sbom() {
   # mariadb-<version>.cdx.json. The 3.4 and older series do not make one,
   # and a draft release's assets are not downloadable yet, so a missing file
   # is skipped rather than treated as an error. Run from inside the release
-  # dir; the file goes in an SBOM subdir.
+  # dir; the file goes in an SBOM subdir, renamed to match the tarball and
+  # zip (mariadb-connector-nodejs-<version>.cdx.json).
   local sbom_url
   sbom_url="${1}/releases/download/${release}/mariadb-${release}.cdx.json"
   if wget -q --spider ${sbom_url}; then
     RC mkdir -v SBOM
     RC pushd SBOM
       RC wget -N ${sbom_url}
+      RC mv -vi mariadb-${release}.cdx.json mariadb-connector-nodejs-${release}.cdx.json
     RC popd
   else
     MSG_L "No SBOM at ${sbom_url} (none for this series, or the release is still a draft), skipping..."
