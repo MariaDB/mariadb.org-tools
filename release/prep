@@ -670,7 +670,11 @@ uploader() {
   local dests
   local rsync_uploader_opts
   dests="$@"
-  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt"
+  # MariaDB.repo is buildbot's repo file for the unsigned ci packages of a
+  # build. mkrepo-yum.sh no longer copies it, but a release downloaded from the
+  # foundation archives can still carry one, so it is kept off the mirrors here
+  # whichever way the release was prepped (MDBF-1123).
+  rsync_uploader_opts="-av --delete-before --exclude=TIME --exclude=exclude --exclude=*orig --exclude=sync_from_netcologne.txt --exclude=MariaDB.repo"
   for dest in ${dests} ; do
     local cont
     cont=""

@@ -421,9 +421,11 @@ maybe_make_symlink() {
 copy_files() {
   # This function takes as an argument, the file portion of an rsync command
 
-  # copy the files from the source to the destination
-  echo "+ rsync -a --info=progress2 --keep-dirlinks --exclude=repodata ${@}"
-          rsync -a --info=progress2 --keep-dirlinks --exclude=repodata ${@}
+  # copy the files from the source to the destination. MariaDB.repo is
+  # excluded because buildbot writes one into every rpm builder dir, pointing
+  # at the unsigned ci packages for that build; it must never ship (MDBF-1123).
+  echo "+ rsync -a --info=progress2 --keep-dirlinks --exclude=repodata --exclude=MariaDB.repo ${@}"
+          rsync -a --info=progress2 --keep-dirlinks --exclude=repodata --exclude=MariaDB.repo ${@}
 
 }
 
