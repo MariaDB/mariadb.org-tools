@@ -47,46 +47,6 @@ set -e
 rpm_ver_cmapi=( 8 9 )
 deb_ver_cmapi=( bullseye bookworm jammy noble )
 
-case $1 in
-  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*13.0*|*13.1*)
-    debian_ver=( bullseye bookworm trixie )
-    ubuntu_ver=( jammy noble resolute )
-    rhel_ver=( 8 9 10 )
-    sles_ver=( 15.7 16.0 )
-    ;;
-  *11.4*)
-    debian_ver=( bullseye bookworm trixie )
-    ubuntu_ver=( jammy noble )
-    rhel_ver=( 8 9 10 )
-    sles_ver=( )
-    ;;
-  *10.11*|*11.0*|*11.1*|*11.2*|*11.3*)
-    debian_ver=( bullseye bookworm )
-    ubuntu_ver=( jammy noble )
-    rhel_ver=( 8 9 10 )
-    sles_ver=( )
-    ;;
-  *10.10*)
-    # need separate 10.10/11 because e.g. 10.10.3 is caught by the next glob
-    debian_ver=( bullseye )
-    ubuntu_ver=( jammy )
-    rhel_ver=( 8 9 )
-    sles_ver=( )
-    ;;
-  *10.5*)
-    debian_ver=( bullseye )
-    ubuntu_ver=( focal )
-    rhel_ver=( 8 9 )
-    sles_ver=( )
-    ;;
-  *)
-    debian_ver=( bullseye )
-    ubuntu_ver=( jammy )
-    rhel_ver=( 8 9 )
-    sles_ver=( )
-    ;;
-esac
-
 err() {
   printf "[ERROR] %s\n" "$*" >&2
   exit 1
@@ -102,6 +62,59 @@ fi
 dir=${1%/}
 version=${dir##*/}
 version=${version##*-}
+
+# Work out the release series (e.g. 13.2 for 13.2.1) and match on it exactly. Matching
+# substrings of the path broke as versions grew: 10.11.8 matched *11.8*, and 13.10.x would
+# match *10.10*.
+if [[ $version =~ ^([0-9]+\.[0-9]+)\. ]]; then
+  series=${BASH_REMATCH[1]}
+else
+  err "Can't work out the release series from '$version'. Aborting."
+fi
+
+# Series that are still released but have a frozen matrix are listed explicitly. Everything
+# else, which means 11.8, 12.x, 13.x, and every later series, gets the current matrix, so a
+# new series needs no change here.
+case $series in
+  11.4)
+    debian_ver=( bullseye bookworm trixie )
+    ubuntu_ver=( jammy noble )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( )
+    ;;
+  10.11|11.[0-3])
+    debian_ver=( bullseye bookworm )
+    ubuntu_ver=( jammy noble )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( )
+    ;;
+  10.10)
+    debian_ver=( bullseye )
+    ubuntu_ver=( jammy )
+    rhel_ver=( 8 9 )
+    sles_ver=( )
+    ;;
+  10.5)
+    debian_ver=( bullseye )
+    ubuntu_ver=( focal )
+    rhel_ver=( 8 9 )
+    sles_ver=( )
+    ;;
+  [1-9].*|10.*|11.[5-7])
+    # 10.6 to 10.9, 11.5 to 11.7, and anything older
+    debian_ver=( bullseye )
+    ubuntu_ver=( jammy )
+    rhel_ver=( 8 9 )
+    sles_ver=( )
+    ;;
+  *)
+    debian_ver=( bullseye bookworm trixie )
+    ubuntu_ver=( jammy noble resolute )
+    rhel_ver=( 8 9 10 )
+    sles_ver=( 15.7 16.0 )
+    ;;
+esac
+
 pwd=$PWD
 
 # do_pkgs <package type> <os name> <os version,...>

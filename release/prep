@@ -142,12 +142,11 @@ ci_dirs_118_ppc64le="kvm-deb-trixie-ppc64le:ppc64le-debian-13-deb-autobake kvm-d
 ci_dirs_118_s390x="kvm-zyp-sles1600-s390x:s390x-sles-1600-rpm-autobake kvm-deb-resolute-s390x:s390x-ubuntu-2604-deb-autobake"
 ci_dirs_118_x86="kvm-deb-sid-x86:x86-debian-sid-deb-autobake kvm-deb-trixie-x86:x86-debian-13-deb-autobake"
 ci_dirs_118="${ci_dirs_117} ${ci_dirs_118_amd64} ${ci_dirs_118_aarch64} ${ci_dirs_118_ppc64le}  ${ci_dirs_118_s390x} ${ci_dirs_118_x86}"
-ci_dirs_120="${ci_dirs_118}"
-ci_dirs_121="${ci_dirs_120}"
-ci_dirs_122="${ci_dirs_121}"
-ci_dirs_123="${ci_dirs_122}"
-ci_dirs_130="${ci_dirs_123}"
-ci_dirs_131="${ci_dirs_130}"
+
+# The list for every series from 12.0 on that doesn't have a ci_dirs_<series> of
+# its own, so a new series needs no change here. When the current list changes,
+# give the series that keep the old list their own variable first.
+ci_dirs_current="${ci_dirs_118}"
 
 }
 
@@ -1515,8 +1514,18 @@ major_gen=${major%%.*}
 
 set_build_dirs_variables
 
-# point ${ci_dirs} at the ci_dirs_* variable for this series
+# point ${ci_dirs} at the ci_dirs_* variable for this series, falling back to
+# ci_dirs_current for 12.0 and later. An older series without a list of its own
+# is an error rather than a guess.
 ci_dirs="ci_dirs_${major//./}"
+if [[ ! -v ${ci_dirs} ]]; then
+  if (( major_gen >= 12 )); then
+    ci_dirs="ci_dirs_current"
+  else
+    echo "+ major=${major}, there is no ${ci_dirs} list, giving up"
+    exit 5
+  fi
+fi
 
 # Set the real version of galera to use
 case ${major} in

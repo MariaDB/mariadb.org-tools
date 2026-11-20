@@ -109,32 +109,44 @@ loadDefaults() {
   fi
 }
 
-# Set the appropriate dists based on the ${ARCHDIR} of the packages
-case ${ARCHDIR} in
-  *10.2*)
+# Set the appropriate dists based on the series in ${ARCHDIR}, which ends in
+# .../ci/<tree>/<tarbuildnum>, with a tree such as bb-13.2-release or main. The
+# series is matched exactly: matching substrings of the path would send e.g.
+# 13.10 to the 10.10 arm.
+if [[ ${ARCHDIR} =~ (^|[/-])([0-9]+\.[0-9]+)([/-]|$) ]]; then
+  series=${BASH_REMATCH[2]}
+elif [[ ${ARCHDIR} == *main* ]]; then
+  series=main
+else
+  series=""
+fi
+
+# Series that are still released on a frozen list of dists are listed
+# explicitly. Everything else, which means 11.8, 12.x, 13.x, every later series,
+# and main, gets the current list, so a new series needs no change here. When
+# the current list changes, give the series that keep the old one their own arm.
+case ${series} in
+  10.2|10.3|10.4|10.5)
     ubuntu_dists=""
     ;;
-  *10.3*|*10.4*|*10.5*)
-    ubuntu_dists=""
-    ;;
-  *10.6*|*10.7*|*10.8*|*10.9*|*10.10*)
+  10.6|10.7|10.8|10.9|10.10)
     ubuntu_dists="jammy"
     ;;
-  *10.11*|*10.12*|*11.0*|*11.1*|*11.2*)
+  10.11|10.12|11.0|11.1|11.2)
     ubuntu_dists="jammy noble"
     ;;
-  *11.4*|*11.5*|*11.6*|*11.7*)
+  11.4|11.5|11.6|11.7)
     ubuntu_dists="jammy noble plucky"
     ;;
-  *11.8*|*12.0*|*12.1*|*12.2*|*12.3*|*13.0*|*13.1*|*main*)
-    ubuntu_dists="jammy noble plucky questing resolute"
-    #ubuntu_dists="jammy noble plucky"
-    ;;
-  *)
+  ""|[1-9].*|10.*|11.[0-7])
     line
     echo "+ ARCHDIR=${ARCHDIR}, can't determine dist, giving up"
     line
     exit 5
+    ;;
+  *)
+    ubuntu_dists="jammy noble plucky questing resolute"
+    #ubuntu_dists="jammy noble plucky"
     ;;
 esac
 
